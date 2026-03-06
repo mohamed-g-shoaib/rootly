@@ -340,10 +340,10 @@ export function MarketingNavbar({
                               className="flex h-69.25 w-full max-w-[320px] shrink-0 flex-col overflow-visible border border-border transition-all duration-200 hover:scale-[1.02] hover:border-foreground/20 hover:opacity-90 lg:w-[320px] lg:max-w-none xl:w-87.5 2xl:w-100"
                             >
                               <div className="relative flex flex-1 items-center justify-center overflow-visible bg-background p-4">
-                                <span className="pointer-events-none absolute top-[89%] left-1/2 z-0 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-serif text-[20rem] leading-none text-muted-foreground opacity-10 xl:text-[22rem] 2xl:text-[24rem]">
+                                <span className="pointer-events-none absolute top-[89%] left-1/2 z-0 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-sans text-[20rem] leading-none text-muted-foreground opacity-10 xl:text-[22rem] 2xl:text-[24rem]">
                                   &rdquo;
                                 </span>
-                                <div className="relative z-10 line-clamp-3 w-full px-2 text-center font-serif text-sm leading-tight xl:text-base 2xl:text-lg">
+                                <div className="text-wrap-pretty relative z-10 line-clamp-3 w-full px-2 text-center font-sans text-sm leading-tight xl:text-base 2xl:text-lg">
                                   <span className="text-primary">
                                     &ldquo;{firstSentence}&rdquo;
                                   </span>

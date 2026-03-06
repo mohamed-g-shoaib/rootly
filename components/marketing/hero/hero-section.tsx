@@ -219,13 +219,13 @@ export function HeroSection() {
         <MarketingContainer className="z-20 mb-12 flex flex-1 flex-col items-center justify-center space-y-8 md:justify-start md:pt-16 lg:mb-12 lg:flex-none lg:items-stretch lg:space-y-0 lg:pt-56 xl:mb-12 2xl:mb-12 3xl:mb-16">
           <div className="flex w-full flex-col space-y-8 lg:flex-row lg:items-end lg:justify-between lg:space-y-0">
             <div className="mx-auto max-w-xl space-y-4 px-2 text-center lg:mx-0 lg:space-y-3 lg:px-0 lg:text-left">
-              <h1 className="font-serif text-3xl leading-tight md:text-3xl lg:text-3xl lg:leading-tight xl:text-3xl xl:leading-[1.3] 2xl:text-3xl 3xl:text-4xl">
+              <h1 className="text-wrap-pretty font-sans text-3xl leading-tight md:text-3xl lg:text-3xl lg:leading-tight xl:text-3xl xl:leading-[1.3] 2xl:text-3xl 3xl:text-4xl">
                 <span className="text-foreground">
                   Run your business finances without manual work.
                 </span>
               </h1>
 
-              <p className="mx-auto max-w-md text-center font-sans text-base leading-normal text-muted-foreground lg:mx-0 lg:max-w-none lg:text-left">
+              <p className="text-wrap-pretty mx-auto max-w-md text-center font-sans text-base leading-normal text-muted-foreground lg:mx-0 lg:max-w-none lg:text-left">
                 One place for transactions, receipts, invoices and everything
                 around it.
               </p>
