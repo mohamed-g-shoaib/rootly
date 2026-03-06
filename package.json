@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
@@ -36,8 +39,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "oxfmt": "^0.36.0",
+    "oxlint": "^1.51.0",
+    "oxlint-tsgolint": "^0.16.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
