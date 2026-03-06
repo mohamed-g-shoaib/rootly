@@ -131,3 +131,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .bg-background-semi-transparent {
+    position: relative;
+  }
+
+  .bg-background-semi-transparent::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--color-background);
+    opacity: 0.8;
+  }
+}
