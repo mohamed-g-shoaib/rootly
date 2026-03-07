@@ -77,11 +77,11 @@ export function TimeSavingsSection() {
   return (
     <section className="bg-background py-12 sm:py-16 lg:py-24">
       <MarketingContainer>
-        <div className="mb-12 space-y-4 text-center">
-          <h2 className="text-balance text-2xl text-foreground sm:text-2xl">
-            Less admin. More focus.
+        <div className="mx-auto mb-12 max-w-xl space-y-4 px-2 text-center lg:mx-0 lg:mb-14 lg:max-w-2xl lg:px-0 lg:text-left">
+          <h2 className="text-wrap-pretty font-sans text-3xl leading-tight md:text-3xl lg:text-3xl lg:leading-tight xl:text-3xl xl:leading-[1.3] 2xl:text-3xl 3xl:text-4xl">
+            <span className="text-foreground">Less admin. More focus.</span>
           </h2>
-          <p className="text-pretty mx-auto hidden max-w-2xl text-base leading-normal text-muted-foreground sm:block">
+          <p className="text-wrap-pretty mx-auto hidden max-w-md font-sans text-base leading-normal text-muted-foreground sm:block lg:mx-0 lg:max-w-none lg:text-left">
             Rootly removes manual financial work so you can spend time on what
             actually matters.
           </p>
