@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MarketingContainer } from "@/components/marketing/container";
+import { homepageTestimonials } from "@/components/marketing/testimonials/testimonials-data";
 import RootlyLogo from "@/components/rootly-logo";
 import { cn } from "@/lib/utils";
 
@@ -72,31 +73,13 @@ const mobileFeatureItems: NavItem[] = [
   { href: "/file-storage", label: "Files" },
 ];
 
-const headerStories: StoryPreview[] = [
-  {
-    name: "Vitalie Rosescu",
-    image: "/stories/vitalie.jpg",
-    quote:
-      "All in one platform for freelancers looking to create clear insights on income and expenses.",
-  },
-  {
-    name: "Nick Speer",
-    image: "/stories/speer.jpeg",
-    quote:
-      "Rootly is bookkeeping software without the fluff. It's a ledger with modern tooling and integrations.",
-  },
-  {
-    name: "Ivo Dukov",
-    quote:
-      "Everything lives in one place now — customers, invoices, documents, and financial analytics.",
-  },
-  {
-    name: "Ciarán Harris",
-    image: "/stories/ciaran.jpeg",
-    quote:
-      "Financial admin stopped being a source of friction. Rootly actually works the way you'd expect modern software to work.",
-  },
-];
+const headerStories: StoryPreview[] = homepageTestimonials.map(
+  (testimonial) => ({
+    name: testimonial.name,
+    image: testimonial.image,
+    quote: testimonial.content,
+  }),
+);
 
 export function MarketingNavbar({
   transparent = false,
@@ -335,7 +318,7 @@ export function MarketingNavbar({
                             </Link>
 
                             <Link
-                              href="/testimonials"
+                              href={{ pathname: "/", hash: "testimonials" }}
                               onClick={() => setIsFeaturesOpen(false)}
                               className="flex h-69.25 w-full max-w-[320px] shrink-0 flex-col overflow-visible border border-border transition-all duration-200 hover:scale-[1.02] hover:border-foreground/20 hover:opacity-90 lg:w-[320px] lg:max-w-none xl:w-87.5 2xl:w-100"
                             >
