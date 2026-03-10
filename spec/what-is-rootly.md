@@ -124,7 +124,7 @@ Before starting a session, the user configures:
 
 - **Question count** — `10`, `20`, `All`, or `Custom` (user-defined number)
 - **Shuffle** — toggle to randomize question order and further test memory
-- **Include flagged only** — optional toggle to restrict the session to flagged notes only; when off, all Q&A notes are included
+- **Include flagged** — optional toggle to restrict the session to flagged notes only; when off, all Q&A notes are included
 
 #### During Review
 

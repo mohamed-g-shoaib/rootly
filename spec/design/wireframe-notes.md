@@ -96,7 +96,7 @@ A horizontal row of controls grouped tightly together:
    - Filters note list to show only notes linked to the selected course.
 
 4. **Flagged Filter (Toggle Button):**
-   - Label: `Flagged only`
+   - Label: `Flagged`
    - A toggle button — inactive by default. When active, the note list shows only notes where `flag = true`.
 
 5. **Sort Control (Select):**
@@ -398,7 +398,7 @@ Before showing the full form, present a type selector:
 **Row 3 — Filter Chips:**
 Horizontally scrollable chip row:
 
-- Type chip | Course chip | Flagged Only chip | Sort By chip
+- Type chip | Course chip | Flagged chip | Sort By chip
 - Each chip, when tapped, opens a Coss UI bottom sheet with options as a vertical radio list.
 - Active filters show a visual indicator on their chip.
 

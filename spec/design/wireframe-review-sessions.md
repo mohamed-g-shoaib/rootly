@@ -130,7 +130,7 @@ A horizontal row of data points:
 3. Question count: `20 questions` with a list icon
 4. Indicator badges (small, muted):
    - `Shuffled` badge — only shown if `shuffled = true`
-   - `Flagged Only` badge — only shown if `flagged_only = true`
+   - `Flagged` badge — only shown if `flagged_only = true`
 
 **Card Right Section:**
 
@@ -163,7 +163,7 @@ A horizontal row of data points:
 A horizontal row: accuracy (`85%`), time spent, question count, date. Same icons as the card.
 
 **Section 2 — Session Config:**
-Muted badges: `Shuffled` (if true), `Flagged Only` (if true). If both false, this section is omitted.
+Muted badges: `Shuffled` (if true), `Flagged` (if true). If both false, this section is omitted.
 
 **Section 3 — Notes Leveled Up / Down:**
 Two sub-sections side by side (or stacked on narrow screens):
@@ -242,7 +242,7 @@ All Sheets open as bottom sheets. Height: ~90% viewport with drag handle. Conten
    - Default: off.
    - When on: questions are served in random order during the session.
 
-3. **Flagged Only (Switch):**
+3. **Flagged (Switch):**
    - Label: `Flagged notes only`
    - Default: off.
    - When on: only Q&A notes where `flag = true` are included in the session.

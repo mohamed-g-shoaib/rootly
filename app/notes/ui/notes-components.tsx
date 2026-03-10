@@ -8,12 +8,20 @@ import {
   Edit01Icon,
   Flag01Icon,
   MoreVerticalIcon,
+  Note01Icon,
+  Pdf01Icon,
+  TextSquareIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import {
+  PreviewCard,
+  PreviewCardPopup,
+  PreviewCardTrigger,
+} from "@/components/ui/preview-card"
 import {
   AlertDialog,
   AlertDialogClose,
@@ -40,12 +48,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 
-import {
-  formatUpdatedLabel,
-  understandingLabel,
-  toCodeBadgeLabel,
-  type Note,
-} from "./notes-model"
+import { understandingLabel, type Note, toCodeBadgeLabel } from "./notes-model"
 
 export function EmptyState({
   hasAnyNotes,
@@ -89,7 +92,8 @@ export function EmptyState({
 
 export function NoteCard({
   note,
-  now,
+  now: _now,
+  isMobile,
   globalShowAnswers,
   overrideShow,
   onOverrideChange,
@@ -100,6 +104,7 @@ export function NoteCard({
 }: {
   note: Note
   now: Date
+  isMobile: boolean
   globalShowAnswers: boolean
   overrideShow: boolean | undefined
   onOverrideChange: (value: boolean) => void
@@ -115,7 +120,6 @@ export function NoteCard({
     <Card className="p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <Badge>{isQa ? "Q&A" : "Freeform"}</Badge>
           {note.courseTitle ? (
             <div className="text-sm text-muted-foreground">
               {note.courseTitle}
@@ -130,7 +134,13 @@ export function NoteCard({
             aria-label={note.flag ? "Remove flag" : "Flag for review"}
             onClick={onToggleFlag}
           >
-            <HugeiconsIcon icon={Flag01Icon} size={18} />
+            <HugeiconsIcon
+              icon={Flag01Icon}
+              size={18}
+              className={
+                note.flag ? "text-destructive" : "text-muted-foreground"
+              }
+            />
           </Button>
 
           <DropdownMenu>
@@ -145,10 +155,17 @@ export function NoteCard({
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onViewFull}>
+                <HugeiconsIcon icon={Note01Icon} size={18} />
                 View full note
               </DropdownMenuItem>
-              <DropdownMenuItem>Export as PDF</DropdownMenuItem>
-              <DropdownMenuItem>Export as Markdown</DropdownMenuItem>
+              <DropdownMenuItem>
+                <HugeiconsIcon icon={Pdf01Icon} size={18} />
+                Export as PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <HugeiconsIcon icon={TextSquareIcon} size={18} />
+                Export as Markdown
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DeleteDialog onDelete={() => void 0}>
                 <DropdownMenuItem variant="destructive">
@@ -167,20 +184,42 @@ export function NoteCard({
             <div className="font-medium">{note.question}</div>
 
             {!showAnswer ? (
-              <Button variant="outline" onClick={() => onOverrideChange(true)}>
-                Show Answer
-              </Button>
+              isMobile ? (
+                <Button
+                  variant="outline"
+                  onClick={() => onOverrideChange(true)}
+                >
+                  Show Answer
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <PreviewCard>
+                    <PreviewCardTrigger
+                      render={<Button variant="ghost" size="sm" />}
+                    >
+                      Peek answer
+                    </PreviewCardTrigger>
+                    <PreviewCardPopup>
+                      <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                        {note.answer}
+                      </div>
+                    </PreviewCardPopup>
+                  </PreviewCard>
+                </div>
+              )
             ) : (
               <>
                 <div className="text-sm text-muted-foreground">
                   {note.answer}
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={() => onOverrideChange(false)}
-                >
-                  Hide Answer
-                </Button>
+                {isMobile ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => onOverrideChange(false)}
+                  >
+                    Hide Answer
+                  </Button>
+                ) : null}
               </>
             )}
           </div>
@@ -201,24 +240,24 @@ export function NoteCard({
       <div className="flex items-center justify-between gap-3 pt-4">
         <div className="flex items-center gap-2">
           {note.codeSnippet ? (
-            <Button variant="outline" size="sm" onClick={onViewCode}>
+            <Button
+              variant="outline"
+              size="sm"
+              aria-label="View code"
+              onClick={onViewCode}
+              className="gap-2"
+            >
               <HugeiconsIcon icon={CodeIcon} size={18} />
               {toCodeBadgeLabel(note.codeLanguage)}
             </Button>
           ) : null}
-
-          {note.type === "qa" && note.understandingLevel ? (
-            <Badge variant="outline">
-              {understandingLabel(note.understandingLevel)}
-            </Badge>
-          ) : null}
-
-          {note.flag ? <Badge variant="secondary">Flagged</Badge> : null}
         </div>
 
-        <div className="text-xs text-muted-foreground">
-          {formatUpdatedLabel(now, note.updatedAt)}
-        </div>
+        {note.type === "qa" && note.understandingLevel ? (
+          <Badge variant="outline">
+            {understandingLabel(note.understandingLevel)}
+          </Badge>
+        ) : null}
       </div>
     </Card>
   )
@@ -233,7 +272,10 @@ function DeleteDialog({
 }) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={children as React.ReactElement} />
+      <AlertDialogTrigger
+        nativeButton={false}
+        render={children as React.ReactElement}
+      />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete note?</AlertDialogTitle>

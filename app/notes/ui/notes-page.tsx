@@ -28,8 +28,6 @@ export default function NotesPage() {
   const courses = React.useMemo(() => buildMockCourses(), [])
   const allNotes = React.useMemo(() => buildMockNotes(), [])
 
-  const [searchInput, setSearchInput] = React.useState("")
-  const [search, setSearch] = React.useState("")
   const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all")
   const [courseFilter, setCourseFilter] = React.useState<CourseFilter>("all")
   const [flaggedOnly, setFlaggedOnly] = React.useState(false)
@@ -58,14 +56,7 @@ export default function NotesPage() {
 
   const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
 
-  React.useEffect(() => {
-    const t = window.setTimeout(() => setSearch(searchInput.trim()), 300)
-    return () => window.clearTimeout(t)
-  }, [searchInput])
-
   const filtered = React.useMemo(() => {
-    const q = search.toLowerCase()
-
     const base = allNotes.filter((n) => {
       if (typeFilter !== "all" && n.type !== typeFilter) return false
 
@@ -79,12 +70,7 @@ export default function NotesPage() {
 
       if (flaggedOnly && !n.flag) return false
 
-      if (!q) return true
-      const hay = [n.question, n.answer, n.body, n.courseTitle]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-      return hay.includes(q)
+      return true
     })
 
     const listHasQa = base.some((n) => n.type === "qa")
@@ -113,7 +99,7 @@ export default function NotesPage() {
     })
 
     return { items: sorted, hasQa: listHasQa }
-  }, [allNotes, courseFilter, flaggedOnly, search, sortKey, typeFilter])
+  }, [allNotes, courseFilter, flaggedOnly, sortKey, typeFilter])
 
   const visibleNotes = React.useMemo(
     () =>
@@ -130,15 +116,12 @@ export default function NotesPage() {
   )
 
   const filtersActive =
-    search.length > 0 ||
     typeFilter !== "all" ||
     courseFilter !== "all" ||
     flaggedOnly ||
     sortKey !== "last_updated"
 
   function clearFilters() {
-    setSearchInput("")
-    setSearch("")
     setTypeFilter("all")
     setCourseFilter("all")
     setFlaggedOnly(false)
@@ -209,13 +192,11 @@ export default function NotesPage() {
       filteredCount={filtered.items.length}
       hasQa={filtered.hasQa}
       filtersActive={filtersActive}
-      searchInput={searchInput}
       typeFilter={typeFilter}
       courseFilter={courseFilter}
       flaggedOnly={flaggedOnly}
       sortKey={sortKey}
       globalShowAnswers={globalShowAnswers}
-      onSearchInputChange={setSearchInput}
       onTypeChange={setTypeFilter}
       onCourseChange={setCourseFilter}
       onToggleFlaggedOnly={() => setFlaggedOnly((v) => !v)}
@@ -244,7 +225,7 @@ export default function NotesPage() {
 
       <PageContainer>
         <div className="pt-4">
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.items.length === 0 ? (
               <EmptyState
                 hasAnyNotes={allNotes.length > 0}
@@ -258,6 +239,7 @@ export default function NotesPage() {
                   key={note.id}
                   note={note}
                   now={now}
+                  isMobile={isMobile}
                   globalShowAnswers={globalShowAnswers}
                   overrideShow={answerOverrides[note.id]}
                   onOverrideChange={(value) =>

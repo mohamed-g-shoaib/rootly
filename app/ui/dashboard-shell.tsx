@@ -140,7 +140,9 @@ export function DashboardShell({
                 className="min-w-72 justify-between"
                 onClick={() => setCommandOpen(true)}
               >
-                <span className="text-muted-foreground">Search or jump to...</span>
+                <span className="text-muted-foreground">
+                  Search or jump to...
+                </span>
                 {shortcut ? <Kbd>{shortcut}</Kbd> : null}
               </Button>
             )}
@@ -171,7 +173,7 @@ export function DashboardShell({
       {isMobile && fab ? (
         <Button
           size="icon-lg"
-          className="fixed right-4 bottom-24 z-30 rounded-full"
+          className="fixed right-4 bottom-20 z-30 rounded-full"
           aria-label={fab.ariaLabel}
           onClick={fab.onClick}
         >
@@ -205,7 +207,9 @@ function UserAvatarPopover() {
         <div className="flex flex-col gap-4">
           <div>
             <div className="font-medium">Rami R</div>
-            <div className="text-sm text-muted-foreground">rami@example.com</div>
+            <div className="text-sm text-muted-foreground">
+              rami@example.com
+            </div>
           </div>
 
           <div className="flex items-center justify-between">
@@ -246,7 +250,9 @@ function MobileAvatarSheet({
           <div className="flex flex-col gap-4">
             <div>
               <div className="font-medium">Rami R</div>
-              <div className="text-sm text-muted-foreground">rami@example.com</div>
+              <div className="text-sm text-muted-foreground">
+                rami@example.com
+              </div>
             </div>
 
             <div className="flex items-center justify-between">
@@ -294,7 +300,11 @@ function CommandPalette({
     {
       value: "Notes",
       items: [
-        { value: "note-1", label: "React useEffect dependencies", shortcut: "↵" },
+        {
+          value: "note-1",
+          label: "React useEffect dependencies",
+          shortcut: "↵",
+        },
         { value: "note-2", label: "SQL partial indexes", shortcut: "↵" },
       ],
     },
