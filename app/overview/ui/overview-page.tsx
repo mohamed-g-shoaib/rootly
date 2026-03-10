@@ -1,11 +1,13 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { Suspense, useEffect, useMemo, useState } from "react"
+import { Fragment, Suspense, useEffect, useMemo, useState } from "react"
 
 import {
   AddCircleIcon,
   AiSearchIcon,
+  ArrowDown01Icon,
+  ArrowUp01Icon,
   Book01Icon,
   Calendar01Icon,
   Cancel01Icon,
@@ -21,7 +23,7 @@ import { cn } from "@/lib/utils"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Kbd } from "@/components/ui/kbd"
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
   Popover,
   PopoverContent,
@@ -42,9 +44,11 @@ import {
 
 import {
   Command,
+  CommandCollection,
   CommandDialog,
   CommandDialogPopup,
   CommandEmpty,
+  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
@@ -523,64 +527,105 @@ function CommandPalette({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  type Item = {
+    value: string
+    label: string
+    shortcut?: string
+  }
+
+  type Group = {
+    value: string
+    items: Item[]
+  }
+
+  const groupedItems: Group[] = [
+    {
+      value: "Recent / Suggested",
+      items: [
+        { value: "log-daily", label: "Log today's entry" },
+        { value: "start-review", label: "Start review session" },
+        { value: "create-note", label: "Create new note" },
+      ],
+    },
+    {
+      value: "Notes",
+      items: [
+        {
+          value: "note-1",
+          label: "React useEffect dependencies",
+          shortcut: "↵",
+        },
+        { value: "note-2", label: "SQL partial indexes", shortcut: "↵" },
+      ],
+    },
+    {
+      value: "Courses",
+      items: [
+        { value: "course-1", label: "Advanced React Patterns" },
+        { value: "course-2", label: "Postgres Performance" },
+      ],
+    },
+    {
+      value: "Actions",
+      items: [
+        { value: "go-overview", label: "Go to Overview" },
+        { value: "go-notes", label: "Go to Notes" },
+      ],
+    },
+  ]
+
   const content = (
-    <CommandPanel>
-      <Command>
-        <CommandInput placeholder="Search notes, courses, or run a command..." />
+    <Command items={groupedItems}>
+      <CommandInput placeholder="Search notes, courses, or run a command..." />
 
+      <CommandPanel>
+        <CommandEmpty>No results found.</CommandEmpty>
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-
-          <CommandGroup>
-            <CommandGroupLabel>Recent / Suggested</CommandGroupLabel>
-            <CommandItem>Log today&apos;s entry</CommandItem>
-            <CommandItem>Start review session</CommandItem>
-            <CommandItem>Create new note</CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup>
-            <CommandGroupLabel>Notes</CommandGroupLabel>
-            <CommandItem>
-              React useEffect dependencies
-              <CommandShortcut>↵</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              SQL partial indexes
-              <CommandShortcut>↵</CommandShortcut>
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup>
-            <CommandGroupLabel>Courses</CommandGroupLabel>
-            <CommandItem>Advanced React Patterns</CommandItem>
-            <CommandItem>Postgres Performance</CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup>
-            <CommandGroupLabel>Actions</CommandGroupLabel>
-            <CommandItem>Go to Overview</CommandItem>
-            <CommandItem>Go to Notes</CommandItem>
-          </CommandGroup>
+          {(group, index) => (
+            <Fragment key={group.value}>
+              <CommandGroup items={group.items}>
+                <CommandGroupLabel>{group.value}</CommandGroupLabel>
+                <CommandCollection>
+                  {(item) => (
+                    <CommandItem key={item.value} value={item.value}>
+                      <span className="flex-1">{item.label}</span>
+                      {item.shortcut ? (
+                        <CommandShortcut>{item.shortcut}</CommandShortcut>
+                      ) : null}
+                    </CommandItem>
+                  )}
+                </CommandCollection>
+              </CommandGroup>
+              {index < groupedItems.length - 1 ? <CommandSeparator /> : null}
+            </Fragment>
+          )}
         </CommandList>
+      </CommandPanel>
 
-        <div className="flex items-center justify-between gap-2 border-t px-5 py-3 text-xs text-muted-foreground">
+      <CommandFooter>
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="rounded-md border px-2 py-1">↑↓</div>
-            <div>to navigate</div>
+            <KbdGroup>
+              <Kbd>
+                <HugeiconsIcon icon={ArrowUp01Icon} size={14} />
+              </Kbd>
+              <Kbd>
+                <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
+              </Kbd>
+            </KbdGroup>
+            <span>Navigate</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="rounded-md border px-2 py-1">Enter</div>
-            <div>to select</div>
+            <Kbd>Enter</Kbd>
+            <span>Open</span>
           </div>
         </div>
-      </Command>
-    </CommandPanel>
+        <div className="flex items-center gap-2">
+          <Kbd>Esc</Kbd>
+          <span>Close</span>
+        </div>
+      </CommandFooter>
+    </Command>
   )
 
   if (isMobile) {
@@ -613,7 +658,9 @@ function CommandPalette({
 
 function getDesktopShortcutLabel(): "⌘K" | "Ctrl K" {
   if (typeof navigator === "undefined") return "Ctrl K"
-  const isMac = navigator.platform.toLowerCase().includes("mac")
+  const isMac = navigator.userAgentData?.platform
+    ? navigator.userAgentData.platform.toLowerCase().includes("mac")
+    : navigator.userAgent.toLowerCase().includes("mac")
   return isMac ? "⌘K" : "Ctrl K"
 }
 
