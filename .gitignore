@@ -18,18 +18,27 @@
 # production
 /build
 
+# vercel
+/.vercel
+
 # misc
 .DS_Store
 *.pem
+.eslintcache
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+.pnpm-debug.log*
 
 # env files
-.env*.local
+.env*
+!.env.example
+
+# supabase local secrets
+/supabase/.env.local
+/supabase/.env.keys
 
 # typescript
 *.tsbuildinfo
