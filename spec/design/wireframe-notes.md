@@ -27,10 +27,24 @@ This rule is non-negotiable. Every UI element must be built using Coss UI primit
 
 ---
 
+## ⚠️ ANTI-PATTERN: No Inline Card Expansion
+
+```
+🚫 NEVER expand a card's height inline to reveal more content.
+🚫 NEVER use "Show more" / "Show less" toggles that grow a card in place.
+```
+
+Expanding a card inline breaks grid and list layout rhythm, causes neighboring cards to shift,
+and produces dead whitespace in grid siblings. ALL "see more" interactions must open a separate
+surface (Sheet, Popover, or dedicated page). Cards always maintain a fixed, consistent height.
+
+---
+
 ## Component Rules for This Page
 
 - **Create and Edit operations** → always use the Coss UI **Sheet** component. Never a modal, never a separate page.
 - **Delete operation** → always use the Coss UI **Alert Dialog** component. Never a simple confirm(), never a toast-only action.
+- **Full body view (Freeform)** → use the Coss UI **Sheet** component. Never expand the card inline.
 - **Export scope popover** → use the Coss UI **Popover** component.
 - **Overflow menu per card** → use the Coss UI **Dropdown Menu** component.
 - **Filter selects** → use the Coss UI **Select** component.
@@ -79,7 +93,7 @@ A horizontal row of controls grouped tightly together:
    - Options: `All Courses` (default), then one option per course the user has created, listed alphabetically.
    - Filters note list to show only notes linked to the selected course.
 
-4. **Flagged Filter (Toggle Button or Select):**
+4. **Flagged Filter (Toggle Button):**
    - Label: `Flagged only`
    - A toggle button — inactive by default. When active, the note list shows only notes where `flag = true`.
 
@@ -143,7 +157,7 @@ Two buttons, grouped tightly:
 
 ### Note Card Anatomy
 
-Each note in the list is rendered as a Card component. The card has a fixed internal layout described below.
+Each note in the list is rendered as a Card component. **Cards have a fixed height — they never expand inline.** All additional content is revealed via Sheets.
 
 #### Card Top Row
 A horizontal row spanning the full card width:
@@ -161,22 +175,26 @@ A horizontal row spanning the full card width:
     - Clicking opens a Coss UI Dropdown Menu anchored below-left of the button.
     - Menu items:
       1. `Edit` → opens the Edit Note Sheet
-      2. `Export as PDF` → exports this single note as PDF
-      3. `Export as Markdown` → exports this single note as Markdown
-      4. A visual separator line
-      5. `Delete` → opens the Delete Alert Dialog (styled as a destructive item)
+      2. `View full note` → opens the Full Note Viewer Sheet (see below)
+      3. `Export as PDF` → exports this single note as PDF
+      4. `Export as Markdown` → exports this single note as Markdown
+      5. A visual separator line
+      6. `Delete` → opens the Delete Alert Dialog (styled as a destructive item)
 
 #### Card Main Content Area
 
 **For Q&A notes:**
-- **Question:** Displayed in full, not truncated. Uses a slightly larger or bolder text style than the answer (handled by Coss UI typography tokens).
-- **Answer:** Displayed below the question, separated by a subtle divider.
+- **Question:** Displayed in full, not truncated. Uses a slightly bolder text style than the answer (handled by Coss UI typography tokens).
+- **Answer section:**
   - **Default state:** Hidden. In place of the answer text, render a ghost/outline button labeled `Show Answer`.
   - **When revealed:** The answer text is shown in full. A button labeled `Hide Answer` appears below it.
   - **Global toggle interaction:** If the page-level "Hide All Answers" / "Show All Answers" button is clicked, this card's answer state updates to match. If the user then manually toggles this specific card, it overrides the global state for this card only.
+  - **Card height:** The card height adjusts between the hidden and revealed answer states only. This is acceptable because it is a single-column list, not a grid — there are no sibling cards in the same row to be affected.
 
 **For Freeform notes:**
-- **Body:** Displayed as a text preview. Truncated to a maximum of 4 lines. If the full body exceeds 4 lines, a `Show more` inline text button appears at the end. Clicking `Show more` expands the card to show the full body in place (no navigation, no sheet). A `Show less` button appears at the bottom.
+- **Body preview:** The body text is truncated to a maximum of 4 lines using CSS line-clamp. The card height is always fixed at this truncated height.
+- If the body exceeds 4 lines, a `View full note` text link appears below the preview. Clicking this opens the **Full Note Viewer Sheet** — it does NOT expand the card inline.
+- There is no "Show less" on the card. Collapsing is done by closing the Sheet.
 
 #### Card Bottom Row
 A horizontal row spanning the full card width:
@@ -187,7 +205,7 @@ A horizontal row spanning the full card width:
   1. **Code Snippet Badge:**
      - Condition: note has a non-null, non-empty `code_snippet` field.
      - Label: the value of `code_language` (e.g. `Python`, `JavaScript`, `SQL`). If `code_language` is `text` or empty, label is `Code`.
-     - Clicking this badge opens a read-only code viewer — a Coss UI Sheet that slides in from the right, showing the code snippet in a monospace code block with the language label as the sheet title. The sheet is read-only; editing the snippet is done via the Edit Sheet.
+     - Clicking this badge opens the **Code Snippet Viewer Sheet**.
 
   2. **Understanding Level Badge (Q&A only):**
      - Condition: note type is `Q&A` and `understanding_level` is set.
@@ -197,10 +215,10 @@ A horizontal row spanning the full card width:
   3. **Flagged Badge:**
      - Condition: `flag = true`.
      - Label: `Flagged`
-     - This badge is redundant with the flag icon in the top row but serves as a scannable visual indicator in the badge row for consistency.
+     - Serves as a scannable visual indicator in the badge row.
 
 - **Right side — Metadata:**
-  - A muted text label showing when the note was last updated, in relative format (e.g. `Updated 2 hours ago`, `Updated Mar 3`). Use relative time for recent updates (within 7 days) and absolute date for older ones.
+  - A muted text label showing when the note was last updated. Use relative time for updates within 7 days (e.g. `Updated 2 hours ago`) and absolute date for older ones (e.g. `Updated Mar 3`).
 
 ---
 
@@ -209,7 +227,6 @@ A horizontal row spanning the full card width:
 Three distinct empty states, each shown in the center of the note list area:
 
 1. **No notes exist at all:**
-   - Illustration or large icon (use Coss UI's empty state pattern if available).
    - Heading: `No notes yet`
    - Subtext: `Create your first note to get started.`
    - A primary button: `New Note` — clicking opens the Create Note Sheet.
@@ -219,25 +236,44 @@ Three distinct empty states, each shown in the center of the note list area:
    - Subtext: `Try adjusting your search or clearing the filters.`
    - A ghost button: `Clear filters` — clicking resets all filters to their default state.
 
-3. **Notes exist but filtered list has only Freeform notes (Understanding Level sort selected):**
-   - Show the notes normally. The Understanding Level sort option simply has no effect and the list order falls back to Last Updated. No error shown.
+3. **Filtered list has only Freeform notes with Understanding Level sort selected:**
+   - Show the notes normally. The Understanding Level sort falls back silently to Last Updated. No error shown.
+
+---
+
+### Full Note Viewer Sheet
+
+**Trigger:** Clicking `View full note` text link on a Freeform card, or `View full note` in the overflow menu.
+
+**Component:** Coss UI Sheet, sliding in from the right.
+
+**Sheet title:** First 6 words of the note body followed by `...`, or the full body if shorter.
+
+**Content:**
+- Full body text, not truncated, vertically scrollable inside the sheet.
+- If the note has a code snippet, the code block is rendered below the body inside the same sheet.
+- Read-only. No editing within this sheet.
+
+**Sheet Footer:**
+- `Close` — ghost button.
+- `Edit Note` — secondary button. Closes this sheet and opens the Edit Note Sheet.
 
 ---
 
 ### Create Note Sheet
 
-**Trigger:** Clicking the `New Note` button in the Page Header Row.
+**Trigger:** Clicking the `New Note` button in the Page Header Row, or the FAB on mobile.
 
 **Component:** Coss UI Sheet, sliding in from the right side of the screen.
 
 **Sheet title:** `New Note`
 
-**Sheet width (desktop):** Wide enough to comfortably display a form with multiple fields — approximately one-third of the viewport width, but use Coss UI Sheet size tokens, not arbitrary widths.
+**Sheet width (desktop):** Use Coss UI Sheet size tokens — do not use arbitrary widths.
 
 #### Step 1 — Note Type Selection
 Before showing the full form, present a type selector:
 - Two large selectable cards or toggle buttons: `Q&A` and `Freeform`
-- Default: no type pre-selected, user must choose.
+- Default: no type pre-selected. User must choose.
 - Once a type is selected, the appropriate form fields appear below without closing and reopening the sheet.
 
 #### Form Fields — Q&A Type
@@ -245,75 +281,51 @@ Before showing the full form, present a type selector:
 1. **Course (Select — optional):**
    - Label: `Course`
    - Options: `No course` (default), then all user courses alphabetically.
-   - Links the note to a course.
 
 2. **Question (Textarea — required):**
-   - Label: `Question`
-   - Placeholder: `What is the question?`
-   - No character limit enforced in UI, but required — cannot submit empty.
+   - Label: `Question` | Placeholder: `What is the question?`
 
 3. **Answer (Textarea — required):**
-   - Label: `Answer`
-   - Placeholder: `Write the answer...`
-   - Required — cannot submit empty.
+   - Label: `Answer` | Placeholder: `Write the answer...`
 
-4. **Understanding Level (Segmented control or radio group — required):**
+4. **Understanding Level (Segmented control — required):**
    - Label: `Understanding Level`
-   - 5 options labeled `1`, `2`, `3`, `4`, `5`
-   - Each option has a short descriptor below it:
-     - 1 = `No clue`
-     - 2 = `Vague idea`
-     - 3 = `Understand`
-     - 4 = `Confident`
-     - 5 = `Mastered`
+   - 5 options: `1` through `5`, each with a descriptor below:
+     - 1 = `No clue` | 2 = `Vague idea` | 3 = `Understand` | 4 = `Confident` | 5 = `Mastered`
 
 5. **Code Snippet (optional, collapsible):**
-   - A collapsed section by default, labeled `+ Add code snippet`.
-   - Clicking expands to reveal:
-     - **Language Select:** Label `Language`. Options include common programming languages plus `Text` as default.
-     - **Code Textarea:** Monospace font (Coss UI code input if available). Placeholder: `Paste or write your code here...`
-   - Once expanded, it cannot be re-collapsed unless the code fields are both empty.
+   - Collapsed by default. Label: `+ Add code snippet`
+   - Expanding reveals: Language Select + Code Textarea (monospace).
+   - Cannot re-collapse unless both fields are empty.
 
-6. **Flag toggle (optional):**
-   - Label: `Flag for review`
-   - A Coss UI Switch or Checkbox component. Default: off.
+6. **Flag for review (Switch — optional):** Default off.
 
 #### Form Fields — Freeform Type
 
 1. **Course (Select — optional):** Same as Q&A.
-
-2. **Body (Textarea — required):**
-   - Label: `Note`
-   - Placeholder: `Write your note...`
-   - Taller textarea than Q&A fields — freeform notes are typically longer.
-   - Required — cannot submit empty.
-
+2. **Body (Textarea — required):** Label: `Note` | Placeholder: `Write your note...` | Taller than Q&A textareas.
 3. **Code Snippet (optional, collapsible):** Same as Q&A.
-
-4. **Flag toggle (optional):** Same as Q&A.
+4. **Flag for review (Switch — optional):** Same as Q&A.
 
 #### Sheet Footer
-Two buttons, right-aligned at the bottom of the sheet:
-- `Cancel` — ghost button. Closes the sheet without saving. If any field has been filled, show a Coss UI Alert Dialog confirming discard: `Discard changes? Your note will not be saved.` with `Discard` (destructive) and `Keep editing` options.
-- `Save Note` — primary button. Disabled until all required fields are valid. Clicking submits the form, closes the sheet, and prepends the new note to the top of the list with an optimistic update.
+- `Cancel` — ghost button. If any field has been filled, show a discard Alert Dialog before closing.
+- `Save Note` — primary button. Disabled until all required fields are valid. On success: closes sheet, prepends card to list.
 
 ---
 
 ### Edit Note Sheet
 
-**Trigger:** Clicking `Edit` in the note card's overflow menu.
+**Trigger:** `Edit` in the note overflow menu.
 
 **Component:** Coss UI Sheet, sliding in from the right.
 
 **Sheet title:** `Edit Note`
 
-**Form:** Identical to the Create Note Sheet form for the same note type, pre-populated with the note's current values.
-
-**Type field:** The note type (Q&A / Freeform) is displayed as a read-only label — it cannot be changed after creation.
+**Form:** Same as Create, pre-populated with current values. Note type is a read-only label — cannot be changed after creation.
 
 **Sheet Footer:**
-- `Cancel` — same discard confirmation behavior as Create.
-- `Save Changes` — primary button. Disabled until at least one field has changed. Clicking saves, closes the sheet, and updates the card in place.
+- `Cancel` — same discard confirmation as Create.
+- `Save Changes` — primary button. Disabled until at least one field has changed.
 
 ---
 
@@ -323,29 +335,29 @@ Two buttons, right-aligned at the bottom of the sheet:
 
 **Component:** Coss UI Sheet, sliding in from the right.
 
-**Sheet title:** The value of `code_language` (e.g. `Python`) or `Code Snippet` if language is `text`.
+**Sheet title:** `code_language` value (e.g. `Python`), or `Code Snippet` if language is `text`.
 
-**Content:** A read-only code block displaying the full `code_snippet` value in a monospace font, with syntax highlighting if Coss UI supports it natively.
+**Content:** Read-only code block in monospace font. Syntax highlighting if Coss UI supports it natively.
 
 **Sheet Footer:**
-- `Close` — ghost button. Closes the sheet.
-- `Edit Note` — secondary button. Closes this sheet and opens the Edit Note Sheet for the same note.
+- `Close` — ghost button.
+- `Edit Note` — secondary button. Opens Edit Note Sheet for the same note.
 
 ---
 
 ### Delete Alert Dialog
 
-**Trigger:** Clicking `Delete` in the note card's overflow menu.
+**Trigger:** `Delete` in the note overflow menu.
 
-**Component:** Coss UI Alert Dialog (blocking overlay — user cannot interact with anything behind it).
+**Component:** Coss UI Alert Dialog.
 
 **Title:** `Delete note?`
 
-**Body text:** `This action cannot be undone. The note will be permanently deleted.`
+**Body:** `This action cannot be undone. The note will be permanently deleted.`
 
 **Buttons:**
-- `Cancel` — secondary/ghost button. Closes the dialog, no action taken.
-- `Delete` — destructive primary button. Clicking deletes the note, closes the dialog, and removes the card from the list with an optimistic update. If the deletion fails, the card is restored and a Coss UI Toast error is shown.
+- `Cancel` — ghost button.
+- `Delete` — destructive button. On success: removes card from list. On failure: restores card, shows Coss UI Toast error.
 
 ---
 
@@ -353,89 +365,75 @@ Two buttons, right-aligned at the bottom of the sheet:
 
 ### Page Header Row (Mobile)
 
-**Position:** Sticky below the Top Bar. Does not scroll.
-
-**Layout:** Due to limited horizontal space, the header row is split into TWO stacked rows:
+**Position:** Sticky below the Top Bar.
 
 **Row 1:**
 - Left: Page title `Notes`
-- Right: `New Note` primary button (icon only — plus icon, no label to save space). Tapping opens the Create Note Sheet as a bottom sheet on mobile.
-- Right: `Export` ghost button (icon only — download icon, no label). Tapping opens the Export Popover.
+- Right: `New Note` icon-only primary button (plus icon). Opens Create Note Sheet as bottom sheet.
+- Right: `Export` icon-only ghost button (download icon). Opens Export Popover.
 
-**Row 2 — Filter Bar:**
-Scrollable horizontally if filters overflow the viewport width. Displayed as a horizontal scrollable chip/pill row:
-- Search Input (full width, above the chip row as its own row)
-- Type Filter chip
-- Course Filter chip
-- Flagged Only toggle chip
-- Sort By chip
+**Row 2 — Search:**
+- Full-width search input. Placeholder: `Search notes...`
 
-Each filter chip, when tapped, opens a Coss UI bottom sheet with the filter options listed as a vertical radio list. Selecting an option closes the bottom sheet and applies the filter. Active filters show a visual indicator on their chip (e.g. a dot or filled style).
+**Row 3 — Filter Chips:**
+Horizontally scrollable chip row:
+- Type chip | Course chip | Flagged Only chip | Sort By chip
+- Each chip, when tapped, opens a Coss UI bottom sheet with options as a vertical radio list.
+- Active filters show a visual indicator on their chip.
 
-**Hide/Show All Answers button (mobile):**
-If the current list contains Q&A notes, this appears as a full-width ghost button below the filter chip row.
+**Hide/Show All Answers (mobile):**
+Full-width ghost button below the chip row, visible only when the list contains Q&A notes.
 
 ---
 
 ### Note List (Mobile)
 
-**Layout:** Single column, same as desktop. Cards stack vertically.
-
-**Card layout on mobile:** Identical to desktop card anatomy with one adjustment:
-- The card top row (type badge + course + flag + menu) wraps if needed — flag and menu buttons remain right-aligned.
-- Answer reveal and body expand behavior is identical to desktop.
-- Badge row is identical to desktop.
-
-**Infinite scroll:** Identical to desktop.
+- Single column. Same card anatomy as desktop.
+- Answer reveal behavior identical to desktop.
+- Freeform body truncated to 4 lines. `View full note` link opens Full Note Viewer Sheet (bottom sheet). No inline expansion.
+- Infinite scroll identical to desktop.
 
 ---
 
 ### Sheets on Mobile
 
-On mobile, all Coss UI Sheets open as **bottom sheets** (slide up from the bottom) instead of sliding in from the right. This is a Coss UI Sheet behavior — configure the sheet's side prop to `bottom` on mobile breakpoints.
-
-**Height:** The Create and Edit sheets take up approximately 90% of the viewport height on mobile, with a drag handle at the top to dismiss.
-
-**Scrollability:** The form inside the sheet is vertically scrollable if the content exceeds the sheet height.
+All Sheets open as **bottom sheets** on mobile (slide up from bottom). Configure the Coss UI Sheet `side` prop to `bottom` on mobile breakpoints. Height: ~90% of viewport with a drag handle. Form content is vertically scrollable inside the sheet.
 
 ---
 
-### FAB (Mobile — Notes Page)
+### FAB (Mobile)
 
-**Position:** Floating above the bottom dock, bottom-right.
-
+**Position:** Bottom-right, floating above the bottom dock.
 **Icon:** Plus icon.
-
-**Action:** Tapping opens the Create Note Sheet (bottom sheet).
-
-This duplicates the `New Note` button in the header row intentionally — the FAB provides thumb-zone access without scrolling back to the top.
+**Action:** Opens Create Note Sheet (bottom sheet). Intentional duplication of the header button for thumb-zone access.
 
 ---
 
 ## Data Dependencies
 
-- **Note list:** Fetched from `public.notes` table with RLS applied. Filtered and sorted server-side where possible; client-side filtering for search.
-- **Course filter options:** Fetched from `public.courses` table (user's courses only, via RLS).
-- **Flag toggle:** Updates `public.notes.flag` field via optimistic update.
-- **Create note:** Inserts into `public.notes`.
-- **Edit note:** Updates the corresponding row in `public.notes`.
-- **Delete note:** Deletes the corresponding row from `public.notes`.
-- **Export:** Client-side generation from the current filtered note set already loaded in state. If the filtered set is larger than the current loaded batch, fetch all matching notes before generating the export file.
+- **Note list:** `public.notes` via RLS. Server-side filtering and sorting where possible; debounced client-side for search.
+- **Course filter options:** `public.courses` via RLS.
+- **Flag toggle:** Optimistic update on `public.notes.flag`.
+- **Create:** INSERT into `public.notes`.
+- **Edit:** UPDATE on `public.notes`.
+- **Delete:** DELETE on `public.notes`.
+- **Export:** Client-side generation from filtered set. Fetch full filtered set before generating if batch is incomplete.
 
 ---
 
 ## Interaction States Summary
 
-| Action | Component Used | Side Effect |
+| Action | Component | Side Effect |
 |---|---|---|
-| Create note | Sheet (right on desktop, bottom on mobile) | Prepend card to list |
-| Edit note | Sheet (right on desktop, bottom on mobile) | Update card in place |
+| Create note | Sheet | Prepend card to list |
+| Edit note | Sheet | Update card in place |
 | Delete note | Alert Dialog | Remove card from list |
-| View code snippet | Sheet (right on desktop, bottom on mobile) | No data change |
-| Toggle flag | Optimistic icon button on card | Update badge + flag icon |
-| Export notes | Popover → PDF or Markdown download | No data change |
-| Reveal/hide answer | Inline toggle on card | No data change |
+| View full Freeform note | Sheet | No data change |
+| View code snippet | Sheet | No data change |
+| Toggle flag | Optimistic icon button | Update badge + flag icon |
+| Export notes | Popover → download | No data change |
+| Reveal/hide answer (Q&A) | Inline button on card | No data change |
 | Reveal/hide all answers | Page header button | No data change |
 | Apply filter | Select / chip | Re-fetch or re-filter list |
 | Change sort | Select / chip | Re-sort current list |
-| Infinite scroll | Automatic | Append next batch to list |
+| Infinite scroll trigger | Automatic | Append next batch |
