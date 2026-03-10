@@ -153,12 +153,12 @@ The Overview page visualizes all learning data. All charts and metrics support a
 
 Four top-level stat cards always visible regardless of time range:
 
-| Card              | Description                                             |
-| ----------------- | ------------------------------------------------------- |
-| Total Courses     | Number of courses created                               |
-| Total Notes       | Total notes across all courses and uncategorized        |
+| Card              | Description                                            |
+| ----------------- | ------------------------------------------------------ |
+| Total Courses     | Number of courses created                              |
+| Total Notes       | Total notes across all courses and uncategorized       |
 | Avg Understanding | Average understanding level across all Q&A notes (1–5) |
-| Study Time        | Total study time logged across all daily sessions       |
+| Study Time        | Total study time logged across all daily sessions      |
 
 #### Charts
 
@@ -222,7 +222,7 @@ The golden rule: **never import Recharts at the top level of a page**. Every cha
 {
   id: string
   user_id: string
-  course_id: string | null  // null = note not attached to any course (uncategorized)
+  course_id: string | null // null = note not attached to any course (uncategorized)
   type: "qa" | "freeform"
   // Q&A only
   question: string | null
@@ -245,8 +245,8 @@ The golden rule: **never import Recharts at the top level of a page**. Every cha
 {
   id: string
   user_id: string
-  date: string        // stored as YYYY-MM-DD, displayed as "Monday, Dec 1"
-  study_time: number  // stored as total minutes, displayed as hours + minutes
+  date: string // stored as YYYY-MM-DD, displayed as "Monday, Dec 1"
+  study_time: number // stored as total minutes, displayed as hours + minutes
   mood: 1 | 2 | 3
   notes: string | null
   created_at: string
@@ -337,15 +337,15 @@ This is the active rebuild. It is cloud-first, scalable, and built for long-term
 
 ### v2 Routes (Draft)
 
-| Path              | Description                              |
-| ----------------- | ---------------------------------------- |
-| `/`               | Public landing page                      |
-| `/overview`       | Charts, stats, and progress visualization |
-| `/notes`          | View, filter, and manage all notes       |
-| `/courses`        | Manage courses                           |
-| `/daily-tracking` | Log study time and mood                  |
+| Path              | Description                                 |
+| ----------------- | ------------------------------------------- |
+| `/`               | Public landing page                         |
+| `/overview`       | Charts, stats, and progress visualization   |
+| `/notes`          | View, filter, and manage all notes          |
+| `/courses`        | Manage courses                              |
+| `/daily-tracking` | Log study time and mood                     |
 | `/review`         | Spaced repetition session setup and history |
-| `/login`          | Auth page                                |
+| `/login`          | Auth page                                   |
 
 **Middleware behavior:** All routes except `/`, `/login`, and static assets are protected. Unauthenticated users are redirected to `/login`.
 
