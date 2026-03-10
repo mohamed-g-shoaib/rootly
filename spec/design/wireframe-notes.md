@@ -71,10 +71,12 @@ The Top Bar and Bottom Dock are identical to the Overview page. Do not re-implem
 **Layout:** A single horizontal row spanning the full content width. Contains four groups arranged left to right:
 
 #### Group 1 — Page Title (Left-anchored)
+
 - A static text label: `Notes`
 - This is the page heading. It is not interactive.
 
 #### Group 2 — Filter Bar (Center, takes majority of width)
+
 A horizontal row of controls grouped tightly together:
 
 1. **Search Input:**
@@ -108,6 +110,7 @@ A horizontal row of controls grouped tightly together:
    - Applies to the current filtered set.
 
 #### Group 3 — Hide/Show All Answers Toggle (Right of filter bar)
+
 - A single ghost/outline button.
 - Default label: `Hide All Answers`
 - When clicked, all Q&A note cards in the list collapse their answer sections simultaneously.
@@ -117,6 +120,7 @@ A horizontal row of controls grouped tightly together:
 - State is local to the page session — it resets on page reload.
 
 #### Group 4 — Action Buttons (Right-anchored)
+
 Two buttons, grouped tightly:
 
 1. **Export Button:**
@@ -160,6 +164,7 @@ Two buttons, grouped tightly:
 Each note in the list is rendered as a Card component. **Cards have a fixed height — they never expand inline.** All additional content is revealed via Sheets.
 
 #### Card Top Row
+
 A horizontal row spanning the full card width:
 
 - **Left side:**
@@ -184,6 +189,7 @@ A horizontal row spanning the full card width:
 #### Card Main Content Area
 
 **For Q&A notes:**
+
 - **Question:** Displayed in full, not truncated. Uses a slightly bolder text style than the answer (handled by Coss UI typography tokens).
 - **Answer section:**
   - **Default state:** Hidden. In place of the answer text, render a ghost/outline button labeled `Show Answer`.
@@ -192,16 +198,17 @@ A horizontal row spanning the full card width:
   - **Card height:** The card height adjusts between the hidden and revealed answer states only. This is acceptable because it is a single-column list, not a grid — there are no sibling cards in the same row to be affected.
 
 **For Freeform notes:**
+
 - **Body preview:** The body text is truncated to a maximum of 4 lines using CSS line-clamp. The card height is always fixed at this truncated height.
 - If the body exceeds 4 lines, a `View full note` text link appears below the preview. Clicking this opens the **Full Note Viewer Sheet** — it does NOT expand the card inline.
 - There is no "Show less" on the card. Collapsing is done by closing the Sheet.
 
 #### Card Bottom Row
+
 A horizontal row spanning the full card width:
 
 - **Left side — Badge Row:**
   Three optional badges displayed in a horizontal row. Each badge is only rendered if the condition is met:
-
   1. **Code Snippet Badge:**
      - Condition: note has a non-null, non-empty `code_snippet` field.
      - Label: the value of `code_language` (e.g. `Python`, `JavaScript`, `SQL`). If `code_language` is `text` or empty, label is `Code`.
@@ -209,7 +216,7 @@ A horizontal row spanning the full card width:
 
   2. **Understanding Level Badge (Q&A only):**
      - Condition: note type is `Q&A` and `understanding_level` is set.
-     - Label: `Level [N]` where N is the understanding level value (1–5).
+     - Label: the understanding level label — `Confused`, `Getting It`, or `Clear` — corresponding to the value (1, 2, 3).
      - Do not render this badge for Freeform notes.
 
   3. **Flagged Badge:**
@@ -250,11 +257,13 @@ Three distinct empty states, each shown in the center of the note list area:
 **Sheet title:** First 6 words of the note body followed by `...`, or the full body if shorter.
 
 **Content:**
+
 - Full body text, not truncated, vertically scrollable inside the sheet.
 - If the note has a code snippet, the code block is rendered below the body inside the same sheet.
 - Read-only. No editing within this sheet.
 
 **Sheet Footer:**
+
 - `Close` — ghost button.
 - `Edit Note` — secondary button. Closes this sheet and opens the Edit Note Sheet.
 
@@ -271,7 +280,9 @@ Three distinct empty states, each shown in the center of the note list area:
 **Sheet width (desktop):** Use Coss UI Sheet size tokens — do not use arbitrary widths.
 
 #### Step 1 — Note Type Selection
+
 Before showing the full form, present a type selector:
+
 - Two large selectable cards or toggle buttons: `Q&A` and `Freeform`
 - Default: no type pre-selected. User must choose.
 - Once a type is selected, the appropriate form fields appear below without closing and reopening the sheet.
@@ -290,8 +301,11 @@ Before showing the full form, present a type selector:
 
 4. **Understanding Level (Segmented control — required):**
    - Label: `Understanding Level`
-   - 5 options: `1` through `5`, each with a descriptor below:
-     - 1 = `No clue` | 2 = `Vague idea` | 3 = `Understand` | 4 = `Confident` | 5 = `Mastered`
+   - 3 options, each as a large selectable button:
+     - `Confused` (value: 1)
+     - `Getting It` (value: 2)
+     - `Clear` (value: 3)
+   - No default — user must select one. Cannot submit without a selection.
 
 5. **Code Snippet (optional, collapsible):**
    - Collapsed by default. Label: `+ Add code snippet`
@@ -308,6 +322,7 @@ Before showing the full form, present a type selector:
 4. **Flag for review (Switch — optional):** Same as Q&A.
 
 #### Sheet Footer
+
 - `Cancel` — ghost button. If any field has been filled, show a discard Alert Dialog before closing.
 - `Save Note` — primary button. Disabled until all required fields are valid. On success: closes sheet, prepends card to list.
 
@@ -324,6 +339,7 @@ Before showing the full form, present a type selector:
 **Form:** Same as Create, pre-populated with current values. Note type is a read-only label — cannot be changed after creation.
 
 **Sheet Footer:**
+
 - `Cancel` — same discard confirmation as Create.
 - `Save Changes` — primary button. Disabled until at least one field has changed.
 
@@ -340,6 +356,7 @@ Before showing the full form, present a type selector:
 **Content:** Read-only code block in monospace font. Syntax highlighting if Coss UI supports it natively.
 
 **Sheet Footer:**
+
 - `Close` — ghost button.
 - `Edit Note` — secondary button. Opens Edit Note Sheet for the same note.
 
@@ -356,6 +373,7 @@ Before showing the full form, present a type selector:
 **Body:** `This action cannot be undone. The note will be permanently deleted.`
 
 **Buttons:**
+
 - `Cancel` — ghost button.
 - `Delete` — destructive button. On success: removes card from list. On failure: restores card, shows Coss UI Toast error.
 
@@ -368,15 +386,18 @@ Before showing the full form, present a type selector:
 **Position:** Sticky below the Top Bar.
 
 **Row 1:**
+
 - Left: Page title `Notes`
 - Right: `New Note` icon-only primary button (plus icon). Opens Create Note Sheet as bottom sheet.
 - Right: `Export` icon-only ghost button (download icon). Opens Export Popover.
 
 **Row 2 — Search:**
+
 - Full-width search input. Placeholder: `Search notes...`
 
 **Row 3 — Filter Chips:**
 Horizontally scrollable chip row:
+
 - Type chip | Course chip | Flagged Only chip | Sort By chip
 - Each chip, when tapped, opens a Coss UI bottom sheet with options as a vertical radio list.
 - Active filters show a visual indicator on their chip.
@@ -423,17 +444,17 @@ All Sheets open as **bottom sheets** on mobile (slide up from bottom). Configure
 
 ## Interaction States Summary
 
-| Action | Component | Side Effect |
-|---|---|---|
-| Create note | Sheet | Prepend card to list |
-| Edit note | Sheet | Update card in place |
-| Delete note | Alert Dialog | Remove card from list |
-| View full Freeform note | Sheet | No data change |
-| View code snippet | Sheet | No data change |
-| Toggle flag | Optimistic icon button | Update badge + flag icon |
-| Export notes | Popover → download | No data change |
-| Reveal/hide answer (Q&A) | Inline button on card | No data change |
-| Reveal/hide all answers | Page header button | No data change |
-| Apply filter | Select / chip | Re-fetch or re-filter list |
-| Change sort | Select / chip | Re-sort current list |
-| Infinite scroll trigger | Automatic | Append next batch |
+| Action                   | Component              | Side Effect                |
+| ------------------------ | ---------------------- | -------------------------- |
+| Create note              | Sheet                  | Prepend card to list       |
+| Edit note                | Sheet                  | Update card in place       |
+| Delete note              | Alert Dialog           | Remove card from list      |
+| View full Freeform note  | Sheet                  | No data change             |
+| View code snippet        | Sheet                  | No data change             |
+| Toggle flag              | Optimistic icon button | Update badge + flag icon   |
+| Export notes             | Popover → download     | No data change             |
+| Reveal/hide answer (Q&A) | Inline button on card  | No data change             |
+| Reveal/hide all answers  | Page header button     | No data change             |
+| Apply filter             | Select / chip          | Re-fetch or re-filter list |
+| Change sort              | Select / chip          | Re-sort current list       |
+| Infinite scroll trigger  | Automatic              | Append next batch          |

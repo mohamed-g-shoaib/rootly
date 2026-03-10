@@ -62,7 +62,11 @@ There are two types of notes:
 - A **question** (what you're trying to understand)
 - An **answer** (what you learned)
 - An optional **code snippet** with language and syntax highlighting
-- An **understanding level** (1–5) representing how well you grasp the concept
+- An **understanding level** (1–3) representing how well you grasp the concept:
+  - `1` = **Confused** — doesn't understand it at all
+  - `2` = **Getting It** — partial understanding, needs more review
+  - `3` = **Clear** — understands it well
+
 - A **flag** boolean for marking notes for review
 
 **Freeform Notes** — unstructured notes for thoughts, summaries, or anything that doesn't fit a Q&A format:
@@ -125,7 +129,11 @@ Before starting a session, the user configures:
 #### During Review
 
 - Answers are hidden; the user reads the question and tests their memory
-- The user reveals the answer, then rates their recall to adjust the understanding level up or down
+- The user reveals the answer, then rates their recall:
+  - `✓ Nailed it` → level up by 1 (clamped at 3)
+  - `~ Sort of` → no change
+  - `✗ Forgot it` → level down by 1 (clamped at 1)
+
 - Progress through the session is visible
 
 #### Session Summary
@@ -157,7 +165,7 @@ Four top-level stat cards always visible regardless of time range:
 | ----------------- | ------------------------------------------------------ |
 | Total Courses     | Number of courses created                              |
 | Total Notes       | Total notes across all courses and uncategorized       |
-| Avg Understanding | Average understanding level across all Q&A notes (1–5) |
+| Avg Understanding | Average understanding level across all Q&A notes (1–3) |
 | Study Time        | Total study time logged across all daily sessions      |
 
 #### Charts
@@ -227,7 +235,8 @@ The golden rule: **never import Recharts at the top level of a page**. Every cha
   // Q&A only
   question: string | null
   answer: string | null
-  understanding_level: 1 | 2 | 3 | 4 | 5 | null
+  understanding_level: 1 | 2 | 3 | null // 1 = Confused, 2 = Getting It, 3 = Clear
+
   // Freeform only
   body: string | null
   // Shared
