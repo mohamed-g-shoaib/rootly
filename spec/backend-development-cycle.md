@@ -57,7 +57,7 @@ Q&A fields:
 
 - `question text`
 - `answer text`
-- `understanding_level smallint` with check `(1..5)`
+- `understanding_level smallint` with check `(1..3)` (`1 = Confused`, `2 = Getting It`, `3 = Clear`)
 
 Freeform fields:
 
@@ -297,6 +297,10 @@ Within the scope defined by `spec/what-is-rootly.md`, the database backend is co
 - Schema is created
 - RLS is enabled and restricted to authenticated users
 - Required analytics/review workflows are supported via RPCs
+
+Migration notes:
+
+- The `public.notes.understanding_level` scale was reduced from 1–5 to 1–3. Existing values of `4` and `5` were clamped to `3` before enforcing the new CHECK constraint.
 
 Next work should be in the application layer:
 
