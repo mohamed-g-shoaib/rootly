@@ -450,17 +450,3 @@ src/Modal.tsx:12 - missing overscroll-behavior: contain
 | File | Description |
 | ---- | ----------- |
 | `SKILL.md` | Entry point — instructs the LLM to fetch `command.md` from GitHub before each review |
-
----
-
-## Community-Recommended Skills for This Stack
-
-Based on the [skills.sh all-time leaderboard](https://skills.sh/trending), the following skills are community-praised for Next.js / React / Supabase / Tailwind stacks and are worth considering adding:
-
-| Skill | Publisher | Installs | Why Relevant |
-| ----- | --------- | -------- | ------------ |
-| [`shadcn`](https://skills.sh/shadcn/ui/shadcn) | shadcn/ui | 2,000+ | shadcn/ui component patterns — reference for coss ui which is built on the same model |
-| [`deploy-to-vercel`](https://skills.sh/vercel-labs/agent-skills/deploy-to-vercel) | Vercel | 970+ | Vercel deployment best practices, env vars, Edge config |
-| [`playwright-best-practices`](https://skills.sh/currents-dev/playwright-best-practices-skill/playwright-best-practices) | currents-dev | 783+ | Automated E2E testing — relevant for CI workflow |
-| [`systematic-debugging`](https://skills.sh/obra/superpowers/systematic-debugging) | obra/superpowers | 821+ | Hypothesis-driven debugging methodology for complex bugs |
-| [`test-driven-development`](https://skills.sh/obra/superpowers/test-driven-development) | obra/superpowers | 656+ | TDD workflow enforcement — pairs with the CI setup |
