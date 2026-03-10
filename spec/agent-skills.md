@@ -25,6 +25,8 @@ Skills follow the [skills.sh](https://skills.sh) standard and are placed in the 
 | 6 | [Supabase Postgres Best Practices](#6-supabase-postgres-best-practices) | Supabase | 724+ | `.agents/supabase-postgres-best-practices/` |
 | 7 | [PostgreSQL Table Design](#7-postgresql-table-design) | wshobson | — | `.agents/postgresql-table-design/` |
 | 8 | [PostgreSQL Pro](#8-postgresql-pro) | jeffallan | — | `.agents/postgres-pro/` |
+| 9 | [TypeScript Advanced Types](#9-typescript-advanced-types) | wshobson | — | `.agents/typescript-advanced-types/` |
+| 10 | [Web Interface Guidelines](#10-web-interface-guidelines) | Vercel | 3,200+ | `.agents/web-design-guidelines/` |
 
 ---
 
@@ -343,13 +345,120 @@ ANALYZE orders;
 
 ---
 
+## 9. TypeScript Advanced Types
+
+**Publisher:** wshobson
+**skills.sh rank:** Community — no public install count
+**When to load:** Implementing complex generic logic; building type-safe API clients, event emitters, or form validators; creating reusable type utilities; migrating JavaScript to TypeScript; any time you reach for `any` and need a better solution
+
+### Purpose
+
+A comprehensive, example-driven guide to TypeScript's advanced type system. Covers the 5 core pillars — generics, conditional types, mapped types, template literal types, and utility types — plus 6 real-world advanced patterns with full working code. Uniquely includes a **type testing** section and a **common pitfalls** section. The skill is self-contained in a single `SKILL.md` with no separate reference files.
+
+### Top 10 Rules by Priority
+
+1. **Use `unknown` over `any`** — `unknown` forces you to narrow before use; `any` silently disables the type checker and defeats the purpose of TypeScript
+2. **Leverage `infer` in conditional types** — Extract inner types (return types, promise types, array element types) without runtime code using `infer R`
+3. **Prefer discriminated unions over optional fields** — Model state machines with `{ status: 'success'; data: T } | { status: 'error'; error: string }` so the compiler exhausts all cases
+4. **Use mapped types to transform, not duplicate** — Derive `Partial<T>`, `Readonly<T>`, `Getters<T>` from a single source of truth; never manually maintain parallel type shapes
+5. **Constrain generics with `extends`** — Always bound generics to the minimum required interface (`T extends HasLength`) rather than leaving them unconstrained
+6. **Template literal types for string patterns** — Build `EventHandler = \`on${Capitalize<EventName>}\`` to enforce naming conventions at compile time
+7. **Type guards over assertions** — Write `value is string` type guard functions instead of `as string` casts; guards are verified at runtime, casts are not
+8. **Use `DeepReadonly<T>` / `DeepPartial<T>` for nested objects** — Built-in `Readonly<T>` and `Partial<T>` are shallow; write recursive versions for config/state objects
+9. **Test your types with `AssertEqual<T, U>`** — Write compile-time type tests using `[T] extends [U] ? [U] extends [T] ? true : false : false` to prevent type regressions
+10. **Avoid deeply nested conditional types** — They slow down the TypeScript compiler significantly; flatten or cache intermediate types with `type` aliases
+
+### Advanced Patterns Reference
+
+| Pattern | Use Case |
+| ------- | -------- |
+| Type-Safe Event Emitter | Typed `on()` / `emit()` with `EventMap` generic |
+| Type-Safe API Client | Endpoint config object with inferred params, body, response |
+| Builder Pattern | Compile-time enforcement that all required fields are set before `.build()` |
+| `DeepReadonly` / `DeepPartial` | Recursive type transforms for nested config/state objects |
+| Type-Safe Form Validation | Generic `FormValidator<T>` with per-field rule arrays |
+| Discriminated Unions + Reducer | Exhaustive state machines with no impossible states |
+
+### Available Files
+
+| File | Description |
+| ---- | ----------- |
+| `SKILL.md` | Full self-contained skill — all patterns, examples, pitfalls, performance notes, and type testing |
+
+---
+
+## 10. Web Interface Guidelines
+
+**Publisher:** Vercel
+**skills.sh rank:** #52 all-time — 3,200+ installs
+**When to load:** Reviewing any UI code for correctness; asked to "review my UI", "audit design", "check accessibility", or "check my site against best practices"; before merging any frontend component
+
+### Purpose
+
+An **auditing** skill, not a creation skill. Where Frontend Design (#3) tells the LLM *how to create* great UI, this skill tells it *how to review* existing UI against a concrete, comprehensive checklist. It fetches the latest rules from [`vercel-labs/web-interface-guidelines`](https://github.com/vercel-labs/web-interface-guidelines) on every invocation, so rules are always up to date. Output is in terse `file:line` format (VS Code clickable).
+
+> **Note:** This skill dynamically fetches its rules at runtime from:
+> `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md`
+> It always reflects the latest version of the guidelines — no local copy needed.
+
+### Top 10 Rules by Priority
+
+1. **Accessibility first** — Icon-only buttons need `aria-label`; form controls need `<label>`; interactive elements need keyboard handlers; use `<button>` for actions and `<a>` for navigation — never `<div onClick>`
+2. **Focus states always** — Never use `outline-none` without a `focus-visible:ring-*` replacement; use `:focus-visible` over `:focus`; group compound controls with `:focus-within`
+3. **Animation: `transform`/`opacity` only** — Never `transition: all`; list properties explicitly; always honor `prefers-reduced-motion`; all animations must be interruptible
+4. **Forms: labels, autocomplete, correct types** — Every input needs `autocomplete` and a meaningful `name`; use `type="email"`, `type="tel"` etc.; never block paste; warn before navigation with unsaved changes
+5. **Destructive actions need confirmation** — Never execute destructive operations immediately; always show a confirmation modal or an undo window
+6. **URL reflects all state** — Filters, tabs, pagination, expanded panels belong in query params — not `useState`; deep-link all stateful UI
+7. **Typography precision** — Use `…` not `...`; curly quotes not straight quotes; `text-wrap: balance` on headings; `font-variant-numeric: tabular-nums` for number columns
+8. **Performance: virtualize large lists** — Lists over 50 items must use `virtua` or `content-visibility: auto`; no layout reads (`getBoundingClientRect`) during render
+9. **Content handling: always handle edge cases** — Every text container needs `truncate`, `line-clamp-*`, or `break-words`; flex children need `min-w-0`; always handle empty states
+10. **Images: explicit dimensions + priority** — Every `<img>` needs `width` and `height` (prevents CLS); above-fold images need `priority`/`fetchpriority="high"`; below-fold need `loading="lazy"`
+
+### Anti-Patterns to Flag
+
+| Anti-Pattern | Why |
+| ------------ | --- |
+| `user-scalable=no` / `maximum-scale=1` | Disables zoom — accessibility violation |
+| `transition: all` | Animates unexpected properties; never explicit |
+| `outline-none` without focus replacement | Breaks keyboard navigation |
+| `<div onClick>` / `<span onClick>` | Should be `<button>`; no keyboard, no semantics |
+| Images without `width`/`height` | Causes Cumulative Layout Shift (CLS) |
+| Large `.map()` without virtualization | Causes jank on lists > 50 items |
+| Hardcoded date/number formats | Use `Intl.DateTimeFormat` / `Intl.NumberFormat` |
+| `autoFocus` without justification | Disruptive on mobile; use sparingly |
+| `onPaste` + `preventDefault` | Never block paste in form fields |
+
+### Output Format
+
+The skill outputs findings grouped by file in terse `file:line` format:
+
+```text
+## src/Button.tsx
+src/Button.tsx:42 - icon button missing aria-label
+src/Button.tsx:55 - animation missing prefers-reduced-motion
+src/Button.tsx:67 - transition: all → list properties explicitly
+
+## src/Modal.tsx
+src/Modal.tsx:12 - missing overscroll-behavior: contain
+
+## src/Card.tsx
+✓ pass
+```
+
+### Available Files
+
+| File | Description |
+| ---- | ----------- |
+| `SKILL.md` | Entry point — instructs the LLM to fetch `command.md` from GitHub before each review |
+
+---
+
 ## Community-Recommended Skills for This Stack
 
 Based on the [skills.sh all-time leaderboard](https://skills.sh/trending), the following skills are community-praised for Next.js / React / Supabase / Tailwind stacks and are worth considering adding:
 
 | Skill | Publisher | Installs | Why Relevant |
 | ----- | --------- | -------- | ------------ |
-| [`web-design-guidelines`](https://skills.sh/vercel-labs/agent-skills/web-design-guidelines) | Vercel | 3,200+ | Consistent design systems — pairs well with coss ui |
 | [`shadcn`](https://skills.sh/shadcn/ui/shadcn) | shadcn/ui | 2,000+ | shadcn/ui component patterns — reference for coss ui which is built on the same model |
 | [`deploy-to-vercel`](https://skills.sh/vercel-labs/agent-skills/deploy-to-vercel) | Vercel | 970+ | Vercel deployment best practices, env vars, Edge config |
 | [`playwright-best-practices`](https://skills.sh/currents-dev/playwright-best-practices-skill/playwright-best-practices) | currents-dev | 783+ | Automated E2E testing — relevant for CI workflow |
