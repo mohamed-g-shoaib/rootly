@@ -77,7 +77,11 @@ We've introduced a few additional tokens to provide more granular control:
 Components that wrap Base UI primitives re-export the underlying primitive. Use the styled component when our defaults work, or the primitive when you need different compositions or styling. In a monorepo with a shared UI package, apps import from that package—Base UI stays in one place, no need to add it to each app.
 
 ```tsx
-import { Slider, SliderValue, SliderPrimitive } from "@coss/ui/components/slider";
+import {
+  Slider,
+  SliderValue,
+  SliderPrimitive,
+} from "@coss/ui/components/slider"
 ```
 
 ## Base UI Re-exports

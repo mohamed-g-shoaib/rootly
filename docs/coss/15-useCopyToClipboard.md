@@ -46,16 +46,16 @@ npx shadcn@latest add @coss/use-copy-to-clipboard
 ### Basic
 
 ```tsx
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
 function CopyButton({ text }: { text: string }) {
-  const { copyToClipboard, isCopied } = useCopyToClipboard();
+  const { copyToClipboard, isCopied } = useCopyToClipboard()
 
   return (
     <button onClick={() => copyToClipboard(text)}>
       {isCopied ? "Copied!" : "Copy"}
     </button>
-  );
+  )
 }
 ```
 
@@ -64,7 +64,7 @@ function CopyButton({ text }: { text: string }) {
 The `isCopied` state resets after 2 seconds by default. You can change this:
 
 ```tsx
-const { copyToClipboard, isCopied } = useCopyToClipboard({ timeout: 3000 });
+const { copyToClipboard, isCopied } = useCopyToClipboard({ timeout: 3000 })
 ```
 
 Set `timeout` to `0` to keep `isCopied` as `true` indefinitely (until the component unmounts).
@@ -76,7 +76,7 @@ Run a side effect when a copy succeeds:
 ```tsx
 const { copyToClipboard, isCopied } = useCopyToClipboard({
   onCopy: () => console.log("Copied to clipboard"),
-});
+})
 ```
 
 ### With icon swap
@@ -84,12 +84,12 @@ const { copyToClipboard, isCopied } = useCopyToClipboard({
 A common pattern — swap the icon briefly to confirm the copy:
 
 ```tsx
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { Button } from "@/components/ui/button";
+import { CheckIcon, CopyIcon } from "lucide-react"
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
+import { Button } from "@/components/ui/button"
 
 function CopyButton({ value }: { value: string }) {
-  const { copyToClipboard, isCopied } = useCopyToClipboard();
+  const { copyToClipboard, isCopied } = useCopyToClipboard()
 
   return (
     <Button
@@ -104,7 +104,7 @@ function CopyButton({ value }: { value: string }) {
         <CopyIcon aria-hidden="true" />
       )}
     </Button>
-  );
+  )
 }
 ```
 
@@ -112,12 +112,12 @@ function CopyButton({ value }: { value: string }) {
 
 ```tsx
 function useCopyToClipboard(options?: {
-  timeout?: number;
-  onCopy?: () => void;
+  timeout?: number
+  onCopy?: () => void
 }): {
-  copyToClipboard: (value: string) => void;
-  isCopied: boolean;
-};
+  copyToClipboard: (value: string) => void
+  isCopied: boolean
+}
 ```
 
 ### Options

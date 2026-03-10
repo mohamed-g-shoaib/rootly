@@ -35,6 +35,7 @@ import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
 
 export default function RootLayout({ children }) {
 return (
+
 <html lang="en">
 <head />
 <body>
@@ -82,6 +83,7 @@ import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
 
 export default function RootLayout({ children }) {
 return (
+
 <html lang="en">
 <head />
 <body>

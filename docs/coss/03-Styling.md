@@ -168,20 +168,26 @@ See [Get Started](/ui/docs/get-started) for installing with the CLI. If you pref
 Components like Dialog, AlertDialog, Sheet, and Empty use the `font-heading` class for titles. The coss style preset defines `--font-sans`, `--font-heading`, and `--font-mono` with system font fallbacks. To use custom fonts, define these variables in your layout using `next/font`:
 
 ```tsx title="app/layout.tsx"
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google"
 
-const fontSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
-const fontHeading = Geist({ variable: "--font-heading", subsets: ["latin"], weight: "600" });
-const fontMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
+const fontSans = Geist({ variable: "--font-sans", subsets: ["latin"] })
+const fontHeading = Geist({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  weight: "600",
+})
+const fontMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] })
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${fontSans.variable} ${fontHeading.variable} ${fontMono.variable} font-sans`}>
+      <body
+        className={`${fontSans.variable} ${fontHeading.variable} ${fontMono.variable} font-sans`}
+      >
         {children}
       </body>
     </html>
-  );
+  )
 }
 ```
 
@@ -197,9 +203,7 @@ Add `isolation: isolate` to your application's root wrapper div. This creates a 
 
 ```tsx title="app/layout.tsx"
 <body>
-  <div className="isolate relative flex min-h-svh flex-col">
-    {children}
-  </div>
+  <div className="isolate relative flex min-h-svh flex-col">{children}</div>
 </body>
 ```
 
@@ -209,9 +213,7 @@ For iOS Safari 26+ compatibility, add `position: relative` to the body element. 
 
 ```tsx title="app/layout.tsx"
 <body className="relative">
-  <div className="isolate relative flex min-h-svh flex-col">
-    {children}
-  </div>
+  <div className="isolate relative flex min-h-svh flex-col">{children}</div>
 </body>
 ```
 
