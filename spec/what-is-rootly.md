@@ -41,6 +41,16 @@ Rootly acts as that structured capture layer built specifically for how develope
 
 ---
 
+## What Rootly is NOT
+
+- Not a project management tool
+- Not a team tool
+- Not a general note-taking app like Notion or Obsidian
+- Not a course platform — it tracks your learning from external courses, it doesn't host them
+- Not a social or sharing platform
+
+---
+
 ## Core Workflows
 
 ### 1. Notes
@@ -62,11 +72,7 @@ There are two types of notes:
 - A **flag** boolean for marking notes for review
 - No understanding level — freeform notes are not reviewed in spaced repetition mode
 
-Both note types belong to a course, share the same `course_id` relationship, and are stored in the same notes collection. The `type` field (`"qa"` | `"freeform"`) distinguishes them.
-
----
-
-Here's the updated section:
+Both note types are stored in the same notes collection. The `type` field (`"qa"` | `"freeform"`) distinguishes them. Notes do not have to belong to a course — `course_id` is optional. A note with `course_id: null` is considered uncategorized.
 
 ---
 
@@ -82,8 +88,6 @@ Notes are attached to courses. Each course has:
 - A **progress** percentage (0–100) representing how far through the course you are
 - Created/updated timestamps
 
-Here's the updated section:
-
 ---
 
 ### 3. Daily Study Session Tracking
@@ -92,7 +96,7 @@ Log each study day with:
 
 - A **date** displayed in 12hr format, e.g. `Monday, Dec 1`
 - **Study time** entered as separate hours and minutes fields, e.g. `Hours: 02 | Minutes: 54` — stored internally as total minutes
-- A **mood score** (1–5) mapped to human-readable labels:
+- A **mood score** (1–3) mapped to human-readable labels:
 
 | Value | Label      |
 | ----- | ---------- |
@@ -104,15 +108,13 @@ Log each study day with:
 
 The mood labels are a UI concern only — the database stores `1–3` and the frontend maps them to labels. This keeps the model clean and makes it easy to change labels later without a migration.
 
-Here's the updated section:
-
 ---
 
 ### 4. Spaced Repetition Review
 
 Review mode applies to **Q&A notes only** — freeform notes are never included.
 
-## Session Setup
+#### Session Setup
 
 Before starting a session, the user configures:
 
@@ -120,13 +122,13 @@ Before starting a session, the user configures:
 - **Shuffle** — toggle to randomize question order and further test memory
 - **Include flagged only** — optional toggle to restrict the session to flagged notes only; when off, all Q&A notes are included
 
-## During Review
+#### During Review
 
 - Answers are hidden; the user reads the question and tests their memory
 - The user reveals the answer, then rates their recall to adjust the understanding level up or down
 - Progress through the session is visible
 
-## Session Summary
+#### Session Summary
 
 At the end of each session, the summary shows:
 
@@ -134,10 +136,10 @@ At the end of each session, the summary shows:
 - **Time spent** — displayed as `Hours: 00 | Minutes: 17`
 - **Notes that leveled up** — list of notes whose understanding level increased
 - **Notes that leveled down** — list of notes whose understanding level decreased
-- **Weakest course** — the course with the lowest average understanding level across reviewed notes
-- **Strongest course** — the course with the highest average understanding level across reviewed notes
+- **Weakest course** — the course with the lowest average understanding level across reviewed notes (`null` if all reviewed notes are uncategorized)
+- **Strongest course** — the course with the highest average understanding level across reviewed notes (`null` if all reviewed notes are uncategorized)
 
-## Saved Sessions
+#### Saved Sessions
 
 After completing a review, the user can **save the session** with a custom name. Saved sessions are stored and accessible from the Review page for historical reference.
 
@@ -147,18 +149,18 @@ After completing a review, the user can **save the session** with a custom name.
 
 The Overview page visualizes all learning data. All charts and metrics support a **time range filter**: last **7 days**, **30 days**, or **90 days**.
 
-## Summary Cards
+#### Summary Cards
 
 Four top-level stat cards always visible regardless of time range:
 
-| Card              | Description                                            |
-| ----------------- | ------------------------------------------------------ |
-| Total Courses     | Number of courses created                              |
-| Total Notes       | Total notes across all courses and uncategorized       |
+| Card              | Description                                             |
+| ----------------- | ------------------------------------------------------- |
+| Total Courses     | Number of courses created                               |
+| Total Notes       | Total notes across all courses and uncategorized        |
 | Avg Understanding | Average understanding level across all Q&A notes (1–5) |
-| Study Time        | Total study time logged across all daily sessions      |
+| Study Time        | Total study time logged across all daily sessions       |
 
-## Charts
+#### Charts
 
 **Understanding Progress**
 Track comprehension levels over time and identify learning trends. Shows how average understanding level changes across the selected time range.
@@ -172,7 +174,7 @@ Understand how emotional state affects the learning journey. Shows mood scores (
 **Course Mastery Overview**
 Compare understanding levels across different courses and subjects. Shows average understanding level per course, sorted from weakest to strongest. Uncategorized notes are excluded from this chart.
 
-## Overview data considerations
+#### Overview Data Considerations
 
 - Time range filter applies to all charts simultaneously
 - Summary cards show **all-time totals**, not filtered by time range — they are global stats
@@ -180,7 +182,7 @@ Compare understanding levels across different courses and subjects. Shows averag
 - Days with no study session logged show as zero on the Daily Study Sessions chart, not as gaps, to make consistency visible
 - Mood chart uses the label names (`Burned Out`, `Neutral`, `Focused`), not raw numbers
 
-## Recharts Performance
+#### Recharts Performance
 
 Recharts is heavy by default and can cause noticeable slowdowns when charts render on load or when data updates. To keep the Overview page fast:
 
@@ -195,13 +197,14 @@ The golden rule: **never import Recharts at the top level of a page**. Every cha
 
 ---
 
-## Data Models (Basic Suggested Structure)
+## Data Models
 
 ### Course
 
 ```typescript
 {
   id: string
+  user_id: string
   title: string
   instructor: string | null
   course_link: string | null
@@ -218,7 +221,8 @@ The golden rule: **never import Recharts at the top level of a page**. Every cha
 ```typescript
 {
   id: string
-  course_id: string | null // null = note not attached to any course
+  user_id: string
+  course_id: string | null  // null = note not attached to any course (uncategorized)
   type: "qa" | "freeform"
   // Q&A only
   question: string | null
@@ -240,8 +244,9 @@ The golden rule: **never import Recharts at the top level of a page**. Every cha
 ```typescript
 {
   id: string
-  date: string // stored as YYYY-MM-DD, displayed as "Monday, Dec 1"
-  study_time: number // stored as total minutes, displayed as hours + minutes
+  user_id: string
+  date: string        // stored as YYYY-MM-DD, displayed as "Monday, Dec 1"
+  study_time: number  // stored as total minutes, displayed as hours + minutes
   mood: 1 | 2 | 3
   notes: string | null
   created_at: string
@@ -254,22 +259,23 @@ The golden rule: **never import Recharts at the top level of a page**. Every cha
 ```typescript
 {
   id: string
-  name: string                    // user-defined session name
-  date: string                    // YYYY-MM-DD
-  question_count: number          // how many notes were reviewed
+  user_id: string
+  name: string                     // user-defined session name
+  date: string                     // YYYY-MM-DD
+  question_count: number           // how many notes were reviewed
   shuffled: boolean
   flagged_only: boolean
-  accuracy: number                // 0–100
-  time_spent: number              // stored as total minutes
-  notes_leveled_up: string[]      // note IDs
-  notes_leveled_down: string[]    // note IDs
-  weakest_course_id: string | null
-  strongest_course_id: string | null
+  accuracy: number                 // 0–100
+  time_spent: number               // stored as total minutes
+  notes_leveled_up: string[]       // note IDs
+  notes_leveled_down: string[]     // note IDs
+  weakest_course_id: string | null  // null if all reviewed notes are uncategorized
+  strongest_course_id: string | null // null if all reviewed notes are uncategorized
   created_at: string
 }
 ```
 
-All tables use **Row Level Security (RLS)**. Users only ever see their own data.
+All tables use **Row Level Security (RLS)**. Users only ever see their own data. The `user_id` field on every table is the anchor for RLS policies — always set to `auth.uid()` on insert and filtered on select.
 
 ---
 
@@ -328,6 +334,20 @@ This is the active rebuild. It is cloud-first, scalable, and built for long-term
 - Oxlint + Oxfmt instead of ESLint + Prettier
 - New Supabase API keys: `sb_publishable_...` and `sb_secret_...` (not legacy `anon` / `service_role`)
 - `pnpm` as the package manager
+
+### v2 Routes (Draft)
+
+| Path              | Description                              |
+| ----------------- | ---------------------------------------- |
+| `/`               | Public landing page                      |
+| `/overview`       | Charts, stats, and progress visualization |
+| `/notes`          | View, filter, and manage all notes       |
+| `/courses`        | Manage courses                           |
+| `/daily-tracking` | Log study time and mood                  |
+| `/review`         | Spaced repetition session setup and history |
+| `/login`          | Auth page                                |
+
+**Middleware behavior:** All routes except `/`, `/login`, and static assets are protected. Unauthenticated users are redirected to `/login`.
 
 ### v2 Tech Stack
 
@@ -407,7 +427,7 @@ Two GitHub Actions workflows:
 - **No noise** — the interface should not distract from learning; it should support it
 - **Accessibility** — dark/light mode support, `jsx-a11y` enforced via Oxlint
 
-## coss ui Styling Preservation
+### coss ui Styling Preservation
 
 coss ui components are **copy-paste owned code** — they live in `components/ui/` and are treated as a design system layer, not as an external dependency. Because of this, the following rules apply strictly:
 
@@ -428,13 +448,3 @@ The guiding rule: **treat coss ui components as a sealed design system**. Compos
 - `SUPABASE_SECRET_KEY` is used server-side only for elevated operations (replaces legacy `service_role` key)
 - The underlying Postgres role for elevated access is still `service_role` (with `BYPASSRLS`)
 - Auth flows use `@supabase/ssr` for session handling in Next.js App Router (server components, middleware, route handlers)
-
----
-
-## What Rootly is NOT
-
-- Not a project management tool
-- Not a team tool
-- Not a general note-taking app like Notion or Obsidian
-- Not a course platform — it tracks your learning from external courses, it doesn't host them
-- Not a social or sharing platform
