@@ -108,7 +108,7 @@ The first visible section when the page loads. No scroll required to see it.
   - Three summary stat items stacked vertically:
     1. `Total Courses` — count of all user courses
     2. `Total Notes` — count of all user notes
-    3. `Avg. Understanding` — average understanding level across all Q&A notes, displayed as X.X / 5
+    3. `Avg. Understanding` — average understanding level across all Q&A notes, displayed as X.X / 3
   - Each stat item shows a small label and a bold value. They are read-only.
 
 #### Section B: Time Range Toggle
@@ -161,10 +161,10 @@ The first visible section when the page loads. No scroll required to see it.
 
 - **Right column: Understanding Progress Chart**
   - Chart type: Line chart — one point per day.
-  - Data: Y-axis is average understanding level (1.0–5.0) across all Q&A notes updated on that day. X-axis is dates.
+  - Data: Y-axis is average understanding level (1.0–3.0) across all Q&A notes updated on that day. X-axis is dates.
   - Days with no updated notes: render as a gap in the line.
   - Chart title above, left-aligned: `Understanding Progress`
-  - Y-axis range: 1 to 5.
+  - Y-axis range: 1 to 3.
   - Tooltip on hover: shows date and average understanding level to one decimal place.
 
 #### Section E: Course Mastery Block (Full Width)
@@ -177,8 +177,8 @@ The first visible section when the page loads. No scroll required to see it.
 
 **Content:** A vertically stacked list of courses. Each course row contains:
 - Left: Course title (text)
-- Center: A horizontal progress bar showing the average understanding level of that course's Q&A notes as a proportion of 5. The bar fills from left to right.
-- Right: The numeric average displayed as `X.X / 5`
+- Center: A horizontal progress bar showing the average understanding level of that course's Q&A notes as a proportion of 3. The bar fills from left to right.
+- Right: The numeric average displayed as `X.X / 3`
 
 **Ordering:** Courses sorted by average understanding level, ascending (weakest courses first) — so the user sees what needs the most attention at the top.
 
@@ -259,7 +259,7 @@ Mobile applies at viewport widths < 768px. Tablet (768px–1023px) follows mobil
 - **Three summary stats:** Displayed in a single horizontal row of three equal-width cells below the study time number:
   - `Total Courses` / count
   - `Total Notes` / count
-  - `Avg. Understanding` / X.X / 5
+  - `Avg. Understanding` / X.X / 3
   Each cell shows a small label above a bold value.
 
 #### Section B: Study Time Chart (Mobile)
