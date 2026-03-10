@@ -62,6 +62,7 @@ export function NotesHeader({
   onOpenMobileType,
   onOpenMobileCourse,
   onOpenMobileSort,
+  onOpenMobileExport,
 }: {
   isMobile: boolean
   courses: { id: string; title: string }[]
@@ -82,6 +83,7 @@ export function NotesHeader({
   onOpenMobileType: () => void
   onOpenMobileCourse: () => void
   onOpenMobileSort: () => void
+  onOpenMobileExport: () => void
 }) {
   const typeItems = React.useMemo<{ value: TypeFilter; label: string }[]>(
     () => [
@@ -323,32 +325,14 @@ export function NotesHeader({
                   Sort by
                 </Button>
 
-                <Popover>
-                  <PopoverTrigger
-                    render={
-                      <Button variant="outline" size="icon" aria-label="Export">
-                        <HugeiconsIcon icon={Download01Icon} size={18} />
-                      </Button>
-                    }
-                  />
-                  <PopoverContent align="end" className="w-56">
-                    <div className="flex flex-col gap-3">
-                      <div className="text-sm text-muted-foreground">
-                        {filtersActive
-                          ? `Exporting ${filteredCount} filtered notes`
-                          : `Exporting all ${filteredCount} notes`}
-                      </div>
-                      <Button variant="outline" className="gap-2">
-                        <HugeiconsIcon icon={Pdf01Icon} size={18} />
-                        Export as PDF
-                      </Button>
-                      <Button variant="outline" className="gap-2">
-                        <HugeiconsIcon icon={TextSquareIcon} size={18} />
-                        Export as Markdown
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="Export"
+                  onClick={onOpenMobileExport}
+                >
+                  <HugeiconsIcon icon={Download01Icon} size={18} />
+                </Button>
               </div>
             </div>
           </div>

@@ -14,6 +14,8 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { cn } from "@/lib/utils"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -39,12 +41,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/menu"
-import { Radio, RadioGroup } from "@/components/ui/radio-group"
+
 import {
   Sheet,
-  SheetContent,
+  SheetClose,
+  SheetFooter,
   SheetHeader,
   SheetPanel,
+  SheetPopup,
   SheetTitle,
 } from "@/components/ui/sheet"
 
@@ -137,9 +141,10 @@ export function NoteCard({
             <HugeiconsIcon
               icon={Flag01Icon}
               size={18}
-              className={
+              className={cn(
+                "cursor-pointer",
                 note.flag ? "text-destructive" : "text-muted-foreground"
-              }
+              )}
             />
           </Button>
 
@@ -313,21 +318,31 @@ export function FilterSheet({
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom">
+      <SheetPopup side="bottom" variant="inset">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
         <SheetPanel className="px-4 pb-5">
-          <RadioGroup value={value} onValueChange={onValueChange}>
+          <div className="flex flex-col gap-2">
             {options.map((o) => (
-              <label key={o.value} className="flex items-center gap-3">
-                <Radio value={o.value} />
-                <span className="text-sm">{o.label}</span>
-              </label>
+              <Button
+                key={o.value}
+                variant={o.value === value ? "secondary" : "ghost"}
+                className="justify-start"
+                onClick={() => {
+                  onValueChange(o.value)
+                  onOpenChange(false)
+                }}
+              >
+                {o.label}
+              </Button>
             ))}
-          </RadioGroup>
+          </div>
         </SheetPanel>
-      </SheetContent>
+        <SheetFooter>
+          <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
+        </SheetFooter>
+      </SheetPopup>
     </Sheet>
   )
 }

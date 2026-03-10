@@ -8,7 +8,12 @@ const PreviewCard = PreviewCardPrimitive.Root;
 
 function PreviewCardTrigger({ ...props }: PreviewCardPrimitive.Trigger.Props) {
   return (
-    <PreviewCardPrimitive.Trigger data-slot="preview-card-trigger" {...props} />
+    <PreviewCardPrimitive.Trigger
+      data-slot="preview-card-trigger"
+      delay={props.delay ?? 250}
+      closeDelay={props.closeDelay ?? 120}
+      {...props}
+    />
   );
 }
 

@@ -4,9 +4,10 @@ import * as React from "react"
 
 import {
   AiSearchIcon,
+  ArrowDown01Icon,
+  ArrowUp01Icon,
   Book01Icon,
   Calendar01Icon,
-  Cancel01Icon,
   DatabaseLightningIcon,
   Home01Icon,
   NoteIcon,
@@ -18,13 +19,21 @@ import { useIsMobile } from "@/hooks/use-media-query"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Kbd } from "@/components/ui/kbd"
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetClose,
+  SheetFooter,
+  SheetHeader,
+  SheetPanel,
+  SheetPopup,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { Switch } from "@/components/ui/switch"
 
 import { FloatingDock } from "@/components/ui/floating-dock"
@@ -233,20 +242,11 @@ function MobileAvatarSheet({
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" showCloseButton={false}>
-        <div className="flex items-center justify-between p-4">
-          <div className="font-medium">Account</div>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Close"
-            onClick={() => onOpenChange(false)}
-          >
-            <HugeiconsIcon icon={Cancel01Icon} size={18} />
-          </Button>
-        </div>
-
-        <div className="px-4 pb-5">
+      <SheetPopup side="bottom" variant="inset" showCloseButton={false}>
+        <SheetHeader>
+          <SheetTitle>Account</SheetTitle>
+        </SheetHeader>
+        <SheetPanel className="px-4 pb-5">
           <div className="flex flex-col gap-4">
             <div>
               <div className="font-medium">Rami R</div>
@@ -262,8 +262,11 @@ function MobileAvatarSheet({
 
             <Button variant="destructive-outline">Logout</Button>
           </div>
-        </div>
-      </SheetContent>
+        </SheetPanel>
+        <SheetFooter>
+          <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
+        </SheetFooter>
+      </SheetPopup>
     </Sheet>
   )
 }
@@ -353,7 +356,27 @@ function CommandPalette({
       </CommandPanel>
 
       <CommandFooter>
-        <div className="text-xs text-muted-foreground">Press Esc to close</div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <KbdGroup>
+              <Kbd>
+                <HugeiconsIcon icon={ArrowUp01Icon} size={14} />
+              </Kbd>
+              <Kbd>
+                <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
+              </Kbd>
+            </KbdGroup>
+            <span>Navigate</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Kbd>↵</Kbd>
+            <span>Open</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Kbd>Esc</Kbd>
+          <span>Close</span>
+        </div>
       </CommandFooter>
     </Command>
   )
@@ -361,20 +384,15 @@ function CommandPalette({
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" showCloseButton={false}>
-          <div className="flex items-center justify-between p-4">
-            <div className="font-medium">Search</div>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Close"
-              onClick={() => onOpenChange(false)}
-            >
-              <HugeiconsIcon icon={Cancel01Icon} size={18} />
-            </Button>
-          </div>
-          <div className="px-4 pb-4">{content}</div>
-        </SheetContent>
+        <SheetPopup side="bottom" variant="inset" showCloseButton={false}>
+          <SheetHeader>
+            <SheetTitle>Search</SheetTitle>
+          </SheetHeader>
+          <SheetPanel className="px-4 pb-4">{content}</SheetPanel>
+          <SheetFooter>
+            <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
+          </SheetFooter>
+        </SheetPopup>
       </Sheet>
     )
   }

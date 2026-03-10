@@ -48,6 +48,8 @@ export default function NotesPage() {
   const [mobileCourseSheetOpen, setMobileCourseSheetOpen] =
     React.useState(false)
   const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false)
+  const [mobileExportSheetOpen, setMobileExportSheetOpen] =
+    React.useState(false)
 
   const [visibleCount, setVisibleCount] = React.useState(20)
   const [loadingMore, setLoadingMore] = React.useState(false)
@@ -206,6 +208,7 @@ export default function NotesPage() {
       onOpenMobileType={() => setMobileTypeSheetOpen(true)}
       onOpenMobileCourse={() => setMobileCourseSheetOpen(true)}
       onOpenMobileSort={() => setMobileSortSheetOpen(true)}
+      onOpenMobileExport={() => setMobileExportSheetOpen(true)}
     />
   )
 
@@ -308,6 +311,20 @@ export default function NotesPage() {
           { label: "Course", value: "course" },
         ]}
         onValueChange={(v) => setSortKey(v as SortKey)}
+      />
+
+      <FilterSheet
+        title="Export"
+        open={mobileExportSheetOpen}
+        onOpenChange={setMobileExportSheetOpen}
+        value="pdf"
+        options={[
+          { label: "Export as PDF", value: "pdf" },
+          { label: "Export as Markdown", value: "md" },
+        ]}
+        onValueChange={() => {
+          setMobileExportSheetOpen(false)
+        }}
       />
 
       <NoteViewerSheet
