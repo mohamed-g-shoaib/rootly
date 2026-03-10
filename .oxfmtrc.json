@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": false,
+  "trailingComma": "es5",
+  "ignorePatterns": [
+    ".next/**",
+    "dist/**",
+    "coverage/**",
+    ".turbo/**",
+    ".pnpm-store/**",
+    "pnpm-lock.yaml",
+    "components/ui/**"
+  ],
+  "sortTailwindcss": {
+    "stylesheet": "./app/globals.css",
+    "functions": ["cn", "cva"]
+  },
+  "embeddedLanguageFormatting": "auto"
+}
