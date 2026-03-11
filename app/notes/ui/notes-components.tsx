@@ -105,6 +105,7 @@ export function NoteCard({
   onEdit,
   onViewFull,
   onViewCode,
+  readOnly = false,
 }: {
   note: Note
   now: Date
@@ -116,6 +117,7 @@ export function NoteCard({
   onEdit: () => void
   onViewFull: () => void
   onViewCode: () => void
+  readOnly?: boolean
 }) {
   const isQa = note.type === "qa"
   const showAnswer = overrideShow ?? globalShowAnswers
@@ -148,38 +150,42 @@ export function NoteCard({
             />
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={<Button variant="ghost" size="icon" aria-label="More" />}
-            >
-              <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onEdit}>
-                <HugeiconsIcon icon={Edit01Icon} size={18} />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onViewFull}>
-                <HugeiconsIcon icon={Note01Icon} size={18} />
-                View full note
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <HugeiconsIcon icon={Pdf01Icon} size={18} />
-                Export as PDF
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <HugeiconsIcon icon={TextSquareIcon} size={18} />
-                Export as Markdown
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DeleteDialog onDelete={() => void 0}>
-                <DropdownMenuItem variant="destructive">
-                  <HugeiconsIcon icon={Delete01Icon} size={18} />
-                  Delete
+          {!readOnly ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="ghost" size="icon" aria-label="More" />
+                }
+              >
+                <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={onEdit}>
+                  <HugeiconsIcon icon={Edit01Icon} size={18} />
+                  Edit
                 </DropdownMenuItem>
-              </DeleteDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuItem onClick={onViewFull}>
+                  <HugeiconsIcon icon={Note01Icon} size={18} />
+                  View full note
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <HugeiconsIcon icon={Pdf01Icon} size={18} />
+                  Export as PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <HugeiconsIcon icon={TextSquareIcon} size={18} />
+                  Export as Markdown
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DeleteDialog onDelete={() => void 0}>
+                  <DropdownMenuItem variant="destructive">
+                    <HugeiconsIcon icon={Delete01Icon} size={18} />
+                    Delete
+                  </DropdownMenuItem>
+                </DeleteDialog>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
         </div>
       </div>
 
@@ -233,7 +239,7 @@ export function NoteCard({
             <div className="line-clamp-4 text-sm text-muted-foreground">
               {note.body}
             </div>
-            {note.body && note.body.split(" ").length > 24 ? (
+            {!readOnly && note.body && note.body.split(" ").length > 24 ? (
               <Button variant="link" className="px-0" onClick={onViewFull}>
                 View full note
               </Button>
@@ -244,7 +250,7 @@ export function NoteCard({
 
       <div className="flex items-center justify-between gap-3 pt-4">
         <div className="flex items-center gap-2">
-          {note.codeSnippet ? (
+          {!readOnly && note.codeSnippet ? (
             <Button
               variant="outline"
               size="sm"
