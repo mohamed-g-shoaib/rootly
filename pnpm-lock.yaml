@@ -47,9 +47,6 @@ importers:
       '@codemirror/lang-yaml':
         specifier: ^6.1.2
         version: 6.1.2
-      '@codemirror/view':
-        specifier: ^6.39.17
-        version: 6.39.17
       '@hugeicons/core-free-icons':
         specifier: ^4.0.0
         version: 4.0.0

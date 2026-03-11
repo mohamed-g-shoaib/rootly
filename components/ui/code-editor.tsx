@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import CodeMirror from "@uiw/react-codemirror"
+import CodeMirror, { EditorView } from "@uiw/react-codemirror"
 import { githubDark, githubLight } from "@uiw/codemirror-theme-github"
 import { javascript } from "@codemirror/lang-javascript"
 import { json } from "@codemirror/lang-json"
@@ -16,7 +16,6 @@ import { rust } from "@codemirror/lang-rust"
 import { java } from "@codemirror/lang-java"
 import { cpp } from "@codemirror/lang-cpp"
 import { php } from "@codemirror/lang-php"
-import { EditorView } from "@codemirror/view"
 import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"
