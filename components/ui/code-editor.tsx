@@ -76,8 +76,10 @@ export function CodeEditor({
         basicSetup={{
           lineNumbers: true,
           highlightActiveLine: true,
-          highlightSelectionMatches: true,
+          highlightSelectionMatches: false,
           foldGutter: false,
+          autocompletion: false,
+          bracketMatching: false,
         }}
       />
     </div>

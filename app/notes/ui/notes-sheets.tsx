@@ -2,6 +2,8 @@
 
 import * as React from "react"
 
+import dynamic from "next/dynamic"
+
 import {
   CheckmarkCircle01Icon,
   CodeIcon,
@@ -38,7 +40,11 @@ import { SelectButton } from "@/components/ui/select"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { CodeBlock } from "@/components/ui/code-block"
-import { CodeEditor } from "@/components/ui/code-editor"
+
+const CodeEditor = dynamic(
+  () => import("@/components/ui/code-editor").then((m) => m.CodeEditor),
+  { ssr: false }
+)
 
 import type { Note, NoteType } from "./notes-model"
 import { toCodeBadgeLabel } from "./notes-model"

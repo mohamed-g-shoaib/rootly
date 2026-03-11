@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { useTheme } from "next-themes"
-import { createHighlighter, type Highlighter } from "shiki"
+import { getSingletonHighlighter } from "shiki/bundle/web"
 
 import { cn } from "@/lib/utils"
 
@@ -32,19 +32,6 @@ const SUPPORTED_LANGUAGES = [
 
 type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
 
-let highlighterPromise: Promise<Highlighter> | null = null
-
-function getHighlighter() {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighter({
-      themes: ["github-light", "github-dark"],
-      langs: [...SUPPORTED_LANGUAGES],
-    })
-  }
-
-  return highlighterPromise
-}
-
 export function CodeBlock({
   code,
   language,
@@ -61,17 +48,21 @@ export function CodeBlock({
     let canceled = false
 
     async function highlight() {
-      const highlighter = await getHighlighter()
-      const lang = (SUPPORTED_LANGUAGES.includes(language as SupportedLanguage)
+      const lang = SUPPORTED_LANGUAGES.includes(language as SupportedLanguage)
         ? (language as SupportedLanguage)
-        : "tsx") as SupportedLanguage
+        : "tsx"
 
       const theme = resolvedTheme === "dark" ? "github-dark" : "github-light"
+      const shikiLang = lang as unknown as any
 
-      const nextHtml = highlighter.codeToHtml(code, {
-        lang,
-        theme,
+      const highlighter = await getSingletonHighlighter({
+        themes: ["github-light", "github-dark"],
+        langs: [shikiLang],
       })
+
+      await highlighter.loadLanguage(shikiLang)
+
+      const nextHtml = highlighter.codeToHtml(code, { lang: shikiLang, theme })
 
       if (canceled) return
       setHtml(nextHtml)
