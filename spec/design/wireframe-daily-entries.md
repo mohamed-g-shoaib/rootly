@@ -42,10 +42,10 @@ Cards always maintain a fixed height. All editing or detailed viewing happens th
 - **Create and Edit operations** → Coss UI **Sheet** (right on desktop, bottom on mobile).
 - **Delete operation** → Coss UI **Alert Dialog**.
 - **Overflow menu per card** → Coss UI **Dropdown Menu**.
-- **Filter controls** → Coss UI **Select** and date range inputs.
-- **Mood selector in form** → Three large Coss UI **Toggle** or selectable button components. Never a dropdown.
-- **Study time input** → Two Coss UI **Input** components (hours + minutes) side by side.
-- **Date picker** → Coss UI **Calendar** or **DatePicker** component.
+- **Filter controls (implemented)** → Date range uses a `Calendar` range picker inside a `Popover` (desktop) and a Dates sheet (mobile). Mood filter uses `Combobox`.
+- **Mood selector in form (implemented)** → Three large selectable buttons.
+- **Study time input (implemented)** → Uses `NumberField` (hours + minutes) side by side.
+- **Date picker (implemented)** → Uses `Calendar` inside a `Popover`.
 - **Skeleton loading** → Coss UI **Skeleton** component.
 
 ---
@@ -64,8 +64,8 @@ The Top Bar and Bottom Dock are shared layout components. Do not re-implement th
 {
   id: string
   user_id: string
-  date: string           // stored as YYYY-MM-DD
-  study_time: number     // stored as total minutes
+  date: string // stored as YYYY-MM-DD
+  study_time: number // stored as total minutes
   mood: 1 | 2 | 3
   notes: string | null
   created_at: string
@@ -74,6 +74,7 @@ The Top Bar and Bottom Dock are shared layout components. Do not re-implement th
 ```
 
 **Display rules:**
+
 - `date` → displayed as `Monday, Dec 1` (full weekday name, abbreviated month, day number — no year unless the entry is from a prior year, in which case append the year: `Monday, Dec 1, 2025`).
 - `study_time` → displayed as `Xh Ym` (e.g. `2h 30m`). If under 60 minutes, display as `Ym` only (e.g. `45m`). Never display raw minutes.
 - `mood` → displayed as an icon + label. `1` = 😔 Low, `2` = 😐 Neutral, `3` = 😊 Good.
@@ -90,10 +91,9 @@ The Top Bar and Bottom Dock are shared layout components. Do not re-implement th
 
 - **Left:** Static page title label: `Daily Entries`
 
-- **Center — Filter Bar:**
-  1. **Date Range — From (DatePicker):** Label: `From`. Defaults to empty (no filter). When set, shows only entries on or after this date.
-  2. **Date Range — To (DatePicker):** Label: `To`. Defaults to empty. When set, shows only entries on or before this date.
-  3. **Mood Filter (Select):** Label: `Mood`. Options: `All Moods` (default), `😊 Good`, `😐 Neutral`, `😔 Low`. Filters the list to entries matching the selected mood.
+- **Center — Filter Bar (implemented):**
+  1. **Date Range:** Single button opens a range `Calendar` in a popover; selection populates internal `fromDate`/`toDate` values.
+  2. **Mood Filter:** `Combobox` with options: `All Moods`, `Focused` (3), `Neutral` (2), `Burned Out` (1).
 
 - **Right — Primary Action Button:**
   - **If today has no entry yet:** A primary button labeled `Log Today` with a plus icon.
@@ -123,12 +123,14 @@ The Top Bar and Bottom Dock are shared layout components. Do not re-implement th
 Each entry is rendered as a Card with a fixed height. Cards never expand inline.
 
 #### Card Left Section
+
 A vertical stack, left-anchored:
 
 1. **Date label:** Human-readable date in the format described above (e.g. `Monday, March 10`). This is the primary text of the card — largest and most prominent.
 2. **"Today" badge:** Rendered immediately to the right of the date label (inline, not below) using a Coss UI Badge. Only shown when the entry's `date` equals today's date. Helps the user instantly locate today's log.
 
 #### Card Center Section
+
 A horizontal row of three data points, visually grouped:
 
 1. **Study Time:**
@@ -145,7 +147,9 @@ A horizontal row of three data points, visually grouped:
    - If `notes` is null or empty, this slot is omitted — no placeholder is shown.
 
 #### Card Right Section
+
 Right-anchored:
+
 - **Overflow Menu Button (`•••`):** Coss UI Dropdown Menu on click.
   - Menu items:
     1. `Edit` → opens Edit Entry Sheet
@@ -181,14 +185,14 @@ Right-anchored:
 1. **Date (DatePicker — contextually disabled):**
    - Label: `Date`
    - When triggered from the `Log Today` button or FAB: pre-set to today's date and **disabled** — the user cannot change it.
-   - Already-logged dates are **blocked** in the date picker — they cannot be selected. The picker visually greys them out. This prevents duplicate entries. If a user wants to update a past entry, they must use the Edit flow via that entry's overflow menu.
-   - The date picker shows only dates up to and including today. Future dates cannot be selected — a user cannot pre-log a future session.
+   - Already-logged dates are **not blocked** in the picker.
+   - Future-date blocking is **not implemented**.
 
 2. **Study Time (dual Input — required):**
    - Label: `Study Time`
-   - Two number inputs side by side:
-     - First input: label `Hours`, min 0, max 23.
-     - Second input: label `Minutes`, min 0, max 59.
+   - Two `NumberField` inputs side by side:
+     - Hours: min 0, max 23.
+     - Minutes: min 0, max 59.
    - Both default to `0`. At least one must be non-zero to be valid — a study time of 0h 0m is not allowed.
    - These two values are combined on save: `(hours × 60) + minutes` → stored as `study_time` in minutes.
 
@@ -207,6 +211,7 @@ Right-anchored:
    - No character limit enforced in UI.
 
 #### Sheet Footer
+
 - `Cancel` — ghost button. If any field has been touched, show discard Alert Dialog before closing: `Discard entry? Your log will not be saved.` with `Discard` (destructive) and `Keep editing`.
 - `Save Entry` — primary button. Disabled until Study Time is valid (> 0) and Mood is selected. On success: closes sheet, prepends card to list.
 
@@ -225,6 +230,7 @@ Right-anchored:
 **Date field behavior in edit:** The date field is always **disabled** in the Edit sheet. A logged entry's date is immutable — dates cannot be reassigned. If the user needs a different date, they delete this entry and create a new one.
 
 **Sheet Footer:**
+
 - `Cancel` — same discard confirmation as Create.
 - `Save Changes` — primary button. Disabled until at least one field has changed. On success: closes sheet, updates card in place.
 
@@ -238,9 +244,10 @@ Right-anchored:
 
 **Title:** `Delete entry?`
 
-**Body:** `This will remove your log for [formatted date]. This action cannot be undone.` (e.g. `This will remove your log for Monday, March 10. This action cannot be undone.`)
+**Body (implemented):** `This will remove your log for this day. This action cannot be undone.`
 
 **Buttons:**
+
 - `Cancel` — ghost button.
 - `Delete` — destructive button. On success: removes card from list. On failure: shows Coss UI Toast error.
 
@@ -251,11 +258,13 @@ Right-anchored:
 ### Page Header Row (Mobile)
 
 **Row 1:**
+
 - Left: `Daily Entries` title
 - Right: `Log Today` icon-only primary button (plus icon) — or `Edit Today` icon-only ghost button if today already has an entry. Opens the appropriate Sheet as a bottom sheet.
 
 **Row 2 — Filter Bar:**
 Horizontally scrollable chip row:
+
 - `From` date chip — tapping opens a Coss UI bottom sheet with the date picker.
 - `To` date chip — same.
 - `Mood` filter chip — tapping opens a Coss UI bottom sheet with radio options: All Moods, Good, Neutral, Low.
@@ -278,9 +287,7 @@ All Sheets open as **bottom sheets** on mobile (slide up from bottom). Coss UI S
 ### FAB (Mobile)
 
 **Position:** Bottom-right, floating above the bottom dock.
-**Context-aware behavior:**
-- If today has no entry: plus icon. Tapping opens Create Entry Sheet with today's date pre-set and locked.
-- If today already has an entry: pencil/edit icon. Tapping opens Edit Entry Sheet for today's entry.
+**Implemented behavior:** FAB uses a plus icon and triggers the primary action (log/edit today) based on whether today has an entry.
 
 ---
 
@@ -297,11 +304,11 @@ All Sheets open as **bottom sheets** on mobile (slide up from bottom). Coss UI S
 
 ## Interaction States Summary
 
-| Action | Component | Side Effect |
-|---|---|---|
-| Log today | Sheet | Prepend card to list; header button changes to Edit Today |
-| Edit entry | Sheet | Update card in place |
-| Delete entry | Alert Dialog | Remove card from list |
-| Apply date range filter | DatePicker chips | Re-filter list |
-| Apply mood filter | Select / chip | Re-filter list |
-| Clear filters | Ghost button | Reset all filters, show full list |
+| Action                  | Component        | Side Effect                                               |
+| ----------------------- | ---------------- | --------------------------------------------------------- |
+| Log today               | Sheet            | Prepend card to list; header button changes to Edit Today |
+| Edit entry              | Sheet            | Update card in place                                      |
+| Delete entry            | Alert Dialog     | Remove card from list                                     |
+| Apply date range filter | DatePicker chips | Re-filter list                                            |
+| Apply mood filter       | Select / chip    | Re-filter list                                            |
+| Clear filters           | Ghost button     | Reset all filters, show full list                         |

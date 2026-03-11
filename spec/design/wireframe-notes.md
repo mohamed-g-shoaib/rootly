@@ -47,8 +47,8 @@ surface (Sheet, Popover, or dedicated page). Cards always maintain a fixed, cons
 - **Full body view (Freeform)** → use the Coss UI **Sheet** component. Never expand the card inline.
 - **Export scope popover** → use the Coss UI **Popover** component.
 - **Overflow menu per card** → use the Coss UI **Dropdown Menu** component.
-- **Filter selects** → use the Coss UI **Select** component.
-- **Search input** → use the Coss UI **Input** component.
+- **Filter selects (implemented)** → desktop filters use `Combobox` for Type/Course and `Select` for Sort.
+- **Search input (implemented)** → no page-level search input is implemented on the Notes page.
 - **Badges** → use the Coss UI **Badge** component.
 - **Skeleton loading** → use the Coss UI **Skeleton** component.
 
@@ -80,22 +80,19 @@ The Top Bar and Bottom Dock are identical to the Overview page. Do not re-implem
 A horizontal row of controls grouped tightly together:
 
 1. **Search Input:**
-   - A text input field. Placeholder: `Search notes...`
-   - Filters the note list in real time as the user types (debounced — do not fire on every keystroke, wait ~300ms after the user stops typing).
-   - Search matches against: note question, answer, body, and course name.
-   - Width: the widest element in the filter bar.
+   - **Not implemented:** the Notes page currently has no search input.
 
-2. **Type Filter (Select):**
+2. **Type Filter (implemented):**
    - Label: `Type`
    - Options: `All Types` (default), `Q&A`, `Freeform`
    - Filters note list to show only the selected type.
 
-3. **Course Filter (Select):**
+3. **Course Filter (implemented):**
    - Label: `Course`
    - Options: `All Courses` (default), then one option per course the user has created, listed alphabetically.
    - Filters note list to show only notes linked to the selected course.
 
-4. **Flagged Filter (Toggle Button):**
+4. **Flagged Filter (implemented):**
    - Label: `Flagged`
    - A toggle button — inactive by default. When active, the note list shows only notes where `flag = true`.
 
@@ -111,11 +108,8 @@ A horizontal row of controls grouped tightly together:
 
 #### Group 3 — Hide/Show All Answers Toggle (Right of filter bar)
 
-- A single ghost/outline button.
-- Default label: `Hide All Answers`
-- When clicked, all Q&A note cards in the list collapse their answer sections simultaneously.
-- Label toggles to: `Show All Answers`
-- When clicked again, all answer sections expand simultaneously.
+- A single icon-only button.
+- **Implemented behavior:** Toggles a page-level boolean (`globalShowAnswers`) and changes icon (`Eye` vs `ViewOff`).
 - **Visibility rule:** This button is only visible when the current note list contains at least one Q&A note. If the list shows only Freeform notes (due to filtering), this button is hidden entirely.
 - State is local to the page session — it resets on page reload.
 
@@ -132,9 +126,9 @@ Two buttons, grouped tightly:
      - A scope label (not interactive, small muted text):
        - If no filters are active: `Exporting all [N] notes`
        - If any filter is active: `Exporting [N] filtered notes`
-     - Two action buttons stacked vertically:
-       - `Export as PDF`
-       - `Export as Markdown`
+     - Two action buttons stacked vertically (implemented):
+       - `Export as PDF` (uses `@react-pdf/renderer` to generate a PDF in the browser)
+       - `Export as Markdown` (downloads a `.md` file)
    - Clicking either export option triggers the export and closes the popover.
 
 2. **Create Note Button:**
@@ -167,33 +161,38 @@ Each note in the list is rendered as a Card component. **Cards have a fixed heig
 
 A horizontal row spanning the full card width:
 
-- **Left side:**
-  - Note type badge: either `Q&A` or `Freeform` — rendered as a Coss UI Badge.
-  - Course name (if the note is linked to a course): rendered as a small muted text label immediately below the type badge. If the note has no linked course, this line is omitted entirely.
+- **Left side (implemented):**
+  - Course name (if present) is shown as muted text.
+  - Note type badge is not rendered on the card.
 
 - **Right side (grouped tightly):**
   - **Flag Toggle Button:** An icon-only button showing a flag icon.
     - If `flag = false`: icon is in its default/muted state. Tooltip: `Flag for review`
     - If `flag = true`: icon is in its active/highlighted state. Tooltip: `Remove flag`
     - Clicking immediately toggles the flag value via an optimistic update (update UI instantly, sync to DB in background).
+
+    **Implemented note:** the list is currently mocked/static; the flag toggle builds a `next` array but does not persist it.
+
   - **Overflow Menu Button (`•••`):** An icon-only button (three dots / ellipsis icon).
     - Clicking opens a Coss UI Dropdown Menu anchored below-left of the button.
     - Menu items:
       1. `Edit` → opens the Edit Note Sheet
       2. `View full note` → opens the Full Note Viewer Sheet (see below)
-      3. `Export as PDF` → exports this single note as PDF
-      4. `Export as Markdown` → exports this single note as Markdown
+      3. `Export as PDF` → present in the menu UI but not wired to export per-note
+      4. `Export as Markdown` → present in the menu UI but not wired to export per-note
       5. A visual separator line
-      6. `Delete` → opens the Delete Alert Dialog (styled as a destructive item)
+      6. `Delete` → opens the Delete Alert Dialog
 
 #### Card Main Content Area
 
 **For Q&A notes:**
 
 - **Question:** Displayed in full, not truncated. Uses a slightly bolder text style than the answer (handled by Coss UI typography tokens).
-- **Answer section:**
-  - **Default state:** Hidden. In place of the answer text, render a ghost/outline button labeled `Show Answer`.
-  - **When revealed:** The answer text is shown in full. A button labeled `Hide Answer` appears below it.
+- **Answer section (implemented):**
+  - **Default state:** Hidden.
+  - **Desktop:** shows a `Peek answer` control that opens a preview surface.
+  - **Mobile:** shows a `Show Answer` button.
+  - **When revealed:** The answer text is shown in full; on mobile a `Hide Answer` button is shown.
   - **Global toggle interaction:** If the page-level "Hide All Answers" / "Show All Answers" button is clicked, this card's answer state updates to match. If the user then manually toggles this specific card, it overrides the global state for this card only.
   - **Card height:** The card height adjusts between the hidden and revealed answer states only. This is acceptable because it is a single-column list, not a grid — there are no sibling cards in the same row to be affected.
 
@@ -207,25 +206,13 @@ A horizontal row spanning the full card width:
 
 A horizontal row spanning the full card width:
 
-- **Left side — Badge Row:**
-  Three optional badges displayed in a horizontal row. Each badge is only rendered if the condition is met:
-  1. **Code Snippet Badge:**
-     - Condition: note has a non-null, non-empty `code_snippet` field.
-     - Label: the value of `code_language` (e.g. `Python`, `JavaScript`, `SQL`). If `code_language` is `text` or empty, label is `Code`.
-     - Clicking this badge opens the **Code Snippet Viewer Sheet**.
-
-  2. **Understanding Level Badge (Q&A only):**
-     - Condition: note type is `Q&A` and `understanding_level` is set.
-     - Label: the understanding level label — `Confused`, `Getting It`, or `Clear` — corresponding to the value (1, 2, 3).
-     - Do not render this badge for Freeform notes.
-
-  3. **Flagged Badge:**
-     - Condition: `flag = true`.
-     - Label: `Flagged`
-     - Serves as a scannable visual indicator in the badge row.
+- **Left side — Badge Row (implemented):**
+  - Code snippet is shown as an outline button (with code icon) labeled using `toCodeBadgeLabel(note.codeLanguage)`; clicking opens the Code Snippet Viewer Sheet.
+  - Understanding level is shown as a single outline badge for Q&A notes.
+  - A separate "Flagged" badge is not rendered.
 
 - **Right side — Metadata:**
-  - A muted text label showing when the note was last updated. Use relative time for updates within 7 days (e.g. `Updated 2 hours ago`) and absolute date for older ones (e.g. `Updated Mar 3`).
+  - Updated-at metadata is not rendered on the note card.
 
 ---
 
@@ -259,7 +246,8 @@ Three distinct empty states, each shown in the center of the note list area:
 **Content:**
 
 - Full body text, not truncated, vertically scrollable inside the sheet.
-- If the note has a code snippet, the code block is rendered below the body inside the same sheet.
+- If the note has a code snippet, the code block is rendered below the body.
+- **Implemented:** code is rendered via `CodeBlock` (Shiki).
 - Read-only. No editing within this sheet.
 
 **Sheet Footer:**
@@ -324,7 +312,7 @@ Before showing the full form, present a type selector:
 #### Sheet Footer
 
 - `Cancel` — ghost button. If any field has been filled, show a discard Alert Dialog before closing.
-- `Save Note` — primary button. Disabled until all required fields are valid. On success: closes sheet, prepends card to list.
+- **Implemented:** `Save Note` is currently rendered but disabled.
 
 ---
 
@@ -341,7 +329,9 @@ Before showing the full form, present a type selector:
 **Sheet Footer:**
 
 - `Cancel` — same discard confirmation as Create.
-- `Save Changes` — primary button. Disabled until at least one field has changed.
+- **Implemented:** `Save Changes` is currently rendered but disabled.
+
+**Implemented note:** The editor supports an optional code snippet section that uses `CodeEditor` (CodeMirror) and a searchable language selector.
 
 ---
 
@@ -353,7 +343,7 @@ Before showing the full form, present a type selector:
 
 **Sheet title:** `code_language` value (e.g. `Python`), or `Code Snippet` if language is `text`.
 
-**Content:** Read-only code block in monospace font. Syntax highlighting if Coss UI supports it natively.
+**Content (implemented):** Read-only code rendered via `CodeBlock` (Shiki) and wrapped in a scrollable area.
 
 **Sheet Footer:**
 
@@ -393,7 +383,7 @@ Before showing the full form, present a type selector:
 
 **Row 2 — Search:**
 
-- Full-width search input. Placeholder: `Search notes...`
+- **Implemented:** no search row is present.
 
 **Row 3 — Filter Chips:**
 Horizontally scrollable chip row:
@@ -404,6 +394,16 @@ Horizontally scrollable chip row:
 
 **Hide/Show All Answers (mobile):**
 Full-width ghost button below the chip row, visible only when the list contains Q&A notes.
+
+**Implemented behavior:** the mobile layout uses icon buttons in the header row for flagged-only and show/hide all answers.
+
+---
+
+## Active State / Icon Color (Implemented)
+
+- Notes header flagged-only icon uses `var(--destructive)` when active.
+- Notes header global show answers icon uses `var(--info)` when active.
+- In the editor sheet, understanding level icons use `var(--warning)` / `var(--info)` / `var(--success)` when selected.
 
 ---
 

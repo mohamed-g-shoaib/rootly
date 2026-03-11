@@ -159,8 +159,8 @@ A horizontal row of data points:
 
 **Content — four sections stacked vertically:**
 
-**Section 1 — Top Stats:**
-A horizontal row: accuracy (`85%`), time spent, question count, date. Same icons as the card.
+**Section 1 — Top Stats (implemented):**
+A small grid of stats is rendered. Not all values use icons.
 
 **Section 2 — Session Config:**
 Muted badges: `Shuffled` (if true), `Flagged` (if true). If both false, this section is omitted.
@@ -251,17 +251,19 @@ All Sheets open as bottom sheets. Height: ~90% viewport with drag handle. Conten
 ### Sheet Footer
 
 - `Cancel` — ghost button. Closes the sheet with no action.
-- `Start Session` — primary button with play icon. Always enabled as long as question count is valid. Clicking closes the sheet and navigates to the **Review Screen** at `/review/session`, passing the configuration as route state (not URL params — config should not be bookmarkable).
+- `Start Session` — primary button with play icon.
+
+**Implemented behavior:** Starting a session does not navigate to a separate route. The Review page switches internal view state from list → active session.
 
 ---
 
 ## SCREEN 3: THE REVIEW SCREEN
 
-**Route:** `/review/session`
+**Route (implemented):** Still `/review`.
 
-**Entry:** Navigated to from the Session Setup Sheet after clicking `Start Session`. If a user navigates directly to this route without a valid session config in state, redirect to `/review`.
+**Entry (implemented):** Entered by switching internal state after `Start Session`.
 
-This is a full-page, focused experience. The Bottom Dock is hidden on this screen — there is no navigation away except via the End Session button. The Top Bar is also hidden. The screen is entirely owned by the review session.
+This is a full-page, focused experience. The `DashboardShell` is not rendered while a session is active, so the Top Bar and Bottom Dock are not shown.
 
 ### DESKTOP LAYOUT
 
@@ -339,13 +341,13 @@ Full-width card. Question text slightly smaller than desktop but still large and
 
 ## SCREEN 4: SESSION SUMMARY SCREEN
 
-**Route:** `/review/summary`
+**Route (implemented):** Still `/review`.
 
-**Entry:** Navigated to automatically after the last question, or after confirming `Show summary` on early end.
+**Entry (implemented):** The Review page switches internal view state to `summary` after the last question, or after confirming `Show summary`.
 
-If a user navigates directly to this route without valid summary data in state, redirect to `/review`.
+If a user refreshes mid-session, the view resets to the list view.
 
-The Bottom Dock and Top Bar are restored on this screen.
+The Bottom Dock and Top Bar are restored because the summary is rendered within `DashboardShell`.
 
 ### DESKTOP LAYOUT
 

@@ -42,6 +42,7 @@ There is NO sidebar. There is NO left rail. There is NO right panel. The layout 
 ## DESKTOP LAYOUT
 
 ### Breakpoint Definition
+
 Desktop applies at viewport widths ≥ 1024px.
 
 ---
@@ -55,16 +56,19 @@ Desktop applies at viewport widths ≥ 1024px.
 **Internal layout:** Three sections arranged in a single horizontal row using space-between alignment:
 
 #### Left Section — Logo
-- The Rootly wordmark or logo mark sits flush to the left edge with standard horizontal padding.
-- It is not a navigation element. It does not link anywhere. It is purely a brand anchor.
+
+- The Rootly logomark sits flush to the left edge with standard horizontal padding.
+- **Implemented behavior:** The logo is a navigation element and links to `/`.
 
 #### Center-Left Section — Study Streak
+
 - Displays the user's current consecutive study streak as a number followed by the word "day streak" and a flame emoji (🔥) before the number.
 - Example render: `🔥 12 day streak`
 - This is a read-only display element. It is not clickable.
 - It sits slightly left of center to avoid competing with the right-side controls.
 
 #### Right Section — Command Trigger + Avatar
+
 Two elements grouped tightly together, flush to the right edge:
 
 1. **Command Palette Trigger:**
@@ -116,11 +120,13 @@ The first visible section when the page loads. No scroll required to see it.
 **Position:** Immediately below the Hero Block. Full width of the content area.
 
 **Layout:** A segmented control / tab group with three options:
+
 - `7 Days`
 - `30 Days`
 - `90 Days`
 
 **Behavior:**
+
 - Default selection is `7 Days` on first load.
 - Selecting a range updates all four charts below simultaneously.
 - The selected state is visually distinct (handled by Coss UI's segmented control styling).
@@ -132,18 +138,19 @@ The first visible section when the page loads. No scroll required to see it.
 
 **Width:** Full width of the content area.
 
-**Chart type:** Bar chart or area chart (whichever Coss UI's chart primitive supports natively — do not build a custom chart renderer).
+**Chart type (implemented):** Recharts `BarChart`.
 
 **Data:** One bar/point per day within the selected range. X-axis is dates. Y-axis is study time in minutes.
 
 **Zero-filling:** Days with no study entry must still appear on the X-axis with a value of 0. No gaps.
 
 **Labels:**
+
 - Chart title above the chart, left-aligned: `Daily Study Time`
 - X-axis: date labels, abbreviated (e.g. `Mar 3`, `Mar 4`)
 - Y-axis: minute values
 
-**Interaction:** Hovering a bar shows a tooltip with the exact date and study time in minutes.
+**Interaction (implemented):** Hovering a bar shows a tooltip with the exact date and study time in minutes.
 
 #### Section D: Two-Column Chart Row
 
@@ -152,7 +159,7 @@ The first visible section when the page loads. No scroll required to see it.
 **Layout:** Two equal-width columns side by side.
 
 - **Left column: Mood Series Chart**
-  - Chart type: Line chart or dot plot — one point per day.
+  - Chart type (implemented): Recharts `LineChart`.
   - Data: Y-axis values are mood levels 1, 2, or 3. X-axis is dates.
   - Days with no entry: render as a gap in the line (do NOT zero-fill mood — a missing mood is not mood level 0).
   - Chart title above, left-aligned: `Daily Mood`
@@ -160,7 +167,7 @@ The first visible section when the page loads. No scroll required to see it.
   - Tooltip on hover: shows date and mood label.
 
 - **Right column: Understanding Progress Chart**
-  - Chart type: Line chart — one point per day.
+  - Chart type (implemented): Recharts `LineChart`.
   - Data: Y-axis is average understanding level (1.0–3.0) across all Q&A notes updated on that day. X-axis is dates.
   - Days with no updated notes: render as a gap in the line.
   - Chart title above, left-aligned: `Understanding Progress`
@@ -176,9 +183,12 @@ The first visible section when the page loads. No scroll required to see it.
 **Title:** `Course Mastery` — left-aligned above the list.
 
 **Content:** A vertically stacked list of courses. Each course row contains:
+
 - Left: Course title (text)
 - Center: A horizontal progress bar showing the average understanding level of that course's Q&A notes as a proportion of 3. The bar fills from left to right.
 - Right: The numeric average displayed as `X.X / 3`
+
+**Implementation note:** This list uses a local `Progress` UI component (not a chart primitive).
 
 **Ordering:** Courses sorted by average understanding level, ascending (weakest courses first) — so the user sees what needs the most attention at the top.
 
@@ -195,6 +205,7 @@ The first visible section when the page loads. No scroll required to see it.
 **Layout:** Five navigation items arranged in a horizontal row, evenly spaced and centered within the dock.
 
 **Navigation items (in order, left to right):**
+
 1. Overview — icon: a grid or home symbol
 2. Courses — icon: a book or stack symbol
 3. Notes — icon: a document or pen symbol
@@ -212,6 +223,7 @@ The first visible section when the page loads. No scroll required to see it.
 ## MOBILE LAYOUT
 
 ### Breakpoint Definition
+
 Mobile applies at viewport widths < 768px. Tablet (768px–1023px) follows mobile layout unless specified otherwise.
 
 ---
@@ -225,9 +237,11 @@ Mobile applies at viewport widths < 768px. Tablet (768px–1023px) follows mobil
 **Internal layout:** Two sections, space-between:
 
 #### Left — Logo
+
 - Same as desktop. Wordmark or logomark, left-aligned with standard padding.
 
 #### Right — Search Icon + Avatar
+
 - Two elements grouped tightly:
   1. **Search Icon Button:** A single icon button (magnifying glass). No label. No pill. Tapping opens the Command/Search sheet from the bottom of the screen (a bottom sheet, NOT a top modal or full-screen overlay).
   2. **User Avatar Button:** Same as desktop — circular avatar, opens a bottom sheet (not a popover on mobile) with the same three items: user info, theme toggle, logout.
@@ -260,7 +274,7 @@ Mobile applies at viewport widths < 768px. Tablet (768px–1023px) follows mobil
   - `Total Courses` / count
   - `Total Notes` / count
   - `Avg. Understanding` / X.X / 3
-  Each cell shows a small label above a bold value.
+    Each cell shows a small label above a bold value.
 
 #### Section B: Study Time Chart (Mobile)
 
@@ -309,6 +323,7 @@ Mobile applies at viewport widths < 768px. Tablet (768px–1023px) follows mobil
 **Shape:** Circular button with an icon inside.
 
 **Icon:** Context-aware based on the current screen:
+
 - Overview → Plus icon (shortcut to log today's daily entry)
 - Courses → Plus icon (create new course)
 - Notes → Plus icon (create new note)
@@ -324,22 +339,28 @@ Mobile applies at viewport widths < 768px. Tablet (768px–1023px) follows mobil
 ## Command Palette (Both Breakpoints)
 
 **Trigger:**
+
 - Desktop: `Ctrl+K` (Windows/Linux) or `⌘K` (Mac), or clicking the ghost pill button in the top bar.
 - Mobile: Tapping the search icon in the top bar.
 
 **Appearance:**
+
 - Desktop: Opens as a centered modal overlay with a search input at the top and a scrollable results list below.
 - Mobile: Opens as a bottom sheet with a search input at the top and a scrollable results list below.
 
 **Search input:** Auto-focused when the palette opens. Placeholder text: `Search notes, courses, or run a command...`
 
 **Results:** Grouped into sections:
+
 1. Recent / Suggested actions (shown when input is empty)
 2. Notes matching the query
 3. Courses matching the query
 4. Actions (e.g. `Create new note`, `Start review session`, `Log today's entry`)
 
+**Implemented behavior:** The command palette currently renders a static grouped item list (no live searching over application data yet).
+
 **Dismissal:**
+
 - Desktop: Press `Escape`, or click outside the modal.
 - Mobile: Swipe down on the bottom sheet, or tap outside it.
 
@@ -348,12 +369,14 @@ Mobile applies at viewport widths < 768px. Tablet (768px–1023px) follows mobil
 ## Data Dependencies
 
 All data on the Overview page is fetched from the following Supabase RPCs:
+
 - `public.get_overview_summary()` → powers the Hero Block summary stats
 - `public.get_overview_range(p_days)` → powers all four charts (study time, mood, understanding, course mastery)
 
 The `p_days` parameter maps directly to the Time Range Toggle: 7, 30, or 90.
 
 Data is fetched fresh when:
+
 1. The page first loads
 2. The user changes the Time Range Toggle selection
 

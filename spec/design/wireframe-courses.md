@@ -44,8 +44,8 @@ Cards in a grid must maintain a fixed, uniform height at all times. Any overflow
 - **Delete operation** → Coss UI **Alert Dialog**.
 - **Links viewer** → Coss UI **Sheet**.
 - **Overflow menu per card** → Coss UI **Dropdown Menu**.
-- **Filter and sort controls** → Coss UI **Select**.
-- **Search input** → Coss UI **Input**.
+- **Filter and sort controls (implemented)** → Topic uses `Combobox`; Sort uses `Select`.
+- **Search input (implemented)** → no search input is implemented on the Courses page.
 - **Progress bar** → Coss UI **Progress** component.
 - **Badges (topics)** → Coss UI **Badge**.
 - **Skeleton loading** → Coss UI **Skeleton**.
@@ -75,10 +75,10 @@ The Top Bar and Bottom Dock are shared layout components. Do not re-implement th
 **Layout:** Single horizontal row, full content width, space-between:
 
 - **Left:** Static page title label: `Courses`
-- **Center — Filter Bar:**
-  1. **Search Input:** Placeholder: `Search courses...`. Debounced (~300ms). Matches against title and instructor fields.
-  2. **Topic Filter (Select):** Label: `Topic`. Options: `All Topics` (default), then every unique topic string across the user's courses, listed alphabetically. Filters to courses containing the selected topic.
-  3. **Sort Control (Select):** Label: `Sort by`. Options:
+- **Center — Filter Bar (implemented):**
+  1. **Search Input:** Not implemented.
+  2. **Topic Filter:** Options: `All Topics` (default), then every unique topic string across the user's courses, listed alphabetically.
+  3. **Sort Control:** Options:
      - `Last Updated` (default)
      - `Date Created`
      - `Progress (Low → High)` — surfaces courses needing most attention first
@@ -90,7 +90,11 @@ The Top Bar and Bottom Dock are shared layout components. Do not re-implement th
 
 **Position:** Below the sticky Page Header Row. Vertically scrollable.
 
-**Layout:** A **2-column CSS Grid** on desktop. All cards in the grid are equal width. All cards maintain a fixed, uniform height — no card ever expands inline.
+**Layout (implemented):** Responsive CSS Grid:
+
+- 1 column (base)
+- 2 columns (`sm`)
+- 3 columns (`lg`)
 
 **Loading state:** Render 4 Skeleton cards (2×2 grid) while data is loading.
 
@@ -101,6 +105,7 @@ The Top Bar and Bottom Dock are shared layout components. Do not re-implement th
 Each course is rendered as a Card. The card has a fixed height and a defined internal layout:
 
 **Card Top Row:**
+
 - **Left:** Course title — the primary text, largest on the card. Not truncated if it fits within 2 lines; clipped with ellipsis if longer.
 - **Right (grouped tightly):**
   - **Overflow Menu Button (`•••`):** Coss UI Dropdown Menu on click.
@@ -111,23 +116,28 @@ Each course is rendered as a Card. The card has a fixed height and a defined int
       4. `Delete` → opens Delete Alert Dialog (destructive)
 
 **Card Second Row:**
+
 - Instructor name — muted text. Only rendered if `instructor` is non-null and non-empty. If null, this row is omitted and the card layout adjusts upward.
 
 **Card Progress Row:**
+
 - Label: `Progress` — small muted text above the bar.
 - A full-width Coss UI Progress bar showing the `progress` value (0–100).
 - The numeric percentage is displayed to the right of the bar: e.g. `60%`.
 - Progress is manually set by the user — it is not computed automatically.
 
 **Card Topics Row:**
+
 - A horizontal row of Coss UI Badge components, one per topic in the `topics` array.
 - If the topics array has more than 3 items, show the first 3 badges and a `+N more` badge (e.g. `+2 more`) for the remainder.
 - The `+N more` badge is not interactive — it does not expand or open anything. It is a read-only overflow indicator.
 - If the `topics` array is empty, this row is omitted entirely.
 
 **Card Bottom Row:**
-- **Left:** If `links` array is non-empty or `course_link` is non-null: a link icon followed by the total count of all links (course_link counts as 1 if present, plus the length of the links array). Example: `🔗 3`. Clicking this area opens the Links Viewer Sheet.
-- **Right:** Last updated timestamp — muted text. Relative format within 7 days, absolute date beyond that.
+**Card Bottom Row (implemented):**
+
+- Link access is an icon-only button that opens the Links Viewer Sheet when the course has any links.
+- No link count and no updated-at timestamp are rendered on the card.
 
 **Card click behavior:** Clicking anywhere on the card body (not on the `•••` button or the link count) navigates to the Course Detail Page at `/courses/[id]`.
 
@@ -188,6 +198,7 @@ Each course is rendered as a Card. The card has a fixed height and a defined int
    - This is manually set by the user. There is no auto-computation.
 
 #### Sheet Footer
+
 - `Cancel` — ghost button. If any field has been filled, show discard Alert Dialog before closing.
 - `Save Course` — primary button. Disabled until Title field is valid. On success: closes sheet, prepends card to grid.
 
@@ -204,6 +215,7 @@ Each course is rendered as a Card. The card has a fixed height and a defined int
 **Form:** Identical to Create Course Sheet, pre-populated with current course values.
 
 **Sheet Footer:**
+
 - `Cancel` — same discard confirmation as Create.
 - `Save Changes` — primary button. Disabled until at least one field has changed. On success: updates card in place on the list, and updates the detail page header if navigated from there.
 
@@ -218,11 +230,13 @@ Each course is rendered as a Card. The card has a fixed height and a defined int
 **Sheet title:** `Course Links`
 
 **Content:** A vertical list of all links for this course:
+
 - If `course_link` is non-null, it appears first with a label: `Main Course URL`
 - Then each item in the `links` array, labeled `Link 1`, `Link 2`, etc.
 - Each link is rendered as a clickable external link (opens in a new tab) with an external link icon.
 
 **Sheet Footer:**
+
 - `Close` — ghost button.
 - `Edit Course` — secondary button. Opens Edit Course Sheet.
 
@@ -241,6 +255,7 @@ Each course is rendered as a Card. The card has a fixed height and a defined int
 This message is important: it reassures the user their notes are safe, matching the database's `ON DELETE SET NULL` behavior on `notes.course_id`.
 
 **Buttons:**
+
 - `Cancel` — ghost button.
 - `Delete Course` — destructive button. On success: removes card from grid (or navigates back to list if triggered from detail page). On failure: shows Coss UI Toast error.
 
@@ -251,12 +266,14 @@ This message is important: it reassures the user their notes are safe, matching 
 #### Page Header Row (Mobile)
 
 **Row 1:**
+
 - Left: `Courses` title
 - Right: `New Course` icon-only primary button (plus icon)
 
 **Row 2:** Full-width search input. Placeholder: `Search courses...`
 
 **Row 3:** Horizontally scrollable chip row:
+
 - Topic Filter chip
 - Sort By chip
 - Each chip opens a Coss UI bottom sheet with radio list options on tap.
@@ -266,11 +283,13 @@ This message is important: it reassures the user their notes are safe, matching 
 **Layout:** Single column on mobile — one card per row. Same card anatomy as desktop. Cards maintain fixed height — no inline expansion.
 
 #### FAB (Mobile)
+
 **Position:** Bottom-right, above bottom dock.
 **Icon:** Plus icon.
 **Action:** Opens Create Course Sheet (bottom sheet).
 
 #### Sheets on Mobile
+
 All Sheets open as bottom sheets on mobile. Height: ~90% viewport. Scrollable form content.
 
 ---
@@ -294,13 +313,15 @@ All Sheets open as bottom sheets on mobile. Height: ~90% viewport. Scrollable fo
 **Layout:** A block spanning the full content width. Contains:
 
 **Row 1 — Navigation + Actions:**
+
 - **Left:** A back button (left arrow icon + label `Courses`) that navigates back to the Courses List Page.
-- **Right (grouped):**
-  - `Edit Course` — ghost button. Opens Edit Course Sheet.
-  - `View Links` — ghost button with link icon. Opens Links Viewer Sheet. Only shown if `course_link` is non-null or `links` array is non-empty.
-  - `Delete Course` — destructive ghost button. Opens Delete Alert Dialog.
+  **Right (grouped, implemented UI):**
+
+- Buttons for `Edit Course`, `View Links` (conditional), and `Delete Course` are rendered.
+- **Implemented note:** Edit and Delete actions are currently no-ops (not wired). `View Links` opens the Links Viewer Sheet.
 
 **Row 2 — Course Identity:**
+
 - **Left:**
   - Course title — large heading text, the dominant element of this row.
   - Instructor name — muted text below the title. Only shown if non-null.
@@ -308,6 +329,7 @@ All Sheets open as bottom sheets on mobile. Height: ~90% viewport. Scrollable fo
   - Progress display: Coss UI Progress bar with percentage label. Same visual as the card but slightly larger.
 
 **Row 3 — Topics:**
+
 - A horizontal row of Badge components, one per topic. All topics shown — no truncation (this is the detail page, not a card).
 - If `topics` is empty, this row is omitted.
 
@@ -336,17 +358,21 @@ All behavior, components, and rules from `wireframe-notes.md` apply here, with t
 #### Course Header Block (Mobile)
 
 **Row 1:**
+
 - Left: Back button (arrow + `Courses` label)
 - Right: `•••` overflow menu button. Menu items: `Edit Course`, `View Links` (if applicable), separator, `Delete Course`
 
 **Row 2:**
+
 - Course title — large heading.
 - Instructor — muted text below. Only if non-null.
 
 **Row 3:**
+
 - Progress bar — full width, with percentage label on the right.
 
 **Row 4:**
+
 - Topic badges — horizontally scrollable row if they overflow. All topics shown.
 
 #### Notes Section (Mobile)
@@ -354,6 +380,7 @@ All behavior, components, and rules from `wireframe-notes.md` apply here, with t
 Identical to the Notes page mobile layout, with the same three differences listed in the desktop Course Detail section above (course filter locked, no page title, new note pre-fills course).
 
 #### FAB (Mobile — Course Detail)
+
 **Icon:** Plus icon.
 **Action:** Opens Create Note Sheet with course pre-filled.
 
@@ -372,14 +399,14 @@ Identical to the Notes page mobile layout, with the same three differences liste
 
 ## Interaction States Summary
 
-| Action | Component | Side Effect |
-|---|---|---|
-| Create course | Sheet | Prepend card to grid |
-| Edit course | Sheet | Update card in place |
-| Delete course | Alert Dialog | Remove card from grid; unlinks notes |
-| View links | Sheet | No data change |
-| Click course card | Navigation | Navigate to `/courses/[id]` |
-| Back button on detail | Navigation | Return to Courses list |
-| Edit course (from detail) | Sheet | Updates detail header |
-| Delete course (from detail) | Alert Dialog | Navigate back to list |
-| All notes actions on detail | See wireframe-notes.md | Same as Notes page |
+| Action                      | Component              | Side Effect                          |
+| --------------------------- | ---------------------- | ------------------------------------ |
+| Create course               | Sheet                  | Prepend card to grid                 |
+| Edit course                 | Sheet                  | Update card in place                 |
+| Delete course               | Alert Dialog           | Remove card from grid; unlinks notes |
+| View links                  | Sheet                  | No data change                       |
+| Click course card           | Navigation             | Navigate to `/courses/[id]`          |
+| Back button on detail       | Navigation             | Return to Courses list               |
+| Edit course (from detail)   | Sheet                  | Updates detail header                |
+| Delete course (from detail) | Alert Dialog           | Navigate back to list                |
+| All notes actions on detail | See wireframe-notes.md | Same as Notes page                   |
