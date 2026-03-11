@@ -82,7 +82,7 @@ Fixed at top. Full-width. Minimal.
 
 - Left: `RootlyLogo` component (SVG mark + wordmark). Wraps with `next/link` to `/`.
 - Right:
-  - Ghost/outline link button: `Star on GitHub` — links to the v1 open source repo (`rootly-notes-app`).
+  - Ghost/outline link button: `Star on GitHub` — links to the v2 repo (`rootly`).
   - Primary button: `Get started` → `/login`.
 
 ### Behavior
@@ -159,7 +159,7 @@ The interactive mockup directly below is the visual proof. A hero image would be
 
 ### Purpose
 
-Let the visitor interact with the actual Notes page — reading notes, revealing answers, toggling understanding levels — without signing up. They should leave this section thinking "I already know how to use this."
+Let the visitor interact with the actual Notes page — reading notes and revealing answers — without signing up. They should leave this section thinking "I already know how to use this."
 
 ### Layout
 
@@ -173,10 +173,10 @@ Let the visitor interact with the actual Notes page — reading notes, revealing
 │  │  [ Browser chrome: rounded top bar ]          │  │
 │  │  ┌─────────────────────────────────────────┐  │  │
 │  │  │  Notes page replica (scrollable)        │  │  │
-│  │  │  - 4–6 hardcoded Q&A + freeform notes   │  │  │
-│  │  │  - reveal answer interaction works      │  │  │
-│  │  │  - understanding level buttons work     │  │  │
-│  │  │  - flag button works                    │  │  │
+│  │  │  - 5 hardcoded Q&A + freeform notes     │  │  │
+│  │  │  - reveal/hide answer toggle works      │  │  │
+│  │  │  - flag toggle works (visual only)      │  │  │
+│  │  │  - understanding level shown as badge   │  │  │
 │  │  └─────────────────────────────────────────┘  │  │
 │  └───────────────────────────────────────────────┘  │
 │                                                     │
@@ -190,14 +190,15 @@ Let the visitor interact with the actual Notes page — reading notes, revealing
   - The inner content is scrollable.
   - It is NOT an `<iframe>`. It is a custom `HomepageMockup` component that directly imports and renders the Notes card components with hardcoded data.
 - **What works:**
-  - Reveal/hide answer toggle per card.
-  - Understanding level button selection (visual only — state lives in the mockup component, not persisted).
-  - Flag toggle (visual only).
+  - Reveal/hide answer toggle per Q&A card (`Peek answer` → shows the answer text).
+  - Flag toggle per card (visual only — state lives in the mockup component, not persisted).
+- **What is static (not interactive):**
+  - Understanding level is displayed as a read-only badge (e.g. "Getting It", "Confused") — exactly as it appears on the real card. It is NOT interactive in the mockup because toggling it requires the editor sheet, which is disabled.
 - **What is disabled/hidden:**
   - The `DashboardShell` nav (top bar, dock, FAB) is not rendered.
   - The Notes page header (filters, export, add note) is not rendered — the mockup shows only the card list.
-  - No sheets open. Click on a card opens nothing — the viewer sheet is disabled in mockup mode.
-- **Data:** 5 hardcoded notes in `app/(marketing)/ui/homepage-mock-notes.ts` — a mix of Q&A (3) and freeform (2), covering realistic developer learning content (e.g. a note about closures, one about async/await, one freeform summary of a chapter).
+  - No sheets open. Clicking a card opens nothing — the viewer/editor sheet is disabled in mockup mode.
+- **Data:** 5 hardcoded notes in `app/(marketing)/ui/homepage-mock-notes.ts` — a mix of Q&A (3) and freeform (2), covering realistic developer learning content (e.g. React hooks, async/await, TypeScript discriminated unions, a freeform chapter summary, a freeform session recap).
 - The mockup component accepts a `readOnly: true` prop that disables all sheet-opening interactions.
 
 ### Visual Treatment
@@ -209,7 +210,7 @@ Let the visitor interact with the actual Notes page — reading notes, revealing
 ### Entrance Animation
 
 - The entire browser chrome wrapper: `opacity: 0 → 1`, `translateY(20px) → translateY(0)`, `500ms ease-out`.
-- Triggered when the section scrolls into view (`IntersectionObserver`, threshold: `0.15`).
+- Triggered when the section scrolls into view (`whileInView`, `viewport: { once: true }`, threshold: `0.15`).
 - The individual note cards stagger in after the wrapper: each card `100ms` apart, same `opacity + translateY` motion.
 
 ### Label above the mockup
@@ -313,7 +314,7 @@ How it works
 
 Three short, real quotes from real users. No star ratings, no avatars that look generated, no company logos unless the person is real and notable. Developer credibility > enterprise logos.
 
-> **Note:** At launch, use placeholder copy modeled after real feedback from v1 users. Replace with real quotes as they come in. Do not fabricate.
+> **Note:** At launch, use placeholder `[QUOTE PENDING]` in the implementation. Do not fabricate quotes.
 
 ### Layout
 
@@ -375,7 +376,7 @@ Repeat the offer one more time at the bottom. By this point the visitor has seen
 
 ```
 [ RootlyLogo ]   Built with ♥ for self-taught developers.   [ GitHub ]
-                       © 2025 Rootly
+                       © 2026 Rootly
 ```
 
 - Left: `RootlyLogo` (mark only, no wordmark — smaller).
@@ -450,11 +451,3 @@ All animations on the homepage use **Motion (Framer Motion v12)** — already in
 🚫 No more than 2 font weights in any section (semibold + regular).
 🚫 No custom color outside the coss ui token system — including gradients on backgrounds.
 ```
-
----
-
-## Open Questions (resolve before implementation)
-
-1. **Social proof copy** — do real quotes from v1 users exist? If not, use placeholder `[QUOTE PENDING]` in the implementation and do not fabricate.
-2. **Mockup note content** — the 5 hardcoded notes should feel real and developer-relevant. Confirm the subject matter (e.g. JS closures, async/await, CSS specificity, Git rebase, React hooks).
-3. **GitHub link** — confirm whether the `Star on GitHub` nav link points to `rootly-notes-app` (v1, public) or `rootly` (v2, potentially private).
