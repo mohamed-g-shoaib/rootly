@@ -3,7 +3,7 @@
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
-  ArrowUpDownIcon,
+  UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
@@ -102,7 +102,7 @@ function Calendar({
       }
 
       return (
-        <HugeiconsIcon icon={ArrowUpDownIcon} size={16} className={className} />
+        <HugeiconsIcon icon={UnfoldMoreIcon} size={16} className={className} />
       );
     },
   };

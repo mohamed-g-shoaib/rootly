@@ -192,6 +192,7 @@ export default function NotesPage() {
       isMobile={isMobile}
       courses={courses}
       filteredCount={filtered.items.length}
+      filteredNotes={filtered.items}
       hasQa={filtered.hasQa}
       filtersActive={filtersActive}
       typeFilter={typeFilter}

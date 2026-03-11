@@ -10,9 +10,13 @@ import {
   Calendar01Icon,
   DatabaseLightningIcon,
   Home01Icon,
+  Moon01Icon,
   NoteIcon,
+  Sun01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import Link from "next/link"
+import { useTheme } from "next-themes"
 
 import RootlyLogo from "@/components/rootly-logo"
 import { useIsMobile } from "@/hooks/use-media-query"
@@ -59,6 +63,26 @@ type ShellFab = {
   ariaLabel: string
   icon: React.ReactNode
   onClick: () => void
+}
+
+function ThemeToggle({
+  checked,
+  onCheckedChange,
+}: {
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <HugeiconsIcon icon={Sun01Icon} size={18} />
+      <Switch
+        aria-label="Toggle theme"
+        checked={checked}
+        onCheckedChange={(value) => onCheckedChange(Boolean(value))}
+      />
+      <HugeiconsIcon icon={Moon01Icon} size={18} />
+    </div>
+  )
 }
 
 export function DashboardShell({
@@ -124,7 +148,9 @@ export function DashboardShell({
       <header className="fixed inset-x-0 top-0 z-20 border-b bg-background">
         <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-2">
-            <RootlyLogo className="size-6" aria-hidden="true" />
+            <Link href="/" aria-label="Home">
+              <RootlyLogo className="size-6" aria-hidden="true" />
+            </Link>
           </div>
 
           {!isMobile && typeof streakDays === "number" ? (
@@ -202,6 +228,8 @@ export function DashboardShell({
 }
 
 function UserAvatarPopover() {
+  const { resolvedTheme, setTheme } = useTheme()
+
   return (
     <Popover>
       <PopoverTrigger
@@ -223,7 +251,12 @@ function UserAvatarPopover() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">Theme</div>
-            <Switch aria-label="Toggle theme" />
+            <ThemeToggle
+              checked={resolvedTheme === "dark"}
+              onCheckedChange={(checked) =>
+                setTheme(checked ? "dark" : "light")
+              }
+            />
           </div>
 
           <Button variant="destructive-outline">Logout</Button>
@@ -240,6 +273,8 @@ function MobileAvatarSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { resolvedTheme, setTheme } = useTheme()
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetPopup side="bottom" variant="inset" showCloseButton={false}>
@@ -257,7 +292,12 @@ function MobileAvatarSheet({
 
             <div className="flex items-center justify-between">
               <div className="text-sm">Theme</div>
-              <Switch aria-label="Toggle theme" />
+              <ThemeToggle
+                checked={resolvedTheme === "dark"}
+                onCheckedChange={(checked) =>
+                  setTheme(checked ? "dark" : "light")
+                }
+              />
             </div>
 
             <Button variant="destructive-outline">Logout</Button>

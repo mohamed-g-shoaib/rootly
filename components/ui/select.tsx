@@ -7,7 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
-  ArrowUpDownIcon,
+  UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
@@ -55,7 +55,7 @@ function SelectButton({
           {children}
         </span>
         <span className={selectTriggerIconClassName}>
-          <HugeiconsIcon icon={ArrowUpDownIcon} size={18} />
+          <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
         </span>
       </>
     ),
@@ -86,7 +86,7 @@ function SelectTrigger({
       {children}
       <SelectPrimitive.Icon data-slot="select-icon">
         <span className={selectTriggerIconClassName}>
-          <HugeiconsIcon icon={ArrowUpDownIcon} size={18} />
+          <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
         </span>
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>

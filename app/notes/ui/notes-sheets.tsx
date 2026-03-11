@@ -2,6 +2,16 @@
 
 import * as React from "react"
 
+import {
+  CheckmarkCircle01Icon,
+  CodeIcon,
+  Flag01Icon,
+  InformationCircleIcon,
+  Search02Icon,
+  AlertCircleIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import {
@@ -11,6 +21,8 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
+  ComboboxTrigger,
+  ComboboxValue,
 } from "@/components/ui/combobox"
 import {
   Sheet,
@@ -21,11 +33,38 @@ import {
   SheetPopup,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
+import { SelectButton } from "@/components/ui/select"
+
+import { CodeBlock } from "@/components/ui/code-block"
 
 import type { Note, NoteType } from "./notes-model"
 import { toCodeBadgeLabel } from "./notes-model"
+
+type CodeLanguageOption = { value: string; label: string }
+
+const CODE_LANGUAGE_OPTIONS: CodeLanguageOption[] = [
+  { value: "tsx", label: "TypeScript / TSX" },
+  { value: "jsx", label: "JavaScript / JSX" },
+  { value: "typescript", label: "TypeScript" },
+  { value: "javascript", label: "JavaScript" },
+  { value: "json", label: "JSON" },
+  { value: "bash", label: "Bash / Shell" },
+  { value: "sql", label: "SQL" },
+  { value: "python", label: "Python" },
+  { value: "css", label: "CSS" },
+  { value: "html", label: "HTML" },
+  { value: "markdown", label: "Markdown" },
+  { value: "yaml", label: "YAML" },
+  { value: "rust", label: "Rust" },
+  { value: "go", label: "Go" },
+  { value: "java", label: "Java" },
+  { value: "cpp", label: "C++" },
+  { value: "csharp", label: "C#" },
+  { value: "php", label: "PHP" },
+  { value: "ruby", label: "Ruby" },
+  { value: "swift", label: "Swift" },
+]
 
 export function NoteViewerSheet({
   note,
@@ -59,9 +98,10 @@ export function NoteViewerSheet({
                   {note.body ?? note.answer ?? ""}
                 </div>
                 {note.codeSnippet ? (
-                  <pre className="overflow-x-auto rounded-lg border bg-muted p-3 text-xs">
-                    {note.codeSnippet}
-                  </pre>
+                  <CodeBlock
+                    code={note.codeSnippet}
+                    language={note.codeLanguage}
+                  />
                 ) : null}
               </div>
             ) : null}
@@ -100,12 +140,15 @@ export function CodeViewerSheet({
           <SheetHeader>
             <SheetTitle>{title}</SheetTitle>
           </SheetHeader>
-          <SheetPanel className="px-4 pb-5">
+          <SheetPanel className="min-h-0 flex-1 px-4 pb-5">
             {note?.codeSnippet ? (
-              <div className="flex flex-col gap-4">
-                <pre className="overflow-x-auto rounded-lg border bg-muted p-3 text-xs">
-                  {note.codeSnippet}
-                </pre>
+              <div className="flex min-h-0 flex-col gap-4">
+                <div className="h-[calc(100svh-14rem)] overflow-auto">
+                  <CodeBlock
+                    code={note.codeSnippet}
+                    language={note.codeLanguage}
+                  />
+                </div>
               </div>
             ) : null}
           </SheetPanel>
@@ -146,6 +189,18 @@ export function NoteEditorSheet({
     lockedCourse ? lockedCourse.id : (note?.courseId ?? "none")
   )
 
+  const [flagged, setFlagged] = React.useState(
+    mode === "edit" ? (note?.flag ?? false) : false
+  )
+
+  const [understandingLevel, setUnderstandingLevel] = React.useState<
+    1 | 2 | 3 | null
+  >(mode === "edit" ? (note?.understandingLevel ?? null) : null)
+
+  const [codeEnabled, setCodeEnabled] = React.useState(false)
+  const [codeLanguage, setCodeLanguage] = React.useState("tsx")
+  const [codeValue, setCodeValue] = React.useState("")
+
   const courseItems = React.useMemo<{ value: string; label: string }[]>(
     () => [
       { value: "none", label: "No course" },
@@ -166,6 +221,24 @@ export function NoteEditorSheet({
     if (mode === "create") setType(null)
 
     setCourseId(lockedCourse ? lockedCourse.id : (note?.courseId ?? "none"))
+
+    setFlagged(mode === "edit" ? (note?.flag ?? false) : false)
+    setUnderstandingLevel(
+      mode === "edit" ? (note?.understandingLevel ?? null) : null
+    )
+
+    if (mode === "edit" && note) {
+      const snippet = note.codeSnippet ?? ""
+      setCodeEnabled(Boolean(snippet))
+      setCodeLanguage(note.codeLanguage?.trim() ? note.codeLanguage : "tsx")
+      setCodeValue(snippet)
+    }
+
+    if (mode === "create") {
+      setCodeEnabled(false)
+      setCodeLanguage("tsx")
+      setCodeValue("")
+    }
   }, [lockedCourse, mode, note, note?.courseId])
 
   return (
@@ -263,9 +336,63 @@ export function NoteEditorSheet({
                           Understanding Level
                         </div>
                         <div className="grid grid-cols-3 gap-2">
-                          <Button variant="outline">Confused</Button>
-                          <Button variant="outline">Getting It</Button>
-                          <Button variant="outline">Clear</Button>
+                          <Button
+                            type="button"
+                            variant={
+                              understandingLevel === 1 ? "secondary" : "outline"
+                            }
+                            className="gap-2"
+                            onClick={() => setUnderstandingLevel(1)}
+                          >
+                            <HugeiconsIcon
+                              icon={AlertCircleIcon}
+                              size={18}
+                              color={
+                                understandingLevel === 1
+                                  ? "var(--warning)"
+                                  : "currentColor"
+                              }
+                            />
+                            Confused
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={
+                              understandingLevel === 2 ? "secondary" : "outline"
+                            }
+                            className="gap-2"
+                            onClick={() => setUnderstandingLevel(2)}
+                          >
+                            <HugeiconsIcon
+                              icon={InformationCircleIcon}
+                              size={18}
+                              color={
+                                understandingLevel === 2
+                                  ? "var(--info)"
+                                  : "currentColor"
+                              }
+                            />
+                            Getting It
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={
+                              understandingLevel === 3 ? "secondary" : "outline"
+                            }
+                            className="gap-2"
+                            onClick={() => setUnderstandingLevel(3)}
+                          >
+                            <HugeiconsIcon
+                              icon={CheckmarkCircle01Icon}
+                              size={18}
+                              color={
+                                understandingLevel === 3
+                                  ? "var(--success)"
+                                  : "currentColor"
+                              }
+                            />
+                            Clear
+                          </Button>
                         </div>
                       </div>
                     </>
@@ -280,17 +407,85 @@ export function NoteEditorSheet({
                     </div>
                   )}
 
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-muted-foreground">
-                        Flag for review
-                      </div>
-                      <Switch
-                        aria-label="Flag for review"
-                        defaultChecked={note?.flag ?? false}
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <Button
+                      type="button"
+                      variant={flagged ? "secondary" : "outline"}
+                      className="w-full justify-start gap-2"
+                      onClick={() => setFlagged((v) => !v)}
+                    >
+                      <HugeiconsIcon
+                        icon={Flag01Icon}
+                        size={18}
+                        color={flagged ? "var(--destructive)" : "currentColor"}
+                      />
+                      Flag for review
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant={codeEnabled ? "secondary" : "outline"}
+                      className="w-full justify-start gap-2"
+                      onClick={() => setCodeEnabled((v) => !v)}
+                    >
+                      <HugeiconsIcon
+                        icon={CodeIcon}
+                        size={18}
+                        color={codeEnabled ? "var(--info)" : "currentColor"}
+                      />
+                      Add code snippet
+                    </Button>
+                  </div>
+
+                  {codeEnabled ? (
+                    <div className="flex flex-col gap-2">
+                      <Combobox
+                        items={[...CODE_LANGUAGE_OPTIONS]}
+                        value={
+                          CODE_LANGUAGE_OPTIONS.find(
+                            (x) => x.value === codeLanguage
+                          ) ?? CODE_LANGUAGE_OPTIONS[0]
+                        }
+                        onValueChange={(item) =>
+                          setCodeLanguage(item?.value ?? "tsx")
+                        }
+                      >
+                        <ComboboxTrigger
+                          render={<SelectButton />}
+                          aria-label="Code language"
+                        >
+                          <ComboboxValue placeholder="Language" />
+                        </ComboboxTrigger>
+                        <ComboboxPopup aria-label="Select language">
+                          <div className="border-b p-2">
+                            <ComboboxInput
+                              className="rounded-md before:rounded-[calc(var(--radius-md)-1px)]"
+                              placeholder="Search languages..."
+                              showTrigger={false}
+                              startAddon={
+                                <HugeiconsIcon icon={Search02Icon} size={18} />
+                              }
+                            />
+                          </div>
+                          <ComboboxEmpty>No items found.</ComboboxEmpty>
+                          <ComboboxList>
+                            {(opt) => (
+                              <ComboboxItem key={opt.value} value={opt}>
+                                {opt.label}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxList>
+                        </ComboboxPopup>
+                      </Combobox>
+
+                      <Textarea
+                        placeholder="Paste your code here..."
+                        value={codeValue}
+                        onChange={(e) => setCodeValue(e.target.value)}
+                        className="min-h-40 font-mono"
                       />
                     </div>
-                  </div>
+                  ) : null}
                 </>
               ) : null}
             </div>

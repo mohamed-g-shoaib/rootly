@@ -7,6 +7,7 @@ import {
   Download01Icon,
   EyeIcon,
   Flag01Icon,
+  Loading01Icon,
   Pdf01Icon,
   TextSquareIcon,
   UnfoldMoreIcon,
@@ -40,12 +41,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import type { CourseFilter, SortKey, TypeFilter } from "./notes-model"
+import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
+import { exportNotesAsMarkdown } from "./notes-export"
+import { useExportPdf } from "./notes-pdf"
 
 export function NotesHeader({
   isMobile,
   courses,
   filteredCount,
+  filteredNotes,
   hasQa,
   filtersActive,
   typeFilter,
@@ -68,6 +72,7 @@ export function NotesHeader({
   isMobile: boolean
   courses: { id: string; title: string }[]
   filteredCount: number
+  filteredNotes: Note[]
   hasQa: boolean
   filtersActive: boolean
   typeFilter: TypeFilter
@@ -116,6 +121,8 @@ export function NotesHeader({
       courseItems.find((item) => item.value === courseFilter) ?? courseItems[0],
     [courseFilter, courseItems]
   )
+
+  const { exportPdf, exporting } = useExportPdf(filteredNotes)
 
   return (
     <div className="sticky top-0 z-10 border-b bg-background">
@@ -217,11 +224,24 @@ export function NotesHeader({
                         ? `Exporting ${filteredCount} filtered notes`
                         : `Exporting all ${filteredCount} notes`}
                     </div>
-                    <Button variant="outline" className="gap-2">
-                      <HugeiconsIcon icon={Pdf01Icon} size={18} />
+                    <Button
+                      variant="outline"
+                      className="gap-2"
+                      onClick={() => void exportPdf()}
+                      disabled={exporting}
+                    >
+                      <HugeiconsIcon
+                        icon={exporting ? Loading01Icon : Pdf01Icon}
+                        size={18}
+                        className={exporting ? "animate-spin" : undefined}
+                      />
                       Export as PDF
                     </Button>
-                    <Button variant="outline" className="gap-2">
+                    <Button
+                      variant="outline"
+                      className="gap-2"
+                      onClick={() => exportNotesAsMarkdown(filteredNotes)}
+                    >
                       <HugeiconsIcon icon={TextSquareIcon} size={18} />
                       Export as Markdown
                     </Button>
@@ -245,7 +265,11 @@ export function NotesHeader({
                 }
                 onClick={onToggleFlaggedOnly}
               >
-                <HugeiconsIcon icon={Flag01Icon} size={18} />
+                <HugeiconsIcon
+                  icon={Flag01Icon}
+                  size={18}
+                  color={flaggedOnly ? "var(--destructive)" : "currentColor"}
+                />
               </Button>
 
               {hasQa ? (
@@ -260,6 +284,7 @@ export function NotesHeader({
                   <HugeiconsIcon
                     icon={globalShowAnswers ? ViewOffIcon : EyeIcon}
                     size={18}
+                    color={globalShowAnswers ? "var(--info)" : "currentColor"}
                   />
                 </Button>
               ) : null}
@@ -283,7 +308,11 @@ export function NotesHeader({
                   variant={flaggedOnly ? "secondary" : "ghost"}
                   onClick={onToggleFlaggedOnly}
                 >
-                  <HugeiconsIcon icon={Flag01Icon} size={18} />
+                  <HugeiconsIcon
+                    icon={Flag01Icon}
+                    size={18}
+                    color={flaggedOnly ? "var(--destructive)" : "currentColor"}
+                  />
                 </Button>
 
                 {hasQa ? (
@@ -300,6 +329,7 @@ export function NotesHeader({
                     <HugeiconsIcon
                       icon={globalShowAnswers ? ViewOffIcon : EyeIcon}
                       size={18}
+                      color={globalShowAnswers ? "var(--info)" : "currentColor"}
                     />
                   </Button>
                 ) : null}

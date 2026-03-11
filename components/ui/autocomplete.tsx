@@ -1,7 +1,7 @@
 "use client";
 
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
-import { ArrowUpDownIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
+import { UnfoldMoreIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { cn } from "@/lib/utils";
@@ -63,7 +63,7 @@ function AutocompleteInput({
           {...triggerProps}
         >
           <AutocompletePrimitive.Icon data-slot="autocomplete-icon">
-            <HugeiconsIcon icon={ArrowUpDownIcon} size={18} />
+            <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
           </AutocompletePrimitive.Icon>
         </AutocompleteTrigger>
       )}
