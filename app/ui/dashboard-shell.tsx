@@ -95,7 +95,7 @@ export function DashboardShell({
       },
       {
         label: "Daily",
-        link: "/daily-tracking",
+        link: "/daily-entries",
         icon: <HugeiconsIcon icon={Calendar01Icon} size={18} />,
       },
       {

@@ -59,6 +59,7 @@ export function NotesHeader({
   onSortChange,
   onToggleGlobalAnswers,
   onNewNote,
+  onClearFilters,
   onOpenMobileType,
   onOpenMobileCourse,
   onOpenMobileSort,
@@ -80,6 +81,7 @@ export function NotesHeader({
   onSortChange: (value: SortKey) => void
   onToggleGlobalAnswers: () => void
   onNewNote: () => void
+  onClearFilters: () => void
   onOpenMobileType: () => void
   onOpenMobileCourse: () => void
   onOpenMobileSort: () => void
@@ -226,6 +228,12 @@ export function NotesHeader({
                   </div>
                 </PopoverContent>
               </Popover>
+
+              {filtersActive ? (
+                <Button variant="ghost" onClick={onClearFilters}>
+                  Clear filters
+                </Button>
+              ) : null}
             </div>
 
             <div className="flex items-center gap-2">
@@ -333,6 +341,12 @@ export function NotesHeader({
                 >
                   <HugeiconsIcon icon={Download01Icon} size={18} />
                 </Button>
+
+                {filtersActive ? (
+                  <Button variant="ghost" onClick={onClearFilters}>
+                    Clear
+                  </Button>
+                ) : null}
               </div>
             </div>
           </div>

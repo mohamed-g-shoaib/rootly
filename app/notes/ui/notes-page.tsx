@@ -205,6 +205,7 @@ export default function NotesPage() {
       onSortChange={setSortKey}
       onToggleGlobalAnswers={() => setGlobalShowAnswers((v) => !v)}
       onNewNote={() => setCreateOpen(true)}
+      onClearFilters={clearFilters}
       onOpenMobileType={() => setMobileTypeSheetOpen(true)}
       onOpenMobileCourse={() => setMobileCourseSheetOpen(true)}
       onOpenMobileSort={() => setMobileSortSheetOpen(true)}

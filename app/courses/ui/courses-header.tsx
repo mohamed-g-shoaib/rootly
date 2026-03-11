@@ -32,10 +32,11 @@ export function CoursesHeader({
   topicItems,
   topicFilter,
   sortKey,
-  filtersActive: _filtersActive,
+  filtersActive,
   onTopicChange,
   onSortChange,
   onNewCourse,
+  onClearFilters,
   onOpenMobileTopic,
   onOpenMobileSort,
 }: {
@@ -47,6 +48,7 @@ export function CoursesHeader({
   onTopicChange: (value: TopicFilter) => void
   onSortChange: (value: SortKey) => void
   onNewCourse: () => void
+  onClearFilters: () => void
   onOpenMobileTopic: () => void
   onOpenMobileSort: () => void
 }) {
@@ -113,6 +115,12 @@ export function CoursesHeader({
                   <SelectItem value="alphabetical">Alphabetical</SelectItem>
                 </SelectPopup>
               </Select>
+
+              {filtersActive ? (
+                <Button variant="ghost" onClick={onClearFilters}>
+                  Clear filters
+                </Button>
+              ) : null}
             </div>
 
             <Button className="gap-2" onClick={onNewCourse}>
@@ -145,6 +153,12 @@ export function CoursesHeader({
                 >
                   Sort by
                 </Button>
+
+                {filtersActive ? (
+                  <Button variant="ghost" onClick={onClearFilters}>
+                    Clear
+                  </Button>
+                ) : null}
               </div>
             </div>
           </div>

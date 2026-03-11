@@ -111,6 +111,7 @@ export default function CoursesPage() {
       onTopicChange={setTopicFilter}
       onSortChange={setSortKey}
       onNewCourse={() => setCreateOpen(true)}
+      onClearFilters={clearFilters}
       onOpenMobileTopic={() => setMobileTopicSheetOpen(true)}
       onOpenMobileSort={() => setMobileSortSheetOpen(true)}
     />
