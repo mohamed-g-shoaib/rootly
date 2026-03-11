@@ -159,13 +159,9 @@ export function DailyEntriesHeader({
               ) : null}
             </div>
 
-            <Button
-              onClick={onPrimaryAction}
-              variant={todayHasEntry ? "outline" : "default"}
-              className="gap-2"
-            >
+            <Button onClick={onPrimaryAction} className="gap-2">
               <HugeiconsIcon icon={AddCircleIcon} size={18} />
-              {todayHasEntry ? "Edit Today's Entry" : "Log Today"}
+              {todayHasEntry ? "Today's Entry" : "Log Today"}
             </Button>
           </div>
         ) : (
@@ -174,9 +170,8 @@ export function DailyEntriesHeader({
               <div className="text-lg font-medium">Daily Entries</div>
               <Button
                 size="icon"
-                aria-label={todayHasEntry ? "Edit today's entry" : "Log today"}
+                aria-label={todayHasEntry ? "Today's entry" : "Log today"}
                 onClick={onPrimaryAction}
-                variant={todayHasEntry ? "ghost" : "default"}
               >
                 <HugeiconsIcon icon={AddCircleIcon} size={18} />
               </Button>

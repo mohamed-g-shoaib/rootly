@@ -147,17 +147,19 @@ export function DateRangeFilterSheet({
           </SheetHeader>
           <SheetPanel className="px-4 pb-5">
             <div className="flex flex-col gap-3">
-              <Calendar
-                defaultMonth={selected?.from}
-                mode="range"
-                onSelect={(range) => {
-                  onFromDateChange(
-                    range?.from ? toDateInputValue(range.from) : ""
-                  )
-                  onToDateChange(range?.to ? toDateInputValue(range.to) : "")
-                }}
-                selected={selected}
-              />
+              <div className="flex justify-center">
+                <Calendar
+                  defaultMonth={selected?.from}
+                  mode="range"
+                  onSelect={(range) => {
+                    onFromDateChange(
+                      range?.from ? toDateInputValue(range.from) : ""
+                    )
+                    onToDateChange(range?.to ? toDateInputValue(range.to) : "")
+                  }}
+                  selected={selected}
+                />
+              </div>
               <Button
                 variant={
                   fromDate === "" && toDate === "" ? "secondary" : "ghost"
@@ -562,21 +564,28 @@ export function EntryEditorSheet({
                     <Button
                       variant={mood === 1 ? "secondary" : "outline"}
                       onClick={() => setMood(1)}
-                      className={cn("gap-2", mood === 1 && "bg-muted")}
+                      className={cn(
+                        "justify-center gap-2",
+                        mood === 1 && "bg-muted"
+                      )}
                     >
                       <EmojioneV1WearyFace
-                        className="size-5"
+                        className="hidden size-5 sm:block"
                         aria-hidden="true"
                       />
-                      Burned Out
+                      <span className="sm:hidden">Burned</span>
+                      <span className="hidden sm:inline">Burned Out</span>
                     </Button>
                     <Button
                       variant={mood === 2 ? "secondary" : "outline"}
                       onClick={() => setMood(2)}
-                      className={cn("gap-2", mood === 2 && "bg-muted")}
+                      className={cn(
+                        "justify-center gap-2",
+                        mood === 2 && "bg-muted"
+                      )}
                     >
                       <EmojioneV1SlightlySmilingFace
-                        className="size-5"
+                        className="hidden size-5 sm:block"
                         aria-hidden="true"
                       />
                       Neutral
@@ -584,10 +593,13 @@ export function EntryEditorSheet({
                     <Button
                       variant={mood === 3 ? "secondary" : "outline"}
                       onClick={() => setMood(3)}
-                      className={cn("gap-2", mood === 3 && "bg-muted")}
+                      className={cn(
+                        "justify-center gap-2",
+                        mood === 3 && "bg-muted"
+                      )}
                     >
                       <EmojioneV1GrinningFaceWithSmilingEyes
-                        className="size-5"
+                        className="hidden size-5 sm:block"
                         aria-hidden="true"
                       />
                       Focused

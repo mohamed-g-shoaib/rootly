@@ -264,8 +264,9 @@ export function NotesHeader({
                 </Button>
               ) : null}
 
-              <Button size="icon" aria-label="New note" onClick={onNewNote}>
+              <Button onClick={onNewNote} className="gap-2">
                 <HugeiconsIcon icon={AddCircleIcon} size={18} />
+                New Note
               </Button>
             </div>
           </div>
