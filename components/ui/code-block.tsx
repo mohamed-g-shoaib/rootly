@@ -5,6 +5,8 @@ import * as React from "react"
 import { useTheme } from "next-themes"
 import { createHighlighter, type Highlighter } from "shiki"
 
+import { cn } from "@/lib/utils"
+
 const SUPPORTED_LANGUAGES = [
   "tsx",
   "jsx",
@@ -46,9 +48,11 @@ function getHighlighter() {
 export function CodeBlock({
   code,
   language,
+  className,
 }: {
   code: string
   language: string
+  className?: string
 }) {
   const { resolvedTheme } = useTheme()
   const [html, setHtml] = React.useState<string | null>(null)
@@ -83,7 +87,12 @@ export function CodeBlock({
 
   if (!html) {
     return (
-      <pre className="overflow-x-auto rounded-lg border bg-code p-3 text-xs">
+      <pre
+        className={cn(
+          "rounded-lg border bg-code p-3 text-xs overflow-x-auto",
+          className
+        )}
+      >
         {code}
       </pre>
     )
@@ -91,7 +100,10 @@ export function CodeBlock({
 
   return (
     <div
-      className="overflow-x-auto rounded-lg border bg-code p-3 text-xs"
+      className={cn(
+        "rounded-lg border bg-code p-3 text-xs [&_pre]:h-full [&_pre]:overflow-auto",
+        className
+      )}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

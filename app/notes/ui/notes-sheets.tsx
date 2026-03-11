@@ -143,12 +143,11 @@ export function CodeViewerSheet({
           <SheetPanel className="min-h-0 flex-1 px-4 pb-5">
             {note?.codeSnippet ? (
               <div className="flex min-h-0 flex-col gap-4">
-                <div className="h-[calc(100svh-14rem)] overflow-auto">
-                  <CodeBlock
-                    code={note.codeSnippet}
-                    language={note.codeLanguage}
-                  />
-                </div>
+                <CodeBlock
+                  code={note.codeSnippet}
+                  language={note.codeLanguage}
+                  className="h-[calc(100svh-14rem)] overflow-y-auto"
+                />
               </div>
             ) : null}
           </SheetPanel>
