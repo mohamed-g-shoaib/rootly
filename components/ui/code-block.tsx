@@ -89,7 +89,7 @@ export function CodeBlock({
     return (
       <pre
         className={cn(
-          "rounded-lg border bg-code p-3 text-xs overflow-x-auto",
+          "whitespace-pre-wrap break-all rounded-lg border bg-code p-3 text-xs",
           className
         )}
       >
@@ -101,7 +101,7 @@ export function CodeBlock({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-code p-3 text-xs [&_pre]:h-full [&_pre]:overflow-auto",
+        "overflow-hidden rounded-lg border text-xs [&_pre]:whitespace-pre-wrap [&_pre]:break-all [&_pre]:p-3",
         className
       )}
       dangerouslySetInnerHTML={{ __html: html }}

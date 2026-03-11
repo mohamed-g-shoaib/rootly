@@ -35,8 +35,10 @@ import {
 } from "@/components/ui/sheet"
 import { Textarea } from "@/components/ui/textarea"
 import { SelectButton } from "@/components/ui/select"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { CodeBlock } from "@/components/ui/code-block"
+import { CodeEditor } from "@/components/ui/code-editor"
 
 import type { Note, NoteType } from "./notes-model"
 import { toCodeBadgeLabel } from "./notes-model"
@@ -143,11 +145,17 @@ export function CodeViewerSheet({
           <SheetPanel className="min-h-0 flex-1 px-4 pb-5">
             {note?.codeSnippet ? (
               <div className="flex min-h-0 flex-col gap-4">
-                <CodeBlock
-                  code={note.codeSnippet}
-                  language={note.codeLanguage}
-                  className="h-[calc(100svh-14rem)] overflow-y-auto"
-                />
+                <ScrollArea
+                  className="max-h-[calc(100svh-14rem)]"
+                  scrollbarGutter
+                >
+                  <div className="pb-6">
+                    <CodeBlock
+                      code={note.codeSnippet}
+                      language={note.codeLanguage}
+                    />
+                  </div>
+                </ScrollArea>
               </div>
             ) : null}
           </SheetPanel>
@@ -477,11 +485,11 @@ export function NoteEditorSheet({
                         </ComboboxPopup>
                       </Combobox>
 
-                      <Textarea
-                        placeholder="Paste your code here..."
+                      <CodeEditor
+                        language={codeLanguage}
                         value={codeValue}
-                        onChange={(e) => setCodeValue(e.target.value)}
-                        className="min-h-40 font-mono"
+                        onChange={setCodeValue}
+                        className="min-h-40"
                       />
                     </div>
                   ) : null}
