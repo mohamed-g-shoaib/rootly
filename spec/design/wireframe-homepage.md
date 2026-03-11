@@ -52,9 +52,9 @@ The homepage is seen once or twice by a user — it can breathe. The dashboard i
 │  (headline + sub + CTAs + scroll cue)               │
 ├─────────────────────────────────────────────────────┤
 │  MOCKUP                                             │
-│  (interactive product preview — the centrepiece)    │
+│  (fully interactive product preview — centrepiece)  │
 ├─────────────────────────────────────────────────────┤
-│  FEATURES  (3 columns)                              │
+│  FEATURES  (3 columns, each with visual mockup)     │
 ├─────────────────────────────────────────────────────┤
 │  HOW IT WORKS  (numbered, 4 steps)                  │
 ├─────────────────────────────────────────────────────┤
@@ -153,13 +153,13 @@ The interactive mockup directly below is the visual proof. A hero image would be
 
 ---
 
-## Section 3 — Mockup (Interactive Product Preview)
+## Section 3 — Mockup (Fully Interactive Product Preview)
 
-> **This is the most important section on the page.** It replaces what other landing pages do with a screenshot or video. A living, interactive replica of the product is far more persuasive than either.
+> **This is the most important section on the page.** It replaces what other landing pages do with a screenshot or video. A fully interactive, read-only replica of the real product is far more persuasive than either.
 
 ### Purpose
 
-Let the visitor interact with the actual Notes page — reading notes and revealing answers — without signing up. They should leave this section thinking "I already know how to use this."
+Let the visitor use Rootly — filter notes by type, reveal answers, flag notes, see understanding levels — without signing up. No write operations. Everything else works exactly as it does in the real app. They should leave thinking “I already know how to use this.”
 
 ### Layout
 
@@ -172,11 +172,16 @@ Let the visitor interact with the actual Notes page — reading notes and reveal
 │  ┌───────────────────────────────────────────────┐  │
 │  │  [ Browser chrome: rounded top bar ]          │  │
 │  │  ┌─────────────────────────────────────────┐  │  │
-│  │  │  Notes page replica (scrollable)        │  │  │
-│  │  │  - 5 hardcoded Q&A + freeform notes     │  │  │
-│  │  │  - reveal/hide answer toggle works      │  │  │
-│  │  │  - flag toggle works (visual only)      │  │  │
-│  │  │  - understanding level shown as badge   │  │  │
+│  │  │  [ Notes header strip ]                 │  │  │
+│  │  │  [ All Types ▾ ] [ Show answers ]        │  │  │
+│  │  │  ───────────────────────────────────────  │  │  │
+│  │  │  3-column card grid (responsive)        │  │  │
+│  │  │  ┌─────────┐ ┌─────────┐ ┌─────────┐  │  │  │
+│  │  │  │ NoteCard│ │ NoteCard│ │ NoteCard│  │  │  │
+│  │  │  └─────────┘ └─────────┘ └─────────┘  │  │  │
+│  │  │  ┌─────────┐ ┌─────────┐              │  │  │
+│  │  │  │ NoteCard│ │ NoteCard│              │  │  │
+│  │  │  └─────────┘ └─────────┘              │  │  │
 │  │  └─────────────────────────────────────────┘  │  │
 │  └───────────────────────────────────────────────┘  │
 │                                                     │
@@ -185,38 +190,57 @@ Let the visitor interact with the actual Notes page — reading notes and reveal
 
 ### Implementation Details
 
-- The mockup is a **read-only** replica of the Notes UI.
-  - Rendered inside a decorative browser chrome wrapper (a `div` with rounded corners, a top bar with three traffic-light dots, and a mock URL bar showing `rootly.app/notes`).
-  - The inner content is scrollable.
-  - It is NOT an `<iframe>`. It is a custom `HomepageMockup` component that directly imports and renders the Notes card components with hardcoded data.
-- **What works:**
-  - Reveal/hide answer toggle per Q&A card (`Peek answer` → shows the answer text).
-  - Flag toggle per card (visual only — state lives in the mockup component, not persisted).
-- **What is static (not interactive):**
-  - Understanding level is displayed as a read-only badge (e.g. "Getting It", "Confused") — exactly as it appears on the real card. It is NOT interactive in the mockup because toggling it requires the editor sheet, which is disabled.
-- **What is disabled/hidden:**
-  - The `DashboardShell` nav (top bar, dock, FAB) is not rendered.
-  - The Notes page header (filters, export, add note) is not rendered — the mockup shows only the card list.
-  - No sheets open. Clicking a card opens nothing — the viewer/editor sheet is disabled in mockup mode.
-- **Data:** 5 hardcoded notes in `app/(marketing)/ui/homepage-mock-notes.ts` — a mix of Q&A (3) and freeform (2), covering realistic developer learning content (e.g. React hooks, async/await, TypeScript discriminated unions, a freeform chapter summary, a freeform session recap).
-- The mockup component accepts a `readOnly: true` prop that disables all sheet-opening interactions.
+#### What is fully interactive (no write operations)
 
-### Visual Treatment
+- **Type filter** (`All Types` / `Q&A` / `Freeform`) — filters the visible cards. State lives in the mockup component.
+- **Show all answers / Hide all answers toggle** — reveals or hides all Q&A answers at once. State lives in the mockup component.
+- **Per-card reveal/hide answer** (`Peek answer` → answer visible) — works independently per card.
+- **Per-card flag toggle** — visual only, state lives in mockup component.
+- **Understanding level badge** — static display, read-only. Not interactive (toggling requires the editor sheet which is disabled).
+- **Responsive grid** — 3 columns on desktop (`lg`), 2 columns on tablet (`md`), 1 column on mobile (`sm` and below). Identical to the real Notes page grid.
 
-- The browser chrome wrapper has a `border` using the standard coss ui border token and a subtle shadow — same depth approach as coss ui cards.
-- On desktop: the mockup takes up ~70% of the content container width, centered.
-- On mobile: the mockup is full-width. The browser chrome top bar is hidden on screens below `sm` — just the card list is shown directly.
+#### What is disabled (write operations or sheet interactions)
+
+- No `New Note` button.
+- No export button.
+- No course filter (would require real course data).
+- No sort control.
+- No overflow menu on cards (contains edit/delete).
+- No viewer sheet. No editor sheet. No code viewer sheet. Clicking a card does nothing beyond the card-level interactions above.
+
+#### Component reuse
+
+- Reuses the real `NoteCard` component from `app/notes/ui/notes-components.tsx` directly.
+- `NoteCard` receives a `readOnly?: boolean` prop. When `true`:
+  - Overflow menu (edit/delete/view) is hidden.
+  - Card click / "View full note" does not open the viewer sheet.
+  - All other card-level interactions (reveal answer, flag) remain active.
+- The mockup header strip is a **simplified version** of the real notes header — built inline in `homepage-mockup.tsx`, not imported from the real header. It contains only the type filter and show/hide all answers toggle. No sorting, no export, no course filter.
+
+#### Data
+
+- 5 hardcoded notes in `app/(marketing)/ui/homepage-mock-notes.ts`.
+- Mix: 3 Q&A + 2 freeform.
+- Topics: React hooks, async/await, TypeScript discriminated unions (Q&A); freeform chapter summary, freeform session recap.
+- Each note has a `courseId` and `courseName` field so course names render correctly on cards.
+
+#### Browser chrome wrapper
+
+- `div` with rounded corners, a top bar containing three traffic-light dots and a mock URL bar showing `rootly.app/notes`.
+- Inner content area is scrollable (use coss ui `ScrollArea` or equivalent).
+- On desktop: wrapper takes ~80% of content container width, centered.
+- On mobile (`sm` and below): browser chrome top bar is hidden. Card grid is shown directly, full-width.
 
 ### Entrance Animation
 
 - The entire browser chrome wrapper: `opacity: 0 → 1`, `translateY(20px) → translateY(0)`, `500ms ease-out`.
-- Triggered when the section scrolls into view (`whileInView`, `viewport: { once: true }`, threshold: `0.15`).
-- The individual note cards stagger in after the wrapper: each card `100ms` apart, same `opacity + translateY` motion.
+- Triggered `whileInView`, `viewport: { once: true, amount: 0.15 }`.
+- Note cards stagger in after the wrapper: each card `100ms` apart, same `opacity + translateY` motion.
 
 ### Label above the mockup
 
 - `"Try it — no account needed."` in `text-muted-foreground`, small, centered above the browser chrome.
-- Purpose: explicit permission. Visitors often don't realize they can interact. The label removes the uncertainty.
+- Purpose: explicit permission. Visitors often don't realize they can interact.
 
 ---
 
@@ -224,43 +248,68 @@ Let the visitor interact with the actual Notes page — reading notes and reveal
 
 ### Purpose
 
-Three columns. Each one describes a core workflow. No icons that are purely decorative — every icon must clarify the concept it labels. No fluff copy. Developer audience reads fast.
+Three columns. Each one names a core workflow, describes it in one sentence, and shows a **static visual mockup** that makes the concept immediately concrete. The visual does the explaining — the copy reinforces it. No cards, no borders around the columns. White space is the separator.
 
 ### Layout
 
 ```
 ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
-│  [Icon]          │ │  [Icon]          │ │  [Icon]          │
+│  [Visual mockup] │ │  [Visual mockup] │ │  [Visual mockup] │
 │                  │ │                  │ │                  │
 │  Capture         │ │  Review          │ │  Track           │
-│                  │ │                  │ │                  │
-│  Q&A and         │ │  Spaced          │ │  Log daily study │
-│  freeform notes  │ │  repetition      │ │  sessions and    │
-│  with code       │ │  sessions        │ │  watch your      │
-│  snippets and    │ │  built around    │ │  understanding   │
-│  understanding   │ │  your own notes. │ │  trend over      │
-│  levels.         │ │                  │ │  time.           │
+│  [body copy]     │ │  [body copy]     │ │  [body copy]     │
 └──────────────────┘ └──────────────────┘ └──────────────────┘
 ```
 
 ### Copy
 
-| Column | Icon (Hugeicons) | Title | Body |
-| --- | --- | --- | --- |
-| 1 | `NoteIcon` or similar | `Capture` | `Q&A and freeform notes with code snippets, syntax highlighting, and understanding levels.` |
-| 2 | `RepeatIcon` or similar | `Review` | `Spaced repetition sessions built around your own notes — not a generic question bank.` |
-| 3 | `AnalyticsIcon` or similar | `Track` | `Log daily study sessions and watch your understanding trend over time.` |
+| Column | Title | Body |
+| --- | --- | --- |
+| 1 | `Capture` | `Q&A and freeform notes with code snippets, syntax highlighting, and understanding levels.` |
+| 2 | `Review` | `Spaced repetition sessions built around your own notes — not a generic question bank.` |
+| 3 | `Track` | `Log daily study sessions and watch your understanding trend over time.` |
 
-### Visual Treatment
+### Visual Mockups (one per column)
 
-- No card borders, no backgrounds. Just the icon, title, and body sitting on the page. White space does the separation work.
-- Icons: Hugeicons, `size={24}`, `color="currentColor"`. Not filled — use stroke variant.
-- Title: `font-semibold`, slightly larger than body.
-- Body: `text-muted-foreground`.
+Each visual mockup is a **static, non-interactive JSX composition** built from real coss ui primitives — not a screenshot, not an image. It renders actual UI elements from the product in a simplified, focused arrangement. No card wrapper around the column — the visual sits directly above the title with breathing room.
+
+#### Column 1 — Capture visual
+
+Renders a single condensed Q&A note card (static, no interactions):
+- Course name label top-left (small, muted).
+- Question text (e.g. `"When should you use useMemo?"`)
+- Answer text visible below (e.g. `"When the computation is expensive and the reference needs to be stable across renders."`)
+- Understanding level badge bottom-right: `"Getting It"`.
+- Code language badge bottom-left: `{ } JavaScript`.
+- No flag icon, no overflow menu — stripped to the essential visual.
+
+#### Column 2 — Review visual
+
+Renders a simplified review session card stack (static):
+- A single Q&A note shown in "review mode": question visible, answer hidden behind a `Reveal answer` button.
+- Below the question: three rating buttons in a row: `Confused` / `Getting It` / `Clear` — static, not interactive. One of them visually highlighted (e.g. `Getting It` selected).
+- Small session progress indicator above: e.g. `3 / 10 questions`.
+- This communicates the spaced repetition flow at a glance.
+
+#### Column 3 — Track visual
+
+Renders a simplified overview snippet (static):
+- A small bar chart (3–5 bars, different heights) representing daily study time. Use recharts `BarChart` with hardcoded data — already a dependency. Keep it minimal: no axes labels, no tooltip, no legend. Just the bars.
+- Below the chart: two stat chips side by side — e.g. `🔥 12 day streak` and `avg. 2.4h / day`. Plain text, `text-muted-foreground`.
+- This communicates progress tracking at a glance.
+
+### Visual Treatment (all columns)
+
+- No card borders, no backgrounds on columns. White space separates.
+- Visual mockup sits at top of column, full column width, fixed height — use a consistent height across all three so the row is visually balanced.
+- Title below visual: `font-semibold`.
+- Body below title: `text-muted-foreground`, one sentence.
+- On mobile: single column stack, visuals above their respective title+body.
 
 ### Entrance Animation
 
 - All three columns stagger in on scroll: `opacity + translateY(12px)`, `100ms` apart, `350ms ease-out` each.
+- `whileInView`, `viewport: { once: true }`.
 
 ---
 
@@ -305,6 +354,7 @@ How it works
 ### Entrance Animation
 
 - Steps enter sequentially on scroll: stagger `150ms` apart, `opacity + translateY(8px)`, `350ms ease-out`.
+- `whileInView`, `viewport: { once: true }`.
 
 ---
 
@@ -335,6 +385,7 @@ Three short, real quotes from real users. No star ratings, no avatars that look 
 ### Entrance Animation
 
 - Cards stagger in on scroll: same `opacity + translateY(12px)` pattern, `120ms` apart.
+- `whileInView`, `viewport: { once: true }`.
 
 ---
 
@@ -367,6 +418,7 @@ Repeat the offer one more time at the bottom. By this point the visitor has seen
 ### Entrance Animation
 
 - Single reveal on scroll: `opacity + translateY(16px)`, `400ms ease-out`. No stagger — it's one unit.
+- `whileInView`, `viewport: { once: true }`.
 
 ---
 
@@ -402,30 +454,34 @@ app/
     ui/
       homepage-hero.tsx
       homepage-nav.tsx
-      homepage-mockup.tsx             ← interactive notes replica
+      homepage-mockup.tsx             ← fully interactive notes replica
       homepage-mock-notes.ts          ← hardcoded note data for mockup
-      homepage-features.tsx
+      homepage-features.tsx           ← includes static visual mockups
       homepage-how-it-works.tsx
       homepage-social-proof.tsx
       homepage-final-cta.tsx
       homepage-footer.tsx
 ```
 
-The `(marketing)` route group uses a **separate layout** that does NOT include `DashboardShell`. Authenticated users never see this layout — middleware redirects them to `/overview` before this layout renders.
+The `(marketing)` route group uses a **separate layout** that does NOT include `DashboardShell`. Authenticated users never see this layout — `proxy.ts` redirects them to `/overview` before this layout renders.
 
 ---
 
-## Middleware Behavior
+## Proxy Behavior (`proxy.ts`)
 
 ```
 /  (homepage)
   └── unauthenticated → render (marketing)/page.tsx
   └── authenticated   → redirect 307 to /overview
+
+/overview, /courses, /notes, /daily-entries, /review
+  └── unauthenticated → redirect 307 to /login
+  └── authenticated   → render normally
 ```
 
-All other protected routes (e.g. `/notes`, `/courses`) already redirect unauthenticated users to `/login`. This is the inverse: `/` redirects authenticated users away from the marketing page.
+Auth is determined by presence of Supabase cookie: `sb-gforbcrkqdowocyfrrjj-auth-token`. Presence check only — no decryption.
 
-The logo in the `DashboardShell` (app navbar) links to `/`. For an authenticated user, clicking it hits the middleware, which immediately redirects them to `/overview`. This is intentional — the homepage is never shown to logged-in users.
+The logo in the `DashboardShell` (app navbar) links to `/`. For an authenticated user, clicking it hits `proxy.ts`, which immediately redirects them to `/overview`. This is intentional — the homepage is never shown to logged-in users.
 
 ---
 
@@ -450,4 +506,6 @@ All animations on the homepage use **Motion (Framer Motion v12)** — already in
 🚫 No looping background animations.
 🚫 No more than 2 font weights in any section (semibold + regular).
 🚫 No custom color outside the coss ui token system — including gradients on backgrounds.
+🚫 No card borders or column backgrounds in the Features section.
+🚫 No write operations anywhere in the mockup (no create, edit, delete).
 ```
