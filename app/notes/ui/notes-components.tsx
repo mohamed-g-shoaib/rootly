@@ -1,8 +1,7 @@
 "use client"
 
-import * as React from "react"
-
 import {
+  CheckmarkCircle01Icon,
   CodeIcon,
   Delete01Icon,
   Edit01Icon,
@@ -14,17 +13,11 @@ import {
   TextSquareIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { motion } from "motion/react"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import {
-  PreviewCard,
-  PreviewCardPopup,
-  PreviewCardTrigger,
-} from "@/components/ui/preview-card"
 import {
   AlertDialog,
   AlertDialogClose,
@@ -35,6 +28,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +38,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/menu"
-
+import {
+  PreviewCard,
+  PreviewCardPopup,
+  PreviewCardTrigger,
+} from "@/components/ui/preview-card"
 import {
   Sheet,
   SheetClose,
@@ -52,8 +52,8 @@ import {
   SheetPopup,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { Form } from "@/components/ui/form"
 
-import { motion } from "motion/react"
 import { understandingLabel, type Note, toCodeBadgeLabel } from "./notes-model"
 
 export function EmptyState({
@@ -128,6 +128,7 @@ export function NoteCard({
   onEdit,
   onViewFull,
   onViewCode,
+  onDelete,
   readOnly = false,
   shouldReduceMotion = false,
 }: {
@@ -141,6 +142,7 @@ export function NoteCard({
   onEdit: () => void
   onViewFull: () => void
   onViewCode: () => void
+  onDelete: () => void
   readOnly?: boolean
   shouldReduceMotion?: boolean
 }) {
@@ -201,6 +203,12 @@ export function NoteCard({
                     <HugeiconsIcon icon={Note01Icon} size={18} />
                     View full note
                   </DropdownMenuItem>
+                  {note.codeSnippet ? (
+                    <DropdownMenuItem onClick={onViewCode}>
+                      <HugeiconsIcon icon={CodeIcon} size={18} />
+                      View code
+                    </DropdownMenuItem>
+                  ) : null}
                   <DropdownMenuItem>
                     <HugeiconsIcon icon={Pdf01Icon} size={18} />
                     Export as PDF
@@ -210,7 +218,7 @@ export function NoteCard({
                     Export as Markdown
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DeleteDialog onDelete={() => void 0}>
+                  <DeleteDialog onDelete={onDelete}>
                     <DropdownMenuItem variant="destructive">
                       <HugeiconsIcon icon={Delete01Icon} size={18} />
                       Delete
@@ -364,29 +372,41 @@ export function FilterSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetPopup side="bottom" variant="inset">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-        </SheetHeader>
-        <SheetPanel className="px-4 pb-5">
-          <div className="flex flex-col gap-2">
-            {options.map((o) => (
-              <Button
-                key={o.value}
-                variant={o.value === value ? "secondary" : "ghost"}
-                className="justify-start"
-                onClick={() => {
-                  onValueChange(o.value)
-                  onOpenChange(false)
-                }}
-              >
-                {o.label}
-              </Button>
-            ))}
-          </div>
-        </SheetPanel>
-        <SheetFooter>
-          <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
-        </SheetFooter>
+        <Form className="h-full gap-0">
+          <SheetHeader>
+            <SheetTitle>{title}</SheetTitle>
+          </SheetHeader>
+          <SheetPanel className="px-4 pb-5">
+            <div className="flex flex-col gap-2">
+              {options.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  className={cn(
+                    "flex w-full items-center justify-between rounded-lg px-4 py-3 text-sm transition-colors hover:bg-muted",
+                    value === opt.value
+                      ? "bg-primary/10 font-medium text-primary"
+                      : "text-foreground"
+                  )}
+                  onClick={() => {
+                    onValueChange(opt.value)
+                    onOpenChange(false)
+                  }}
+                >
+                  {opt.label}
+                  {value === opt.value ? (
+                    <HugeiconsIcon icon={CheckmarkCircle01Icon} size={18} />
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          </SheetPanel>
+          <SheetFooter>
+            <SheetClose render={<Button variant="ghost" type="button" />}>
+              Close
+            </SheetClose>
+          </SheetFooter>
+        </Form>
       </SheetPopup>
     </Sheet>
   )

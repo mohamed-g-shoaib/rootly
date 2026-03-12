@@ -23,6 +23,11 @@ import {
   NoteEditorSheet,
 } from "./notes-sheets"
 
+function deleteNote(noteId: string) {
+  // Mock delete: local-only
+  console.log("Delete note", noteId)
+}
+
 export default function NotesPage() {
   const isMobile = useIsMobile()
   const shouldReduceMotion = useReducedMotion()
@@ -260,6 +265,7 @@ export default function NotesPage() {
                   onEdit={() => openEdit(note.id)}
                   onViewFull={() => openView(note.id)}
                   onViewCode={() => openCode(note.id)}
+                  onDelete={() => deleteNote(note.id)}
                 />
               ))
             )}

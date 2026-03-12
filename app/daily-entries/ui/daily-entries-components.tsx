@@ -325,7 +325,7 @@ function DeleteDialog({
   )
 }
 
-export function MobileFilterSheet({
+function MobileFilterSheet({
   title,
   open,
   onOpenChange,
