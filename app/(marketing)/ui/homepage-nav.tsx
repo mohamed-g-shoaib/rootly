@@ -16,7 +16,10 @@ export default function HomepageNav() {
 
   React.useEffect(() => {
     function onScroll() {
-      setScrolled(window.scrollY > 40)
+      setScrolled((prev) => {
+        const next = window.scrollY > 40
+        return prev === next ? prev : next
+      })
     }
 
     onScroll()

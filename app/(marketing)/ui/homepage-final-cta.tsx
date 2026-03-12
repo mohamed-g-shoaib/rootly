@@ -5,7 +5,7 @@ import Link from "next/link"
 
 import { ArrowRight02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { motion } from "motion/react"
+import { motion, useReducedMotion } from "motion/react"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -14,14 +14,16 @@ import { PageContainer } from "@/components/ui/page-container"
 const easeOut = [0.32, 0.72, 0, 1] as const
 
 export default function HomepageFinalCta() {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <section className="pt-14">
       <PageContainer>
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={shouldReduceMotion ? undefined : { opacity: 0, y: 16 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
-          transition={{ duration: 0.4, ease: easeOut }}
+          transition={{ duration: 0.3, ease: easeOut }}
         >
           <Card className="py-14">
             <div className="flex flex-col items-center gap-4 px-6 text-center">

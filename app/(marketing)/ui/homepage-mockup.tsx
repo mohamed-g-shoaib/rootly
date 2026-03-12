@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { motion } from "motion/react"
+import { motion, useReducedMotion } from "motion/react"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -56,13 +56,21 @@ export default function HomepageMockup() {
   const [createOpen, setCreateOpen] = React.useState(false)
   const url = React.useMemo(() => `rootly.app/notes`, [])
 
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <section id="mockup" className="pt-14">
       <PageContainer>
         <div className="flex flex-col items-center gap-4">
-          <div className="text-sm text-muted-foreground">
+          <motion.div
+            initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.3, ease: easeOut }}
+            className="text-sm text-muted-foreground"
+          >
             Try it — no account needed.
-          </div>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

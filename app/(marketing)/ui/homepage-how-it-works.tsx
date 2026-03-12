@@ -14,6 +14,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { motion } from "motion/react"
 import { Bar, BarChart, ResponsiveContainer } from "recharts"
+import { useReducedMotion } from "motion/react"
 
 import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
@@ -33,6 +34,18 @@ import {
   EmojioneV1SlightlySmilingFace,
   EmojioneV1WearyFace,
 } from "@/app/daily-entries/ui/daily-entries-emojis"
+
+function useIsHoverDesktop() {
+  const [value, setValue] = React.useState(false)
+  React.useEffect(() => {
+    const mql = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const update = () => setValue(mql.matches)
+    update()
+    mql.addEventListener("change", update)
+    return () => mql.removeEventListener("change", update)
+  }, [])
+  return value
+}
 
 const easeOut = [0.32, 0.72, 0, 1] as const
 
@@ -71,16 +84,7 @@ function CreateCourseVisual() {
 
 function CaptureVisual() {
   const [showAnswer, setShowAnswer] = React.useState(false)
-  const [isHoverDesktop, setIsHoverDesktop] = React.useState(false)
-
-  React.useEffect(() => {
-    const mql = window.matchMedia("(hover: hover) and (pointer: fine)")
-    const update = () => setIsHoverDesktop(mql.matches)
-
-    update()
-    mql.addEventListener("change", update)
-    return () => mql.removeEventListener("change", update)
-  }, [])
+  const isHoverDesktop = useIsHoverDesktop()
 
   return (
     <Card className="h-48 p-4">
@@ -209,16 +213,7 @@ function ReviewVisual() {
   const [understandingLevel, setUnderstandingLevel] = React.useState<1 | 2 | 3>(
     2
   )
-  const [isHoverDesktop, setIsHoverDesktop] = React.useState(false)
-
-  React.useEffect(() => {
-    const mql = window.matchMedia("(hover: hover) and (pointer: fine)")
-    const update = () => setIsHoverDesktop(mql.matches)
-
-    update()
-    mql.addEventListener("change", update)
-    return () => mql.removeEventListener("change", update)
-  }, [])
+  const isHoverDesktop = useIsHoverDesktop()
 
   return (
     <Card className="h-48 p-4">
@@ -318,7 +313,7 @@ function TrackVisual() {
         <div className="w-full flex-1 overflow-hidden">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={[...TRACK_DATA]}
+              data={TRACK_DATA}
               margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
             >
               <Bar
@@ -398,6 +393,7 @@ function HowItWorksCarousel({
 export default function HomepageHowItWorks() {
   const { scrollerRef, canScrollPrev, canScrollNext, scrollPrev, scrollNext } =
     useCarouselControls()
+  const shouldReduceMotion = useReducedMotion()
 
   return (
     <section className="pt-14">
@@ -405,25 +401,37 @@ export default function HomepageHowItWorks() {
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-2">
             <motion.h2
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
               viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.4, ease: easeOut }}
+              transition={{ duration: 0.3, ease: easeOut }}
               className="text-2xl font-semibold"
             >
               How it works
             </motion.h2>
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
               viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.4, ease: easeOut, delay: 0.05 }}
+              transition={{ duration: 0.3, ease: easeOut, delay: 0.05 }}
               className="text-sm text-muted-foreground"
             >
               Set up a course, capture notes, log daily progress, review what
               you learned, and watch your stats.
             </motion.p>
-            <div className="flex items-center gap-2 pt-2">
+            <motion.div
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.3, ease: easeOut, delay: 0.1 }}
+              className="flex items-center gap-2 pt-2"
+            >
               <Button
                 type="button"
                 size="icon"
@@ -444,14 +452,17 @@ export default function HomepageHowItWorks() {
               >
                 <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
               </Button>
-            </div>
+            </motion.div>
           </div>
 
           <HowItWorksCarousel scrollerRef={scrollerRef}>
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: easeOut, delay: 0 }}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.3, ease: easeOut, delay: 0 }}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -464,9 +475,12 @@ export default function HomepageHowItWorks() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: easeOut, delay: 0.05 }}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.3, ease: easeOut, delay: 0.05 }}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -480,9 +494,12 @@ export default function HomepageHowItWorks() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: easeOut, delay: 0.1 }}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.3, ease: easeOut, delay: 0.1 }}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -495,9 +512,12 @@ export default function HomepageHowItWorks() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: easeOut, delay: 0.15 }}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.3, ease: easeOut, delay: 0.15 }}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -512,9 +532,12 @@ export default function HomepageHowItWorks() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: easeOut, delay: 0.2 }}
+              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
+              whileInView={
+                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+              }
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.3, ease: easeOut, delay: 0.2 }}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
