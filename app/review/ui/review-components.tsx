@@ -40,11 +40,19 @@ import type { ReviewSession } from "./review-model"
 export function ReviewEmptyState({ onStart }: { onStart: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-      <div className="text-lg font-medium">No sessions yet</div>
-      <div className="text-sm text-muted-foreground">
-        Complete your first review session to see your history here.
+      <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+        <HugeiconsIcon
+          icon={Target01Icon}
+          size={24}
+          className="text-muted-foreground"
+        />
       </div>
-      <Button onClick={onStart} className="gap-2">
+      <div className="text-lg font-medium">No sessions yet</div>
+      <div className="max-w-[280px] text-sm text-muted-foreground">
+        Complete your first review session to see your history and performance
+        stats here.
+      </div>
+      <Button onClick={onStart} type="button" className="mt-2 gap-2">
         <HugeiconsIcon icon={Target01Icon} size={18} />
         Start Review
       </Button>
@@ -216,10 +224,10 @@ function DeleteSessionDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogClose render={<Button variant="ghost" />}>
+          <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Cancel
           </AlertDialogClose>
-          <Button variant="destructive" onClick={onDelete}>
+          <Button variant="destructive" type="button" onClick={onDelete}>
             Delete
           </Button>
         </AlertDialogFooter>
