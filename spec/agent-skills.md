@@ -4,29 +4,29 @@
 
 Skills follow the [skills.sh](https://skills.sh) standard and are placed in the `.agents/` directory. Depending on the skill publisher, each skill directory may contain some or all of the following:
 
-| File / Folder | Purpose |
-| ------------- | ------- |
-| `SKILL.md` | Lightweight entry point — describes the skill, when to apply it, and links to references |
-| `AGENTS.md` | Fully compiled, expanded version of all rules — use this when you need deep context |
-| `README.md` | Human-facing documentation about how the skill is structured and how to contribute |
-| `references/` | Individual rule files (one rule per file) — load specific files when needed |
+| File / Folder | Purpose                                                                                  |
+| ------------- | ---------------------------------------------------------------------------------------- |
+| `SKILL.md`    | Lightweight entry point — describes the skill, when to apply it, and links to references |
+| `AGENTS.md`   | Fully compiled, expanded version of all rules — use this when you need deep context      |
+| `README.md`   | Human-facing documentation about how the skill is structured and how to contribute       |
+| `references/` | Individual rule files (one rule per file) — load specific files when needed              |
 
 ---
 
 ## Skills Index
 
-| # | Skill | Publisher | skills.sh Installs | Path |
-| - | ----- | --------- | ------------------ | ---- |
-| 1 | [React Best Practices](#1-react-best-practices) | Vercel | 3,900+ | `.agents/react-best-practices/` |
-| 2 | [Next.js Best Practices](#2-nextjs-best-practices) | Vercel | 768+ | `.agents/next-best-practices/` |
-| 3 | [Frontend Design](#3-frontend-design) | Anthropic | 3,100+ | `.agents/frontend-design/` |
-| 4 | [React Composition Patterns](#4-react-composition-patterns) | Vercel | 1,700+ | `.agents/composition-patterns/` |
-| 5 | [Animation Best Practices](#5-animation-best-practices) | Emil Kowalski | — | `.agents/emilkowal-animations/` |
-| 6 | [Supabase Postgres Best Practices](#6-supabase-postgres-best-practices) | Supabase | 724+ | `.agents/supabase-postgres-best-practices/` |
-| 7 | [PostgreSQL Table Design](#7-postgresql-table-design) | wshobson | — | `.agents/postgresql-table-design/` |
-| 8 | [PostgreSQL Pro](#8-postgresql-pro) | jeffallan | — | `.agents/postgres-pro/` |
-| 9 | [TypeScript Advanced Types](#9-typescript-advanced-types) | wshobson | — | `.agents/typescript-advanced-types/` |
-| 10 | [Web Interface Guidelines](#10-web-interface-guidelines) | Vercel | 3,200+ | `.agents/web-design-guidelines/` |
+| #   | Skill                                                                   | Publisher     | skills.sh Installs | Path                                        |
+| --- | ----------------------------------------------------------------------- | ------------- | ------------------ | ------------------------------------------- |
+| 1   | [React Best Practices](#1-react-best-practices)                         | Vercel        | 3,900+             | `.agents/react-best-practices/`             |
+| 2   | [Next.js Best Practices](#2-nextjs-best-practices)                      | Vercel        | 768+               | `.agents/next-best-practices/`              |
+| 3   | [Frontend Design](#3-frontend-design)                                   | Anthropic     | 3,100+             | `.agents/frontend-design/`                  |
+| 4   | [React Composition Patterns](#4-react-composition-patterns)             | Vercel        | 1,700+             | `.agents/composition-patterns/`             |
+| 5   | [Animation Best Practices](#5-animation-best-practices)                 | Emil Kowalski | —                  | `.agents/emilkowal-animations/`             |
+| 6   | [Supabase Postgres Best Practices](#6-supabase-postgres-best-practices) | Supabase      | 724+               | `.agents/supabase-postgres-best-practices/` |
+| 7   | [PostgreSQL Table Design](#7-postgresql-table-design)                   | wshobson      | —                  | `.agents/postgresql-table-design/`          |
+| 8   | [PostgreSQL Pro](#8-postgresql-pro)                                     | jeffallan     | —                  | `.agents/postgres-pro/`                     |
+| 9   | [TypeScript Advanced Types](#9-typescript-advanced-types)               | wshobson      | —                  | `.agents/typescript-advanced-types/`        |
+| 10  | [Web Interface Guidelines](#10-web-interface-guidelines)                | Vercel        | 3,200+             | `.agents/web-design-guidelines/`            |
 
 ---
 
@@ -55,12 +55,12 @@ Comprehensive performance optimization guide for React and Next.js applications.
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with category table and quick reference for all 58 rules |
-| `AGENTS.md` | Fully compiled document with all rules expanded |
-| `README.md` | Contribution guide and rule file structure |
-| `rules/` | One `.md` file per rule with bad/good code examples |
+| File        | Description                                                          |
+| ----------- | -------------------------------------------------------------------- |
+| `SKILL.md`  | Entry point with category table and quick reference for all 58 rules |
+| `AGENTS.md` | Fully compiled document with all rules expanded                      |
+| `README.md` | Contribution guide and rule file structure                           |
+| `rules/`    | One `.md` file per rule with bad/good code examples                  |
 
 ---
 
@@ -89,24 +89,24 @@ Defines correct Next.js App Router patterns across 18 topic areas. Unlike the Re
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Master index linking to all 18 topic reference files |
-| `async-patterns.md` | Async params, cookies, headers — Next.js 15+ breaking changes |
-| `rsc-boundaries.md` | Invalid RSC pattern detection |
-| `data-patterns.md` | Data fetching strategies and waterfall avoidance |
-| `error-handling.md` | Error, not-found, redirect, forbidden patterns |
-| `file-conventions.md` | Route segments, middleware rename, special files |
-| `bundling.md` | Server-incompatible packages, ESM/CJS, bundle analysis |
-| `metadata.md` | Static/dynamic metadata, OG images with `next/og` |
-| `image.md` | `next/image` usage, remote config, LCP priority |
-| `font.md` | `next/font`, Google Fonts, Tailwind integration |
-| `parallel-routes.md` | Modal pattern with `@slot` and `(.)` interceptors |
-| `hydration-error.md` | Common causes and fixes for hydration mismatches |
-| `suspense-boundaries.md` | Hooks that require Suspense wrapping |
-| `route-handlers.md` | `route.ts` basics and when to use vs server actions |
-| `self-hosting.md` | Docker `standalone` output, multi-instance ISR cache |
-| `debug-tricks.md` | MCP endpoint and `--debug-build-paths` flag |
+| File                     | Description                                                   |
+| ------------------------ | ------------------------------------------------------------- |
+| `SKILL.md`               | Master index linking to all 18 topic reference files          |
+| `async-patterns.md`      | Async params, cookies, headers — Next.js 15+ breaking changes |
+| `rsc-boundaries.md`      | Invalid RSC pattern detection                                 |
+| `data-patterns.md`       | Data fetching strategies and waterfall avoidance              |
+| `error-handling.md`      | Error, not-found, redirect, forbidden patterns                |
+| `file-conventions.md`    | Route segments, middleware rename, special files              |
+| `bundling.md`            | Server-incompatible packages, ESM/CJS, bundle analysis        |
+| `metadata.md`            | Static/dynamic metadata, OG images with `next/og`             |
+| `image.md`               | `next/image` usage, remote config, LCP priority               |
+| `font.md`                | `next/font`, Google Fonts, Tailwind integration               |
+| `parallel-routes.md`     | Modal pattern with `@slot` and `(.)` interceptors             |
+| `hydration-error.md`     | Common causes and fixes for hydration mismatches              |
+| `suspense-boundaries.md` | Hooks that require Suspense wrapping                          |
+| `route-handlers.md`      | `route.ts` basics and when to use vs server actions           |
+| `self-hosting.md`        | Docker `standalone` output, multi-instance ISR cache          |
+| `debug-tricks.md`        | MCP endpoint and `--debug-build-paths` flag                   |
 
 ---
 
@@ -135,8 +135,8 @@ Guides creation of distinctive, production-grade frontend interfaces that avoid 
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------- |
 | `SKILL.md` | Full skill — all design thinking guidelines and rules are self-contained in this single file |
 
 ---
@@ -166,12 +166,12 @@ Teaches composition patterns that scale — specifically how to avoid the `isLoa
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with category table and quick reference |
-| `AGENTS.md` | Fully compiled document with all rules expanded |
-| `README.md` | Structure and contribution guide |
-| `rules/` | Individual rule files with bad/good code examples |
+| File        | Description                                         |
+| ----------- | --------------------------------------------------- |
+| `SKILL.md`  | Entry point with category table and quick reference |
+| `AGENTS.md` | Fully compiled document with all rules expanded     |
+| `README.md` | Structure and contribution guide                    |
+| `rules/`    | Individual rule files with bad/good code examples   |
 
 ---
 
@@ -200,22 +200,22 @@ Based on Emil Kowalski's [animations.dev](https://animations.dev) course and his
 
 ### Key Values Reference
 
-| Value | Usage |
-| ----- | ----- |
-| `cubic-bezier(0.32, 0.72, 0, 1)` | iOS-style drawer/sheet animation |
-| `scale(0.97)` | Button press feedback |
-| `scale(0.95)` | Minimum enter scale (never `scale(0)`) |
-| `200ms ease-out` | Standard UI transition |
-| `300ms` | Maximum duration for UI animations |
-| `500ms` | Drawer animation duration |
-| `14px` | Toast stack offset |
+| Value                            | Usage                                  |
+| -------------------------------- | -------------------------------------- |
+| `cubic-bezier(0.32, 0.72, 0, 1)` | iOS-style drawer/sheet animation       |
+| `scale(0.97)`                    | Button press feedback                  |
+| `scale(0.95)`                    | Minimum enter scale (never `scale(0)`) |
+| `200ms ease-out`                 | Standard UI transition                 |
+| `300ms`                          | Maximum duration for UI animations     |
+| `500ms`                          | Drawer animation duration              |
+| `14px`                           | Toast stack offset                     |
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Full skill with all 43 rules, key values table, and reference file index |
-| `references/` | Individual rule files (one per rule, named by rule ID) |
+| File          | Description                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| `SKILL.md`    | Full skill with all 43 rules, key values table, and reference file index |
+| `references/` | Individual rule files (one per rule, named by rule ID)                   |
 
 ---
 
@@ -244,11 +244,11 @@ Comprehensive Postgres performance optimization guide maintained by Supabase. Co
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with 8-category priority table and reference links |
-| `AGENTS.md` | Fully compiled version (for deep context loading) |
-| `README.md` | Installation and usage guide |
+| File          | Description                                                           |
+| ------------- | --------------------------------------------------------------------- |
+| `SKILL.md`    | Entry point with 8-category priority table and reference links        |
+| `AGENTS.md`   | Fully compiled version (for deep context loading)                     |
+| `README.md`   | Installation and usage guide                                          |
 | `references/` | One `.md` file per rule with bad/good SQL examples and EXPLAIN output |
 
 ---
@@ -278,8 +278,8 @@ A dense, reference-grade PostgreSQL schema design guide. Covers every aspect of 
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                        |
+| ---------- | ---------------------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained skill — all rules, examples, data type tables, SQL code blocks |
 
 ---
@@ -334,14 +334,14 @@ ANALYZE orders;
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Full skill with workflow, patterns, MUST DO / MUST NOT DO rules, and reference table |
-| `references/performance.md` | EXPLAIN ANALYZE, indexes, statistics, query tuning |
-| `references/jsonb.md` | JSONB operators, indexing, GIN, containment queries |
-| `references/extensions.md` | PostGIS, pgvector, pg_trgm, pg_stat_statements |
-| `references/replication.md` | Streaming replication, logical replication, failover |
-| `references/maintenance.md` | VACUUM, ANALYZE, pg_stat views, bloat monitoring |
+| File                        | Description                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------------ |
+| `SKILL.md`                  | Full skill with workflow, patterns, MUST DO / MUST NOT DO rules, and reference table |
+| `references/performance.md` | EXPLAIN ANALYZE, indexes, statistics, query tuning                                   |
+| `references/jsonb.md`       | JSONB operators, indexing, GIN, containment queries                                  |
+| `references/extensions.md`  | PostGIS, pgvector, pg_trgm, pg_stat_statements                                       |
+| `references/replication.md` | Streaming replication, logical replication, failover                                 |
+| `references/maintenance.md` | VACUUM, ANALYZE, pg_stat views, bloat monitoring                                     |
 
 ---
 
@@ -370,19 +370,19 @@ A comprehensive, example-driven guide to TypeScript's advanced type system. Cove
 
 ### Advanced Patterns Reference
 
-| Pattern | Use Case |
-| ------- | -------- |
-| Type-Safe Event Emitter | Typed `on()` / `emit()` with `EventMap` generic |
-| Type-Safe API Client | Endpoint config object with inferred params, body, response |
-| Builder Pattern | Compile-time enforcement that all required fields are set before `.build()` |
-| `DeepReadonly` / `DeepPartial` | Recursive type transforms for nested config/state objects |
-| Type-Safe Form Validation | Generic `FormValidator<T>` with per-field rule arrays |
-| Discriminated Unions + Reducer | Exhaustive state machines with no impossible states |
+| Pattern                        | Use Case                                                                    |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| Type-Safe Event Emitter        | Typed `on()` / `emit()` with `EventMap` generic                             |
+| Type-Safe API Client           | Endpoint config object with inferred params, body, response                 |
+| Builder Pattern                | Compile-time enforcement that all required fields are set before `.build()` |
+| `DeepReadonly` / `DeepPartial` | Recursive type transforms for nested config/state objects                   |
+| Type-Safe Form Validation      | Generic `FormValidator<T>` with per-field rule arrays                       |
+| Discriminated Unions + Reducer | Exhaustive state machines with no impossible states                         |
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained skill — all patterns, examples, pitfalls, performance notes, and type testing |
 
 ---
@@ -395,7 +395,7 @@ A comprehensive, example-driven guide to TypeScript's advanced type system. Cove
 
 ### Purpose
 
-An **auditing** skill, not a creation skill. Where Frontend Design (#3) tells the LLM *how to create* great UI, this skill tells it *how to review* existing UI against a concrete, comprehensive checklist. It fetches the latest rules from [`vercel-labs/web-interface-guidelines`](https://github.com/vercel-labs/web-interface-guidelines) on every invocation, so rules are always up to date. Output is in terse `file:line` format (VS Code clickable).
+An **auditing** skill, not a creation skill. Where Frontend Design (#3) tells the LLM _how to create_ great UI, this skill tells it _how to review_ existing UI against a concrete, comprehensive checklist. It fetches the latest rules from [`vercel-labs/web-interface-guidelines`](https://github.com/vercel-labs/web-interface-guidelines) on every invocation, so rules are always up to date. Output is in terse `file:line` format (VS Code clickable).
 
 > **Note:** This skill dynamically fetches its rules at runtime from:
 > `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md`
@@ -416,17 +416,17 @@ An **auditing** skill, not a creation skill. Where Frontend Design (#3) tells th
 
 ### Anti-Patterns to Flag
 
-| Anti-Pattern | Why |
-| ------------ | --- |
-| `user-scalable=no` / `maximum-scale=1` | Disables zoom — accessibility violation |
-| `transition: all` | Animates unexpected properties; never explicit |
-| `outline-none` without focus replacement | Breaks keyboard navigation |
-| `<div onClick>` / `<span onClick>` | Should be `<button>`; no keyboard, no semantics |
-| Images without `width`/`height` | Causes Cumulative Layout Shift (CLS) |
-| Large `.map()` without virtualization | Causes jank on lists > 50 items |
-| Hardcoded date/number formats | Use `Intl.DateTimeFormat` / `Intl.NumberFormat` |
-| `autoFocus` without justification | Disruptive on mobile; use sparingly |
-| `onPaste` + `preventDefault` | Never block paste in form fields |
+| Anti-Pattern                             | Why                                             |
+| ---------------------------------------- | ----------------------------------------------- |
+| `user-scalable=no` / `maximum-scale=1`   | Disables zoom — accessibility violation         |
+| `transition: all`                        | Animates unexpected properties; never explicit  |
+| `outline-none` without focus replacement | Breaks keyboard navigation                      |
+| `<div onClick>` / `<span onClick>`       | Should be `<button>`; no keyboard, no semantics |
+| Images without `width`/`height`          | Causes Cumulative Layout Shift (CLS)            |
+| Large `.map()` without virtualization    | Causes jank on lists > 50 items                 |
+| Hardcoded date/number formats            | Use `Intl.DateTimeFormat` / `Intl.NumberFormat` |
+| `autoFocus` without justification        | Disruptive on mobile; use sparingly             |
+| `onPaste` + `preventDefault`             | Never block paste in form fields                |
 
 ### Output Format
 
@@ -447,6 +447,6 @@ src/Modal.tsx:12 - missing overscroll-behavior: contain
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                          |
+| ---------- | ------------------------------------------------------------------------------------ |
 | `SKILL.md` | Entry point — instructs the LLM to fetch `command.md` from GitHub before each review |

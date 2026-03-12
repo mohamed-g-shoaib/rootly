@@ -27,10 +27,12 @@ function ZoomableContainer({ children, zoom }) {
 ```tsx
 function FadeContainer({ children, visible }) {
   return (
-    <div style={{
-      opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(10px)'
-    }}>
+    <div
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(10px)",
+      }}
+    >
       {children} {/* Children maintain original size */}
     </div>
   )

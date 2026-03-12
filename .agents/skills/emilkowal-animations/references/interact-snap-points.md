@@ -27,7 +27,8 @@ const onDragEnd = (position) => {
 const onDragEnd = (position, velocity) => {
   if (velocity > 0.5) {
     // Fast flick - snap to point in direction of velocity
-    const target = velocity > 0 ? snapPoints[snapPoints.length - 1] : snapPoints[0]
+    const target =
+      velocity > 0 ? snapPoints[snapPoints.length - 1] : snapPoints[0]
     animateTo(target)
   } else {
     // Slow drag - snap to closest
