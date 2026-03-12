@@ -1,22 +1,22 @@
-import { Geist_Mono, Inter } from "next/font/google"
+import { Geist_Mono, Inter } from "next/font/google";
 
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-})
+});
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
@@ -26,10 +26,10 @@ export default function RootLayout({
         "antialiased",
         fontMono.variable,
         "font-sans",
-        inter.variable
+        inter.variable,
       )}
     >
-      <body>
+      <body suppressHydrationWarning>
         <ThemeProvider>
           <ToastProvider>
             <AnchoredToastProvider>{children}</AnchoredToastProvider>
@@ -37,5 +37,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
