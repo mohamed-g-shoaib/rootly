@@ -10,6 +10,7 @@ import {
   MoreVerticalIcon,
   Note01Icon,
   Pdf01Icon,
+  Search01Icon,
   TextSquareIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -52,6 +53,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 
+import { motion } from "motion/react"
 import { understandingLabel, type Note, toCodeBadgeLabel } from "./notes-model"
 
 export function EmptyState({
@@ -68,11 +70,20 @@ export function EmptyState({
   if (!hasAnyNotes) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No notes yet</div>
-        <div className="text-sm text-muted-foreground">
-          Create your first note to get started.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={Note01Icon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button onClick={onNewNote}>New Note</Button>
+        <div className="text-lg font-medium">No notes yet</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Create your first note to start building your knowledge base.
+        </div>
+        <Button onClick={onNewNote} type="button" className="mt-2">
+          New Note
+        </Button>
       </div>
     )
   }
@@ -80,11 +91,23 @@ export function EmptyState({
   if (hasFilters) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No notes match your filters</div>
-        <div className="text-sm text-muted-foreground">
-          Try adjusting your search or clearing the filters.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={Search01Icon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button variant="ghost" onClick={onClearFilters}>
+        <div className="text-lg font-medium">No notes match your filters</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Try adjusting your search query or clearing the active filters.
+        </div>
+        <Button
+          variant="ghost"
+          type="button"
+          onClick={onClearFilters}
+          className="mt-2"
+        >
           Clear filters
         </Button>
       </div>
@@ -106,6 +129,7 @@ export function NoteCard({
   onViewFull,
   onViewCode,
   readOnly = false,
+  shouldReduceMotion = false,
 }: {
   note: Note
   now: Date
@@ -118,159 +142,174 @@ export function NoteCard({
   onViewFull: () => void
   onViewCode: () => void
   readOnly?: boolean
+  shouldReduceMotion?: boolean
 }) {
   const isQa = note.type === "qa"
   const showAnswer = overrideShow ?? globalShowAnswers
 
+  const _initial = shouldReduceMotion ? undefined : { opacity: 0, y: 10 }
+  const _animate = shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          {note.courseTitle ? (
-            <div className="text-sm text-muted-foreground">
-              {note.courseTitle}
-            </div>
-          ) : null}
-        </div>
+    <motion.div
+      initial={_initial}
+      animate={_animate}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            {note.courseTitle ? (
+              <div className="text-sm text-muted-foreground">
+                {note.courseTitle}
+              </div>
+            ) : null}
+          </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={note.flag ? "Remove flag" : "Flag for review"}
-            onClick={onToggleFlag}
-          >
-            <HugeiconsIcon
-              icon={Flag01Icon}
-              size={18}
-              className={cn(
-                "cursor-pointer",
-                note.flag ? "text-destructive" : "text-muted-foreground"
-              )}
-            />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={note.flag ? "Remove flag" : "Flag for review"}
+              onClick={onToggleFlag}
+            >
+              <HugeiconsIcon
+                icon={Flag01Icon}
+                size={18}
+                className={cn(
+                  "cursor-pointer",
+                  note.flag ? "text-destructive" : "text-muted-foreground"
+                )}
+              />
+            </Button>
 
-          {!readOnly ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button variant="ghost" size="icon" aria-label="More" />
-                }
-              >
-                <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={onEdit}>
-                  <HugeiconsIcon icon={Edit01Icon} size={18} />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onViewFull}>
-                  <HugeiconsIcon icon={Note01Icon} size={18} />
-                  View full note
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <HugeiconsIcon icon={Pdf01Icon} size={18} />
-                  Export as PDF
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <HugeiconsIcon icon={TextSquareIcon} size={18} />
-                  Export as Markdown
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DeleteDialog onDelete={() => void 0}>
-                  <DropdownMenuItem variant="destructive">
-                    <HugeiconsIcon icon={Delete01Icon} size={18} />
-                    Delete
-                  </DropdownMenuItem>
-                </DeleteDialog>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="pt-4">
-        {isQa ? (
-          <div className="flex flex-col gap-3">
-            <div className="font-medium">{note.question}</div>
-
-            {!showAnswer ? (
-              isMobile ? (
-                <Button
-                  variant="outline"
-                  onClick={() => onOverrideChange(true)}
+            {!readOnly ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="ghost" size="icon" aria-label="More" />
+                  }
                 >
-                  Show Answer
-                </Button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <PreviewCard>
-                    <PreviewCardTrigger
-                      render={<Button variant="ghost" size="sm" />}
-                    >
-                      Peek answer
-                    </PreviewCardTrigger>
-                    <PreviewCardPopup>
-                      <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                        {note.answer}
-                      </div>
-                    </PreviewCardPopup>
-                  </PreviewCard>
-                </div>
-              )
-            ) : (
-              <>
-                <div className="text-sm text-muted-foreground">
-                  {note.answer}
-                </div>
-                {isMobile ? (
+                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={onEdit}>
+                    <HugeiconsIcon icon={Edit01Icon} size={18} />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onViewFull}>
+                    <HugeiconsIcon icon={Note01Icon} size={18} />
+                    View full note
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <HugeiconsIcon icon={Pdf01Icon} size={18} />
+                    Export as PDF
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <HugeiconsIcon icon={TextSquareIcon} size={18} />
+                    Export as Markdown
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DeleteDialog onDelete={() => void 0}>
+                    <DropdownMenuItem variant="destructive">
+                      <HugeiconsIcon icon={Delete01Icon} size={18} />
+                      Delete
+                    </DropdownMenuItem>
+                  </DeleteDialog>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="pt-4">
+          {isQa ? (
+            <div className="flex flex-col gap-3">
+              <div className="font-medium">{note.question}</div>
+
+              {!showAnswer ? (
+                isMobile ? (
                   <Button
                     variant="outline"
-                    onClick={() => onOverrideChange(false)}
+                    onClick={() => onOverrideChange(true)}
                   >
-                    Hide Answer
+                    Show Answer
                   </Button>
-                ) : null}
-              </>
-            )}
-          </div>
-        ) : (
-          <div>
-            <div className="line-clamp-4 text-sm text-muted-foreground">
-              {note.body}
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <PreviewCard>
+                      <PreviewCardTrigger
+                        render={<Button variant="ghost" size="sm" />}
+                      >
+                        Peek answer
+                      </PreviewCardTrigger>
+                      <PreviewCardPopup>
+                        <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                          {note.answer}
+                        </div>
+                      </PreviewCardPopup>
+                    </PreviewCard>
+                  </div>
+                )
+              ) : (
+                <>
+                  <div className="text-sm text-muted-foreground">
+                    {note.answer}
+                  </div>
+                  {isMobile ? (
+                    <Button
+                      variant="outline"
+                      onClick={() => onOverrideChange(false)}
+                    >
+                      Hide Answer
+                    </Button>
+                  ) : null}
+                </>
+              )}
             </div>
-            {!readOnly && note.body && note.body.split(" ").length > 24 ? (
-              <Button variant="link" className="px-0" onClick={onViewFull}>
-                View full note
+          ) : (
+            <div>
+              <div className="line-clamp-4 text-sm text-muted-foreground">
+                {note.body}
+              </div>
+              {!readOnly && note.body && note.body.split(" ").length > 24 ? (
+                <Button
+                  variant="link"
+                  type="button"
+                  className="px-0"
+                  onClick={onViewFull}
+                >
+                  View full note
+                </Button>
+              ) : null}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-3 pt-4">
+          <div className="flex items-center gap-2">
+            {!readOnly && note.codeSnippet ? (
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label="View code"
+                onClick={onViewCode}
+                className="gap-2"
+              >
+                <HugeiconsIcon icon={CodeIcon} size={18} />
+                {toCodeBadgeLabel(note.codeLanguage)}
               </Button>
             ) : null}
           </div>
-        )}
-      </div>
 
-      <div className="flex items-center justify-between gap-3 pt-4">
-        <div className="flex items-center gap-2">
-          {!readOnly && note.codeSnippet ? (
-            <Button
-              variant="outline"
-              size="sm"
-              aria-label="View code"
-              onClick={onViewCode}
-              className="gap-2"
-            >
-              <HugeiconsIcon icon={CodeIcon} size={18} />
-              {toCodeBadgeLabel(note.codeLanguage)}
-            </Button>
+          {note.type === "qa" && note.understandingLevel ? (
+            <Badge variant="outline">
+              {understandingLabel(note.understandingLevel)}
+            </Badge>
           ) : null}
         </div>
-
-        {note.type === "qa" && note.understandingLevel ? (
-          <Badge variant="outline">
-            {understandingLabel(note.understandingLevel)}
-          </Badge>
-        ) : null}
-      </div>
-    </Card>
+      </Card>
+    </motion.div>
   )
 }
 
@@ -295,10 +334,10 @@ function DeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogClose render={<Button variant="ghost" />}>
+          <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Cancel
           </AlertDialogClose>
-          <Button variant="destructive" onClick={onDelete}>
+          <Button variant="destructive" type="button" onClick={onDelete}>
             Delete
           </Button>
         </AlertDialogFooter>

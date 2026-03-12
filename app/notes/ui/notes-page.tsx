@@ -11,6 +11,7 @@ import { DashboardShell } from "@/app/ui/dashboard-shell"
 import { PageContainer } from "@/components/ui/page-container"
 
 import { Spinner } from "@/components/ui/spinner"
+import { useReducedMotion } from "motion/react"
 
 import type { CourseFilter, SortKey, TypeFilter } from "./notes-model"
 import { buildMockCourses, buildMockNotes } from "./notes-mock-data"
@@ -24,6 +25,7 @@ import {
 
 export default function NotesPage() {
   const isMobile = useIsMobile()
+  const shouldReduceMotion = useReducedMotion()
 
   const courses = React.useMemo(() => buildMockCourses(), [])
   const allNotes = React.useMemo(() => buildMockNotes(), [])
@@ -245,6 +247,7 @@ export default function NotesPage() {
                   note={note}
                   now={now}
                   isMobile={isMobile}
+                  shouldReduceMotion={shouldReduceMotion ?? undefined}
                   globalShowAnswers={globalShowAnswers}
                   overrideShow={answerOverrides[note.id]}
                   onOverrideChange={(value) =>
