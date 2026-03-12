@@ -48,6 +48,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import {
+  PreviewCard,
+  PreviewCardPopup,
+  PreviewCardTrigger,
+} from "@/components/ui/preview-card"
+import {
   Progress,
   ProgressIndicator,
   ProgressTrack,
@@ -424,87 +429,118 @@ export function CourseCard({
   const hasLinks = Boolean(course.courseLink) || course.links.length > 0
 
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between gap-3">
-        <Link href={`/courses/${course.id}`} className="min-w-0 flex-1">
-          <div className="line-clamp-2 font-medium">{course.title}</div>
-          {course.instructor ? (
-            <div className="pt-1 text-sm text-muted-foreground">
-              {course.instructor}
-            </div>
-          ) : null}
-        </Link>
-
-        <div className="flex items-center gap-1">
-          {hasLinks ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="View links"
-              onClick={onViewLinks}
-            >
-              <HugeiconsIcon icon={Link01Icon} size={18} />
-            </Button>
-          ) : null}
-
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={<Button variant="ghost" size="icon" aria-label="More" />}
-            >
-              <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onEdit}>
-                <HugeiconsIcon icon={Edit01Icon} size={18} />
-                Edit
-              </DropdownMenuItem>
-              {hasLinks ? (
-                <DropdownMenuItem onClick={onViewLinks}>
-                  <HugeiconsIcon icon={Link01Icon} size={18} />
-                  View links
-                </DropdownMenuItem>
+    <div className="h-[220px]">
+      <Card className="h-full p-4">
+        <div className="flex h-full flex-col gap-3">
+          <div className="shrink-0">
+            <div className="flex flex-col gap-1">
+              {course.instructor ? (
+                <div className="truncate text-xs text-muted-foreground">
+                  {course.instructor}
+                </div>
               ) : null}
-              <DropdownMenuSeparator />
-              <DeleteDialog onDelete={onDelete}>
-                <DropdownMenuItem variant="destructive">
-                  <HugeiconsIcon icon={Delete01Icon} size={18} />
-                  Delete
-                </DropdownMenuItem>
-              </DeleteDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
 
-      <div className="pt-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-sm text-muted-foreground">Progress</div>
-          <div className="text-sm tabular-nums">{course.progress}%</div>
-        </div>
-        <div className="pt-2">
-          <Progress value={course.progress}>
-            <ProgressTrack>
-              <ProgressIndicator style={{ width: `${course.progress}%` }} />
-            </ProgressTrack>
-          </Progress>
-        </div>
-      </div>
+              <Link href={`/courses/${course.id}`} className="min-w-0 flex-1">
+                <div className="line-clamp-2 font-medium">{course.title}</div>
+              </Link>
+            </div>
+          </div>
 
-      {showTopics ? (
-        <div className="flex flex-wrap gap-2 pt-4">
-          {visibleTopics.map((t) => (
-            <Badge key={t} variant="outline">
-              {t}
-            </Badge>
-          ))}
-          {remainingTopics > 0 ? (
-            <Badge variant="outline">+{remainingTopics} more</Badge>
-          ) : null}
-        </div>
-      ) : null}
+          <div className="flex min-h-0 flex-1 flex-col justify-center gap-2 overflow-hidden">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm text-muted-foreground">Progress</div>
+              <div className="text-sm tabular-nums">{course.progress}%</div>
+            </div>
+            <div>
+              <Progress value={course.progress}>
+                <ProgressTrack>
+                  <ProgressIndicator style={{ width: `${course.progress}%` }} />
+                </ProgressTrack>
+              </Progress>
+            </div>
+          </div>
 
-      <div className="pt-4" />
-    </Card>
+          <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+              {showTopics ? (
+                <>
+                  {visibleTopics.map((t) => (
+                    <Badge key={t} variant="outline" className="shrink-0">
+                      {t}
+                    </Badge>
+                  ))}
+                  {remainingTopics > 0 ? (
+                    <PreviewCard>
+                      <PreviewCardTrigger
+                        render={
+                          <Badge
+                            variant="outline"
+                            className="shrink-0 cursor-pointer"
+                          />
+                        }
+                      >
+                        +{remainingTopics} more
+                      </PreviewCardTrigger>
+                      <PreviewCardPopup>
+                        <div className="flex flex-wrap gap-1.5">
+                          {course.topics.map((t) => (
+                            <Badge key={t} variant="outline">
+                              {t}
+                            </Badge>
+                          ))}
+                        </div>
+                      </PreviewCardPopup>
+                    </PreviewCard>
+                  ) : null}
+                </>
+              ) : null}
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1">
+              {hasLinks ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="View links"
+                  onClick={onViewLinks}
+                >
+                  <HugeiconsIcon icon={Link01Icon} size={18} />
+                </Button>
+              ) : null}
+
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="ghost" size="icon" aria-label="More" />
+                  }
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={onEdit}>
+                    <HugeiconsIcon icon={Edit01Icon} size={18} />
+                    Edit
+                  </DropdownMenuItem>
+                  {hasLinks ? (
+                    <DropdownMenuItem onClick={onViewLinks}>
+                      <HugeiconsIcon icon={Link01Icon} size={18} />
+                      View links
+                    </DropdownMenuItem>
+                  ) : null}
+                  <DropdownMenuSeparator />
+                  <DeleteDialog onDelete={onDelete}>
+                    <DropdownMenuItem variant="destructive">
+                      <HugeiconsIcon icon={Delete01Icon} size={18} />
+                      Delete
+                    </DropdownMenuItem>
+                  </DeleteDialog>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
   )
 }
 

@@ -157,164 +157,184 @@ export function NoteCard({
       initial={_initial}
       animate={_animate}
       transition={{ duration: 0.3 }}
+      className="h-[220px]"
     >
-      <Card className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            {note.courseTitle ? (
-              <div className="text-sm text-muted-foreground">
-                {note.courseTitle}
-              </div>
-            ) : null}
+      <Card className="h-full p-4">
+        <div className="flex h-full flex-col gap-3">
+          <div className="shrink-0">
+            <div className="flex flex-col gap-1">
+              {note.courseTitle ? (
+                <div className="truncate text-xs text-muted-foreground">
+                  {note.courseTitle}
+                </div>
+              ) : null}
+
+              {isQa ? (
+                <div className="line-clamp-2 font-medium">{note.question}</div>
+              ) : null}
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={note.flag ? "Remove flag" : "Flag for review"}
-              onClick={onToggleFlag}
-            >
-              <HugeiconsIcon
-                icon={Flag01Icon}
-                size={18}
-                className={cn(
-                  "cursor-pointer",
-                  note.flag ? "text-destructive" : "text-muted-foreground"
-                )}
-              />
-            </Button>
-
-            {!readOnly ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost" size="icon" aria-label="More" />
-                  }
-                >
-                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={onEdit}>
-                    <HugeiconsIcon icon={Edit01Icon} size={18} />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onViewFull}>
-                    <HugeiconsIcon icon={Note01Icon} size={18} />
-                    View full note
-                  </DropdownMenuItem>
-                  {note.codeSnippet ? (
-                    <DropdownMenuItem onClick={onViewCode}>
-                      <HugeiconsIcon icon={CodeIcon} size={18} />
-                      View code
-                    </DropdownMenuItem>
-                  ) : null}
-                  <DropdownMenuItem>
-                    <HugeiconsIcon icon={Pdf01Icon} size={18} />
-                    Export as PDF
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <HugeiconsIcon icon={TextSquareIcon} size={18} />
-                    Export as Markdown
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DeleteDialog onDelete={onDelete}>
-                    <DropdownMenuItem variant="destructive">
-                      <HugeiconsIcon icon={Delete01Icon} size={18} />
-                      Delete
-                    </DropdownMenuItem>
-                  </DeleteDialog>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="pt-4">
-          {isQa ? (
-            <div className="flex flex-col gap-3">
-              <div className="font-medium">{note.question}</div>
-
-              {!showAnswer ? (
-                isMobile ? (
+          <div className="min-h-0 flex-1 overflow-hidden">
+            {isQa ? (
+              <div className="flex min-h-0 flex-1 items-start overflow-hidden">
+                {showAnswer ? (
+                  isMobile ? (
+                    <button
+                      type="button"
+                      className="min-h-0 flex-1 cursor-pointer overflow-hidden text-left"
+                      onClick={onViewFull}
+                    >
+                      <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
+                        {note.answer}
+                      </p>
+                    </button>
+                  ) : (
+                    <PreviewCard>
+                      <PreviewCardTrigger
+                        render={
+                          <div className="min-h-0 flex-1 cursor-pointer overflow-hidden" />
+                        }
+                      >
+                        <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
+                          {note.answer}
+                        </p>
+                      </PreviewCardTrigger>
+                      <PreviewCardPopup>
+                        <div className="flex flex-col gap-3">
+                          <div className="text-sm font-medium whitespace-pre-wrap">
+                            {note.question}
+                          </div>
+                          <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                            {note.answer}
+                          </div>
+                        </div>
+                      </PreviewCardPopup>
+                    </PreviewCard>
+                  )
+                ) : (
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => onOverrideChange(true)}
                   >
                     Show Answer
                   </Button>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <PreviewCard>
-                      <PreviewCardTrigger
-                        render={<Button variant="ghost" size="sm" />}
-                      >
-                        Peek answer
-                      </PreviewCardTrigger>
-                      <PreviewCardPopup>
-                        <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                          {note.answer}
-                        </div>
-                      </PreviewCardPopup>
-                    </PreviewCard>
-                  </div>
-                )
-              ) : (
-                <>
-                  <div className="text-sm text-muted-foreground">
-                    {note.answer}
-                  </div>
-                  {isMobile ? (
-                    <Button
-                      variant="outline"
-                      onClick={() => onOverrideChange(false)}
-                    >
-                      Hide Answer
-                    </Button>
-                  ) : null}
-                </>
-              )}
-            </div>
-          ) : (
-            <div>
-              <div className="line-clamp-4 text-sm text-muted-foreground">
-                {note.body}
+                )}
               </div>
-              {!readOnly && note.body && note.body.split(" ").length > 24 ? (
-                <Button
-                  variant="link"
-                  type="button"
-                  className="px-0"
-                  onClick={onViewFull}
-                >
-                  View full note
-                </Button>
-              ) : null}
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between gap-3 pt-4">
-          <div className="flex items-center gap-2">
-            {!readOnly && note.codeSnippet ? (
-              <Button
-                variant="outline"
-                size="sm"
-                aria-label="View code"
-                onClick={onViewCode}
-                className="gap-2"
+            ) : isMobile ? (
+              <button
+                type="button"
+                className="min-h-0 flex-1 cursor-pointer overflow-hidden text-left"
+                onClick={onViewFull}
               >
-                <HugeiconsIcon icon={CodeIcon} size={18} />
-                {toCodeBadgeLabel(note.codeLanguage)}
-              </Button>
-            ) : null}
+                <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
+                  {note.body}
+                </p>
+              </button>
+            ) : (
+              <PreviewCard>
+                <PreviewCardTrigger
+                  render={
+                    <div className="min-h-0 flex-1 cursor-pointer overflow-hidden" />
+                  }
+                >
+                  <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
+                    {note.body}
+                  </p>
+                </PreviewCardTrigger>
+                <PreviewCardPopup>
+                  <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                    {note.body}
+                  </div>
+                </PreviewCardPopup>
+              </PreviewCard>
+            )}
           </div>
 
-          {note.type === "qa" && note.understandingLevel ? (
-            <Badge variant="outline">
-              {understandingLabel(note.understandingLevel)}
-            </Badge>
-          ) : null}
+          <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+              {!readOnly && note.codeSnippet ? (
+                <Badge
+                  variant="outline"
+                  className="shrink-0 cursor-pointer"
+                  onClick={onViewCode}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <HugeiconsIcon icon={CodeIcon} size={14} />
+                    {toCodeBadgeLabel(note.codeLanguage)}
+                  </span>
+                </Badge>
+              ) : null}
+
+              {note.type === "qa" && note.understandingLevel ? (
+                <Badge variant="outline" className="shrink-0">
+                  {understandingLabel(note.understandingLevel)}
+                </Badge>
+              ) : null}
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={note.flag ? "Remove flag" : "Flag for review"}
+                onClick={onToggleFlag}
+              >
+                <HugeiconsIcon
+                  icon={Flag01Icon}
+                  size={18}
+                  className={cn(
+                    "cursor-pointer",
+                    note.flag ? "text-destructive" : "text-muted-foreground"
+                  )}
+                />
+              </Button>
+
+              {!readOnly ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" aria-label="More" />
+                    }
+                  >
+                    <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={onEdit}>
+                      <HugeiconsIcon icon={Edit01Icon} size={18} />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={onViewFull}>
+                      <HugeiconsIcon icon={Note01Icon} size={18} />
+                      View full note
+                    </DropdownMenuItem>
+                    {note.codeSnippet ? (
+                      <DropdownMenuItem onClick={onViewCode}>
+                        <HugeiconsIcon icon={CodeIcon} size={18} />
+                        View code
+                      </DropdownMenuItem>
+                    ) : null}
+                    <DropdownMenuItem>
+                      <HugeiconsIcon icon={Pdf01Icon} size={18} />
+                      Export as PDF
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <HugeiconsIcon icon={TextSquareIcon} size={18} />
+                      Export as Markdown
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DeleteDialog onDelete={onDelete}>
+                      <DropdownMenuItem variant="destructive">
+                        <HugeiconsIcon icon={Delete01Icon} size={18} />
+                        Delete
+                      </DropdownMenuItem>
+                    </DeleteDialog>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : null}
+            </div>
+          </div>
         </div>
       </Card>
     </motion.div>

@@ -64,22 +64,40 @@ export function ReviewSessionSkeletonList() {
   return (
     <div className="flex flex-col gap-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i} className="p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0 flex-1">
-              <Skeleton className="h-5 w-48" />
+        <Card key={i} className="h-[220px] p-4">
+          <div className="flex h-full flex-col gap-3">
+            <div className="shrink-0">
+              <Skeleton className="h-4 w-32" />
               <div className="pt-2">
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-5 w-48" />
               </div>
             </div>
-            <Skeleton className="h-9 w-9 rounded-md" />
-          </div>
-          <div className="pt-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <Skeleton className="h-4 w-16" />
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-5 w-20" />
+
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <div className="flex w-full items-start justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <Skeleton className="h-4 w-28" />
+                  <div className="pt-2">
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                </div>
+                <div className="min-w-0 flex-1 text-right">
+                  <Skeleton className="ml-auto h-4 w-28" />
+                  <div className="pt-2">
+                    <Skeleton className="ml-auto h-4 w-40" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+              <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+                <Skeleton className="h-5 w-16" />
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-5 w-20" />
+              </div>
+              <Skeleton className="h-9 w-9 rounded-md" />
             </div>
           </div>
         </Card>
@@ -104,99 +122,112 @@ export function SessionCard({
   onDelete: () => void
 }) {
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between gap-3">
-        <button
-          type="button"
-          className="min-w-0 flex-1 text-left"
-          onClick={onView}
-        >
-          <div className="truncate font-medium">{session.name}</div>
-          <div className="pt-1 text-sm text-muted-foreground">
-            {formattedDate}
-          </div>
-        </button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={<Button variant="ghost" size="icon" aria-label="More" />}
-          >
-            <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onView}>
-              <HugeiconsIcon icon={Target01Icon} size={18} />
-              View details
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DeleteSessionDialog sessionName={session.name} onDelete={onDelete}>
-              <DropdownMenuItem variant="destructive">
-                <HugeiconsIcon icon={Delete01Icon} size={18} />
-                Delete
-              </DropdownMenuItem>
-            </DeleteSessionDialog>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      <div className="pt-4">
-        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Target01Icon} size={18} />
-            <span className="tabular-nums">{session.accuracy}%</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Clock01Icon} size={18} />
-            <span className="tabular-nums">
-              {formatMinutes(session.timeSpentMinutes)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={CheckListIcon} size={18} />
-            <span className="tabular-nums">
-              {session.questionCount} questions
-            </span>
+    <div className="h-[220px]">
+      <Card className="h-full p-4">
+        <div className="flex h-full flex-col gap-3">
+          <div className="shrink-0">
+            <div className="text-xs text-muted-foreground">{formattedDate}</div>
+            <button
+              type="button"
+              className="line-clamp-2 pt-1 text-left font-medium decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline"
+              onClick={onView}
+            >
+              {session.name}
+            </button>
           </div>
 
-          {session.shuffled ? <Badge variant="outline">Shuffled</Badge> : null}
-          {session.flaggedOnly ? (
-            <Badge variant="outline">Flagged</Badge>
-          ) : null}
-        </div>
-
-        <div className="pt-4">
-          <div className="flex w-full items-start justify-between gap-4">
+          <div className="flex min-h-0 w-full flex-1 items-start justify-between gap-4 overflow-hidden">
             <div className="min-w-0 flex-1">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs text-muted-foreground">
                 Weakest course
               </div>
               <div
                 className={cn(
-                  "pt-1 font-normal",
+                  "truncate pt-1 text-sm font-normal",
                   weakestCourseTitle === "—" && "text-muted-foreground"
                 )}
               >
-                <div className="truncate">{weakestCourseTitle}</div>
+                {weakestCourseTitle}
               </div>
             </div>
-
             <div className="min-w-0 flex-1 text-right">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs text-muted-foreground">
                 Strongest course
               </div>
               <div
                 className={cn(
-                  "pt-1 font-normal",
+                  "truncate pt-1 text-sm font-normal",
                   strongestCourseTitle === "—" && "text-muted-foreground"
                 )}
               >
-                <div className="truncate">{strongestCourseTitle}</div>
+                {strongestCourseTitle}
               </div>
             </div>
           </div>
+
+          <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+              <Badge variant="outline" className="shrink-0">
+                <span className="inline-flex items-center gap-2">
+                  <HugeiconsIcon icon={Target01Icon} size={14} />
+                  {session.accuracy}%
+                </span>
+              </Badge>
+              <Badge variant="outline" className="shrink-0">
+                <span className="inline-flex items-center gap-2">
+                  <HugeiconsIcon icon={Clock01Icon} size={14} />
+                  {formatMinutes(session.timeSpentMinutes)}
+                </span>
+              </Badge>
+              <Badge variant="outline" className="shrink-0">
+                <span className="inline-flex items-center gap-2">
+                  <HugeiconsIcon icon={CheckListIcon} size={14} />
+                  {session.questionCount}q
+                </span>
+              </Badge>
+              {session.shuffled ? (
+                <Badge variant="outline" className="shrink-0">
+                  Shuffled
+                </Badge>
+              ) : null}
+              {session.flaggedOnly ? (
+                <Badge variant="outline" className="shrink-0">
+                  Flagged
+                </Badge>
+              ) : null}
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1">
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="ghost" size="icon" aria-label="More" />
+                  }
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={onView}>
+                    <HugeiconsIcon icon={Target01Icon} size={18} />
+                    View details
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DeleteSessionDialog
+                    sessionName={session.name}
+                    onDelete={onDelete}
+                  >
+                    <DropdownMenuItem variant="destructive">
+                      <HugeiconsIcon icon={Delete01Icon} size={18} />
+                      Delete
+                    </DropdownMenuItem>
+                  </DeleteSessionDialog>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   )
 }
 
