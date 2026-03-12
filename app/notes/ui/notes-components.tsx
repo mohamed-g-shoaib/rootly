@@ -11,6 +11,7 @@ import {
   Pdf01Icon,
   Search01Icon,
   TextSquareIcon,
+  ViewOffIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { motion } from "motion/react"
@@ -275,6 +276,20 @@ export function NoteCard({
             </div>
 
             <div className="flex shrink-0 items-center gap-1">
+              {isQa && overrideShow === true ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Hide answer"
+                  onClick={() => onOverrideChange(false)}
+                >
+                  <HugeiconsIcon
+                    icon={ViewOffIcon}
+                    size={18}
+                    color="var(--info)"
+                  />
+                </Button>
+              ) : null}
               <Button
                 variant="ghost"
                 size="icon"

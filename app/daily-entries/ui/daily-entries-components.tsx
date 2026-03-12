@@ -223,44 +223,45 @@ export function EntryCard({
   const isToday = isSameDay(entry.date, toDateInputValue(now))
 
   return (
-    <div className="h-[220px]">
+    <div className="h-[160px]">
+      {/* EntryCard is intentionally shorter — less content than other card types */}
       <Card className="h-full p-4">
         <div className="flex h-full flex-col gap-3">
-          <div className="flex shrink-0 items-start justify-between gap-3">
-            <div className="min-w-0 truncate font-medium">
-              {formatEntryDate(entry.date, now)}
+          <div className="flex shrink-0 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <div className="truncate font-medium">
+                {formatEntryDate(entry.date, now)}
+              </div>
+              {isToday ? (
+                <Badge variant="outline" className="shrink-0">
+                  Today
+                </Badge>
+              ) : null}
             </div>
-            {isToday ? (
-              <Badge variant="outline" className="shrink-0">
-                Today
-              </Badge>
-            ) : null}
+            <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
+              <HugeiconsIcon icon={Clock01Icon} size={16} />
+              <span className="tabular-nums">
+                {formatStudyTime(entry.studyTimeMinutes)}
+              </span>
+            </div>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-hidden">
-            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={Clock01Icon} size={18} />
-                <span className="tabular-nums">
-                  {formatStudyTime(entry.studyTimeMinutes)}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                {entry.mood === 1 ? (
-                  <EmojioneV1WearyFace className="size-5" aria-hidden="true" />
-                ) : entry.mood === 2 ? (
-                  <EmojioneV1SlightlySmilingFace
-                    className="size-5"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <EmojioneV1GrinningFaceWithSmilingEyes
-                    className="size-5"
-                    aria-hidden="true"
-                  />
-                )}
-                <span>{moodLabel(entry.mood)}</span>
-              </div>
+          <div className="flex min-h-0 flex-1 items-center overflow-hidden">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {entry.mood === 1 ? (
+                <EmojioneV1WearyFace className="size-5" aria-hidden="true" />
+              ) : entry.mood === 2 ? (
+                <EmojioneV1SlightlySmilingFace
+                  className="size-5"
+                  aria-hidden="true"
+                />
+              ) : (
+                <EmojioneV1GrinningFaceWithSmilingEyes
+                  className="size-5"
+                  aria-hidden="true"
+                />
+              )}
+              <span>{moodLabel(entry.mood)}</span>
             </div>
           </div>
 

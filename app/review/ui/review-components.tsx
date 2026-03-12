@@ -74,7 +74,7 @@ export function ReviewSessionSkeletonList() {
             </div>
 
             <div className="min-h-0 flex-1 overflow-hidden">
-              <div className="flex w-full items-start justify-between gap-4">
+              <div className="flex w-full items-center justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <Skeleton className="h-4 w-28" />
                   <div className="pt-2">
@@ -125,18 +125,22 @@ export function SessionCard({
     <div className="h-[220px]">
       <Card className="h-full p-4">
         <div className="flex h-full flex-col gap-3">
-          <div className="shrink-0">
-            <div className="text-xs text-muted-foreground">{formattedDate}</div>
+          <div className="flex shrink-0 items-start justify-between gap-3">
             <button
               type="button"
-              className="line-clamp-2 pt-1 text-left font-medium decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline"
+              className="min-w-0 flex-1 text-left"
               onClick={onView}
             >
-              {session.name}
+              <div className="line-clamp-2 font-medium decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
+                {session.name}
+              </div>
             </button>
+            <div className="shrink-0 pt-0.5 text-xs text-muted-foreground">
+              {formattedDate}
+            </div>
           </div>
 
-          <div className="flex min-h-0 w-full flex-1 items-start justify-between gap-4 overflow-hidden">
+          <div className="flex min-h-0 w-full flex-1 items-center justify-between gap-4 overflow-hidden">
             <div className="min-w-0 flex-1">
               <div className="text-xs text-muted-foreground">
                 Weakest course

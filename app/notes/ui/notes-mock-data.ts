@@ -33,7 +33,7 @@ export function buildMockNotes(): Note[] {
       courseTitle: "Postgres Performance",
       question: "What is a partial index?",
       answer:
-        "An index with a WHERE clause that only indexes a subset of rows, improving size and performance.",
+        "An index with a WHERE clause that only indexes a subset of rows, improving size and performance.An index with a WHERE clauseAn index with a WHERE clauseAn index with a WHERE clauseAn index with a WHERE clauseAn index with a WHERE clause",
       body: null,
       understandingLevel: 1,
       flag: false,
