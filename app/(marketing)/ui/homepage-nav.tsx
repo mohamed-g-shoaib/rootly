@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 
-import { Github01Icon } from "@hugeicons/core-free-icons"
+import { ArrowRight02Icon, Github01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import RootlyLogo from "@/components/rootly-logo"
@@ -59,7 +59,16 @@ export default function HomepageNav() {
               Star on GitHub
             </Button>
 
-            <Button render={<Link href="/login" />}>Get started</Button>
+            <Button render={<Link href="/login" />} className="group">
+              <span className="inline-flex items-center gap-2">
+                Get started
+                <HugeiconsIcon
+                  icon={ArrowRight02Icon}
+                  size={18}
+                  className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+                />
+              </span>
+            </Button>
           </div>
         </div>
       </PageContainer>

@@ -3,9 +3,9 @@
 import * as React from "react"
 import Link from "next/link"
 
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { motion, useReducedMotion } from "motion/react"
+import { motion } from "motion/react"
 
 import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
@@ -13,8 +13,6 @@ import { PageContainer } from "@/components/ui/page-container"
 const easeOut = [0.32, 0.72, 0, 1] as const
 
 export default function HomepageHero() {
-  const reduceMotion = useReducedMotion()
-
   return (
     <section className="pt-24">
       <PageContainer>
@@ -48,44 +46,25 @@ export default function HomepageHero() {
           >
             <Button
               render={<Link href="/login" />}
-              className="w-full sm:w-auto"
+              className="group w-full sm:w-auto"
             >
-              Get started — it&apos;s free
+              <span className="inline-flex items-center gap-2">
+                Get started
+                <HugeiconsIcon
+                  icon={ArrowRight02Icon}
+                  size={18}
+                  className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+                />
+              </span>
             </Button>
 
             <Button
-              variant="ghost"
+              variant="outline"
               render={<a href="#mockup" aria-label="See how it works" />}
               className="w-full sm:w-auto"
             >
               See how it works
             </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, ease: easeOut, delay: 0.6 }}
-            className="pt-2"
-          >
-            <motion.div
-              animate={
-                reduceMotion ? { opacity: 1 } : { opacity: [1, 0.35, 1] }
-              }
-              transition={
-                reduceMotion
-                  ? undefined
-                  : {
-                      duration: 1.6,
-                      ease: "easeOut",
-                      repeat: Infinity,
-                      repeatDelay: 0.6,
-                      delay: 1,
-                    }
-              }
-            >
-              <HugeiconsIcon icon={ArrowDown01Icon} size={20} />
-            </motion.div>
           </motion.div>
         </div>
       </PageContainer>

@@ -2,78 +2,530 @@
 
 import * as React from "react"
 
+import {
+  AlertCircleIcon,
+  ArrowLeft02Icon,
+  ArrowRight02Icon,
+  CheckmarkCircle01Icon,
+  EyeIcon,
+  InformationCircleIcon,
+  ViewOffIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { motion } from "motion/react"
+import { Bar, BarChart, ResponsiveContainer } from "recharts"
 
 import { PageContainer } from "@/components/ui/page-container"
-import { Separator } from "@/components/ui/separator"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Slider, SliderValue } from "@/components/ui/slider"
+import {
+  PreviewCard,
+  PreviewCardPopup,
+  PreviewCardTrigger,
+} from "@/components/ui/preview-card"
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
+
+import {
+  EmojioneV1GrinningFaceWithSmilingEyes,
+  EmojioneV1SlightlySmilingFace,
+  EmojioneV1WearyFace,
+} from "@/app/daily-entries/ui/daily-entries-emojis"
 
 const easeOut = [0.32, 0.72, 0, 1] as const
 
-const STEPS = [
-  {
-    number: "01",
-    title: "Add your courses",
-    body: "Create a course for each video series, tutorial, or documentation set you are working through.",
-  },
-  {
-    number: "02",
-    title: "Capture as you learn",
-    body: "Write Q&A notes for concepts you want to remember. Add code snippets directly in the note.",
-  },
-  {
-    number: "03",
-    title: "Review regularly",
-    body: "Run a spaced repetition session on your notes. Rate each answer — Rootly adjusts your understanding level.",
-  },
-  {
-    number: "04",
-    title: "See your progress",
-    body: "The overview shows your study time, mood trends, and understanding growth across all your courses.",
-  },
+const TRACK_DATA = [
+  { day: "Mon", minutes: 42 },
+  { day: "Tue", minutes: 28 },
+  { day: "Wed", minutes: 55 },
+  { day: "Thu", minutes: 20 },
+  { day: "Fri", minutes: 48 },
 ] as const
 
+function CreateCourseVisual() {
+  return (
+    <Card className="h-48 p-4">
+      <div className="flex h-full flex-col gap-3">
+        <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+          <div>Course</div>
+          <div>3 links</div>
+        </div>
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="font-medium">Machine Learning Fundamentals</div>
+          <div className="text-sm text-muted-foreground">Andrew Ng</div>
+        </div>
+        <Field>
+          <Slider defaultValue={42}>
+            <div className="mb-2 flex items-center justify-between gap-1">
+              <FieldLabel className="text-sm font-medium">Progress</FieldLabel>
+              <SliderValue />
+            </div>
+          </Slider>
+        </Field>
+      </div>
+    </Card>
+  )
+}
+
+function CaptureVisual() {
+  const [showAnswer, setShowAnswer] = React.useState(false)
+  const [isHoverDesktop, setIsHoverDesktop] = React.useState(false)
+
+  React.useEffect(() => {
+    const mql = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const update = () => setIsHoverDesktop(mql.matches)
+
+    update()
+    mql.addEventListener("change", update)
+    return () => mql.removeEventListener("change", update)
+  }, [])
+
+  return (
+    <Card className="h-48 p-4">
+      <div className="flex h-full flex-col gap-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-sm text-muted-foreground">React</div>
+          <Button
+            type="button"
+            size="icon"
+            variant={showAnswer ? "secondary" : "outline"}
+            aria-label={showAnswer ? "Hide answer" : "Show answer"}
+            onClick={() => setShowAnswer((prev) => !prev)}
+          >
+            <HugeiconsIcon
+              icon={showAnswer ? ViewOffIcon : EyeIcon}
+              size={18}
+              color={showAnswer ? "var(--info)" : "currentColor"}
+            />
+          </Button>
+        </div>
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="font-medium">When should you use useMemo?</div>
+          {showAnswer ? (
+            <div className="text-sm text-muted-foreground">
+              When the computation is expensive and the reference needs to be
+              stable across renders.
+            </div>
+          ) : isHoverDesktop ? (
+            <PreviewCard>
+              <PreviewCardTrigger render={<Button variant="ghost" size="sm" />}>
+                Peek answer
+              </PreviewCardTrigger>
+              <PreviewCardPopup>
+                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                  When the computation is expensive and the reference needs to
+                  be stable across renders.
+                </div>
+              </PreviewCardPopup>
+            </PreviewCard>
+          ) : (
+            <Popover>
+              <PopoverTrigger render={<Button variant="ghost" size="sm" />}>
+                Peek answer
+              </PopoverTrigger>
+              <PopoverPopup align="start" className="w-64">
+                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                  When the computation is expensive and the reference needs to
+                  be stable across renders.
+                </div>
+              </PopoverPopup>
+            </Popover>
+          )}
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <Badge variant="outline">{"{ }"} JavaScript</Badge>
+          <Badge variant="outline">Getting It</Badge>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+function DailyLogVisual() {
+  const [mood, setMood] = React.useState<"burned" | "neutral" | "focused">(
+    "focused"
+  )
+
+  return (
+    <Card className="h-48 p-4">
+      <div className="flex h-full flex-col gap-3">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div>Today</div>
+          <div className="tabular-nums">2h 25m</div>
+        </div>
+
+        <div className="flex flex-1 flex-col justify-center">
+          <div className="text-center text-sm text-muted-foreground">
+            Today I learned about useMemo and why I might not need useEffect.
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            type="button"
+            variant={mood === "burned" ? "secondary" : "outline"}
+            size="sm"
+            className="gap-2"
+            onClick={() => setMood("burned")}
+          >
+            <EmojioneV1WearyFace className="size-4" aria-hidden="true" />
+            Burned
+          </Button>
+          <Button
+            type="button"
+            variant={mood === "neutral" ? "secondary" : "outline"}
+            size="sm"
+            className="gap-2"
+            onClick={() => setMood("neutral")}
+          >
+            <EmojioneV1SlightlySmilingFace
+              className="size-4"
+              aria-hidden="true"
+            />
+            Neutral
+          </Button>
+          <Button
+            type="button"
+            variant={mood === "focused" ? "secondary" : "outline"}
+            size="sm"
+            className="gap-2"
+            onClick={() => setMood("focused")}
+          >
+            <EmojioneV1GrinningFaceWithSmilingEyes
+              className="size-4"
+              aria-hidden="true"
+            />
+            Focused
+          </Button>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+function ReviewVisual() {
+  const [understandingLevel, setUnderstandingLevel] = React.useState<1 | 2 | 3>(
+    2
+  )
+  const [isHoverDesktop, setIsHoverDesktop] = React.useState(false)
+
+  React.useEffect(() => {
+    const mql = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const update = () => setIsHoverDesktop(mql.matches)
+
+    update()
+    mql.addEventListener("change", update)
+    return () => mql.removeEventListener("change", update)
+  }, [])
+
+  return (
+    <Card className="h-48 p-4">
+      <div className="flex h-full flex-col gap-3">
+        <div className="text-sm text-muted-foreground">3 / 10 questions</div>
+
+        <div className="flex flex-1 flex-col gap-3">
+          <div className="font-medium">What problem does useMemo solve?</div>
+          {isHoverDesktop ? (
+            <PreviewCard>
+              <PreviewCardTrigger render={<Button variant="ghost" size="sm" />}>
+                Peek answer
+              </PreviewCardTrigger>
+              <PreviewCardPopup>
+                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                  It memoizes expensive computations to avoid re-running them
+                  unnecessarily, and it can help keep references stable.
+                </div>
+              </PreviewCardPopup>
+            </PreviewCard>
+          ) : (
+            <Popover>
+              <PopoverTrigger render={<Button variant="ghost" size="sm" />}>
+                Peek answer
+              </PopoverTrigger>
+              <PopoverPopup align="start" className="w-64">
+                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                  It memoizes expensive computations to avoid re-running them
+                  unnecessarily, and it can help keep references stable.
+                </div>
+              </PopoverPopup>
+            </Popover>
+          )}
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            type="button"
+            variant={understandingLevel === 1 ? "secondary" : "outline"}
+            size="sm"
+            className="gap-2"
+            onClick={() => setUnderstandingLevel(1)}
+          >
+            <HugeiconsIcon
+              icon={AlertCircleIcon}
+              size={18}
+              color={
+                understandingLevel === 1 ? "var(--warning)" : "currentColor"
+              }
+            />
+            Confused
+          </Button>
+          <Button
+            type="button"
+            variant={understandingLevel === 2 ? "secondary" : "outline"}
+            size="sm"
+            className="gap-2"
+            onClick={() => setUnderstandingLevel(2)}
+          >
+            <HugeiconsIcon
+              icon={InformationCircleIcon}
+              size={18}
+              color={understandingLevel === 2 ? "var(--info)" : "currentColor"}
+            />
+            Getting It
+          </Button>
+          <Button
+            type="button"
+            variant={understandingLevel === 3 ? "secondary" : "outline"}
+            size="sm"
+            className="gap-2"
+            onClick={() => setUnderstandingLevel(3)}
+          >
+            <HugeiconsIcon
+              icon={CheckmarkCircle01Icon}
+              size={18}
+              color={
+                understandingLevel === 3 ? "var(--success)" : "currentColor"
+              }
+            />
+            Clear
+          </Button>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+function TrackVisual() {
+  return (
+    <Card className="h-48 p-4">
+      <div className="flex h-full flex-col gap-4">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div>Study minutes</div>
+          <div>avg. 2.4h / day</div>
+        </div>
+        <div className="w-full flex-1 overflow-hidden">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={[...TRACK_DATA]}
+              margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+            >
+              <Bar
+                dataKey="minutes"
+                fill="var(--color-chart-1)"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+function useCarouselControls() {
+  const scrollerRef = React.useRef<HTMLDivElement | null>(null)
+  const [canScrollPrev, setCanScrollPrev] = React.useState(false)
+  const [canScrollNext, setCanScrollNext] = React.useState(true)
+
+  const updateButtons = React.useCallback(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    setCanScrollPrev(el.scrollLeft > 0)
+    setCanScrollNext(el.scrollLeft < max - 1)
+  }, [])
+
+  React.useEffect(() => {
+    updateButtons()
+    const el = scrollerRef.current
+    if (!el) return
+
+    const onScroll = () => updateButtons()
+    el.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", updateButtons)
+    return () => {
+      el.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", updateButtons)
+    }
+  }, [updateButtons])
+
+  const scrollByCard = React.useCallback((direction: -1 | 1) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const amount = Math.max(280, Math.floor(el.clientWidth * 0.9))
+    el.scrollBy({ left: direction * amount, behavior: "smooth" })
+  }, [])
+
+  return {
+    scrollerRef,
+    canScrollPrev,
+    canScrollNext,
+    scrollPrev: () => scrollByCard(-1),
+    scrollNext: () => scrollByCard(1),
+  }
+}
+
+function HowItWorksCarousel({
+  scrollerRef,
+  children,
+}: {
+  scrollerRef: React.RefObject<HTMLDivElement | null>
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      ref={scrollerRef}
+      className="flex snap-x snap-mandatory gap-4 overflow-x-auto pe-16 pb-2 [scrollbar-width:none] sm:pe-24 [&::-webkit-scrollbar]:hidden"
+      aria-label="How it works steps"
+    >
+      {children}
+    </div>
+  )
+}
+
 export default function HomepageHowItWorks() {
+  const { scrollerRef, canScrollPrev, canScrollNext, scrollPrev, scrollNext } =
+    useCarouselControls()
+
   return (
     <section className="pt-14">
       <PageContainer>
-        <div className="flex flex-col gap-8">
-          <motion.h2
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.4, ease: easeOut }}
-            className="text-2xl font-semibold"
-          >
-            How it works
-          </motion.h2>
-
-          <div className="flex flex-col">
-            {STEPS.map((s, idx) => (
-              <React.Fragment key={s.number}>
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={{
-                    duration: 0.35,
-                    ease: easeOut,
-                    delay: idx * 0.15,
-                  }}
-                  className="grid grid-cols-1 gap-4 py-6 sm:grid-cols-[6rem_1fr]"
-                >
-                  <div className="font-mono text-lg text-muted-foreground">
-                    {s.number}
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="text-base font-semibold">{s.title}</div>
-                    <div className="text-sm text-muted-foreground">{s.body}</div>
-                  </div>
-                </motion.div>
-
-                {idx < STEPS.length - 1 ? <Separator /> : null}
-              </React.Fragment>
-            ))}
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2">
+            <motion.h2
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.4, ease: easeOut }}
+              className="text-2xl font-semibold"
+            >
+              How it works
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.4, ease: easeOut, delay: 0.05 }}
+              className="text-sm text-muted-foreground"
+            >
+              Set up a course, capture notes, log daily progress, review what
+              you learned, and watch your stats.
+            </motion.p>
+            <div className="flex items-center gap-2 pt-2">
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                aria-label="Previous"
+                disabled={!canScrollPrev}
+                onClick={scrollPrev}
+              >
+                <HugeiconsIcon icon={ArrowLeft02Icon} size={18} />
+              </Button>
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                aria-label="Next"
+                disabled={!canScrollNext}
+                onClick={scrollNext}
+              >
+                <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
+              </Button>
+            </div>
           </div>
+
+          <HowItWorksCarousel scrollerRef={scrollerRef}>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: easeOut, delay: 0 }}
+              className="w-80 shrink-0 snap-start sm:w-96"
+            >
+              <div className="flex flex-col gap-3">
+                <CreateCourseVisual />
+                <div className="text-lg font-semibold">Create a course</div>
+                <div className="text-sm text-muted-foreground">
+                  Add what you&apos;re learning and keep resources in one place.
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: easeOut, delay: 0.05 }}
+              className="w-80 shrink-0 snap-start sm:w-96"
+            >
+              <div className="flex flex-col gap-3">
+                <CaptureVisual />
+                <div className="text-lg font-semibold">Capture notes</div>
+                <div className="text-sm text-muted-foreground">
+                  Q&amp;A and freeform notes with code snippets and
+                  understanding levels.
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: easeOut, delay: 0.1 }}
+              className="w-80 shrink-0 snap-start sm:w-96"
+            >
+              <div className="flex flex-col gap-3">
+                <DailyLogVisual />
+                <div className="text-lg font-semibold">Log daily progress</div>
+                <div className="text-sm text-muted-foreground">
+                  Track study time and mood to build consistency.
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: easeOut, delay: 0.15 }}
+              className="w-80 shrink-0 snap-start sm:w-96"
+            >
+              <div className="flex flex-col gap-3">
+                <ReviewVisual />
+                <div className="text-lg font-semibold">
+                  Start a review session
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Spaced repetition sessions built around your own notes.
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: easeOut, delay: 0.2 }}
+              className="w-80 shrink-0 snap-start sm:w-96"
+            >
+              <div className="flex flex-col gap-3">
+                <TrackVisual />
+                <div className="text-lg font-semibold">Watch analytics</div>
+                <div className="text-sm text-muted-foreground">
+                  Watch your study time trend and keep improving.
+                </div>
+              </div>
+            </motion.div>
+          </HowItWorksCarousel>
         </div>
       </PageContainer>
     </section>
