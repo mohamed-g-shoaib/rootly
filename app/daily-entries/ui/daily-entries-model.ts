@@ -12,7 +12,9 @@ export type DailyEntry = {
   updatedAt: string
 }
 
-export function moodLabel(mood: MoodValue): "Burned Out" | "Neutral" | "Focused" {
+export function moodLabel(
+  mood: MoodValue
+): "Burned Out" | "Neutral" | "Focused" {
   if (mood === 1) return "Burned Out"
   if (mood === 2) return "Neutral"
   return "Focused"

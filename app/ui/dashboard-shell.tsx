@@ -17,6 +17,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
+import { signOut } from "@/app/auth/actions"
 
 import RootlyLogo from "@/components/rootly-logo"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -272,7 +273,15 @@ function UserAvatarPopover() {
             />
           </div>
 
-          <Button variant="destructive-outline">Logout</Button>
+          <form action={signOut}>
+            <Button
+              variant="destructive-outline"
+              className="w-full"
+              type="submit"
+            >
+              Logout
+            </Button>
+          </form>
         </div>
       </PopoverContent>
     </Popover>
@@ -313,7 +322,15 @@ function MobileAvatarSheet({
               />
             </div>
 
-            <Button variant="destructive-outline">Logout</Button>
+            <form action={signOut}>
+              <Button
+                variant="destructive-outline"
+                className="w-full"
+                type="submit"
+              >
+                Logout
+              </Button>
+            </form>
           </div>
         </SheetPanel>
         <SheetFooter>

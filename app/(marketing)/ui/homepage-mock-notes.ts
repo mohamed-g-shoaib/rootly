@@ -57,8 +57,7 @@ export const HOMEPAGE_MOCK_NOTES: Note[] = [
     courseTitle: "Postgres",
     question: null,
     answer: null,
-    body:
-      "Chapter recap: Indexes speed up reads but add write overhead. Use composite indexes when filtering on multiple columns, and remember that Postgres doesn’t automatically index foreign keys.",
+    body: "Chapter recap: Indexes speed up reads but add write overhead. Use composite indexes when filtering on multiple columns, and remember that Postgres doesn’t automatically index foreign keys.",
     codeSnippet: null,
     codeLanguage: "sql",
     understandingLevel: null,
@@ -73,8 +72,7 @@ export const HOMEPAGE_MOCK_NOTES: Note[] = [
     courseTitle: "Study",
     question: null,
     answer: null,
-    body:
-      "Review session notes: The goal isn’t perfect recall — it’s consistent retrieval practice. Rate honestly, then let the session guide what you revisit next.",
+    body: "Review session notes: The goal isn’t perfect recall — it’s consistent retrieval practice. Rate honestly, then let the session guide what you revisit next.",
     codeSnippet: null,
     codeLanguage: "markdown",
     understandingLevel: null,

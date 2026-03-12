@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 
 import {
   CodeIcon,
@@ -11,20 +11,20 @@ import {
   Note01Icon,
   Pdf01Icon,
   TextSquareIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import {
   PreviewCard,
   PreviewCardPopup,
   PreviewCardTrigger,
-} from "@/components/ui/preview-card";
-import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover";
+} from "@/components/ui/preview-card"
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
 import {
   AlertDialog,
   AlertDialogClose,
@@ -34,20 +34,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu";
+} from "@/components/ui/menu"
 
 import {
   understandingLabel,
   type Note,
   toCodeBadgeLabel,
-} from "@/app/notes/ui/notes-model";
+} from "@/app/notes/ui/notes-model"
 
 export function MockNoteCard({
   note,
@@ -58,16 +58,16 @@ export function MockNoteCard({
   onViewCode,
   onDelete,
 }: {
-  note: Note;
-  breakpoint: "mobile" | "tablet" | "desktop";
-  onToggleFlag: () => void;
-  onEdit: () => void;
-  onViewFull: () => void;
-  onViewCode: () => void;
-  onDelete: () => void;
+  note: Note
+  breakpoint: "mobile" | "tablet" | "desktop"
+  onToggleFlag: () => void
+  onEdit: () => void
+  onViewFull: () => void
+  onViewCode: () => void
+  onDelete: () => void
 }) {
-  const isQa = note.type === "qa";
-  const isDesktop = breakpoint === "desktop";
+  const isQa = note.type === "qa"
+  const isDesktop = breakpoint === "desktop"
 
   return (
     <Card className="p-4">
@@ -92,7 +92,7 @@ export function MockNoteCard({
               size={18}
               className={cn(
                 "cursor-pointer",
-                note.flag ? "text-destructive" : "text-muted-foreground",
+                note.flag ? "text-destructive" : "text-muted-foreground"
               )}
             />
           </Button>
@@ -199,15 +199,15 @@ export function MockNoteCard({
         ) : null}
       </div>
     </Card>
-  );
+  )
 }
 
 function DeleteDialog({
   children,
   onDelete,
 }: {
-  children: React.ReactNode;
-  onDelete: () => void;
+  children: React.ReactNode
+  onDelete: () => void
 }) {
   return (
     <AlertDialog>
@@ -232,5 +232,5 @@ function DeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

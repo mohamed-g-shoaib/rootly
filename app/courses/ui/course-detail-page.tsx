@@ -399,6 +399,7 @@ export default function CourseDetailPage({ courseId }: { courseId: string }) {
                     onEdit={() => openEdit(note.id)}
                     onViewFull={() => openView(note.id)}
                     onViewCode={() => openCode(note.id)}
+                    onDelete={() => void 0}
                   />
                 ))
               )}

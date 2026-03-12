@@ -174,6 +174,10 @@ export const REVIEW_MOCK_SESSIONS: ReviewSession[] = [
   },
 ]
 
-export function getMockAvailableQaNotes({ flaggedOnly }: { flaggedOnly: boolean }) {
+export function getMockAvailableQaNotes({
+  flaggedOnly,
+}: {
+  flaggedOnly: boolean
+}) {
   return REVIEW_MOCK_NOTES_POOL.filter((n) => (flaggedOnly ? n.flag : true))
 }

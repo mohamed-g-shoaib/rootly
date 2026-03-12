@@ -33,7 +33,8 @@ export const DAILY_ENTRIES_MOCK: DailyEntry[] = [
     date: "2026-03-10",
     studyTimeMinutes: 75,
     mood: 3,
-    notes: "Finished the hooks section — felt smooth after refactoring the sheets.",
+    notes:
+      "Finished the hooks section — felt smooth after refactoring the sheets.",
   }),
   makeEntry({
     id: "entry_11",
@@ -82,7 +83,8 @@ export const DAILY_ENTRIES_MOCK: DailyEntry[] = [
     date: "2026-03-03",
     studyTimeMinutes: 135,
     mood: 3,
-    notes: "Review session: strongest course improved, weakest still needs work.",
+    notes:
+      "Review session: strongest course improved, weakest still needs work.",
   }),
   makeEntry({
     id: "entry_04",
