@@ -460,7 +460,7 @@ export function CourseCard({
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
             <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
               {showTopics ? (
                 <>
@@ -496,7 +496,7 @@ export function CourseCard({
               ) : null}
             </div>
 
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="-mr-2 flex shrink-0 items-center gap-1">
               {hasLinks ? (
                 <Button
                   variant="ghost"

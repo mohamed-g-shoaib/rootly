@@ -90,7 +90,7 @@ export function ReviewSessionSkeletonList() {
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+            <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
               <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
                 <Skeleton className="h-5 w-16" />
                 <Skeleton className="h-5 w-20" />
@@ -169,7 +169,7 @@ export function SessionCard({
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
             <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
               <Badge variant="outline" className="shrink-0">
                 <span className="inline-flex items-center gap-2">
@@ -201,7 +201,7 @@ export function SessionCard({
               ) : null}
             </div>
 
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="-mr-2 flex shrink-0 items-center gap-1">
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={

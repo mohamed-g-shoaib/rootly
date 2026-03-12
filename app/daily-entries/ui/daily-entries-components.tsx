@@ -265,7 +265,7 @@ export function EntryCard({
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center justify-between gap-2 pt-2">
+          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
             <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
               {entry.notes ? (
                 <span className="truncate text-xs text-muted-foreground">
@@ -274,7 +274,7 @@ export function EntryCard({
               ) : null}
             </div>
 
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="-mr-2 flex shrink-0 items-center gap-1">
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
