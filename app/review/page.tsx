@@ -1,5 +1,11 @@
-import { ReviewPage } from "./ui/review-page"
+import { createClient } from "@/lib/supabase/server"
+import ReviewPageUI from "./ui/review-page"
 
-export default function Page() {
-  return <ReviewPage />
+export default async function ReviewPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  return <ReviewPageUI user={user} />
 }

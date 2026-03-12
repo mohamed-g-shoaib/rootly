@@ -1,12 +1,10 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 
-import { ArrowRight02Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { motion, useReducedMotion } from "motion/react"
 
+import { AuthAwareCta } from "./auth-aware-cta"
 import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
 
@@ -46,19 +44,7 @@ export default function HomepageHero() {
             transition={{ duration: 0.3, ease: easeOut, delay: 0.2 }}
             className="flex flex-col items-start gap-2 sm:flex-row sm:items-center"
           >
-            <Button
-              render={<Link href="/login" />}
-              className="group w-full sm:w-auto"
-            >
-              <span className="inline-flex items-center gap-2">
-                Get started
-                <HugeiconsIcon
-                  icon={ArrowRight02Icon}
-                  size={18}
-                  className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
-                />
-              </span>
-            </Button>
+            <AuthAwareCta />
 
             <Button
               variant="outline"

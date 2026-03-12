@@ -1,5 +1,11 @@
-import OverviewPage from "./ui/overview-page"
+import { createClient } from "@/lib/supabase/server"
+import OverviewPageUI from "./ui/overview-page"
 
-export default function Page() {
-  return <OverviewPage />
+export default async function OverviewPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  return <OverviewPageUI user={user} />
 }

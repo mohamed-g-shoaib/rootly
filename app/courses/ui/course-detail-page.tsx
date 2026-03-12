@@ -1,5 +1,6 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
 import Link from "next/link"
 import * as React from "react"
 
@@ -49,7 +50,13 @@ import {
   NoteViewerSheet,
 } from "@/app/notes/ui/notes-sheets"
 
-export default function CourseDetailPage({ courseId }: { courseId: string }) {
+export default function CourseDetailPage({
+  courseId,
+  user,
+}: {
+  courseId: string
+  user: User | null
+}) {
   const isMobile = useIsMobile()
 
   const allCourses = React.useMemo(() => buildMockCourses(), [])
@@ -203,7 +210,7 @@ export default function CourseDetailPage({ courseId }: { courseId: string }) {
 
   if (!course) {
     return (
-      <DashboardShell>
+      <DashboardShell user={user}>
         <PageContainer>
           <div className="pt-6">
             <div className="text-lg font-medium">Course not found</div>
@@ -270,6 +277,7 @@ export default function CourseDetailPage({ courseId }: { courseId: string }) {
 
   return (
     <DashboardShell
+      user={user}
       fab={
         isMobile
           ? {

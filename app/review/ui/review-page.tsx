@@ -1,5 +1,6 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { PlayIcon, Target01Icon } from "@hugeicons/core-free-icons"
@@ -118,7 +119,7 @@ type ViewState =
   | { type: "active" }
   | { type: "summary"; data: ReviewSummaryData; config: ReviewSessionConfig }
 
-export function ReviewPage() {
+export default function ReviewPage({ user }: { user: User | null }) {
   const isMobile = useIsMobile()
   const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
 
@@ -315,6 +316,7 @@ export function ReviewPage() {
 
   return (
     <DashboardShell
+      user={user}
       fab={{
         ariaLabel: "Start review",
         icon: <HugeiconsIcon icon={PlayIcon} size={20} />,

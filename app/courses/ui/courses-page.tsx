@@ -1,5 +1,6 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
@@ -21,7 +22,7 @@ import {
   LinksViewerSheet,
 } from "./courses-components"
 
-export default function CoursesPage() {
+export default function CoursesPage({ user }: { user: User | null }) {
   const isMobile = useIsMobile()
 
   const [courses, setCourses] = React.useState(() => buildMockCourses())
@@ -119,6 +120,7 @@ export default function CoursesPage() {
 
   return (
     <DashboardShell
+      user={user}
       fab={
         isMobile
           ? {

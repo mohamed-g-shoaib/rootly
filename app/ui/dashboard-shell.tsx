@@ -17,6 +17,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
+import type { User } from "@supabase/supabase-js"
 import { signOut } from "@/app/auth/actions"
 
 import RootlyLogo from "@/components/rootly-logo"
@@ -88,10 +89,12 @@ export function DashboardShell({
   children,
   streakDays,
   fab,
+  user,
 }: {
   children: React.ReactNode
   streakDays?: number
   fab?: ShellFab
+  user: User | null
 }) {
   const [isMobile, setIsMobile] = React.useState(false)
 
@@ -109,6 +112,28 @@ export function DashboardShell({
   const [avatarOpen, setAvatarOpen] = React.useState(false)
 
   const shortcut = isMobile ? null : getDesktopShortcutLabel()
+
+  const displayName =
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
+    user?.email?.split("@")[0] ??
+    "You"
+
+  const displayEmail = user?.email ?? ""
+
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+
+  const initials = displayName
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
+
+  // Ensure these are "used" to satisfy linting
+  void displayEmail
+  void avatarUrl
 
   const navigationItems = React.useMemo(
     () => [
@@ -203,12 +228,12 @@ export function DashboardShell({
                 onClick={() => setAvatarOpen(true)}
               >
                 <Avatar>
-                  <AvatarImage src="" alt="" />
-                  <AvatarFallback>RR</AvatarFallback>
+                  <AvatarImage src={avatarUrl} alt={displayName} />
+                  <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </Button>
             ) : (
-              <UserAvatarPopover />
+              <UserAvatarPopover user={user} />
             )}
           </div>
         </div>
@@ -236,13 +261,35 @@ export function DashboardShell({
         onOpenChange={setCommandOpen}
       />
 
-      <MobileAvatarSheet open={avatarOpen} onOpenChange={setAvatarOpen} />
+      <MobileAvatarSheet
+        open={avatarOpen}
+        onOpenChange={setAvatarOpen}
+        user={user}
+      />
     </div>
   )
 }
 
-function UserAvatarPopover() {
+function UserAvatarPopover({ user }: { user: User | null }) {
   const { resolvedTheme, setTheme } = useTheme()
+
+  const displayName =
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
+    user?.email?.split("@")[0] ??
+    "You"
+
+  const displayEmail = user?.email ?? ""
+
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+
+  const initials = displayName
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
     <Popover>
@@ -250,17 +297,15 @@ function UserAvatarPopover() {
         render={<Button variant="ghost" size="icon" aria-label="User menu" />}
       >
         <Avatar>
-          <AvatarImage src="" alt="" />
-          <AvatarFallback>RR</AvatarFallback>
+          <AvatarImage src={avatarUrl} alt={displayName} />
+          <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="w-72">
         <div className="flex flex-col gap-4">
           <div>
-            <div className="font-medium">Rami R</div>
-            <div className="text-sm text-muted-foreground">
-              rami@example.com
-            </div>
+            <div className="font-medium">{displayName}</div>
+            <div className="text-sm text-muted-foreground">{displayEmail}</div>
           </div>
 
           <div className="flex items-center justify-between">
@@ -273,15 +318,15 @@ function UserAvatarPopover() {
             />
           </div>
 
-          <form action={signOut}>
-            <Button
-              variant="destructive-outline"
-              className="w-full"
-              type="submit"
-            >
-              Logout
-            </Button>
-          </form>
+          <Button
+            variant="destructive-outline"
+            className="w-full"
+            onClick={async () => {
+              await signOut()
+            }}
+          >
+            Logout
+          </Button>
         </div>
       </PopoverContent>
     </Popover>
@@ -291,11 +336,26 @@ function UserAvatarPopover() {
 function MobileAvatarSheet({
   open,
   onOpenChange,
+  user,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  user: User | null
 }) {
   const { resolvedTheme, setTheme } = useTheme()
+
+  const displayName =
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
+    user?.email?.split("@")[0] ??
+    "You"
+
+  const displayEmail = user?.email ?? ""
+
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+
+  void avatarUrl
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -306,9 +366,9 @@ function MobileAvatarSheet({
         <SheetPanel className="px-4 pb-5">
           <div className="flex flex-col gap-4">
             <div>
-              <div className="font-medium">Rami R</div>
+              <div className="font-medium">{displayName}</div>
               <div className="text-sm text-muted-foreground">
-                rami@example.com
+                {displayEmail}
               </div>
             </div>
 
@@ -322,15 +382,15 @@ function MobileAvatarSheet({
               />
             </div>
 
-            <form action={signOut}>
-              <Button
-                variant="destructive-outline"
-                className="w-full"
-                type="submit"
-              >
-                Logout
-              </Button>
-            </form>
+            <Button
+              variant="destructive-outline"
+              className="w-full"
+              onClick={async () => {
+                await signOut()
+              }}
+            >
+              Logout
+            </Button>
           </div>
         </SheetPanel>
         <SheetFooter>

@@ -1,5 +1,11 @@
-import { DailyEntriesPage } from "./ui/daily-entries-page"
+import { createClient } from "@/lib/supabase/server"
+import DailyEntriesPageUI from "./ui/daily-entries-page"
 
-export default function Page() {
-  return <DailyEntriesPage />
+export default async function DailyEntriesPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  return <DailyEntriesPageUI user={user} />
 }

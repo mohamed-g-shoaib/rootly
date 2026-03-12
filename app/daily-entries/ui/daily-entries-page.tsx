@@ -1,5 +1,6 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
@@ -27,7 +28,7 @@ import {
   type MoodFilter,
 } from "./daily-entries-model"
 
-export function DailyEntriesPage() {
+export default function DailyEntriesPage({ user }: { user: User | null }) {
   const isMobile = useIsMobile()
 
   const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
@@ -113,6 +114,7 @@ export function DailyEntriesPage() {
 
   return (
     <DashboardShell
+      user={user}
       fab={{
         ariaLabel: todayHasEntry ? "Edit today's entry" : "Log today",
         icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,

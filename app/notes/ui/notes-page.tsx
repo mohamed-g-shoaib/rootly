@@ -1,5 +1,6 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
@@ -28,7 +29,7 @@ function deleteNote(noteId: string) {
   console.log("Delete note", noteId)
 }
 
-export default function NotesPage() {
+export default function NotesPage({ user }: { user: User | null }) {
   const isMobile = useIsMobile()
   const shouldReduceMotion = useReducedMotion()
 
@@ -223,6 +224,7 @@ export default function NotesPage() {
 
   return (
     <DashboardShell
+      user={user}
       fab={
         isMobile
           ? {

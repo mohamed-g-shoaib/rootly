@@ -2,7 +2,9 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import {
+  ArrowLeft01Icon,
   GithubIcon,
   GoogleIcon,
   LinkedinIcon,
@@ -12,6 +14,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import RootlyLogo from "@/components/rootly-logo"
 
 export default function LoginPageUI() {
   const searchParams = useSearchParams()
@@ -49,91 +52,90 @@ export default function LoginPageUI() {
   const isLoading = !!loadingProvider
 
   return (
-    <Card className="flex flex-col items-center gap-6 p-8 shadow-lg">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <div className="flex items-center gap-2">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-8 text-primary"
-            aria-hidden="true"
-          >
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
-          <span className="text-2xl font-bold tracking-tight">Rootly</span>
+    <div className="flex flex-col gap-4">
+      <Link
+        href="/"
+        className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+        Back to homepage
+      </Link>
+
+      <Card className="flex flex-col items-center gap-6 p-8 shadow-lg">
+        <div className="flex flex-col items-center gap-2 text-center">
+          <div className="flex items-center gap-2">
+            <RootlyLogo className="size-8 text-primary" aria-hidden="true" />
+            <span className="text-2xl font-bold tracking-tight">Rootly</span>
+          </div>
+          <h1 className="mt-4 text-xl font-semibold tracking-tight">
+            Welcome back
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Sign in to your learning notebook
+          </p>
         </div>
-        <h1 className="mt-4 text-xl font-semibold tracking-tight">
-          Welcome back
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Sign in to your learning notebook
+
+        <div className="flex w-full flex-col gap-3">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3"
+            type="button"
+            onClick={() => handleOAuthSignIn("google")}
+            disabled={isLoading}
+            aria-busy={loadingProvider === "google"}
+          >
+            {loadingProvider === "google" ? (
+              <Spinner className="size-4" />
+            ) : (
+              <HugeiconsIcon icon={GoogleIcon} size={20} />
+            )}
+            Continue with Google
+          </Button>
+
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3"
+            type="button"
+            onClick={() => handleOAuthSignIn("github")}
+            disabled={isLoading}
+            aria-busy={loadingProvider === "github"}
+          >
+            {loadingProvider === "github" ? (
+              <Spinner className="size-4" />
+            ) : (
+              <HugeiconsIcon icon={GithubIcon} size={20} />
+            )}
+            Continue with GitHub
+          </Button>
+
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3"
+            type="button"
+            onClick={() => handleOAuthSignIn("linkedin")}
+            disabled={isLoading}
+            aria-busy={loadingProvider === "linkedin"}
+          >
+            {loadingProvider === "linkedin" ? (
+              <Spinner className="size-4" />
+            ) : (
+              <HugeiconsIcon icon={LinkedinIcon} size={20} />
+            )}
+            Continue with LinkedIn
+          </Button>
+        </div>
+
+        {errorMessage && (
+          <p className="text-sm font-medium text-destructive" role="alert">
+            {errorMessage}
+          </p>
+        )}
+
+        <p className="text-center text-xs text-muted-foreground">
+          By signing in, you agree to our <br />
+          <span className="font-medium">Terms and Privacy Policy</span>
         </p>
-      </div>
-
-      <div className="flex w-full flex-col gap-3">
-        <Button
-          variant="outline"
-          className="w-full justify-start gap-3"
-          type="button"
-          onClick={() => handleOAuthSignIn("google")}
-          disabled={isLoading}
-          aria-busy={loadingProvider === "google"}
-        >
-          {loadingProvider === "google" ? (
-            <Spinner className="size-4" />
-          ) : (
-            <HugeiconsIcon icon={GoogleIcon} size={20} />
-          )}
-          Continue with Google
-        </Button>
-
-        <Button
-          variant="outline"
-          className="w-full justify-start gap-3"
-          type="button"
-          onClick={() => handleOAuthSignIn("github")}
-          disabled={isLoading}
-          aria-busy={loadingProvider === "github"}
-        >
-          {loadingProvider === "github" ? (
-            <Spinner className="size-4" />
-          ) : (
-            <HugeiconsIcon icon={GithubIcon} size={20} />
-          )}
-          Continue with GitHub
-        </Button>
-
-        <Button
-          variant="outline"
-          className="w-full justify-start gap-3"
-          type="button"
-          onClick={() => handleOAuthSignIn("linkedin")}
-          disabled={isLoading}
-          aria-busy={loadingProvider === "linkedin"}
-        >
-          {loadingProvider === "linkedin" ? (
-            <Spinner className="size-4" />
-          ) : (
-            <HugeiconsIcon icon={LinkedinIcon} size={20} />
-          )}
-          Continue with LinkedIn
-        </Button>
-      </div>
-
-      {errorMessage && (
-        <p className="text-sm font-medium text-destructive" role="alert">
-          {errorMessage}
-        </p>
-      )}
-
-      <p className="text-center text-xs text-muted-foreground">
-        By signing in, you agree to our <br />
-        <span className="font-medium">Terms and Privacy Policy</span>
-      </p>
-    </Card>
+      </Card>
+    </div>
   )
 }

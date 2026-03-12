@@ -1,7 +1,9 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
+import * as React from "react"
 import dynamic from "next/dynamic"
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, useMemo, useState, useId } from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -36,14 +38,16 @@ const CourseMasteryList = dynamic(
   { ssr: false, loading: () => <ChartSkeleton heightClassName="h-64" /> }
 )
 
-export default function OverviewPage() {
+export default function OverviewPage({ user }: { user: User | null }) {
   const isMobile = useIsMobile()
+  const id = useId()
   const [range, setRange] = useState<RangeKey>("7")
 
   const mock = useMemo(() => buildMockOverview(range), [range])
 
   return (
     <DashboardShell
+      user={user}
       streakDays={mock.streakDays}
       fab={
         isMobile
@@ -58,7 +62,12 @@ export default function OverviewPage() {
       <PageContainer>
         {isMobile ? (
           <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pt-3 pb-3 lg:hidden">
-            <RangeToggle range={range} onRangeChange={setRange} fullWidth />
+            <RangeToggle
+              id={`${id}-mobile`}
+              range={range}
+              onRangeChange={setRange}
+              fullWidth
+            />
           </div>
         ) : null}
 
@@ -76,7 +85,11 @@ export default function OverviewPage() {
 
         {!isMobile ? (
           <section className="pt-6">
-            <RangeToggle range={range} onRangeChange={setRange} />
+            <RangeToggle
+              id={`${id}-desktop`}
+              range={range}
+              onRangeChange={setRange}
+            />
           </section>
         ) : null}
 
@@ -216,13 +229,16 @@ function RangeToggle({
   range,
   onRangeChange,
   fullWidth = false,
+  id,
 }: {
   range: RangeKey
   onRangeChange: (value: RangeKey) => void
   fullWidth?: boolean
+  id?: string
 }) {
   return (
     <Tabs
+      id={id}
       value={range}
       onValueChange={(v) => onRangeChange(v as RangeKey)}
       orientation="horizontal"
