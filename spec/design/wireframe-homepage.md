@@ -49,24 +49,22 @@ The homepage is seen once or twice by a user — it can breathe. The dashboard i
 │  NAV                                                │
 ├─────────────────────────────────────────────────────┤
 │  HERO                                               │
-│  (headline + sub + CTAs + scroll cue)               │
+│  (headline + sub + CTAs)                            │
 ├─────────────────────────────────────────────────────┤
 │  MOCKUP                                             │
-│  (full mini-app — all pages, localStorage, dock)    │
+│  (Notes-only mini-app — localStorage, header strip) │
 ├─────────────────────────────────────────────────────┤
-│  FEATURES  (3 columns, each with visual mockup)     │
+│  HOW IT WORKS  (horizontal scroll carousel, 5 steps)│
 ├─────────────────────────────────────────────────────┤
-│  HOW IT WORKS  (numbered, 4 steps)                  │
+│  FINAL CTA  (Card with quote + CTA button)          │
 ├─────────────────────────────────────────────────────┤
-│  SOCIAL PROOF  (3 cards, real quotes)               │
-├─────────────────────────────────────────────────────┤
-│  FINAL CTA                                          │
-├─────────────────────────────────────────────────────┤
-│  FOOTER                                             │
+│  FOOTER  (multi-column + wordmark watermark)        │
 └─────────────────────────────────────────────────────┘
 ```
 
-All sections use the **global content container** (the same max-width token used everywhere in the app — do not introduce a new one). Sections breathe — generous vertical padding between each.
+> **Note:** The Features section and Social Proof section from the original plan were **not implemented**. They were dropped. The "How It Works" section was significantly redesigned (see below). The page order is NAV → HERO → MOCKUP → HOW IT WORKS → FINAL CTA → FOOTER.
+
+All sections use `PageContainer` for consistent max-width. Sections use `pt-14` vertical rhythm.
 
 ---
 
@@ -77,24 +75,25 @@ All sections use the **global content container** (the same max-width token used
 Fixed at top. Full-width. Minimal.
 
 ```
-[ RootlyLogo ]                    [ GitHub ] [ Get started ]
+[ RootlyLogo mark + "Rootly" wordmark ]     [ GitHub ] [ Get started → ]
 ```
 
-- Left: `RootlyLogo` component (SVG mark + wordmark). Wraps with `next/link` to `/`.
+- Left: `RootlyLogo` SVG mark + plain `"Rootly"` text (`text-sm font-medium`), wrapped in `next/link` to `/`.
 - Right:
-  - Ghost/outline link: `Star on GitHub` — links to the repo.
-  - Primary button: `Get started` → `/login`.
+  - Outline button: `Star on GitHub` with `Github01Icon` — links to `https://github.com/mohamed-g-shoaib/rootly`, `target="_blank"`. Hidden on mobile (`hidden sm:inline-flex`).
+  - Primary button: `Get started` with `ArrowRight02Icon` that translates on hover → `/login`.
 
 ### Behavior
 
-- On scroll past the hero, the nav gains `backdrop-blur` and a thin bottom border.
-- On mobile: GitHub link collapses — only logo and `Get started` remain.
-- This is NOT `DashboardShell` nav. Completely separate component.
+- On scroll past 40px, nav gains `backdrop-blur` and `border-border bg-background/80`. Below that: `border-transparent bg-transparent`.
+- CSS-only transition on `border-b` and `background-color`. No JS animation library.
+- Mobile: GitHub button hidden, logo + Get started only.
 
-### Component Notes
+### Implementation Notes
 
-- Use coss ui `Button` with the appropriate variant for `Get started`.
-- Background transition on scroll: CSS transition on `background-color` + `border-bottom-color` only. No JS animation library.
+- **Implemented.** File: `app/(marketing)/ui/homepage-nav.tsx`.
+- Uses `PageContainer`, coss ui `Button`, `HugeiconsIcon`.
+- Nav height: `h-14` within the header.
 
 ---
 
@@ -115,41 +114,39 @@ One job: make the visitor understand what Rootly does in under 4 seconds.
 │   Capture notes, track progress, and review         │
 │   what you've learned — all in one place.           │
 │                                                     │
-│   [ Get started — it's free ]   [ See how it works ]│
-│                                                     │
-│   ↓                                                 │
+│   [ Get started → ]   [ See how it works ]          │
 │                                                     │
 └─────────────────────────────────────────────────────┘
 ```
 
+> **Change from original plan:** The scroll cue (chevron below CTAs) was **not implemented**. Hero section top padding is `pt-24`. CTA buttons stack vertically on mobile and become `flex-row` on `sm:`.
+
 ### Copy
 
-- **Headline:** `The learning notebook built for developers.` — two lines, large, left-aligned desktop / centered mobile. No gradient text.
-- **Sub:** `Capture notes, track progress, and review what you've learned — all in one place.` — `text-muted-foreground`.
-- **CTAs:** Primary `Get started — it's free` → `/login`. Ghost `See how it works` → smooth scroll `#mockup`.
-- **Scroll cue:** chevron below CTAs, fades in after 1s, opacity-pulse only.
+- **Headline:** `The learning notebook built for developers.` — single block, `text-4xl font-semibold tracking-tight sm:text-5xl`, left-aligned desktop → centered mobile (`sm:text-center`). No gradient text.
+- **Sub:** `Capture notes, track progress, and review what you've learned — all in one place.` — `text-base text-muted-foreground sm:text-lg`.
+- **CTAs:** Primary `Get started` with `ArrowRight02Icon` → `/login`. Outline `See how it works` → `#mockup` smooth scroll.
 
 ### Entrance Animation
 
-- Headline: `opacity 0→1`, `translateY(12px)→0`, `400ms ease-out`, no delay.
+- Headline: `opacity 0→1`, `y: 12→0`, `400ms`, `cubic-bezier(0.32, 0.72, 0, 1)`, no delay.
 - Sub: same, `100ms` delay.
-- CTAs: same, `200ms` delay.
-- Scroll cue: `opacity 0→1` only, `600ms` delay, `800ms` duration.
-- All play-once on mount (not scroll-triggered — hero is immediately visible).
+- CTAs wrapper: same, `200ms` delay.
+- All `animate` (play-once on mount, not scroll-triggered).
+
+### Implementation Notes
+
+- **Implemented.** File: `app/(marketing)/ui/homepage-hero.tsx`.
 
 ---
 
-## Section 3 — Mockup (Full Interactive Mini-App)
+## Section 3 — Mockup (Notes Mini-App)
 
-> **This is the most important section on the page.** It is a fully functional embedded mini-app — every real page of Rootly is accessible, all interactions work, all sheets open. The only difference from the real app is that data is stored in `localStorage` (demo namespace) and never persisted to a real backend. Users who explore deeply get the complete product experience without signing up.
+> **Scope change from original plan:** The full multi-page mini-app (Notes + Courses + Overview + Daily Entries + Review) described in the original spec was **scoped down to Notes only** in the current implementation. There is no FloatingDock, no page switcher, no mock URL bar reactive to page changes. Only the Notes page is embedded. The remaining pages are planned but not yet built.
 
 ### Purpose
 
-Let the visitor use the real product: create courses, add notes, run a review session, log a daily entry, see their progress on the Overview — all within the browser chrome wrapper on the homepage. When they sign up, nothing feels unfamiliar.
-
-### LCP Strategy
-
-The mockup opens on the **Notes page** by default, not Overview. This avoids loading recharts on the critical paint path. Overview is accessible via the floating dock but is not the initial page. The browser chrome wrapper itself is below the hero, so it is already below the fold on most viewports — but we still default to the lightest page (Notes) to be safe.
+Let the visitor interact with real note cards: create, edit, view, flag, delete. All data writes to `localStorage` under the `rootly_demo_*` namespace. No Supabase calls.
 
 ### Layout
 
@@ -160,16 +157,13 @@ The mockup opens on the **Notes page** by default, not Overview. This avoids loa
 │  "Try it — no account needed."                      │
 │                                                     │
 │  ┌───────────────────────────────────────────────┐  │
-│  │  [ ● ● ●   rootly.app/notes          ]        │  │  ← browser chrome top bar
+│  │  [ ● ● ●   rootly.app/notes          ]        │  │  ← browser chrome top bar (sm+ only)
 │  │  ┌─────────────────────────────────────────┐  │  │
+│  │  │ sticky header: "Notes"   [ New Note ]   │  │  │
+│  │  ├─────────────────────────────────────────┤  │  │
 │  │  │                                         │  │  │
-│  │  │   [ active page renders here ]          │  │  │
-│  │  │   (Notes / Courses / Overview /         │  │  │
-│  │  │    Daily Entries / Review)              │  │  │
+│  │  │   [ NoteCard grid ]                     │  │  │
 │  │  │                                         │  │  │
-│  │  │  ┌─────────────────────────────────┐   │  │  │
-│  │  │  │  FloatingDock (real component)  │   │  │  │
-│  │  │  └─────────────────────────────────┘   │  │  │
 │  │  └─────────────────────────────────────────┘  │  │
 │  └───────────────────────────────────────────────┘  │
 │                                                     │
@@ -178,69 +172,40 @@ The mockup opens on the **Notes page** by default, not Overview. This avoids loa
 
 ### Container & Sizing
 
-- The browser chrome wrapper follows the **global content container width** (same max-width token used across the app). It is NOT a fixed pixel width, and does NOT use arbitrary Tailwind values.
-- Fixed height on the inner content area — use a CSS custom property or a coss ui height token if available. The content area does not grow with content. It is a fixed viewport.
-- The `FloatingDock` sits inside the content area, pinned to the bottom of the fixed-height viewport (position absolute bottom).
-- On mobile (`sm` and below): browser chrome top bar is hidden. The content area and dock remain.
+- Wrapped in coss ui `Card` with `overflow-hidden`. Width follows `PageContainer` (global max-width token). No arbitrary pixel widths.
+- Inner content area has `relative overflow-hidden bg-background`.
+- No fixed height — content area grows with note cards.
 
 ### Browser Chrome Top Bar
 
-- Three traffic-light dots (decorative, no action).
-- Mock URL bar that updates reactively to reflect the current page: `rootly.app/notes`, `rootly.app/courses`, `rootly.app/overview`, `rootly.app/daily-entries`, `rootly.app/review`.
-- Same border and background as the content area — no custom colors.
+- Rendered only on `sm:` and above (`hidden sm:flex`).
+- Three traffic-light dots: `bg-destructive/70`, `bg-warning/70`, `bg-success/70` — decorative, no action.
+- Mock URL: `rootly.app/notes` (static string, not reactive to page changes in current implementation).
+- Right side: `w-12` spacer for visual balance.
+- Background: `bg-muted/40 border-b`.
 
-### Pages in the Mockup
+### Mockup Header Strip (inside content area)
 
-All five pages are rendered inside the mockup. The active page is determined by `mockActivePage` state in `HomepageMockup`. Each page is a **mockup-specific wrapper** that imports the real page's UI components but replaces all data-fetching hooks with the demo localStorage store.
+A sticky header is rendered at the top of the content area (`sticky top-0 z-20 border-b bg-background`):
 
-#### Page routing pattern
+- Left: `"Notes"` label (`text-sm font-medium text-foreground`).
+- Right: `"New Note"` primary `Button` that opens `MockNoteEditorSheet` in create mode.
 
-No Next.js routing is used inside the mockup. `mockActivePage` is a string enum:
-```
-type MockPage = 'notes' | 'courses' | 'overview' | 'daily-entries' | 'review'
-```
+> **Change from original plan:** The original spec called for a type filter strip and show/hide all answers toggle in the mockup header. The implemented header is simpler — just a label and a New Note button. No filters, no global show/hide toggle.
 
-The `FloatingDock` receives `mockActivePage` and `setMockActivePage` as props and uses them in place of `usePathname` / `router.push`.
+### Notes Page
 
-#### Page 1 — Notes (default)
-
-- Renders the real `NoteCard` grid, with the type filter strip and show/hide all answers toggle (same as the previously implemented mockup header strip).
-- All sheets work: create sheet (add note), edit sheet (edit note), viewer sheet (view full note), code viewer sheet.
-- All sheet write operations persist to the **demo localStorage store** (not Supabase).
-- Card cap enforced (see Card Cap Rules below). When a new note is created, if the cap is reached, the oldest note is removed from the demo store.
-- `NoteCard` no longer requires `readOnly` in this version — the full card interactions are enabled, including overflow menu (edit / delete / view).
-
-#### Page 2 — Courses
-
-- Renders the real Courses page UI: course cards grid, create course sheet, edit course sheet, delete course confirmation.
-- All write operations persist to the demo localStorage store.
-- No server actions — all mutations go through the demo store.
-
-#### Page 3 — Overview
-
-- Renders the real Overview page UI: stats, charts (recharts), streaks.
-- Loaded via `React.lazy` + `Suspense` with a skeleton fallback — deferred so it does not block the initial Notes page paint.
-- Data sourced from the demo localStorage store (notes + daily entries + courses).
-
-#### Page 4 — Daily Entries
-
-- Renders the real Daily Entries page UI: entry list, create/edit entry sheet.
-- All write operations persist to the demo localStorage store.
-
-#### Page 5 — Review
-
-- Renders the real Review session UI.
-- Seeded Q&A notes from the demo store are used as the source.
-- Rating actions (Confused / Getting It / Clear) update the understanding level of the note in the demo localStorage store.
-- No Supabase calls.
+- **File:** `app/(marketing)/ui/mock-notes-page.tsx`
+- Renders `MockNoteCard` grid via real `DemoStoreProvider` context.
+- Grid: `grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3` inside `p-4`.
+- Notes sorted by `updatedAt` descending. Mobile shows a mixed cap: 1 Q&A + 2 freeform (sorted by `updatedAt`), not the full card cap.
+- All sheets work: create, edit, view full note, code viewer.
 
 ### Demo localStorage Store
 
-All demo data lives in `localStorage` under namespaced keys. The store is implemented in `app/(marketing)/ui/mock-store.ts`.
+Implemented in `app/(marketing)/ui/mock-store.ts`. Uses `useSyncExternalStore` for reactivity. Seed is always written on mount (no check for existing keys — always resets on page load).
 
-#### Namespace
-
-All keys are prefixed with `rootly_demo_` to avoid collision with any future real auth or app localStorage keys:
+#### Namespace Keys
 
 ```
 rootly_demo_notes
@@ -249,78 +214,76 @@ rootly_demo_daily_entries
 rootly_demo_review_sessions
 ```
 
-#### Store API (`mock-store.ts`)
-
-Exports a single `useDemoStore()` hook (or a plain object of getters/setters — choose whichever is cleanest). The interface must cover:
+#### Store API
 
 ```ts
 // Notes
-getNotes(): DemoNote[]
-addNote(note: Omit<DemoNote, 'id' | 'createdAt'>): void
+addNote(note: Omit<DemoNote, 'id' | 'createdAt' | 'updatedAt'>): void
 updateNote(id: string, patch: Partial<DemoNote>): void
 deleteNote(id: string): void
 
 // Courses
-getCourses(): DemoCourse[]
-addCourse(course: Omit<DemoCourse, 'id' | 'createdAt'>): void
+addCourse(course: Omit<DemoCourse, 'id' | 'createdAt' | 'updatedAt'>): void
 updateCourse(id: string, patch: Partial<DemoCourse>): void
 deleteCourse(id: string): void
 
 // Daily Entries
-getDailyEntries(): DemoDailyEntry[]
-addDailyEntry(entry: Omit<DemoDailyEntry, 'id' | 'createdAt'>): void
+addDailyEntry(entry: Omit<DemoDailyEntry, 'id' | 'createdAt' | 'updatedAt'>): void
 updateDailyEntry(id: string, patch: Partial<DemoDailyEntry>): void
 deleteDailyEntry(id: string): void
 ```
 
-#### Reactivity
+`DemoNote`, `DemoCourse`, `DemoDailyEntry` are type aliases for the real `Note`, `Course`, `DailyEntry` types — no separate demo types.
 
-The store must be reactive — components that consume it must re-render when the store changes. Use a lightweight `useSyncExternalStore` pattern or a React context + `useState` at the `HomepageMockup` level. Do NOT use Zustand, Jotai, or any external state library.
+#### Daily Entry Deduplication
 
-#### No persistence across sessions
+`addDailyEntry` silently no-ops if an entry already exists for the same `date`. This prevents duplicate-date collisions.
 
-The demo store does NOT persist across page loads. On mount, if `rootly_demo_notes` does not exist in localStorage, the store is pre-seeded with the seed data (see below). If keys exist, existing data is used (so interactions within a session are preserved on scroll/re-render).
+### Seed Data
 
-Actually — clarification: "no data persistence" means no Supabase persistence. The data IS written to localStorage so that interactions survive re-renders and scroll. It does NOT survive a full page reload by design — on page load, seed data is always restored. Implement by always writing seed data on mount, not checking for existing keys.
-
-#### Seed Data
-
-Seed data lives in `app/(marketing)/ui/mock-seed.ts`. It is imported by `mock-store.ts` and written to localStorage on every mount of `HomepageMockup`.
+Implemented in `app/(marketing)/ui/mock-seed.ts`. All timestamps are anchored to `2026-03-10T12:00:00.000Z`.
 
 ```
-Seed: 3 courses
-  - "React Deep Dive" (in progress)
-  - "TypeScript Fundamentals" (in progress)
-  - "Node.js & Express" (not started)
+Seed: 6 courses
+  - "React Deep Dive" (42% progress, topics: React, Hooks, Rendering)
+  - "TypeScript Fundamentals" (35% progress, topics: TypeScript, Types)
+  - "Node.js & Express" (0% progress, topics: Node, Express)
+  - "Algorithms & Data Structures" (68% progress, topics: Algorithms, Big O, Trees)
+  - "Python for Data Science" (20% progress, topics: Python, NumPy, Pandas)
+  - "Advanced CSS & Animations" (55% progress, topics: CSS, Animations, Layout)
 
-Seed: 9 notes (to fill the desktop cap immediately)
-  - 6 Q&A notes spread across the first two courses:
-    1. When should you use useMemo? (React Deep Dive)
-    2. What is the difference between useEffect and useLayoutEffect? (React Deep Dive)
-    3. How does React reconciliation work? (React Deep Dive)
-    4. What is a discriminated union in TypeScript? (TypeScript Fundamentals)
-    5. When should you use `unknown` instead of `any`? (TypeScript Fundamentals)
-    6. What does the `satisfies` operator do? (TypeScript Fundamentals)
+Seed: 9 notes
+  - 6 Q&A notes across React Deep Dive + TypeScript Fundamentals:
+    1. When should you use useMemo? (React) — Getting It, flagged
+    2. What is the difference between useEffect and useLayoutEffect? (React) — Confused
+    3. How does React reconciliation work? (React) — Clear
+    4. What is a discriminated union in TypeScript? (TS) — Getting It, flagged
+    5. When should you use `unknown` instead of `any`? (TS) — Confused
+    6. What does the `satisfies` operator do? (TS) — Clear
   - 3 freeform notes:
     7. Chapter summary: React rendering model (React Deep Dive)
-    8. Session recap: TypeScript utility types (TypeScript Fundamentals)
+    8. Session recap: TypeScript utility types (TS Fundamentals) — flagged
     9. Quick reference: async/await patterns (Node.js & Express)
-  - Each Q&A note has a realistic answer (2–3 sentences).
-  - Understanding levels are varied: some "Confused", some "Getting It", some "Clear".
-  - Some notes are flagged.
 
-Seed: 5 daily entries
-  - One per day for the last 5 days.
-  - Varied study durations (45 min, 90 min, 30 min, 120 min, 60 min).
-  - Varied moods.
-  - Varied notes referenced.
+Seed: 9 daily entries (not 5 as originally planned)
+  - 2026-03-10: 60 min, Focused
+  - 2026-03-09: 120 min, Burned Out
+  - 2026-03-08: 30 min, Neutral
+  - 2026-03-07: 90 min, Focused
+  - 2026-03-06: 45 min, Neutral
+  - 2026-03-05: 75 min, Neutral
+  - 2026-03-04: 50 min, Burned Out
+  - 2026-03-03: 100 min, Focused
+  - 2026-03-02: 40 min, Neutral
 
-Seed: 0 review sessions (the Review page generates one on demand from seeded notes).
+Seed: 0 review sessions.
 ```
+
+> **Change from original plan:** Seed courses expanded from 3 to 6. Daily entries expanded from 5 to 9. The extra data makes the Overview charts and stats more convincing for future pages.
 
 ### Card Cap Rules
 
-The mockup maintains a fixed number of visible note cards so the mockup height never grows or shifts. The cap is enforced in the demo store's `addNote` method.
+Cap is enforced in `mock-store.ts` `addNote`. Breakpoint is detected in `HomepageMockup` via a `useBreakpoint()` hook and passed as `noteCap` to `DemoStoreProvider`.
 
 ```
 Desktop  (lg and above):  9 cards max  (3 columns × 3 rows)
@@ -328,216 +291,215 @@ Tablet   (md):            6 cards max  (2 columns × 3 rows)
 Mobile   (sm and below):  3 cards max  (1 column  × 3 rows)
 ```
 
-When `addNote` is called and the current note count equals the cap for the current breakpoint, the **oldest note** (by `createdAt`) is removed before the new note is added. The cap is checked against the breakpoint-appropriate limit.
+Mobile display is further customized: shows 1 Q&A + 2 freeform (hardcoded split, not pure cap enforcement).
 
-The breakpoint is detected inside `HomepageMockup` using a `useBreakpoint()` utility (implement as a small `useMediaQuery` wrapper — no external library). The cap value is passed down to the demo store context.
+When `addNote` is called and the cap is reached, the oldest note (by `createdAt`) is removed before the new one is added.
 
-### FloatingDock Integration
+### MockNoteCard
 
-The `FloatingDock` component is reused directly — it is the same component used in `DashboardShell`. It is an **exception** to the mockup isolation rule because it is a pure UI navigation component with no server dependencies.
+- **File:** `app/(marketing)/ui/mock-note-card.tsx`
+- A self-contained mock implementation of `NoteCard` wired to the demo store types. Does NOT import or modify the real `NoteCard` from `app/notes/ui/`.
+- Supports full interactions: overflow menu (edit / delete / view full / view code), flag toggle, show/hide answer toggle on Q&A notes.
 
-#### Props adaptation
+### Mock Sheets
 
-The `FloatingDock` normally uses `usePathname()` to determine the active item and `router.push()` to navigate. In the mockup context:
-
-- A thin adapter wrapper `MockFloatingDock` is created in `app/(marketing)/ui/mock-floating-dock.tsx`.
-- `MockFloatingDock` accepts `activePage: MockPage` and `onNavigate: (page: MockPage) => void` props.
-- Internally it renders `FloatingDock` with a mocked `pathname` derived from `activePage` and replaces nav item `onClick` handlers with calls to `onNavigate`.
-- The FAB (new note / new entry button) in the real dock is adapted: in mockup context it opens the create sheet for the active page, writing to the demo store.
-- No changes to the real `FloatingDock` component itself.
-
-### Reusability Principles
-
-This is a complex component. Follow these rules to keep it clean:
-
-```
-✅ One file per concern:
-   mock-store.ts          — store API + seed writes
-   mock-seed.ts           — all seed data, typed
-   mock-floating-dock.tsx — FloatingDock adapter
-   mock-notes-page.tsx    — Notes page for mockup context
-   mock-courses-page.tsx  — Courses page for mockup context
-   mock-overview-page.tsx — Overview page for mockup context (lazy)
-   mock-daily-entries-page.tsx  — Daily Entries page for mockup context
-   mock-review-page.tsx   — Review page for mockup context
-   homepage-mockup.tsx    — orchestrator: browser chrome + page switching
-
-✅ Pages import real UI components (NoteCard, CourseCard, etc.) directly.
-✅ Pages replace only data hooks — real components are untouched.
-✅ All demo-specific types (DemoNote, DemoCourse, etc.) are defined in mock-store.ts.
-✅ No prop drilling beyond one level. Store is accessed via context from HomepageMockup.
-🚫 Do NOT modify any real page component, real UI component, or real data hook.
-🚫 Do NOT add mockup-specific props to real components except the already-existing readOnly on NoteCard.
-```
+- **`mock-note-editor-sheet.tsx`** — full create/edit sheet wired to demo store. Mirrors `NoteEditorSheet` from `app/notes/ui/notes-sheets.tsx` but saves to demo store.
+- **`mock-notes-sheets.tsx`** — viewer sheet (`MockNoteViewerSheet`) and code viewer sheet (`MockCodeViewerSheet`). Read-only; provide an "Edit" action that chains to the editor.
+- **`mock-sheet.tsx`** — `MockSheetPortalProvider` that constrains sheet portals to render inside `mockViewportRef` rather than `document.body`.
 
 ### Entrance Animation
 
-- Browser chrome wrapper: `opacity 0→1`, `translateY(20px)→0`, `500ms ease-out`.
-- `whileInView`, `viewport: { once: true, amount: 0.15 }`.
-- Note cards stagger in after wrapper: `100ms` apart, same `opacity + translateY`.
-- No entrance animation on the dock (it is a UI element, not a reveal moment).
+- `Card` wrapper: `opacity 0→1`, `y: 20→0`, `500ms`, `cubic-bezier(0.32, 0.72, 0, 1)`, `whileInView`, `viewport: { once: true, amount: 0.15 }`.
+- No staggered note card entrance animation in current implementation.
 
 ### Label above the mockup
 
-- `"Try it — no account needed."` — `text-muted-foreground`, small, centered.
-- Purpose: explicit permission signal.
+- `"Try it — no account needed."` — `text-sm text-muted-foreground`, centered.
+
+### Implementation Notes
+
+- **Partially implemented.** File: `app/(marketing)/ui/homepage-mockup.tsx`.
+- Only Notes page is implemented. Multi-page switcher, FloatingDock adapter, Courses/Overview/Daily Entries/Review mock pages are **not yet built**.
 
 ---
 
 ## Section 4 — Features
 
-### Purpose
-
-Three columns. Each names a core workflow, describes it in one sentence, and shows a **static visual mockup** making the concept immediately concrete. No cards, no borders around columns. White space is the separator.
-
-### Layout
-
-```
-┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
-│  [Visual mockup] │ │  [Visual mockup] │ │  [Visual mockup] │
-│                  │ │                  │ │                  │
-│  Capture         │ │  Review          │ │  Track           │
-│  [body copy]     │ │  [body copy]     │ │  [body copy]     │
-└──────────────────┘ └──────────────────┘ └──────────────────┘
-```
-
-### Copy
-
-| Column | Title | Body |
-| --- | --- | --- |
-| 1 | `Capture` | `Q&A and freeform notes with code snippets, syntax highlighting, and understanding levels.` |
-| 2 | `Review` | `Spaced repetition sessions built around your own notes — not a generic question bank.` |
-| 3 | `Track` | `Log daily study sessions and watch your understanding trend over time.` |
-
-### Visual Mockups (one per column)
-
-Each visual is a **static, non-interactive JSX composition** of real coss ui primitives. Not a screenshot, not an image. No card wrapper around the column — visual sits directly above title.
-
-#### Column 1 — Capture visual
-
-- Single condensed Q&A note (static): course name label, question, answer, understanding level badge (`Getting It`), code language chip (`{ } JavaScript`).
-- No flag, no overflow menu — stripped to essentials.
-
-#### Column 2 — Review visual
-
-- Single Q&A in review mode (static): question visible, answer hidden behind `Reveal answer` button.
-- Three rating buttons in a row: `Confused` / `Getting It` / `Clear` — static, one visually highlighted.
-- Session progress indicator above: `3 / 10`.
-
-#### Column 3 — Track visual
-
-- Small recharts `BarChart` (hardcoded data, 5 bars). No axes, no tooltip, no legend. Bars only.
-- Two stat lines below: `🔥 12 day streak` and `avg. 2.4h / day`. `text-muted-foreground`.
-
-### Visual Treatment
-
-- No card borders or column backgrounds. White space separates.
-- Consistent fixed height across all three visual mockups so the row is balanced.
-- Title: `font-semibold`. Body: `text-muted-foreground`.
-- Mobile: single column stack.
-
-### Entrance Animation
-
-- Three columns stagger: `opacity + translateY(12px)`, `100ms` apart, `350ms ease-out`.
-- `whileInView`, `viewport: { once: true }`.
+> **Not implemented.** This section was dropped from the current build. The three-column Features layout (Capture / Review / Track) described in the original plan does not exist in the codebase.
 
 ---
 
 ## Section 5 — How It Works
 
+> **Significantly redesigned.** The original plan was a vertical numbered list (4 steps, two-column desktop layout with `Separator` between steps). The implemented version is a **horizontal scroll carousel** with 5 steps, each having an interactive visual mockup (not static) and prev/next navigation buttons.
+
 ### Layout
 
 ```
 How it works
+[subtitle]
+[ ← ] [ → ]
 
-01  Add your courses
-    Create a course for each video series, tutorial, or documentation set.
-
-02  Capture as you learn
-    Write Q&A notes for concepts you want to remember. Add code snippets directly.
-
-03  Review regularly
-    Run a spaced repetition session. Rate each answer — Rootly adjusts your level.
-
-04  See your progress
-    Overview shows study time, mood trends, and understanding growth.
+┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+│ [Visual] │ │ [Visual] │ │ [Visual] │ │ [Visual] │ │ [Visual] │ →  (scrollable)
+│          │ │          │ │          │ │          │ │          │
+│ Title    │ │ Title    │ │ Title    │ │ Title    │ │ Title    │
+│ Body     │ │ Body     │ │ Body     │ │ Body     │ │ Body     │
+└──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘
 ```
 
-- Section title: large, left-aligned, `font-semibold`.
-- Each step: two-column (desktop) — mono step number left, title + body right. `Separator` between steps.
-- Mobile: single column, number above title.
+- Section title: `text-2xl font-semibold`.
+- Subtitle: `text-sm text-muted-foreground` — `"Set up a course, capture notes, log daily progress, review what you learned, and watch your stats."`.
+- Prev/Next icon buttons (`ArrowLeft02Icon` / `ArrowRight02Icon`) rendered below the subtitle, above the carousel. Disabled state wired to scroll position.
+- Carousel: `flex snap-x snap-mandatory overflow-x-auto` with `[scrollbar-width:none]`. Cards are `w-80 sm:w-96 shrink-0 snap-start`.
+- Trailing padding-end (`pe-16 sm:pe-24`) creates a visual bleed hint of the next card.
+
+### 5 Steps (implemented)
+
+| Step | Title | Visual |
+| --- | --- | --- |
+| 1 | `Create a course` | `CreateCourseVisual` — Card with course title "Machine Learning Fundamentals", instructor "Andrew Ng", and an **interactive** `Slider` showing progress at 42% |
+| 2 | `Capture notes` | `CaptureVisual` — Card with a Q&A note ("When should you use useMemo?"), interactive show/hide answer toggle, `PreviewCard` (hover desktop) or `Popover` (touch) for "Peek answer", Understanding + language badges |
+| 3 | `Log daily progress` | `DailyLogVisual` — Card with study time "2h 25m", reflective text, and **interactive** 3-button mood selector (Burned / Neutral / Focused with emoji icons) |
+| 4 | `Start a review session` | `ReviewVisual` — Card with session progress "3 / 10 questions", question text, `PreviewCard`/`Popover` "Peek answer", and **interactive** 3-button understanding level selector (Confused / Getting It / Clear with Hugeicons) |
+| 5 | `Watch analytics` | `TrackVisual` — Card with a live `BarChart` (5 hardcoded bars, no axes/tooltips), "Study minutes" label, and "avg. 2.4h / day" stat |
+
+> **Changes from original plan:**
+> - Was 4 steps; now 5 steps (added "Create a course" and "Log daily progress").
+> - Was vertical numbered list; now horizontal scroll carousel.
+> - Was static visual mockups; visuals are now interactive (Slider, mood picker, understanding picker).
+> - Step copy is different from the original.
+> - `Separator` between steps is gone.
+> - Carousel uses `PreviewCard` component for desktop hover-peek on answers (not in the original spec).
+
+### Carousel Behavior
+
+`useCarouselControls()` hook tracks scroll position via `scrollLeft` / `scrollWidth` / `clientWidth`. Scrolls by `max(280, clientWidth * 0.9)` per click. Updates prev/next button disabled state reactively.
 
 ### Entrance Animation
 
-- Steps stagger `150ms` apart, `opacity + translateY(8px)`, `350ms ease-out`.
-- `whileInView`, `viewport: { once: true }`.
+- Section title + subtitle: `opacity 0→1`, `y: 12→0`, `whileInView`, `viewport: { once: true, amount: 0.25 }`.
+- Carousel cards: `opacity 0→1`, `y: 12→0`, `animate` (on mount), staggered `0ms / 50ms / 100ms / 150ms / 200ms`.
+
+### Implementation Notes
+
+- **Implemented.** File: `app/(marketing)/ui/homepage-how-it-works.tsx`.
+- Imports `Bar`, `BarChart`, `ResponsiveContainer` from `recharts` directly (not lazy-loaded — these are static hardcoded data bars, not a live chart).
+- Imports emoji SVG components from `app/daily-entries/ui/daily-entries-emojis`.
 
 ---
 
 ## Section 6 — Social Proof
 
-> At launch, use `[QUOTE PENDING]`. Do not fabricate quotes.
-
-- Three coss ui `Card` components, side by side (mobile: stacked).
-- Quote: italic, `text-foreground`. Attribution: `text-muted-foreground`.
-
-### Entrance Animation
-
-- Cards stagger `120ms` apart, `opacity + translateY(12px)`.
-- `whileInView`, `viewport: { once: true }`.
+> **Not implemented.** Dropped from the current build.
 
 ---
 
 ## Section 7 — Final CTA
 
-- Headline: `Start learning with intention.`
-- Sub: `Rootly is free to use. No credit card required.`
-- Single primary `Button` → `/login`. Centered.
-- Visually distinct background via `--muted` token or subtle border.
+### Layout
+
+```
+┌─────────────────────────────────────────────────────┐
+│  Card (py-14, centered)                             │
+│                                                     │
+│  Start learning with intention.                     │
+│                                                     │
+│  "All disciplines repeated with consistency..."     │
+│   — John C. Maxwell                                 │
+│                                                     │
+│  [ Get started → ]                                  │
+│                                                     │
+│  Rootly is free to use.                             │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+> **Change from original plan:** The sub-copy `"Rootly is free to use. No credit card required."` was replaced with an italic motivational quote from John C. Maxwell: *"All disciplines repeated with consistency every day lead to great achievements gained slowly over time."* The `"Rootly is free to use."` line is kept below the button (shorter, no "No credit card required" line).
+
+- Wrapped in a coss ui `Card` with `py-14`.
+- `"Start learning with intention."` — `text-3xl font-semibold`.
+- Quote: `text-sm text-muted-foreground italic`.
+- Primary `Button` with `ArrowRight02Icon` → `/login`.
+- `"Rootly is free to use."` — `text-sm text-muted-foreground`.
 
 ### Entrance Animation
 
-- Single reveal: `opacity + translateY(16px)`, `400ms ease-out`.
-- `whileInView`, `viewport: { once: true }`.
+- `motion.div` wrapper: `opacity 0→1`, `y: 16→0`, `400ms`, `whileInView`, `viewport: { once: true, amount: 0.25 }`.
+
+### Implementation Notes
+
+- **Implemented.** File: `app/(marketing)/ui/homepage-final-cta.tsx`.
 
 ---
 
 ## Section 8 — Footer
 
+### Layout
+
 ```
-[ RootlyLogo (mark only) ]   Built with ♥ for self-taught developers. © 2026   [ GitHub ]
+┌─────────────────────────────────────────────────────┐
+│  Separator                                          │
+│  ─────────────────────────────────────────────────  │
+│                                                     │
+│  [ RootlyLogo + "Rootly" ]    [ Account | Connect | Legal ]
+│  Built with ♥ for self-taught developers.           │
+│  © 2026 Rootly. All rights reserved.                │
+│  [ ThemeSwitcherMultiButton ]                       │
+│                                                     │
+│  ──────────────────────────────────────────────     │
+│  [ ROOTLY wordmark watermark — full width ]         │
+│                                                     │
+└─────────────────────────────────────────────────────┘
 ```
 
-- `Separator` above. `text-muted-foreground` throughout. Mobile: stacked centered.
-- No entrance animation.
+> **Changes from original plan:**
+> - Footer is significantly expanded from the original single-line layout.
+> - Left column: logo + wordmark, tagline, copyright, and a `ThemeSwitcherMultiButton` (Light / Dark / System tri-state selector).
+> - Right column: `nav` grid with 3 link groups — **Account** (Login), **Connect** (GitHub), **Legal** (Privacy Policy, Terms of Service — both `#` placeholders).
+> - A full-width `RootlyWord` SVG watermark renders at the bottom of the footer at large scale (`h-14 sm:h-20 lg:h-32`), `text-muted-foreground/25`, `select-none`.
+> - No entrance animation on the footer (as specified).
+
+### Implementation Notes
+
+- **Implemented.** File: `app/(marketing)/ui/homepage-footer.tsx`.
+- Uses `RootlyLogo`, `RootlyWord` (SVG wordmark component from `components/rootly-word.tsx`), `Separator`, `PageContainer`.
+- `ThemeSwitcherMultiButton` is a custom component at `app/(marketing)/ui/theme-switcher-multi-button.tsx`.
 
 ---
 
-## Route & File Structure
+## Route & File Structure (as implemented)
 
 ```
 app/
   (marketing)/
-    page.tsx
-    layout.tsx
+    page.tsx          ← imports all sections
+    layout.tsx        ← minimal layout wrapper
     ui/
-      homepage-nav.tsx
-      homepage-hero.tsx
-      homepage-mockup.tsx          ← orchestrator: browser chrome, page switcher
-      homepage-features.tsx        ← static visual mockups
-      homepage-how-it-works.tsx
-      homepage-social-proof.tsx
-      homepage-final-cta.tsx
-      homepage-footer.tsx
+      homepage-nav.tsx             ✅ implemented
+      homepage-hero.tsx            ✅ implemented
+      homepage-mockup.tsx          ✅ implemented (Notes only — multi-page pending)
+      homepage-how-it-works.tsx    ✅ implemented (carousel redesign)
+      homepage-final-cta.tsx       ✅ implemented
+      homepage-footer.tsx          ✅ implemented
 
-      mock-seed.ts                 ← all seed data (typed, no logic)
-      mock-store.ts                ← demo localStorage store + useDemoStore hook
-      mock-floating-dock.tsx       ← FloatingDock adapter for mockup context
-      mock-notes-page.tsx          ← Notes page wired to demo store
-      mock-courses-page.tsx        ← Courses page wired to demo store
-      mock-overview-page.tsx       ← Overview page wired to demo store (lazy)
-      mock-daily-entries-page.tsx  ← Daily Entries page wired to demo store
-      mock-review-page.tsx         ← Review page wired to demo store
+      mock-seed.ts                 ✅ implemented
+      mock-store.ts                ✅ implemented
+      mock-note-card.tsx           ✅ implemented (self-contained, does not import real NoteCard)
+      mock-notes-page.tsx          ✅ implemented
+      mock-note-editor-sheet.tsx   ✅ implemented
+      mock-notes-sheets.tsx        ✅ implemented (viewer + code viewer)
+      mock-sheet.tsx               ✅ implemented (MockSheetPortalProvider)
+      theme-switcher-multi-button.tsx ✅ implemented
+
+      homepage-mock-notes.ts       ⚠️  exists (likely a legacy/unused file — verify before removing)
+
+      — NOT YET BUILT —
+      mock-floating-dock.tsx       ❌ pending
+      mock-courses-page.tsx        ❌ pending
+      mock-overview-page.tsx       ❌ pending (lazy)
+      mock-daily-entries-page.tsx  ❌ pending
+      mock-review-page.tsx         ❌ pending
 ```
 
 ---
