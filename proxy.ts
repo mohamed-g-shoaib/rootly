@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-
-const AUTH_COOKIE = "sb-gforbcrkqdowocyfrrjj-auth-token"
+import { updateSession } from "@/lib/supabase/middleware"
 
 const PROTECTED_PREFIXES = [
   "/overview",
@@ -11,25 +10,38 @@ const PROTECTED_PREFIXES = [
   "/review",
 ] as const
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const isAuthenticated = request.cookies.has(AUTH_COOKIE)
 
-  if (pathname === "/" && isAuthenticated) {
+  // 1. Refresh session and get the updated response
+  const { supabaseResponse, user } = await updateSession(request)
+  const isAuthenticated = !!user
+
+  // 2. Redirect authenticated users away from public home and login
+  if ((pathname === "/" || pathname === "/login") && isAuthenticated) {
     return NextResponse.redirect(new URL("/overview", request.url))
   }
 
-  const isProtected = PROTECTED_PREFIXES.some((prefix) =>
-    pathname === prefix || pathname.startsWith(`${prefix}/`)
+  // 3. Redirect unauthenticated users to login for protected routes
+  const isProtected = PROTECTED_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
   )
 
   if (isProtected && !isAuthenticated) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  return NextResponse.next()
+  return supabaseResponse
 }
 
 export const proxyConfig = {
-  matcher: ["/", "/overview/:path*", "/courses/:path*", "/notes/:path*", "/daily-entries/:path*", "/review/:path*"],
+  matcher: [
+    "/",
+    "/login",
+    "/overview/:path*",
+    "/courses/:path*",
+    "/notes/:path*",
+    "/daily-entries/:path*",
+    "/review/:path*",
+  ],
 }
