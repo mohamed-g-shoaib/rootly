@@ -1,160 +1,124 @@
 # 12 Principles of Animation
 
-Apr 8, 2025 by Raphael Salaja
+[The Principles of Animation](#the-principles-of-animation)[Squash and Stretch](#squash-and-stretch)[Anticipation](#anticipation)[Staging](#staging)[Straight Ahead Action & Pose to Pose](#straight-ahead-action--pose-to-pose)[Follow Through & Overlapping Action](#follow-through--overlapping-action)[Slow In & Slow Out](#slow-in--slow-out)[Arcs](#arcs)[Secondary Action](#secondary-action)[Timing](#timing)[Exaggeration](#exaggeration)[Solid Drawing](#solid-drawing)[Appeal](#appeal)[Why These Principles Still Matter](#why-these-principles-still-matter)
 
-Motion on the web has come a long way from simple transitions and hover effects. Motion is more than flair; it is communication, guiding users, reassuring them, and delighting them while transforming routine workflows into memorable experiences.
+# 12 Principles of Animation
+
+04 August 2025
+
+> Due to the nature of some of these examples, for the best viewing experience, please view this page on a desktop device.
+
+Animation on the web has come a long way from simple transitions and hover effects. Motion is more than flair; it is communication, guiding users, reassuring them, and delighting them while transforming routine workflows into memorable experiences.
 
 But not all animation is created equal. The difference between good and great often comes down to intention. Great animation is purposeful, subtle, and rooted in the principles that have guided designers for decades.
 
 # The Principles of Animation
 
-The 12 Principles of Animation provide a framework for creating more engaging and lifelike animations. In the 1930s, Disney animators codified what they'd learned into twelve principles.[1](#user-content-fn-1) They were trying to make drawings feel real. We're trying to make pixels feel human. The problems are surprisingly similar.
+The 12 Principles of Animation provide a framework for creating more engaging and lifelike animations. Developed by Disney animators in the 1930s, they emphasize the importance of understanding the underlying mechanics of movement and how to apply them effectively.[1](#user-content-fn-1)
+
+Understanding these principles can help you create animations that feel more natural and intuitive in your software.
 
 ## Squash and Stretch
 
-Everything has it's own mass, and the way it moves and deforms is crucial to conveying its weight and personality. Drop a rubber ball. It flattens on impact, then springs back.
+Everything has it's own mass, and the way it moves and deforms is crucial to conveying its weight and personality. If you are trying to create a sense of realism in your animations, consider how objects squash and stretch in the real world.
 
-That momentary deformation tells your brain everything about its weight, material, and energy. Digital objects don't have physics so in turn we need to "fake" it.
+You can use this concept to create objects that seem malleable and responsive to their environment.
 
-Fire
+Toast icon
 
-FireCrownToast
+ArrowFire iconCrown iconToast icon
 
 Family's Wallet Icon Picker[2](#user-content-fn-2)
 
 In this example, the wallet icon appears to squash and stretch on change. It's almost like it's morphing into a different shape. A simple but effective use of this principle.
 
-It's small and most users won't consciously notice but they'll feel it, and that feeling adds to the overall experience.
-
-There is a trap here though. Too much squash and stretch turns professional software into a cartoon. The goal is believability, not Looney Tunes (unless that's what you're going for).
-
-As with all things in life, a balance must be struck.
+Utilize in moderation. Overdoing squash and stretch can lead to a cartoonish effect that distracts rather than enhances. The key is to find the right balance that feels natural and complements the overall design, as is with all principles we will cover.
 
 ## Anticipation
 
-Anticipation is the act of preparing users for what comes next. Before a baseball pitcher throws, they wind up. Before a dancer leaps, they bend their knees.
+Anticipation is the act of preparing users for what comes next. In practice, this means giving a clue before a major action occurs. Such cues tap into subconscious expectations.
 
-In practice, this means giving a clue before a major action occurs. Such cues tap into subconscious expectations.
+Use anticipation to set up important transitions or calls-to-action – like a notification icon that wiggles gently to imply updates awaiting. Select the issue below and hold to delete it to see how you can anticipate a deletion.
 
-Refreshing
+## Tasks
 
-Bookmark
+TPA-42Anticipate Future Deletions
 
-Bell
+Dec 28
 
-Pin
-
-Star
-
-Above is a pull-to-refresh interaction. As you drag down, the reveal hint appears from the top to indicate that releasing will trigger a refresh. The pulling down also feels elastic, giving a sense that something will happen on release.
-
-Reserve anticipation for moments that matter. A notification badge might wiggle to hint at updates. A submit button might compress slightly before sending. But if every micro-interaction has a wind-up, your app will feel sluggish. Save the drama for the dramatic.
+Avoid overusing it on every tiny interaction, too much anticipation can feel gimmicky or slow the experience. Save it for moments where an extra hint helps the user, and keep it quick. The goal is to inform the user about what’s coming, without making them wait unnecessarily.
 
 ## Staging
 
-If anticipation is about the before, staging is about the during. When a complex panel opens, what should the user look at first? If everything animates simultaneously, the answer is "nothing" their attention scatters.
+If anticipation is about the before, staging is about the during. This principle is all about focusing the user’s attention on what matters most as an interaction unfolds.
 
-Bell 2
+In UI terms, staging might mean introducing interface elements one by one in a sequence. Imagine opening a complex settings panel: the backdrop might fade in first, then the panel slides into view, and finally the primary control within that panel gets a subtle highlight.
 
-$57,206
+Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them.
 
-Dot Grid 1 X 3 Horizontal
+About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.
 
-Customize
+Choreograph the sequence, in this example, we use the backdrop to blur out the background to provide focus.
 
-Watch the sequence here. Clicking on the image brings the card into focus while dimming the background. The animation guides your eye to the important parts.
-
-Think of staging as directing a film. You're not just showing information you're manipulating attention.
+Avoid animating too many things at the same exact time, or the user won’t know where to look. Staging is not always needed for very simple interactions, but for anything complex, it brings clarity.
 
 ## Straight Ahead Action & Pose to Pose
 
-There are two ways to animate. Straight ahead means drawing frame after frame in sequence, letting the animation discover itself. Pose to pose means defining the key moments first, then filling in the gaps.
+There’s more than one way to animate a sequence. Straight ahead action means animating one frame after another in order. Pose to pose involves planning key moments and then filling in the gaps between.
 
-On the web, we mostly work pose to pose. We define the keyframes and let the browser interpolate the rest.
+We usually rely on straight ahead action on the web. We define the keyframes and let software interpolate the in-betweens. When trying to create animations, try to keep this in mind. You don't have to plan every single frame in detail. Instead, take the key points, and allow eases and transitions to fill in the gaps.
 
-This matters more than it sounds. You don't need to obsess over every frame, you need just need to nail the important ones. Start state. End state. Maybe a midpoint for complex curves.
-
-AppleChevron Down
+Apple
 
 Divider
 
-AppleChevron Down
+Apple
 
 Divider
 
-AppleChevron Down
+Apple
 
-Why is this important? Because focusing on key poses helps you prioritize what matters. It keeps your animations efficient and purposeful.
-
-If something doesn't need to be animated, don't animate it (please). Not every key moment needs motion. Sometimes the best animation is none at all.
-
-For example, consider context menus. Apple's context menus only animate on exit, never on entry. Opening happens instantly. They do this beecause context menus are used constantly, and that entrance animation would compound into irritation.
+When it comes to deciding on what should be interpolated, consider how often this action will be used. For example, Apple only animates out their context menus as they are used so frequently, animating them in all the time can start to feel sluggish for the user.
 
 ## Follow Through & Overlapping Action
 
-When you stop walking, your hair keeps moving. When you start running, your arms take a moment to catch up. Nothing in nature moves as a single rigid unit.
+When you stop moving, parts of you might continue moving, and when you start moving, not everything accelerates at once. This principle bring this natural continuity into animations.
 
-If you want your animations to feel more alive, you need to embrace this principle.
-
-Tab EdgeTab Edge
+Imagine scrolling through a list where each card enters the viewport with a tiny delay relative to the previous card. Instead of a block of content popping in together, you get a graceful cascade. This staggered timing is overlapping action at work, turning a static list into a dynamic flow.
 
 Dia's Split Tabs.[3](#user-content-fn-3)
 
-The above example makes use of springs to make the transitions feel more alive. Springs itself is a whole topic that would need it's own essay to be discussed.
+The above example makes use of springs to make the transitions feel more alive. Springs itself is a whole topic that would need it's own essay to be discussed. It's not covered in this one, but if you want to do some digging on it yourself, check out the [Animate with Springs](https://developer.apple.com/videos/play/wwdc2023/10158) talk from WWDC23.[4](#user-content-fn-4)
 
-They add that organic overshoot-and-settle that easing curves can't replicate. Apple's WWDC23 talk on springs is worth your time if you want to go deeper.[4](#user-content-fn-4)
-
-Knowning this, the maing danger is latency. Too much stagger and your interface feels slow, like it's thinking too hard, so save it for none critical elements.
+Use follow-through and overlapping actions to soften transitions and make them feel natural. Anytime an abrupt stop or start feels jarring, adding a bit of overlap can help. Be cautious not to overdo it, too much delay between elements can make the UI sluggish or unresponsive.
 
 ## Slow In & Slow Out
 
-Nothing in nature starts or stops instantly. Even light takes time to fade.
+Most things in nature don’t start or stop instantly and neither should good UI animations. Slow in & slow out means an object begins motion gradually, then speeds up, then slows down again at the end.
 
-This principle is the cornerstone of smooth, comfortable transitions. In practice, it’s all about easing curves, an element might ease-out as it leaves the screen or ease-in when it appears.
-
-The result mimics how a car accelerates and brakes, or how a human moves, avoiding the jolt of an abrupt linear motion.
-
-Easing Curve Visualization
+This principle is the cornerstone of smooth, comfortable transitions. In practice, it’s all about easing curves, an element might ease-out as it leaves the screen or ease-in when it appears. The result mimics how a car accelerates and brakes, or how a human moves – avoiding the jolt of an abrupt linear motion.
 
 easeInSine
 
-Easing Curve Visualization
-
 easeOutSine
-
-Easing Curve Visualization
 
 easeInOutSine
 
-Easing Curve Visualization
-
 easeInQuad
-
-Easing Curve Visualization
 
 easeOutQuad
 
-Easing Curve Visualization
-
 easeInOutQuad
-
-Easing Curve Visualization
 
 easeInCubic
 
-Easing Curve Visualization
-
 easeOutCubic
-
-Easing Curve Visualization
 
 easeInOutCubic
 
-Common Easing Functions.[5](#user-content-fn-5)
+Above shows a few of the widely used easing functions. Check out [easing.dev](https://easing.dev) for a more comprehensive list, as well as the ability to create your own.[5](#user-content-fn-5)
 
-This is where easing curves earn their keep. An `ease-out` makes entrances feel snappy—the element arrives fast and settles gently. An `ease-in` works for exits, building momentum before departure. `ease-in-out` suits elements that need to feel deliberate, like a panel sliding across the screen.
-
-[easing.dev](https://easing.dev) is an excellent playground for this.[5](#user-content-fn-5) I'd reccomend spending some time there, experimenting with different curves to see how they affect the feel of motion.
+The kind of eases you use as well can make a difference. For example, use an `ease-out` to make elements feel more snappy. Use an `ease-in` for elements that are entering the viewport.
 
 ## Arcs
 
@@ -162,9 +126,7 @@ Arcs make movement feel organic. Instead of sliding elements in straight lines, 
 
 Apple's Dynamic Island.[6](#user-content-fn-6)
 
-Apple's Dynamic Island uses this beautifully. Elements don't just resize, they flow along curved paths that feel inevitable, like water finding its level.
-
-Arcs are hard to get right in UI. They're most useful for hero moments on landing pages or playful interactions where you want that extra polish. For utilitarian interfaces, straight lines are fine. But when you need magic, reach for a curve.
+Arcs are hard to implement when it comes to UX. It's more relevant for brining information forward, like on a landing page. Alot of experimentation is needed to get it right.
 
 ## Secondary Action
 
@@ -172,13 +134,7 @@ These are little flourishes that support the main action, adding depth and feedb
 
 Secondary actions might be something like a checkmark icon that pops and then does a brief sparkle after a form is successfully submitted. The sparkle isn’t the main message, but it reinforces the feeling of success in a fun way.
 
-Check
-
-Loading Spinner
-
-Backinged Up! Now
-
-Family's Secure Wallet Button[3](#user-content-fn-3)
+Running Simulation Done!
 
 Add secondary actions to inject delight and clarity into moments of user feedback. Sound can also be a secondary action, like a subtle click or whoosh that reinforces the feeling of interaction.
 
@@ -188,21 +144,19 @@ Think of your favourite games or media, when they want to show impact they often
 
 In animation, timing refers to the speed of an action, pretty self explanatory. Choosing the right duration is what makes interfaces feel snappy or sluggish, deliberate or chaotic.
 
-A tooltip at 150ms feels responsive. The same tooltip at 400ms feels broken. The information hasn't changed, only the wait. And waiting, even for fractions of a second, erodes trust.
-
-Amazon
+For example, a tooltip appearing might feel just right at 150 milliseconds, but utterly annoying at 400 milliseconds. A good rule of thumb I like to use is to keep durations under 300ms for most interactions.
 
 Snappy (120ms)
 
-My rule: keep interactions under 300ms. Anything longer needs a good reason.
-
-More importantly, be consistent. If your buttons animate at 200ms, all your buttons should animate at 200ms. Inconsistent timing creates a subconscious sense that something is wrong, even if users can't articulate why. Define your timing scale early. Reuse it everywhere.
+Consistent timing across similar actions keeps the experience coherent and responsive. Keep this in mind. Define some timing guidelines for your animations and reuse them throughout your product.
 
 ## Exaggeration
 
-Reality is boring. Sometimes you need to push past it.
+Sometimes clarity or engagement calls for pushing reality a bit. **Exaggeration** means intentionally amplifying a motion or effect beyond what is realistic, in order to make a point. In UI, it's more about emphasizing feedback or transitions so they’re unmistakable (and fun).
 
-Exaggeration means amplifying motion beyond what's physically accurate to make a point land harder. It's theatrical. It's intentional. And in the right moments, it's exactly what you need.
+Exaggeration can also help usability. Imagine an error wiggle on a form field. The field doesn’t just subtly highlight red, it shakes to indicate something's wrong and needs attention.
+
+It’s an exaggerated motion that instantly draws attention to the problem field, much harder to miss than a tiny change.
 
 Use exaggeration sparingly for moments when you want the user to **feel** something strongly or notice something important.
 
@@ -210,9 +164,9 @@ It’s particularly at home in onboarding sequences, empty states, confirmations
 
 ## Solid Drawing
 
-Traditional animators obsessed over making 2D drawings feel three-dimensional. They understood that believable volume creates believable characters.
+Solid drawing in traditional animation is about making sure objects feel three-dimensional and believable in their space. We use this to create a sense of depth and realism in the interface.
 
-We work in a different medium, but the principle translates. Shadows suggest depth. Layering implies hierarchy. Perspective hints at space beyond the viewport.
+It can be as simple as using shadows, layering, and perspective subtly to communicate hierarchy and interactivity.
 
 Globe
 
@@ -220,38 +174,71 @@ Pause
 
 Linear Orbit[7](#user-content-fn-7)
 
-CSS `perspective` is your friend here. It defines how far an object sits from the viewer, giving 3D transforms actual depth instead of flat rotation.
+When it comes to coding 3D transforms, take note of using `perspective` to create depth, which we use in this example. This CSS property allows you to define how far the object is from the viewer, giving a sense of realism to the 3D effect.
 
 Another aspect is consistency in how things are drawn and move. If an icon rotates in 3D, it shouldn’t suddenly look flat or inverted incorrectly, paying attention to how things scale or skew maintains the illusion of volume.
 
 ## Appeal
 
-This is the one that ties everything together. Appeal is the difference between software you tolerate and software you love.
+Lastly, appeal ties everything together. This is about crafting an experience that is visually and emotionally compelling to the user. It’s the difference between an interface that is technically usable and one that people want to use.
 
-![John Phamous's avatar](/content/12-principles-of-animation/avatars/john.png?dpl=dpl_HJCjAUGaayh8zxq6HssN6C1JBEGD)
-A small scrollable sample of delightful creations on the web.8
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+)
 
-Scroll through these examples. Notice how each one makes you feel something? That's appeal. It's not one technique, it's the sum of all the techniques, applied with care and taste.
+[![JohnPhamous's avatar](/media/library/12-principles-of-animation/avatars/john.png)JohnPhamous@JohnPhamous](https://x.com/JohnPhamous)
 
-Think about the products you keep coming back to. The ones you recommend to friends. They probably aren't the most feature rich. They're the ones that feel right. The ones where someone clearly gave a damn.
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+)
 
-That's the goal. to make something people love.
+[![Gustav Ekerot's avatar](/media/library/12-principles-of-animation/avatars/gustav.jpg)Gustav Ekerot@designgurra](https://x.com/designgurra)
 
-# Why This Still Matters
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZDFkNWRiIi8+PC9zdmc+)
 
-We live in an age of AI-generated interfaces and ship-fast culture. Polish feels like a luxury. Animation feels like scope creep. But here's the thing, when everything is fast, craft becomes the differentiator. When AI can generate any feature, the feeling of using software becomes the product.
+[![Abhijeet Singh's avatar](/media/library/12-principles-of-animation/avatars/abhijeet.jpg)Abhijeet Singh@abjt14](https://x.com/abjt14)
 
-In the end, great animation is invisible. Users don't think "nice ease-out curve." They think "this feels good." They don't know why. They just know they want to come back. And that's why these principles still matter. Because they help us create experiences that resonate on a human level,
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjlmYWZiIi8+PC9zdmc+)
 
-They help make ui feel human.
+[![Mint's avatar](/media/library/12-principles-of-animation/avatars/mint.jpg)Mint@smintfy](https://x.com/smintfy)
 
----
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjlmYWZiIi8+PC9zdmc+)
+
+[![Xavier (Jack)'s avatar](/media/library/12-principles-of-animation/avatars/xavier.jpg)Xavier (Jack)@KMkota0](https://x.com/KMkota0)
+
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+)
+
+[![Florian's avatar](/media/library/12-principles-of-animation/avatars/florian.jpg)Florian@flornkm](https://x.com/flornkm)
+
+![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZDFkNWRiIi8+PC9zdmc+)
+
+[![lochie's avatar](/media/library/12-principles-of-animation/avatars/lochie.jpg)lochie@lochieaxon](https://x.com/lochiexon)
+
+A small scrollable sample of delightful creations on the web.[8](#user-content-fn-8)
+
+Think of the products you find delightful to use, or always go back to. What makes them special? Is it the attention to detail, the playful interactions, or the way they anticipate your needs? Those elements contribute to their appeal.
+
+Always consider appeal, especially if you’re aiming for a product that stands out or creates an emotional bond with users. Tell a story with your software. Make something people love.
+
+# Why These Principles Still Matter
+
+In a world of AI-driven software and fast development cycles, polished animation is a differentiator. To stand out, you need to make your product feel great. Thoughtful motion design makes an interface feel crafted and intentional.
+
+These principles help teams avoid the two extremes: sterile or overdone. Without them, you get either lifeless, jarring movements or flashy effects that frustrate. The sweet spot is just enough animation, of the right kind, at the right moments.
+
+In the end, great interface animations are almost invisible. Users just feel that an app is smooth and enjoyable, often without knowing why. That’s the magic of these principles.
+
+....making products more fun, human, and memorable.
+
+## Footnotes
 
 1.  [The Illusion of Life: Disney Animation](https://www.amazon.com/Illusion-Life-Disney-Animation/dp/0786860707) is an amazing book that delves into the principles of animation, including squash and stretch, anticipation, and more. It’s a must-read for anyone serious about mastering animation. [↩](#user-content-fnref-1)
 2.  The [Family](https://www.family.co) Wallet Icon Picker is a great example of how squash and stretch can be used effectively in a user interface. The icon picker uses subtle animations to make the selection process feel more engaging and intuitive. [↩](#user-content-fnref-2)
-3.  [Dia](https://www.diabrowser.com/) have a very nice example of follow-through in their splitting tabs animation. Check out the browser to see the live version. [↩](#user-content-fnref-3) [↩2](#user-content-fnref-3-2)
+3.  [Dia](https://www.diabrowser.com/) have a very nice example of follow-through in their splitting tabs animation. Check out the browser to see the live version. [↩](#user-content-fnref-3)
 4.  The [Animate with Springs](https://developer.apple.com/videos/play/wwdc2023/10158) talk from WWDC23 is a great resource for learning about how to use springs in animations. It's mainly about SwiftUI, but the concepts apply to any animation framework. [↩](#user-content-fnref-4)
-5.  Lochie's [easing.dev](https://easing.dev) is a great resource for exploring different easing functions and their applications. You can also build your own springs here too. [↩](#user-content-fnref-5) [↩2](#user-content-fnref-5-2)
+5.  Lochie's [easing.dev](https://easing.dev) is a great resource for exploring different easing functions and their applications. You can also build your own springs here too. [↩](#user-content-fnref-5)
 6.  Rauno recorded this clip in his [Invisible Details of Interaction Design](https://rauno.me/craft/interaction-design) essay. Worth the read. [↩](#user-content-fnref-6)
 7.  A recreation of the Linear loading animation, made by Emil can be found on their [Twitter](https://x.com/emilkowalski_/status/1937134338816053290/video/1) [↩](#user-content-fnref-7)
 8.  Some wonderful people building on the web, check out their profiles. [John Phamous](https://x.com/JohnPhamous), [Gustav Ekerot](https://x.com/designgurra), [Abhijeet Singh](https://x.com/abjt14), [Mint](https://x.com/smintfy), [Xavier (Jack)](https://x.com/KMkota0), [Florian](https://x.com/flornkm), [Lochie Axon](https://x.com/lochiexon), [Pranathi Peri](https://x.com/pranathiperii), [Jakub Krehel](https://x.com/jakubkrehel) and [Henry Heffernan](https://x.com/henryheffernan). [↩](#user-content-fnref-8)
+
+If you've enjoyed this guide and found it useful, please consider donating to support my work by visiting my donation page. Your contribution helps cover the costs of research, writing and hosting and keeps me motivated to create more in-depth tutorials.
+
+Every bit of support makes a meaningful difference.
+
+[→ Consider Supporting](/checkout?products=9a70b39c-e723-46d5-9679-23aa767285c0)
