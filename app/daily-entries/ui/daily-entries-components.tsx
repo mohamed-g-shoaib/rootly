@@ -7,7 +7,9 @@ import {
   Clock01Icon,
   Delete01Icon,
   Edit01Icon,
+  FilterIcon,
   MoreVerticalIcon,
+  Note01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import type { DateRange } from "react-day-picker"
@@ -90,11 +92,21 @@ export function EmptyState({
   if (!hasAnyEntries) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No entries yet</div>
-        <div className="text-sm text-muted-foreground">
-          Start logging your study sessions to track your progress.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={Note01Icon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button onClick={onLogToday}>Log Today</Button>
+        <div className="text-lg font-medium">No entries yet</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Start logging your study sessions to track your mood and progress over
+          time.
+        </div>
+        <Button onClick={onLogToday} type="button" className="mt-2">
+          Log Today
+        </Button>
       </div>
     )
   }
@@ -102,11 +114,24 @@ export function EmptyState({
   if (hasFilters) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No entries match your filters</div>
-        <div className="text-sm text-muted-foreground">
-          Try adjusting the date range or mood filter.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={FilterIcon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button variant="ghost" onClick={onClearFilters}>
+        <div className="text-lg font-medium">No entries match your filters</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Try adjusting the date range or mood filters to find what you're
+          looking for.
+        </div>
+        <Button
+          variant="ghost"
+          type="button"
+          onClick={onClearFilters}
+          className="mt-2"
+        >
           Clear filters
         </Button>
       </div>
@@ -288,10 +313,10 @@ function DeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogClose render={<Button variant="ghost" />}>
+          <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Cancel
           </AlertDialogClose>
-          <Button variant="destructive" onClick={onDelete}>
+          <Button variant="destructive" type="button" onClick={onDelete}>
             Delete
           </Button>
         </AlertDialogFooter>
@@ -619,10 +644,11 @@ export function EntryEditorSheet({
             </SheetPanel>
 
             <SheetFooter>
-              <SheetClose render={<Button variant="ghost" />}>
+              <SheetClose render={<Button variant="ghost" type="button" />}>
                 Cancel
               </SheetClose>
               <Button
+                type="button"
                 onClick={submit}
                 disabled={
                   !hasValidStudyTime ||
@@ -646,11 +672,12 @@ export function EntryEditorSheet({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogClose render={<Button variant="ghost" />}>
+            <AlertDialogClose render={<Button variant="ghost" type="button" />}>
               Keep editing
             </AlertDialogClose>
             <Button
               variant="destructive"
+              type="button"
               onClick={() => {
                 setDiscardOpen(false)
                 onOpenChange(false)

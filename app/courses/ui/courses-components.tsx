@@ -1,24 +1,26 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import * as React from "react";
+import Link from "next/link"
+import * as React from "react"
 
 import {
+  AddCircleIcon,
+  Cancel01Icon,
+  CourseIcon,
   Delete01Icon,
   Edit01Icon,
+  FilterIcon,
   Link01Icon,
   MoreVerticalIcon,
-  Cancel01Icon,
-  AddCircleIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   AlertDialog,
   AlertDialogClose,
@@ -28,14 +30,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu";
+} from "@/components/ui/menu"
 import {
   Sheet,
   SheetClose,
@@ -44,177 +46,75 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "@/components/ui/sheet"
 import {
   Progress,
   ProgressIndicator,
   ProgressTrack,
-} from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
+} from "@/components/ui/progress"
+import { Slider } from "@/components/ui/slider"
 
-import type { Course } from "./courses-model";
-import { isValidUrl } from "./courses-model";
+import { useReducedMotion } from "motion/react"
+import type { Course } from "./courses-model"
+import { isValidUrl } from "./courses-model"
 
 export function CourseEditorSheet({
   mode,
   course,
   open,
   onOpenChange,
-  isMobile,
+  breakpoint,
   onSave,
 }: {
-  mode: "create" | "edit";
-  course: Course | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  isMobile: boolean;
-  onSave: (course: Course) => void;
+  mode: "create" | "edit"
+  course: Course | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  breakpoint: "mobile" | "tablet" | "desktop"
+  onSave: (course: Course) => void
 }) {
-  const [discardOpen, setDiscardOpen] = React.useState(false);
+  const [discardOpen, setDiscardOpen] = React.useState(false)
 
-  const [title, setTitle] = React.useState("");
-  const [instructor, setInstructor] = React.useState("");
-  const [courseLink, setCourseLink] = React.useState("");
-  const [links, setLinks] = React.useState<string[]>([]);
-  const [topics, setTopics] = React.useState<string[]>([]);
-  const [topicDraft, setTopicDraft] = React.useState("");
-  const [progress, setProgress] = React.useState(0);
+  const [title, setTitle] = React.useState("")
+  const [instructor, setInstructor] = React.useState("")
+  const [courseLink, setCourseLink] = React.useState("")
+  const [links, setLinks] = React.useState<string[]>([])
+  const [topics, setTopics] = React.useState<string[]>([])
+  const [topicDraft, setTopicDraft] = React.useState("")
+  const [progress, setProgress] = React.useState(0)
 
-  const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false);
+  const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false)
   const [linkInvalidByIndex, setLinkInvalidByIndex] = React.useState<
     Record<number, boolean>
-  >({});
+  >({})
 
-  const baseId = course?.id ?? "";
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), []);
+  const isMobile = breakpoint === "mobile"
+  const side = isMobile ? "bottom" : "right"
+  const shouldReduceMotion = useReducedMotion()
 
-  React.useEffect(() => {
-    if (!open) return;
-
-    if (mode === "edit" && course) {
-      setTitle(course.title);
-      setInstructor(course.instructor ?? "");
-      setCourseLink(course.courseLink ?? "");
-      setLinks(course.links);
-      setTopics(course.topics);
-      setTopicDraft("");
-      setProgress(course.progress);
-      setCourseLinkInvalid(false);
-      setLinkInvalidByIndex({});
-      return;
-    }
-
-    if (mode === "create") {
-      setTitle("");
-      setInstructor("");
-      setCourseLink("");
-      setLinks([]);
-      setTopics([]);
-      setTopicDraft("");
-      setProgress(0);
-      setCourseLinkInvalid(false);
-      setLinkInvalidByIndex({});
-    }
-  }, [course, mode, open]);
-
-  const hasChanges = React.useMemo(() => {
-    if (mode === "create") {
-      return (
-        title.trim() !== "" ||
-        instructor.trim() !== "" ||
-        courseLink.trim() !== "" ||
-        links.some((l) => l.trim() !== "") ||
-        topics.length > 0 ||
-        progress !== 0
-      );
-    }
-
-    if (!course) return false;
-
-    return (
-      title.trim() !== course.title.trim() ||
-      instructor.trim() !== (course.instructor ?? "").trim() ||
-      courseLink.trim() !== (course.courseLink ?? "").trim() ||
-      links.join("\n").trim() !== course.links.join("\n").trim() ||
-      topics.join("\n").trim() !== course.topics.join("\n").trim() ||
-      progress !== course.progress
-    );
-  }, [course, courseLink, instructor, links, mode, progress, title, topics]);
-
-  const canSave = title.trim() !== "" && !courseLinkInvalid;
-
-  function requestClose(nextOpen: boolean) {
-    if (nextOpen) {
-      onOpenChange(true);
-      return;
-    }
-
-    if (hasChanges) {
-      setDiscardOpen(true);
-      return;
-    }
-
-    onOpenChange(false);
-  }
-
-  function addLink() {
-    setLinks((prev) => [...prev, ""]);
-  }
-
-  function removeLink(index: number) {
-    setLinks((prev) => prev.filter((_, i) => i !== index));
-    setLinkInvalidByIndex((prev) => {
-      const next: Record<number, boolean> = {};
-      for (const [k, v] of Object.entries(prev)) {
-        const i = Number(k);
-        if (i < index) next[i] = v;
-        if (i > index) next[i - 1] = v;
-      }
-      return next;
-    });
-  }
-
-  function addTopic(raw: string) {
-    const next = raw.trim().replace(/,$/, "");
-    if (!next) return;
-    const normalized = next.toLowerCase();
-    setTopics((prev) =>
-      prev.some((t) => t.toLowerCase() === normalized) ? prev : [...prev, next],
-    );
-    setTopicDraft("");
-  }
-
-  function removeTopic(topic: string) {
-    setTopics((prev) => prev.filter((t) => t !== topic));
-  }
-
-  function onSubmit() {
-    if (!canSave) return;
-
-    const id = mode === "edit" && course ? course.id : `course_${Date.now()}`;
-    const createdAt =
-      mode === "edit" && course ? course.createdAt : now.toISOString();
-
-    const nextCourse: Course = {
-      id,
-      title: title.trim(),
-      instructor: instructor.trim() ? instructor.trim() : null,
-      courseLink: courseLink.trim() ? courseLink.trim() : null,
-      links: links.map((l) => l.trim()).filter(Boolean),
-      topics: topics.map((t) => t.trim()).filter(Boolean),
-      progress,
-      createdAt,
-      updatedAt: now.toISOString(),
-    };
-
-    onSave(nextCourse);
-  }
-
-  const side = isMobile ? "bottom" : "right";
+  const _initial = shouldReduceMotion ? undefined : { opacity: 0, y: 10 }
+  const _animate = shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
 
   return (
     <>
-      <Sheet open={open} onOpenChange={requestClose}>
+      <Sheet
+        open={open}
+        onOpenChange={(next) => {
+          if (
+            !next &&
+            (title !== (course?.title ?? "") ||
+              instructor !== (course?.instructor ?? "") ||
+              courseLink !== (course?.courseLink ?? "") ||
+              JSON.stringify(links) !== JSON.stringify(course?.links ?? []) ||
+              JSON.stringify(topics) !== JSON.stringify(course?.topics ?? []) ||
+              progress !== (course?.progress ?? 0))
+          ) {
+            setDiscardOpen(true)
+          } else {
+            onOpenChange(next)
+          }
+        }}
+      >
         <SheetPopup side={side} variant="inset">
           <Form className="h-full gap-0">
             <SheetHeader>
@@ -250,8 +150,8 @@ export function CourseEditorSheet({
                     aria-invalid={courseLinkInvalid}
                     onBlur={() => setCourseLinkInvalid(!isValidUrl(courseLink))}
                     onValueChange={(v) => {
-                      setCourseLink(v);
-                      if (courseLinkInvalid) setCourseLinkInvalid(false);
+                      setCourseLink(v)
+                      if (courseLinkInvalid) setCourseLinkInvalid(false)
                     }}
                   />
                   {courseLinkInvalid ? (
@@ -266,10 +166,11 @@ export function CourseEditorSheet({
                   <div className="flex flex-col gap-2">
                     {links.map((value, index) => (
                       <div
-                        key={`${baseId}_${index}`}
+                        key={`link_${index}`}
                         className="flex items-center gap-2"
                       >
                         <Input
+                          id={`link_${index}`}
                           value={value}
                           placeholder="https://..."
                           aria-invalid={linkInvalidByIndex[index] ?? false}
@@ -281,20 +182,24 @@ export function CourseEditorSheet({
                           }
                           onValueChange={(v) => {
                             setLinks((prev) =>
-                              prev.map((x, i) => (i === index ? v : x)),
-                            );
+                              prev.map((x, i) => (i === index ? v : x))
+                            )
                             if (linkInvalidByIndex[index])
                               setLinkInvalidByIndex((prev) => ({
                                 ...prev,
                                 [index]: false,
-                              }));
+                              }))
                           }}
                         />
                         <Button
                           variant="ghost"
                           size="icon"
                           aria-label="Remove link"
-                          onClick={() => removeLink(index)}
+                          onClick={() => {
+                            setLinks((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            )
+                          }}
                         >
                           <HugeiconsIcon icon={Cancel01Icon} size={18} />
                         </Button>
@@ -304,7 +209,9 @@ export function CourseEditorSheet({
                   <Button
                     variant="ghost"
                     className="gap-2 self-start"
-                    onClick={addLink}
+                    onClick={() => {
+                      setLinks((prev) => [...prev, ""])
+                    }}
                   >
                     <HugeiconsIcon icon={AddCircleIcon} size={18} />
                     Add link
@@ -314,15 +221,17 @@ export function CourseEditorSheet({
                 <div className="flex flex-col gap-2">
                   <Label>Topics</Label>
                   <div className="flex flex-wrap gap-2">
-                    {topics.map((t) => (
+                    {(topics ?? []).map((t) => (
                       <Badge key={t} variant="outline">
                         <span className="flex items-center gap-1">
                           {t}
                           <button
                             type="button"
-                            className="inline-flex"
-                            aria-label="Remove topic"
-                            onClick={() => removeTopic(t)}
+                            className="inline-flex cursor-pointer"
+                            aria-label={`Remove topic ${t}`}
+                            onClick={() =>
+                              setTopics((prev) => prev.filter((x) => x !== t))
+                            }
                           >
                             <HugeiconsIcon icon={Cancel01Icon} size={16} />
                           </button>
@@ -336,8 +245,14 @@ export function CourseEditorSheet({
                     onValueChange={(v) => setTopicDraft(v)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === ",") {
-                        e.preventDefault();
-                        addTopic(topicDraft);
+                        e.preventDefault()
+                        if (topicDraft.trim()) {
+                          setTopics((prev) => {
+                            if (prev.includes(topicDraft.trim())) return prev
+                            return [...prev, topicDraft.trim()]
+                          })
+                          setTopicDraft("")
+                        }
                       }
                     }}
                   />
@@ -360,15 +275,38 @@ export function CourseEditorSheet({
               </div>
             </SheetPanel>
             <SheetFooter>
-              <SheetClose render={<Button variant="ghost" />}>
+              <SheetClose render={<Button variant="ghost" type="button" />}>
                 Cancel
               </SheetClose>
               <Button
-                onClick={onSubmit}
+                type="button"
+                onClick={() => {
+                  if (!title.trim()) return
+                  onSave({
+                    ...course,
+                    id: course?.id ?? `course_${Date.now()}`,
+                    title: title.trim(),
+                    instructor: instructor.trim(),
+                    courseLink: courseLink.trim(),
+                    links,
+                    topics,
+                    progress,
+                    createdAt: course?.createdAt ?? new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                  } as Course)
+                }}
                 disabled={
-                  !canSave ||
+                  !title.trim() ||
                   Object.values(linkInvalidByIndex).some(Boolean) ||
-                  (mode === "edit" && !hasChanges)
+                  (mode === "edit" &&
+                    title === course?.title &&
+                    instructor === (course?.instructor ?? "") &&
+                    courseLink === (course?.courseLink ?? "") &&
+                    JSON.stringify(links) ===
+                      JSON.stringify(course?.links ?? []) &&
+                    JSON.stringify(topics) ===
+                      JSON.stringify(course?.topics ?? []) &&
+                    progress === course?.progress)
                 }
               >
                 {mode === "create" ? "Save Course" : "Save Changes"}
@@ -387,14 +325,15 @@ export function CourseEditorSheet({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogClose render={<Button variant="ghost" />}>
+            <AlertDialogClose render={<Button variant="ghost" type="button" />}>
               Cancel
             </AlertDialogClose>
             <Button
               variant="destructive"
+              type="button"
               onClick={() => {
-                setDiscardOpen(false);
-                onOpenChange(false);
+                setDiscardOpen(false)
+                onOpenChange(false)
               }}
             >
               Discard
@@ -403,7 +342,7 @@ export function CourseEditorSheet({
         </AlertDialogContent>
       </AlertDialog>
     </>
-  );
+  )
 }
 
 export function EmptyState({
@@ -412,38 +351,55 @@ export function EmptyState({
   onNewCourse,
   onClearFilters,
 }: {
-  hasAnyCourses: boolean;
-  hasFilters: boolean;
-  onNewCourse: () => void;
-  onClearFilters: () => void;
+  hasAnyCourses: boolean
+  hasFilters: boolean
+  onNewCourse: () => void
+  onClearFilters: () => void
 }) {
   if (!hasAnyCourses) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No courses yet</div>
-        <div className="text-sm text-muted-foreground">
-          Add your first course to start organizing your notes.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={CourseIcon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button onClick={onNewCourse}>New Course</Button>
+        <div className="text-lg font-medium">No courses yet</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Add your first course to start organizing your notes and tracking
+          progress.
+        </div>
+        <Button onClick={onNewCourse} className="mt-2">
+          New Course
+        </Button>
       </div>
-    );
+    )
   }
 
   if (hasFilters) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No courses match your filters</div>
-        <div className="text-sm text-muted-foreground">
-          Try adjusting your topic filter.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={FilterIcon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button variant="ghost" onClick={onClearFilters}>
+        <div className="text-lg font-medium">No courses match your filters</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Try adjusting your search or clearing the topic filters.
+        </div>
+        <Button variant="ghost" onClick={onClearFilters} className="mt-2">
           Clear filters
         </Button>
       </div>
-    );
+    )
   }
 
-  return null;
+  return null
 }
 
 export function CourseCard({
@@ -453,19 +409,19 @@ export function CourseCard({
   onViewLinks,
   onDelete,
 }: {
-  course: Course;
-  now: Date;
-  onEdit: () => void;
-  onViewLinks: () => void;
-  onDelete: () => void;
+  course: Course
+  now: Date
+  onEdit: () => void
+  onViewLinks: () => void
+  onDelete: () => void
 }) {
-  const showTopics = course.topics.length > 0;
-  const visibleTopics = course.topics.slice(0, 3);
+  const showTopics = course.topics.length > 0
+  const visibleTopics = course.topics.slice(0, 3)
   const remainingTopics = Math.max(
     0,
-    course.topics.length - visibleTopics.length,
-  );
-  const hasLinks = Boolean(course.courseLink) || course.links.length > 0;
+    course.topics.length - visibleTopics.length
+  )
+  const hasLinks = Boolean(course.courseLink) || course.links.length > 0
 
   return (
     <Card className="p-4">
@@ -549,15 +505,15 @@ export function CourseCard({
 
       <div className="pt-4" />
     </Card>
-  );
+  )
 }
 
 function DeleteDialog({
   children,
   onDelete,
 }: {
-  children: React.ReactNode;
-  onDelete: () => void;
+  children: React.ReactNode
+  onDelete: () => void
 }) {
   return (
     <AlertDialog>
@@ -583,7 +539,7 @@ function DeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }
 
 export function FilterSheet({
@@ -594,12 +550,12 @@ export function FilterSheet({
   options,
   onValueChange,
 }: {
-  title: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  value: string;
-  options: { label: string; value: string }[];
-  onValueChange: (value: string) => void;
+  title: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  value: string
+  options: { label: string; value: string }[]
+  onValueChange: (value: string) => void
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -616,8 +572,8 @@ export function FilterSheet({
                   variant={o.value === value ? "secondary" : "ghost"}
                   className="justify-start"
                   onClick={() => {
-                    onValueChange(o.value);
-                    onOpenChange(false);
+                    onValueChange(o.value)
+                    onOpenChange(false)
                   }}
                 >
                   {o.label}
@@ -631,7 +587,7 @@ export function FilterSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  );
+  )
 }
 
 export function LinksViewerSheet({
@@ -641,13 +597,13 @@ export function LinksViewerSheet({
   isMobile,
   onEditCourse,
 }: {
-  course: Course | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  isMobile: boolean;
-  onEditCourse: () => void;
+  course: Course | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  isMobile: boolean
+  onEditCourse: () => void
 }) {
-  const side = isMobile ? "bottom" : "right";
+  const side = isMobile ? "bottom" : "right"
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -704,5 +660,5 @@ export function LinksViewerSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  );
+  )
 }

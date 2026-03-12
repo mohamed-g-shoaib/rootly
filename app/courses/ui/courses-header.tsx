@@ -117,13 +117,13 @@ export function CoursesHeader({
               </Select>
 
               {filtersActive ? (
-                <Button variant="ghost" onClick={onClearFilters}>
+                <Button variant="ghost" type="button" onClick={onClearFilters}>
                   Clear filters
                 </Button>
               ) : null}
             </div>
 
-            <Button className="gap-2" onClick={onNewCourse}>
+            <Button className="gap-2" type="button" onClick={onNewCourse}>
               <HugeiconsIcon icon={AddCircleIcon} size={18} />
               New Course
             </Button>
@@ -132,7 +132,12 @@ export function CoursesHeader({
           <div className="py-3">
             <div className="flex items-center justify-between">
               <div className="text-lg font-medium">Courses</div>
-              <Button size="icon" aria-label="New course" onClick={onNewCourse}>
+              <Button
+                size="icon"
+                type="button"
+                aria-label="New course"
+                onClick={onNewCourse}
+              >
                 <HugeiconsIcon icon={AddCircleIcon} size={18} />
               </Button>
             </div>
@@ -155,7 +160,11 @@ export function CoursesHeader({
                 </Button>
 
                 {filtersActive ? (
-                  <Button variant="ghost" onClick={onClearFilters}>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={onClearFilters}
+                  >
                     Clear
                   </Button>
                 ) : null}
