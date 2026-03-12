@@ -16,6 +16,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import type { User } from "@supabase/supabase-js"
 import { signOut } from "@/app/auth/actions"
@@ -97,8 +98,10 @@ export function DashboardShell({
   user: User | null
 }) {
   const [isMobile, setIsMobile] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+    setMounted(true)
     const mql = window.matchMedia("(max-width: 768px)")
     const onChange = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches)
@@ -111,7 +114,7 @@ export function DashboardShell({
   const [commandOpen, setCommandOpen] = React.useState(false)
   const [avatarOpen, setAvatarOpen] = React.useState(false)
 
-  const shortcut = isMobile ? null : getDesktopShortcutLabel()
+  const shortcut = mounted && !isMobile ? getDesktopShortcutLabel() : null
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -188,14 +191,30 @@ export function DashboardShell({
             </Link>
           </div>
 
-          {!isMobile && typeof streakDays === "number" ? (
+          {!mounted && typeof streakDays === "number" ? (
+            <div className="text-sm text-muted-foreground tabular-nums">
+              <span aria-hidden="true">🔥</span> {streakDays} day streak
+            </div>
+          ) : mounted && !isMobile && typeof streakDays === "number" ? (
             <div className="text-sm text-muted-foreground tabular-nums">
               <span aria-hidden="true">🔥</span> {streakDays} day streak
             </div>
           ) : null}
 
           <div className="flex items-center gap-2">
-            {isMobile ? (
+            {!mounted ? (
+              <Button
+                variant="outline"
+                type="button"
+                className="min-w-72 justify-between"
+                onClick={() => setCommandOpen(true)}
+              >
+                <span className="text-muted-foreground">
+                  Search or jump to...
+                </span>
+                {shortcut ? <Kbd>{shortcut}</Kbd> : null}
+              </Button>
+            ) : isMobile ? (
               <Button
                 variant="ghost"
                 size="icon"
@@ -219,7 +238,9 @@ export function DashboardShell({
               </Button>
             )}
 
-            {isMobile ? (
+            {!mounted ? (
+              <UserAvatarPopover user={user} />
+            ) : isMobile ? (
               <Button
                 variant="ghost"
                 size="icon"
@@ -243,7 +264,7 @@ export function DashboardShell({
 
       <FloatingDock navigationItems={navigationItems} />
 
-      {isMobile && fab ? (
+      {mounted && isMobile && fab ? (
         <Button
           size="icon-lg"
           type="button"
@@ -261,17 +282,20 @@ export function DashboardShell({
         onOpenChange={setCommandOpen}
       />
 
-      <MobileAvatarSheet
-        open={avatarOpen}
-        onOpenChange={setAvatarOpen}
-        user={user}
-      />
+      {mounted && (
+        <MobileAvatarSheet
+          open={avatarOpen}
+          onOpenChange={setAvatarOpen}
+          user={user}
+        />
+      )}
     </div>
   )
 }
 
 function UserAvatarPopover({ user }: { user: User | null }) {
   const { resolvedTheme, setTheme } = useTheme()
+  const router = useRouter()
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -321,8 +345,10 @@ function UserAvatarPopover({ user }: { user: User | null }) {
           <Button
             variant="destructive-outline"
             className="w-full"
+            type="button"
             onClick={async () => {
               await signOut()
+              router.push("/login")
             }}
           >
             Logout
@@ -343,6 +369,7 @@ function MobileAvatarSheet({
   user: User | null
 }) {
   const { resolvedTheme, setTheme } = useTheme()
+  const router = useRouter()
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -385,8 +412,10 @@ function MobileAvatarSheet({
             <Button
               variant="destructive-outline"
               className="w-full"
+              type="button"
               onClick={async () => {
                 await signOut()
+                router.push("/login")
               }}
             >
               Logout

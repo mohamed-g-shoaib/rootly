@@ -40,8 +40,15 @@ const CourseMasteryList = dynamic(
 
 export default function OverviewPage({ user }: { user: User | null }) {
   const isMobile = useIsMobile()
+  const [mounted, setMounted] = React.useState(false)
   const id = useId()
   const [range, setRange] = useState<RangeKey>("7")
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const effectiveIsMobile = mounted ? isMobile : false
 
   const mock = useMemo(() => buildMockOverview(range), [range])
 
@@ -50,7 +57,7 @@ export default function OverviewPage({ user }: { user: User | null }) {
       user={user}
       streakDays={mock.streakDays}
       fab={
-        isMobile
+        effectiveIsMobile
           ? {
               ariaLabel: "Primary action",
               icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
@@ -60,7 +67,7 @@ export default function OverviewPage({ user }: { user: User | null }) {
       }
     >
       <PageContainer>
-        {isMobile ? (
+        {effectiveIsMobile ? (
           <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pt-3 pb-3 lg:hidden">
             <RangeToggle
               id={`${id}-mobile`}
@@ -73,7 +80,7 @@ export default function OverviewPage({ user }: { user: User | null }) {
 
         <section className="pt-4 lg:pt-6">
           <HeroBlock
-            isMobile={isMobile}
+            isMobile={effectiveIsMobile}
             streakDays={mock.streakDays}
             todayLabel={mock.todayLabel}
             todayStudyMinutes={mock.todayStudyMinutes}
@@ -83,7 +90,7 @@ export default function OverviewPage({ user }: { user: User | null }) {
           />
         </section>
 
-        {!isMobile ? (
+        {!effectiveIsMobile ? (
           <section className="pt-6">
             <RangeToggle
               id={`${id}-desktop`}
