@@ -73,10 +73,10 @@ export default function HomepageMockup() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={shouldReduceMotion ? undefined : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.5, ease: easeOut }}
+            transition={{ duration: 0.3, ease: easeOut }}
             className="w-full"
           >
             <Card className="w-full overflow-hidden">

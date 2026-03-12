@@ -13,7 +13,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { motion } from "motion/react"
-import { Bar, BarChart, ResponsiveContainer } from "recharts"
+import dynamic from "next/dynamic"
 import { useReducedMotion } from "motion/react"
 
 import { PageContainer } from "@/components/ui/page-container"
@@ -302,6 +302,33 @@ function ReviewVisual() {
   )
 }
 
+const TrackVisualChart = dynamic(
+  async () => {
+    const { Bar, BarChart, ResponsiveContainer } = await import("recharts")
+    return {
+      default: ({
+        data,
+      }: {
+        data: ReadonlyArray<{ readonly day: string; readonly minutes: number }>
+      }) => (
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          >
+            <Bar
+              dataKey="minutes"
+              fill="var(--color-chart-1)"
+              radius={[6, 6, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      ),
+    }
+  },
+  { ssr: false }
+)
+
 function TrackVisual() {
   return (
     <Card className="h-48 p-4">
@@ -311,18 +338,7 @@ function TrackVisual() {
           <div>avg. 2.4h / day</div>
         </div>
         <div className="w-full flex-1 overflow-hidden">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={TRACK_DATA}
-              margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-            >
-              <Bar
-                dataKey="minutes"
-                fill="var(--color-chart-1)"
-                radius={[6, 6, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <TrackVisualChart data={TRACK_DATA} />
         </div>
       </div>
     </Card>
