@@ -142,6 +142,7 @@ setIndex((prev) \=> (prev + 1) % labels.length);
 }
 
 return (
+
 <div className\={styles.container}\>
 <MotionConfig
 transition\={{
@@ -230,6 +231,7 @@ const \[expanded, setExpanded\] = useState(false);
 const \[ref, bounds\] = useMeasure();
 
 return (
+
 <div className\={styles.container}\>
 <MotionConfig
 transition\={{
