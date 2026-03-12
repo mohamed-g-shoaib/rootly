@@ -153,13 +153,13 @@ export function DailyEntriesHeader({
               </div>
 
               {filtersActive ? (
-                <Button variant="ghost" onClick={onClearFilters}>
+                <Button variant="ghost" type="button" onClick={onClearFilters}>
                   Clear filters
                 </Button>
               ) : null}
             </div>
 
-            <Button onClick={onPrimaryAction} className="gap-2">
+            <Button onClick={onPrimaryAction} type="button" className="gap-2">
               <HugeiconsIcon icon={AddCircleIcon} size={18} />
               {todayHasEntry ? "Today's Entry" : "Log Today"}
             </Button>
@@ -197,7 +197,11 @@ export function DailyEntriesHeader({
                 </Button>
 
                 {filtersActive ? (
-                  <Button variant="ghost" onClick={onClearFilters}>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={onClearFilters}
+                  >
                     Clear
                   </Button>
                 ) : null}

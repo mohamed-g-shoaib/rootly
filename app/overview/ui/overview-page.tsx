@@ -23,7 +23,7 @@ const DailyStudyTimeChart = dynamic(
 
 const DailyMoodChart = dynamic(() => import("../ui/charts/daily-mood-chart"), {
   ssr: false,
-  loading: () => <ChartSkeleton heightClassName="h-48" />,
+  loading: () => <ChartSkeleton heightClassName="h-56" />,
 })
 
 const UnderstandingProgressChart = dynamic(
@@ -96,7 +96,7 @@ export default function OverviewPage() {
         <section className="pt-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <ChartFrame title="Daily Mood">
-              <Suspense fallback={<ChartSkeleton heightClassName="h-48" />}>
+              <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
                 <DailyMoodChart data={mock.dailyMood} />
               </Suspense>
               {mock.emptyStates.mood ? (

@@ -325,7 +325,11 @@ export function ReviewPage() {
         <PageContainer>
           <div className="flex items-center justify-between py-4">
             <div className="text-lg font-medium">Review Sessions</div>
-            <Button onClick={() => setSetupOpen(true)} className="gap-2">
+            <Button
+              onClick={() => setSetupOpen(true)}
+              type="button"
+              className="gap-2"
+            >
               <HugeiconsIcon icon={PlayIcon} size={18} />
               <span className="hidden sm:inline">Start Review</span>
             </Button>
@@ -485,12 +489,14 @@ function SetupSheet({
                 <div className="grid grid-cols-4 gap-2">
                   <Button
                     variant={questionCountMode === "10" ? "secondary" : "ghost"}
+                    type="button"
                     onClick={() => onQuestionCountModeChange("10")}
                   >
                     10
                   </Button>
                   <Button
                     variant={questionCountMode === "20" ? "secondary" : "ghost"}
+                    type="button"
                     onClick={() => onQuestionCountModeChange("20")}
                   >
                     20
@@ -499,6 +505,7 @@ function SetupSheet({
                     variant={
                       questionCountMode === "all" ? "secondary" : "ghost"
                     }
+                    type="button"
                     onClick={() => onQuestionCountModeChange("all")}
                   >
                     All
@@ -507,6 +514,7 @@ function SetupSheet({
                     variant={
                       questionCountMode === "custom" ? "secondary" : "ghost"
                     }
+                    type="button"
                     onClick={() => onQuestionCountModeChange("custom")}
                   >
                     Custom
@@ -568,8 +576,11 @@ function SetupSheet({
             </div>
           </SheetPanel>
           <SheetFooter>
-            <SheetClose render={<Button variant="ghost" />}>Cancel</SheetClose>
+            <SheetClose render={<Button variant="ghost" type="button" />}>
+              Cancel
+            </SheetClose>
             <Button
+              type="button"
               onClick={() => {
                 onStart()
               }}
@@ -654,7 +665,9 @@ function SessionDetailSheet({
                       {session.questionCount} questions
                     </span>
                   </div>
-                  <div>{sessionDateLabel(session.date, now)}</div>
+                  <div className="tabular-nums">
+                    {sessionDateLabel(session.date, now)}
+                  </div>
                 </div>
 
                 {session.shuffled || session.flaggedOnly ? (

@@ -250,7 +250,7 @@ export function NotesHeader({
               </Popover>
 
               {filtersActive ? (
-                <Button variant="ghost" onClick={onClearFilters}>
+                <Button variant="ghost" type="button" onClick={onClearFilters}>
                   Clear filters
                 </Button>
               ) : null}
@@ -289,7 +289,7 @@ export function NotesHeader({
                 </Button>
               ) : null}
 
-              <Button onClick={onNewNote} className="gap-2">
+              <Button onClick={onNewNote} type="button" className="gap-2">
                 <HugeiconsIcon icon={AddCircleIcon} size={18} />
                 New Note
               </Button>
@@ -334,7 +334,12 @@ export function NotesHeader({
                   </Button>
                 ) : null}
 
-                <Button size="icon" aria-label="New note" onClick={onNewNote}>
+                <Button
+                  size="icon"
+                  type="button"
+                  aria-label="New note"
+                  onClick={onNewNote}
+                >
                   <HugeiconsIcon icon={AddCircleIcon} size={18} />
                 </Button>
               </div>
@@ -374,7 +379,11 @@ export function NotesHeader({
                 </Button>
 
                 {filtersActive ? (
-                  <Button variant="ghost" onClick={onClearFilters}>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={onClearFilters}
+                  >
                     Clear
                   </Button>
                 ) : null}

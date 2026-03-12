@@ -1,5 +1,7 @@
 "use client"
 
+import { CourseIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMemo } from "react"
 
 import { Progress } from "@/components/ui/progress"
@@ -24,7 +26,10 @@ export default function CourseMasteryList({
 
   if (sorted.length === 0) {
     return (
-      <div className="py-8 text-center text-muted-foreground">{emptyLabel}</div>
+      <div className="flex flex-col items-center justify-center gap-2 py-8 text-center text-muted-foreground">
+        <HugeiconsIcon icon={CourseIcon} size={24} className="opacity-50" />
+        <div className="text-sm">{emptyLabel}</div>
+      </div>
     )
   }
 

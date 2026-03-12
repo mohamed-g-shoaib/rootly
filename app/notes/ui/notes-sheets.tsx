@@ -115,8 +115,10 @@ export function NoteViewerSheet({
             ) : null}
           </SheetPanel>
           <SheetFooter>
-            <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
-            <Button variant="outline" onClick={onEdit}>
+            <SheetClose render={<Button variant="ghost" type="button" />}>
+              Close
+            </SheetClose>
+            <Button variant="outline" type="button" onClick={onEdit}>
               Edit Note
             </Button>
           </SheetFooter>
@@ -166,8 +168,10 @@ export function CodeViewerSheet({
             ) : null}
           </SheetPanel>
           <SheetFooter>
-            <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
-            <Button variant="outline" onClick={onEdit}>
+            <SheetClose render={<Button variant="ghost" type="button" />}>
+              Close
+            </SheetClose>
+            <Button variant="outline" type="button" onClick={onEdit}>
               Edit Note
             </Button>
           </SheetFooter>
@@ -271,12 +275,14 @@ export function NoteEditorSheet({
                   <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant={type === "qa" ? "secondary" : "outline"}
+                      type="button"
                       onClick={() => setType("qa")}
                     >
                       Q&A
                     </Button>
                     <Button
                       variant={type === "freeform" ? "secondary" : "outline"}
+                      type="button"
                       onClick={() => setType("freeform")}
                     >
                       Freeform

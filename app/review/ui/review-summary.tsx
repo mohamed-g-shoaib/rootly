@@ -48,11 +48,13 @@ export function ReviewSummary({
   courses,
   onSave,
   onDiscard,
+  onClose,
 }: {
   data: ReviewSummaryData
   courses: ReviewCourse[]
   onSave: (sessionName: string) => void
   onDiscard: () => void
+  onClose?: () => void
 }) {
   const [saveOpen, setSaveOpen] = React.useState(false)
   const [name, setName] = React.useState("")
@@ -207,45 +209,59 @@ export function ReviewSummary({
       </Card>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-        <DiscardDialog onDiscard={onDiscard}>
-          <Button variant="ghost">Discard</Button>
-        </DiscardDialog>
+        {onClose != null ? (
+          <Button variant="ghost" type="button" onClick={onClose}>
+            Close
+          </Button>
+        ) : (
+          <>
+            <DiscardDialog onDiscard={onDiscard}>
+              <Button variant="ghost" type="button">
+                Discard
+              </Button>
+            </DiscardDialog>
 
-        <Popover open={saveOpen} onOpenChange={setSaveOpen}>
-          <PopoverTrigger render={<Button />}>Save Session</PopoverTrigger>
-          <PopoverPopup align="end" className="w-80">
-            <div className="flex flex-col gap-3">
-              <div className="text-sm font-medium">Session name</div>
-              <Input
-                value={name}
-                placeholder="e.g. React Hooks Deep Dive"
-                onValueChange={(v) => setName(v)}
-              />
-              <div className="flex items-center justify-end gap-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setSaveOpen(false)
-                    setName("")
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (!name.trim()) return
-                    onSave(name.trim())
-                    setSaveOpen(false)
-                    setName("")
-                  }}
-                  disabled={!name.trim()}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </PopoverPopup>
-        </Popover>
+            <Popover open={saveOpen} onOpenChange={setSaveOpen}>
+              <PopoverTrigger render={<Button type="button" />}>
+                Save Session
+              </PopoverTrigger>
+              <PopoverPopup align="end" className="w-80">
+                <div className="flex flex-col gap-3">
+                  <div className="text-sm font-medium">Session name</div>
+                  <Input
+                    value={name}
+                    placeholder="e.g. React Hooks Deep Dive"
+                    onValueChange={(v) => setName(v)}
+                  />
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      onClick={() => {
+                        setSaveOpen(false)
+                        setName("")
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (!name.trim()) return
+                        onSave(name.trim())
+                        setSaveOpen(false)
+                        setName("")
+                      }}
+                      disabled={!name.trim()}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </PopoverPopup>
+            </Popover>
+          </>
+        )}
       </div>
     </div>
   )
@@ -281,7 +297,7 @@ function DiscardDialog({
   return (
     <AlertDialog>
       <AlertDialogTrigger
-        nativeButton={false}
+        nativeButton={true}
         render={children as React.ReactElement}
       />
       <AlertDialogContent>
@@ -292,10 +308,10 @@ function DiscardDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogClose render={<Button variant="ghost" />}>
+          <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Keep
           </AlertDialogClose>
-          <Button variant="destructive" onClick={onDiscard}>
+          <Button variant="destructive" type="button" onClick={onDiscard}>
             Discard
           </Button>
         </AlertDialogFooter>

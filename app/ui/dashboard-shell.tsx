@@ -19,8 +19,6 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 
 import RootlyLogo from "@/components/rootly-logo"
-import { useIsMobile } from "@/hooks/use-media-query"
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
@@ -94,7 +92,18 @@ export function DashboardShell({
   streakDays?: number
   fab?: ShellFab
 }) {
-  const isMobile = useIsMobile()
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  React.useEffect(() => {
+    const mql = window.matchMedia("(max-width: 768px)")
+    const onChange = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches)
+    }
+    setIsMobile(mql.matches)
+    mql.addEventListener("change", onChange)
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
+
   const [commandOpen, setCommandOpen] = React.useState(false)
   const [avatarOpen, setAvatarOpen] = React.useState(false)
 
@@ -154,7 +163,7 @@ export function DashboardShell({
           </div>
 
           {!isMobile && typeof streakDays === "number" ? (
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground tabular-nums">
               <span aria-hidden="true">🔥</span> {streakDays} day streak
             </div>
           ) : null}
@@ -164,6 +173,7 @@ export function DashboardShell({
               <Button
                 variant="ghost"
                 size="icon"
+                type="button"
                 aria-label="Search"
                 onClick={() => setCommandOpen(true)}
               >
@@ -172,6 +182,7 @@ export function DashboardShell({
             ) : (
               <Button
                 variant="outline"
+                type="button"
                 className="min-w-72 justify-between"
                 onClick={() => setCommandOpen(true)}
               >
@@ -186,6 +197,7 @@ export function DashboardShell({
               <Button
                 variant="ghost"
                 size="icon"
+                type="button"
                 aria-label="User menu"
                 onClick={() => setAvatarOpen(true)}
               >
@@ -208,6 +220,7 @@ export function DashboardShell({
       {isMobile && fab ? (
         <Button
           size="icon-lg"
+          type="button"
           className="fixed right-4 bottom-20 z-30 rounded-full"
           aria-label={fab.ariaLabel}
           onClick={fab.onClick}

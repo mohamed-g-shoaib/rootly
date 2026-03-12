@@ -4,12 +4,14 @@ import Link from "next/link"
 import * as React from "react"
 
 import {
+  AddCircleIcon,
+  Cancel01Icon,
+  CourseIcon,
   Delete01Icon,
   Edit01Icon,
+  FilterIcon,
   Link01Icon,
   MoreVerticalIcon,
-  Cancel01Icon,
-  AddCircleIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
@@ -52,6 +54,7 @@ import {
 } from "@/components/ui/progress"
 import { Slider } from "@/components/ui/slider"
 
+import { useReducedMotion } from "motion/react"
 import type { Course } from "./courses-model"
 import { isValidUrl } from "./courses-model"
 
@@ -60,14 +63,14 @@ export function CourseEditorSheet({
   course,
   open,
   onOpenChange,
-  isMobile,
+  breakpoint,
   onSave,
 }: {
   mode: "create" | "edit"
   course: Course | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  isMobile: boolean
+  breakpoint: "mobile" | "tablet" | "desktop"
   onSave: (course: Course) => void
 }) {
   const [discardOpen, setDiscardOpen] = React.useState(false)
@@ -85,136 +88,33 @@ export function CourseEditorSheet({
     Record<number, boolean>
   >({})
 
-  const baseId = course?.id ?? ""
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
-
-  React.useEffect(() => {
-    if (!open) return
-
-    if (mode === "edit" && course) {
-      setTitle(course.title)
-      setInstructor(course.instructor ?? "")
-      setCourseLink(course.courseLink ?? "")
-      setLinks(course.links)
-      setTopics(course.topics)
-      setTopicDraft("")
-      setProgress(course.progress)
-      setCourseLinkInvalid(false)
-      setLinkInvalidByIndex({})
-      return
-    }
-
-    if (mode === "create") {
-      setTitle("")
-      setInstructor("")
-      setCourseLink("")
-      setLinks([])
-      setTopics([])
-      setTopicDraft("")
-      setProgress(0)
-      setCourseLinkInvalid(false)
-      setLinkInvalidByIndex({})
-    }
-  }, [course, mode, open])
-
-  const hasChanges = React.useMemo(() => {
-    if (mode === "create") {
-      return (
-        title.trim() !== "" ||
-        instructor.trim() !== "" ||
-        courseLink.trim() !== "" ||
-        links.some((l) => l.trim() !== "") ||
-        topics.length > 0 ||
-        progress !== 0
-      )
-    }
-
-    if (!course) return false
-
-    return (
-      title.trim() !== course.title.trim() ||
-      instructor.trim() !== (course.instructor ?? "").trim() ||
-      courseLink.trim() !== (course.courseLink ?? "").trim() ||
-      links.join("\n").trim() !== course.links.join("\n").trim() ||
-      topics.join("\n").trim() !== course.topics.join("\n").trim() ||
-      progress !== course.progress
-    )
-  }, [course, courseLink, instructor, links, mode, progress, title, topics])
-
-  const canSave = title.trim() !== "" && !courseLinkInvalid
-
-  function requestClose(nextOpen: boolean) {
-    if (nextOpen) {
-      onOpenChange(true)
-      return
-    }
-
-    if (hasChanges) {
-      setDiscardOpen(true)
-      return
-    }
-
-    onOpenChange(false)
-  }
-
-  function addLink() {
-    setLinks((prev) => [...prev, ""])
-  }
-
-  function removeLink(index: number) {
-    setLinks((prev) => prev.filter((_, i) => i !== index))
-    setLinkInvalidByIndex((prev) => {
-      const next: Record<number, boolean> = {}
-      for (const [k, v] of Object.entries(prev)) {
-        const i = Number(k)
-        if (i < index) next[i] = v
-        if (i > index) next[i - 1] = v
-      }
-      return next
-    })
-  }
-
-  function addTopic(raw: string) {
-    const next = raw.trim().replace(/,$/, "")
-    if (!next) return
-    const normalized = next.toLowerCase()
-    setTopics((prev) =>
-      prev.some((t) => t.toLowerCase() === normalized) ? prev : [...prev, next]
-    )
-    setTopicDraft("")
-  }
-
-  function removeTopic(topic: string) {
-    setTopics((prev) => prev.filter((t) => t !== topic))
-  }
-
-  function onSubmit() {
-    if (!canSave) return
-
-    const id = mode === "edit" && course ? course.id : `course_${Date.now()}`
-    const createdAt =
-      mode === "edit" && course ? course.createdAt : now.toISOString()
-
-    const nextCourse: Course = {
-      id,
-      title: title.trim(),
-      instructor: instructor.trim() ? instructor.trim() : null,
-      courseLink: courseLink.trim() ? courseLink.trim() : null,
-      links: links.map((l) => l.trim()).filter(Boolean),
-      topics: topics.map((t) => t.trim()).filter(Boolean),
-      progress,
-      createdAt,
-      updatedAt: now.toISOString(),
-    }
-
-    onSave(nextCourse)
-  }
-
+  const isMobile = breakpoint === "mobile"
   const side = isMobile ? "bottom" : "right"
+  const shouldReduceMotion = useReducedMotion()
+
+  const _initial = shouldReduceMotion ? undefined : { opacity: 0, y: 10 }
+  const _animate = shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
 
   return (
     <>
-      <Sheet open={open} onOpenChange={requestClose}>
+      <Sheet
+        open={open}
+        onOpenChange={(next) => {
+          if (
+            !next &&
+            (title !== (course?.title ?? "") ||
+              instructor !== (course?.instructor ?? "") ||
+              courseLink !== (course?.courseLink ?? "") ||
+              JSON.stringify(links) !== JSON.stringify(course?.links ?? []) ||
+              JSON.stringify(topics) !== JSON.stringify(course?.topics ?? []) ||
+              progress !== (course?.progress ?? 0))
+          ) {
+            setDiscardOpen(true)
+          } else {
+            onOpenChange(next)
+          }
+        }}
+      >
         <SheetPopup side={side} variant="inset">
           <Form className="h-full gap-0">
             <SheetHeader>
@@ -266,10 +166,11 @@ export function CourseEditorSheet({
                   <div className="flex flex-col gap-2">
                     {links.map((value, index) => (
                       <div
-                        key={`${baseId}_${index}`}
+                        key={`link_${index}`}
                         className="flex items-center gap-2"
                       >
                         <Input
+                          id={`link_${index}`}
                           value={value}
                           placeholder="https://..."
                           aria-invalid={linkInvalidByIndex[index] ?? false}
@@ -294,7 +195,11 @@ export function CourseEditorSheet({
                           variant="ghost"
                           size="icon"
                           aria-label="Remove link"
-                          onClick={() => removeLink(index)}
+                          onClick={() => {
+                            setLinks((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            )
+                          }}
                         >
                           <HugeiconsIcon icon={Cancel01Icon} size={18} />
                         </Button>
@@ -304,7 +209,9 @@ export function CourseEditorSheet({
                   <Button
                     variant="ghost"
                     className="gap-2 self-start"
-                    onClick={addLink}
+                    onClick={() => {
+                      setLinks((prev) => [...prev, ""])
+                    }}
                   >
                     <HugeiconsIcon icon={AddCircleIcon} size={18} />
                     Add link
@@ -314,15 +221,17 @@ export function CourseEditorSheet({
                 <div className="flex flex-col gap-2">
                   <Label>Topics</Label>
                   <div className="flex flex-wrap gap-2">
-                    {topics.map((t) => (
+                    {(topics ?? []).map((t) => (
                       <Badge key={t} variant="outline">
                         <span className="flex items-center gap-1">
                           {t}
                           <button
                             type="button"
-                            className="inline-flex"
-                            aria-label="Remove topic"
-                            onClick={() => removeTopic(t)}
+                            className="inline-flex cursor-pointer"
+                            aria-label={`Remove topic ${t}`}
+                            onClick={() =>
+                              setTopics((prev) => prev.filter((x) => x !== t))
+                            }
                           >
                             <HugeiconsIcon icon={Cancel01Icon} size={16} />
                           </button>
@@ -337,7 +246,13 @@ export function CourseEditorSheet({
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === ",") {
                         e.preventDefault()
-                        addTopic(topicDraft)
+                        if (topicDraft.trim()) {
+                          setTopics((prev) => {
+                            if (prev.includes(topicDraft.trim())) return prev
+                            return [...prev, topicDraft.trim()]
+                          })
+                          setTopicDraft("")
+                        }
                       }
                     }}
                   />
@@ -360,15 +275,38 @@ export function CourseEditorSheet({
               </div>
             </SheetPanel>
             <SheetFooter>
-              <SheetClose render={<Button variant="ghost" />}>
+              <SheetClose render={<Button variant="ghost" type="button" />}>
                 Cancel
               </SheetClose>
               <Button
-                onClick={onSubmit}
+                type="button"
+                onClick={() => {
+                  if (!title.trim()) return
+                  onSave({
+                    ...course,
+                    id: course?.id ?? `course_${Date.now()}`,
+                    title: title.trim(),
+                    instructor: instructor.trim(),
+                    courseLink: courseLink.trim(),
+                    links,
+                    topics,
+                    progress,
+                    createdAt: course?.createdAt ?? new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                  } as Course)
+                }}
                 disabled={
-                  !canSave ||
+                  !title.trim() ||
                   Object.values(linkInvalidByIndex).some(Boolean) ||
-                  (mode === "edit" && !hasChanges)
+                  (mode === "edit" &&
+                    title === course?.title &&
+                    instructor === (course?.instructor ?? "") &&
+                    courseLink === (course?.courseLink ?? "") &&
+                    JSON.stringify(links) ===
+                      JSON.stringify(course?.links ?? []) &&
+                    JSON.stringify(topics) ===
+                      JSON.stringify(course?.topics ?? []) &&
+                    progress === course?.progress)
                 }
               >
                 {mode === "create" ? "Save Course" : "Save Changes"}
@@ -387,11 +325,12 @@ export function CourseEditorSheet({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogClose render={<Button variant="ghost" />}>
+            <AlertDialogClose render={<Button variant="ghost" type="button" />}>
               Cancel
             </AlertDialogClose>
             <Button
               variant="destructive"
+              type="button"
               onClick={() => {
                 setDiscardOpen(false)
                 onOpenChange(false)
@@ -420,11 +359,21 @@ export function EmptyState({
   if (!hasAnyCourses) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No courses yet</div>
-        <div className="text-sm text-muted-foreground">
-          Add your first course to start organizing your notes.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={CourseIcon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button onClick={onNewCourse}>New Course</Button>
+        <div className="text-lg font-medium">No courses yet</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Add your first course to start organizing your notes and tracking
+          progress.
+        </div>
+        <Button onClick={onNewCourse} className="mt-2">
+          New Course
+        </Button>
       </div>
     )
   }
@@ -432,11 +381,18 @@ export function EmptyState({
   if (hasFilters) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="text-lg font-medium">No courses match your filters</div>
-        <div className="text-sm text-muted-foreground">
-          Try adjusting your topic filter.
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <HugeiconsIcon
+            icon={FilterIcon}
+            size={24}
+            className="text-muted-foreground"
+          />
         </div>
-        <Button variant="ghost" onClick={onClearFilters}>
+        <div className="text-lg font-medium">No courses match your filters</div>
+        <div className="max-w-[280px] text-sm text-muted-foreground">
+          Try adjusting your search or clearing the topic filters.
+        </div>
+        <Button variant="ghost" onClick={onClearFilters} className="mt-2">
           Clear filters
         </Button>
       </div>

@@ -197,7 +197,7 @@ export default function CoursesPage() {
         course={null}
         open={createOpen}
         onOpenChange={setCreateOpen}
-        isMobile={isMobile}
+        breakpoint={isMobile ? "mobile" : "desktop"}
         onSave={(next: Course) => {
           setCourses((prev) => [next, ...prev])
           setCreateOpen(false)
@@ -209,7 +209,7 @@ export default function CoursesPage() {
         course={activeCourse}
         open={editOpen}
         onOpenChange={setEditOpen}
-        isMobile={isMobile}
+        breakpoint={isMobile ? "mobile" : "desktop"}
         onSave={(next: Course) => {
           setCourses((prev) => prev.map((c) => (c.id === next.id ? next : c)))
           setEditOpen(false)

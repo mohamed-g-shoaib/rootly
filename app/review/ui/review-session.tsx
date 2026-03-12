@@ -120,7 +120,7 @@ export function ReviewSession({
             ) : null}
 
             {!state.revealed ? (
-              <Button variant="ghost" onClick={onReveal}>
+              <Button variant="ghost" type="button" onClick={onReveal}>
                 Reveal Answer
               </Button>
             ) : (
@@ -130,12 +130,19 @@ export function ReviewSession({
                 </div>
 
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                  <Button onClick={() => onRate("nailed")}>Nailed it</Button>
-                  <Button variant="outline" onClick={() => onRate("sort_of")}>
+                  <Button type="button" onClick={() => onRate("nailed")}>
+                    Nailed it
+                  </Button>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() => onRate("sort_of")}
+                  >
                     Sort of
                   </Button>
                   <Button
                     variant="destructive"
+                    type="button"
                     onClick={() => onRate("forgot")}
                   >
                     Forgot it
@@ -181,15 +188,17 @@ function EndSessionDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogClose render={<Button variant="ghost" />}>
+          <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Keep going
           </AlertDialogClose>
           {isEmpty ? (
-            <Button variant="destructive" onClick={onConfirm}>
+            <Button variant="destructive" type="button" onClick={onConfirm}>
               End session
             </Button>
           ) : (
-            <Button onClick={onConfirm}>Show summary</Button>
+            <Button type="button" onClick={onConfirm}>
+              Show summary
+            </Button>
           )}
         </AlertDialogFooter>
       </AlertDialogContent>
