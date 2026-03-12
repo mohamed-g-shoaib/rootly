@@ -30,7 +30,7 @@ const DailyMoodChart = dynamic(() => import("../ui/charts/daily-mood-chart"), {
 
 const UnderstandingProgressChart = dynamic(
   () => import("../ui/charts/understanding-progress-chart"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-48" /> }
+  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> }
 )
 
 const CourseMasteryList = dynamic(
@@ -55,7 +55,6 @@ export default function OverviewPage({ user }: { user: User | null }) {
   return (
     <DashboardShell
       user={user}
-      streakDays={mock.streakDays}
       fab={
         effectiveIsMobile
           ? {
@@ -174,12 +173,6 @@ function HeroBlock({
   return (
     <div className={cn("grid gap-6", !isMobile && "lg:grid-cols-3")}>
       <div className={cn("lg:col-span-2", "flex flex-col gap-2")}>
-        {isMobile ? (
-          <div className="text-sm text-muted-foreground">
-            <span aria-hidden="true">🔥</span> {streakDays} day streak
-          </div>
-        ) : null}
-
         <div className="text-sm text-muted-foreground">
           Today&apos;s Study Time
         </div>
@@ -191,14 +184,19 @@ function HeroBlock({
 
       <div className={cn("flex flex-col gap-3", isMobile && "lg:hidden")}>
         {isMobile ? (
-          <div className="grid grid-cols-3 gap-3">
-            <SummaryCell label="Total Courses" value={String(totalCourses)} />
-            <SummaryCell label="Total Notes" value={String(totalNotes)} />
-            <SummaryCell
-              label="Avg. Understanding"
-              value={`${avgUnderstanding.toFixed(1)} / 3`}
-            />
-          </div>
+          <>
+            <div className="grid grid-cols-3 gap-3">
+              <SummaryCell label="Total Courses" value={String(totalCourses)} />
+              <SummaryCell label="Total Notes" value={String(totalNotes)} />
+              <SummaryCell
+                label="Avg. Understanding"
+                value={`${avgUnderstanding.toFixed(1)} / 3`}
+              />
+            </div>
+            <div className="pt-3 text-sm text-muted-foreground">
+              <span aria-hidden="true">🔥</span> {streakDays} day streak
+            </div>
+          </>
         ) : (
           <div className="flex flex-col gap-3">
             <SummaryRow label="Total Courses" value={String(totalCourses)} />
@@ -207,6 +205,9 @@ function HeroBlock({
               label="Avg. Understanding"
               value={`${avgUnderstanding.toFixed(1)} / 3`}
             />
+            <div className="pt-1 text-sm text-muted-foreground">
+              <span aria-hidden="true">🔥</span> {streakDays} day streak
+            </div>
           </div>
         )}
       </div>

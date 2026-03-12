@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
   const isAuthenticated = !!user
 
   // 2. Redirect authenticated users away from public home and login
-  if ((pathname === "/" || pathname === "/login") && isAuthenticated) {
+  if (pathname === "/login" && isAuthenticated) {
     return NextResponse.redirect(new URL("/overview", request.url))
   }
 

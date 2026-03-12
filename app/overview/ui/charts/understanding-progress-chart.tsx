@@ -29,14 +29,20 @@ const Chart = dynamic(
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            margin={{ top: 8, right: 16, left: 8, bottom: 8 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} />
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
             <YAxis
               domain={[1, 3]}
               tickLine={false}
               axisLine={false}
+              tickMargin={8}
               tickFormatter={(v) => Number(v).toFixed(0)}
             />
             <Tooltip
@@ -77,7 +83,7 @@ export default function UnderstandingProgressChart({
   )
 
   return (
-    <div className="h-48 w-full">
+    <div className="h-56 w-full">
       <Chart chartData={chartData} />
     </div>
   )

@@ -25,11 +25,21 @@ const Chart = dynamic(
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 8, right: 40, left: 0, bottom: 0 }}
+            margin={{ top: 8, right: 40, left: 8, bottom: 8 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} />
-            <YAxis width={40} tickLine={false} axisLine={false} />
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
+            <YAxis
+              width={40}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
             <Tooltip
               content={(props) => {
                 if (!props.active || !props.payload?.length) return null

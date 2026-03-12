@@ -88,12 +88,10 @@ function ThemeToggle({
 
 export function DashboardShell({
   children,
-  streakDays,
   fab,
   user,
 }: {
   children: React.ReactNode
-  streakDays?: number
   fab?: ShellFab
   user: User | null
 }) {
@@ -142,7 +140,7 @@ export function DashboardShell({
     () => [
       {
         label: "Overview",
-        link: "/",
+        link: "/overview",
         icon: <HugeiconsIcon icon={Home01Icon} size={18} />,
       },
       {
@@ -191,16 +189,6 @@ export function DashboardShell({
             </Link>
           </div>
 
-          {!mounted && typeof streakDays === "number" ? (
-            <div className="text-sm text-muted-foreground tabular-nums">
-              <span aria-hidden="true">🔥</span> {streakDays} day streak
-            </div>
-          ) : mounted && !isMobile && typeof streakDays === "number" ? (
-            <div className="text-sm text-muted-foreground tabular-nums">
-              <span aria-hidden="true">🔥</span> {streakDays} day streak
-            </div>
-          ) : null}
-
           <div className="flex items-center gap-2">
             {!mounted ? (
               <Button
@@ -246,6 +234,7 @@ export function DashboardShell({
                 size="icon"
                 type="button"
                 aria-label="User menu"
+                className="rounded-full"
                 onClick={() => setAvatarOpen(true)}
               >
                 <Avatar>
@@ -318,7 +307,14 @@ function UserAvatarPopover({ user }: { user: User | null }) {
   return (
     <Popover>
       <PopoverTrigger
-        render={<Button variant="ghost" size="icon" aria-label="User menu" />}
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="User menu"
+            className="rounded-full"
+          />
+        }
       >
         <Avatar>
           <AvatarImage src={avatarUrl} alt={displayName} />
