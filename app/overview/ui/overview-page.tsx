@@ -1,46 +1,46 @@
-"use client"
+"use client";
 
-import dynamic from "next/dynamic"
-import { Suspense, useMemo, useState } from "react"
+import dynamic from "next/dynamic";
+import { Suspense, useMemo, useState } from "react";
 
-import { AddCircleIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { AddCircleIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { useIsMobile } from "@/hooks/use-media-query"
-import { cn } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
 
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs"
-import { PageContainer } from "@/components/ui/page-container"
-import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
+import { PageContainer } from "@/components/ui/page-container";
+import { DashboardShell } from "@/app/ui/dashboard-shell";
 
-type RangeKey = "7" | "30" | "90"
+type RangeKey = "7" | "30" | "90";
 
 const DailyStudyTimeChart = dynamic(
   () => import("../ui/charts/daily-study-time-chart"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> }
-)
+  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> },
+);
 
 const DailyMoodChart = dynamic(() => import("../ui/charts/daily-mood-chart"), {
   ssr: false,
-  loading: () => <ChartSkeleton heightClassName="h-48" />,
-})
+  loading: () => <ChartSkeleton heightClassName="h-56" />,
+});
 
 const UnderstandingProgressChart = dynamic(
   () => import("../ui/charts/understanding-progress-chart"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-48" /> }
-)
+  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-48" /> },
+);
 
 const CourseMasteryList = dynamic(
   () => import("../ui/charts/course-mastery-list"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-64" /> }
-)
+  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-64" /> },
+);
 
 export default function OverviewPage() {
-  const isMobile = useIsMobile()
-  const [range, setRange] = useState<RangeKey>("7")
+  const isMobile = useIsMobile();
+  const [range, setRange] = useState<RangeKey>("7");
 
-  const mock = useMemo(() => buildMockOverview(range), [range])
+  const mock = useMemo(() => buildMockOverview(range), [range]);
 
   return (
     <DashboardShell
@@ -96,7 +96,7 @@ export default function OverviewPage() {
         <section className="pt-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <ChartFrame title="Daily Mood">
-              <Suspense fallback={<ChartSkeleton heightClassName="h-48" />}>
+              <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
                 <DailyMoodChart data={mock.dailyMood} />
               </Suspense>
               {mock.emptyStates.mood ? (
@@ -131,7 +131,7 @@ export default function OverviewPage() {
         </section>
       </PageContainer>
     </DashboardShell>
-  )
+  );
 }
 
 function HeroBlock({
@@ -143,13 +143,13 @@ function HeroBlock({
   totalNotes,
   avgUnderstanding,
 }: {
-  isMobile: boolean
-  streakDays: number
-  todayLabel: string
-  todayStudyMinutes: number
-  totalCourses: number
-  totalNotes: number
-  avgUnderstanding: number
+  isMobile: boolean;
+  streakDays: number;
+  todayLabel: string;
+  todayStudyMinutes: number;
+  totalCourses: number;
+  totalNotes: number;
+  avgUnderstanding: number;
 }) {
   return (
     <div className={cn("grid gap-6", !isMobile && "lg:grid-cols-3")}>
@@ -191,7 +191,7 @@ function HeroBlock({
         )}
       </div>
     </div>
-  )
+  );
 }
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
@@ -200,7 +200,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
       <div className="text-sm text-muted-foreground">{label}</div>
       <div className="font-semibold">{value}</div>
     </div>
-  )
+  );
 }
 
 function SummaryCell({ label, value }: { label: string; value: string }) {
@@ -209,7 +209,7 @@ function SummaryCell({ label, value }: { label: string; value: string }) {
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="font-semibold">{value}</div>
     </div>
-  )
+  );
 }
 
 function RangeToggle({
@@ -217,9 +217,9 @@ function RangeToggle({
   onRangeChange,
   fullWidth = false,
 }: {
-  range: RangeKey
-  onRangeChange: (value: RangeKey) => void
-  fullWidth?: boolean
+  range: RangeKey;
+  onRangeChange: (value: RangeKey) => void;
+  fullWidth?: boolean;
 }) {
   return (
     <Tabs
@@ -239,82 +239,82 @@ function RangeToggle({
         </TabsTab>
       </TabsList>
     </Tabs>
-  )
+  );
 }
 
 function ChartFrame({
   title,
   children,
 }: {
-  title: string
-  children: React.ReactNode
+  title: string;
+  children: React.ReactNode;
 }) {
   return (
     <div>
       <div className="font-medium">{title}</div>
       <div className="pt-3">{children}</div>
     </div>
-  )
+  );
 }
 
 function ChartSkeleton({ heightClassName }: { heightClassName: string }) {
-  return <Skeleton className={cn("w-full", heightClassName)} />
+  return <Skeleton className={cn("w-full", heightClassName)} />;
 }
 
 type MockPoint = {
-  date: string
-  label: string
-}
+  date: string;
+  label: string;
+};
 
-type MockStudy = MockPoint & { minutes: number }
+type MockStudy = MockPoint & { minutes: number };
 
-type MockMood = MockPoint & { mood: 1 | 2 | 3 | null }
+type MockMood = MockPoint & { mood: 1 | 2 | 3 | null };
 
-type MockUnderstanding = MockPoint & { avg: number | null }
+type MockUnderstanding = MockPoint & { avg: number | null };
 
 type MockCourseMasteryRow = {
-  title: string
-  avg: number
-}
+  title: string;
+  avg: number;
+};
 
 function buildMockOverview(range: RangeKey) {
-  const now = new Date("2026-03-10T12:00:00Z")
+  const now = new Date("2026-03-10T12:00:00Z");
 
-  const days = range === "7" ? 7 : range === "30" ? 30 : 90
+  const days = range === "7" ? 7 : range === "30" ? 30 : 90;
 
-  const series = buildDaySeries(now, days)
+  const series = buildDaySeries(now, days);
 
   const dailyStudyTime: MockStudy[] = series.map((d, idx) => {
-    const minutes = idx % 6 === 0 ? 0 : 35 + (idx % 5) * 18
-    return { ...d, minutes }
-  })
+    const minutes = idx % 6 === 0 ? 0 : 35 + (idx % 5) * 18;
+    return { ...d, minutes };
+  });
 
   const dailyMood: MockMood[] = series.map((d, idx) => {
-    const hasEntry = idx % 8 !== 0
-    if (!hasEntry) return { ...d, mood: null }
-    const mood: 1 | 2 | 3 = ((idx % 3) + 1) as 1 | 2 | 3
-    return { ...d, mood }
-  })
+    const hasEntry = idx % 8 !== 0;
+    if (!hasEntry) return { ...d, mood: null };
+    const mood: 1 | 2 | 3 = ((idx % 3) + 1) as 1 | 2 | 3;
+    return { ...d, mood };
+  });
 
   const understandingProgress: MockUnderstanding[] = series.map((d, idx) => {
-    const hasData = idx % 7 !== 0
-    if (!hasData) return { ...d, avg: null }
-    const avg = Math.min(3, 1.4 + idx * 0.03)
-    return { ...d, avg: Number(avg.toFixed(2)) }
-  })
+    const hasData = idx % 7 !== 0;
+    if (!hasData) return { ...d, avg: null };
+    const avg = Math.min(3, 1.4 + idx * 0.03);
+    return { ...d, avg: Number(avg.toFixed(2)) };
+  });
 
   const courseMastery: MockCourseMasteryRow[] = [
     { title: "Advanced React Patterns", avg: 1.6 },
     { title: "Postgres Performance", avg: 1.9 },
     { title: "TypeScript Deep Dive", avg: 2.2 },
     { title: "Next.js App Router", avg: 2.5 },
-  ]
+  ];
 
   const emptyStates = {
     studyTime: dailyStudyTime.every((d) => d.minutes === 0),
     mood: dailyMood.every((d) => d.mood == null),
     understanding: understandingProgress.every((d) => d.avg == null),
-  }
+  };
 
   return {
     streakDays: 12,
@@ -328,20 +328,20 @@ function buildMockOverview(range: RangeKey) {
     understandingProgress,
     courseMastery,
     emptyStates,
-  }
+  };
 }
 
 function buildDaySeries(now: Date, days: number): MockPoint[] {
-  const items: MockPoint[] = []
+  const items: MockPoint[] = [];
   for (let i = days - 1; i >= 0; i -= 1) {
-    const d = new Date(now)
-    d.setUTCDate(d.getUTCDate() - i)
+    const d = new Date(now);
+    d.setUTCDate(d.getUTCDate() - i);
     items.push({
       date: d.toISOString().slice(0, 10),
       label: formatShortDate(d),
-    })
+    });
   }
-  return items
+  return items;
 }
 
 function formatLongDate(d: Date) {
@@ -349,12 +349,12 @@ function formatLongDate(d: Date) {
     weekday: "long",
     month: "long",
     day: "numeric",
-  }).format(d)
+  }).format(d);
 }
 
 function formatShortDate(d: Date) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
-  }).format(d)
+  }).format(d);
 }

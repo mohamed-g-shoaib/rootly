@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 import {
   Clock01Icon,
   Target01Icon,
   TradeDownIcon,
   TradeUpIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -26,64 +26,66 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
-import { formatMinutes } from "./review-components"
-import type { ReviewCourse, ReviewSession } from "./review-model"
+import { formatMinutes } from "./review-components";
+import type { ReviewCourse, ReviewSession } from "./review-model";
 
 export type ReviewSummaryData = {
-  answeredCount: number
-  totalPlanned: number
-  endedEarly: boolean
-  accuracy: number
-  timeSpentMinutes: number
-  notesLeveledUp: { id: string; question: string }[]
-  notesLeveledDown: { id: string; question: string }[]
-  weakestCourseId: string | null
-  strongestCourseId: string | null
-}
+  answeredCount: number;
+  totalPlanned: number;
+  endedEarly: boolean;
+  accuracy: number;
+  timeSpentMinutes: number;
+  notesLeveledUp: { id: string; question: string }[];
+  notesLeveledDown: { id: string; question: string }[];
+  weakestCourseId: string | null;
+  strongestCourseId: string | null;
+};
 
 export function ReviewSummary({
   data,
   courses,
   onSave,
   onDiscard,
+  onClose,
 }: {
-  data: ReviewSummaryData
-  courses: ReviewCourse[]
-  onSave: (sessionName: string) => void
-  onDiscard: () => void
+  data: ReviewSummaryData;
+  courses: ReviewCourse[];
+  onSave: (sessionName: string) => void;
+  onDiscard: () => void;
+  onClose?: () => void;
 }) {
-  const [saveOpen, setSaveOpen] = React.useState(false)
-  const [name, setName] = React.useState("")
+  const [saveOpen, setSaveOpen] = React.useState(false);
+  const [name, setName] = React.useState("");
 
   const weakestTitle = React.useMemo(() => {
-    if (!data.weakestCourseId) return "—"
-    return courses.find((c) => c.id === data.weakestCourseId)?.title ?? "—"
-  }, [courses, data.weakestCourseId])
+    if (!data.weakestCourseId) return "—";
+    return courses.find((c) => c.id === data.weakestCourseId)?.title ?? "—";
+  }, [courses, data.weakestCourseId]);
 
   const strongestTitle = React.useMemo(() => {
-    if (!data.strongestCourseId) return "—"
-    return courses.find((c) => c.id === data.strongestCourseId)?.title ?? "—"
-  }, [courses, data.strongestCourseId])
+    if (!data.strongestCourseId) return "—";
+    return courses.find((c) => c.id === data.strongestCourseId)?.title ?? "—";
+  }, [courses, data.strongestCourseId]);
 
   const noCourseData =
-    data.weakestCourseId == null && data.strongestCourseId == null
+    data.weakestCourseId == null && data.strongestCourseId == null;
 
   const status = React.useMemo(() => {
-    const a = data.accuracy
+    const a = data.accuracy;
 
     if (a >= 85) {
-      return { label: "Excellent", badgeVariant: "success" as const }
+      return { label: "Excellent", badgeVariant: "success" as const };
     }
     if (a >= 70) {
-      return { label: "Good", badgeVariant: "secondary" as const }
+      return { label: "Good", badgeVariant: "secondary" as const };
     }
     if (a >= 50) {
-      return { label: "Needs Review", badgeVariant: "warning" as const }
+      return { label: "Needs Review", badgeVariant: "warning" as const };
     }
-    return { label: "Needs Study", badgeVariant: "destructive" as const }
-  }, [data.accuracy])
+    return { label: "Needs Study", badgeVariant: "destructive" as const };
+  }, [data.accuracy]);
 
   return (
     <div className="flex flex-col gap-4 py-6">
@@ -149,7 +151,7 @@ export function ReviewSummary({
               </div>
               <div
                 className={cn(
-                  !data.strongestCourseId && "text-muted-foreground"
+                  !data.strongestCourseId && "text-muted-foreground",
                 )}
               >
                 {strongestTitle}
@@ -207,48 +209,56 @@ export function ReviewSummary({
       </Card>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-        <DiscardDialog onDiscard={onDiscard}>
-          <Button variant="ghost">Discard</Button>
-        </DiscardDialog>
+        {onClose != null ? (
+          <Button variant="ghost" onClick={onClose}>
+            Close
+          </Button>
+        ) : (
+          <>
+            <DiscardDialog onDiscard={onDiscard}>
+              <Button variant="ghost">Discard</Button>
+            </DiscardDialog>
 
-        <Popover open={saveOpen} onOpenChange={setSaveOpen}>
-          <PopoverTrigger render={<Button />}>Save Session</PopoverTrigger>
-          <PopoverPopup align="end" className="w-80">
-            <div className="flex flex-col gap-3">
-              <div className="text-sm font-medium">Session name</div>
-              <Input
-                value={name}
-                placeholder="e.g. React Hooks Deep Dive"
-                onValueChange={(v) => setName(v)}
-              />
-              <div className="flex items-center justify-end gap-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setSaveOpen(false)
-                    setName("")
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (!name.trim()) return
-                    onSave(name.trim())
-                    setSaveOpen(false)
-                    setName("")
-                  }}
-                  disabled={!name.trim()}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </PopoverPopup>
-        </Popover>
+            <Popover open={saveOpen} onOpenChange={setSaveOpen}>
+              <PopoverTrigger render={<Button />}>Save Session</PopoverTrigger>
+              <PopoverPopup align="end" className="w-80">
+                <div className="flex flex-col gap-3">
+                  <div className="text-sm font-medium">Session name</div>
+                  <Input
+                    value={name}
+                    placeholder="e.g. React Hooks Deep Dive"
+                    onValueChange={(v) => setName(v)}
+                  />
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setSaveOpen(false);
+                        setName("");
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (!name.trim()) return;
+                        onSave(name.trim());
+                        setSaveOpen(false);
+                        setName("");
+                      }}
+                      disabled={!name.trim()}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </PopoverPopup>
+            </Popover>
+          </>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
 function StatCard({
@@ -256,9 +266,9 @@ function StatCard({
   value,
   icon,
 }: {
-  label: string
-  value: string
-  icon?: React.ReactNode
+  label: string;
+  value: string;
+  icon?: React.ReactNode;
 }) {
   return (
     <Card className="p-4">
@@ -268,20 +278,20 @@ function StatCard({
       </div>
       <div className="pt-2 text-xl font-medium tabular-nums">{value}</div>
     </Card>
-  )
+  );
 }
 
 function DiscardDialog({
   children,
   onDiscard,
 }: {
-  children: React.ReactNode
-  onDiscard: () => void
+  children: React.ReactNode;
+  onDiscard: () => void;
 }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger
-        nativeButton={false}
+        nativeButton={true}
         render={children as React.ReactElement}
       />
       <AlertDialogContent>
@@ -301,7 +311,7 @@ function DiscardDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 export function buildSessionFromSummary({
@@ -313,13 +323,13 @@ export function buildSessionFromSummary({
   userId,
   config,
 }: {
-  data: ReviewSummaryData
-  id: string
-  createdAt: string
-  date: string
-  name: string
-  userId: string
-  config: { shuffled: boolean; flaggedOnly: boolean }
+  data: ReviewSummaryData;
+  id: string;
+  createdAt: string;
+  date: string;
+  name: string;
+  userId: string;
+  config: { shuffled: boolean; flaggedOnly: boolean };
 }): ReviewSession {
   return {
     id,
@@ -336,16 +346,16 @@ export function buildSessionFromSummary({
     weakestCourseId: data.weakestCourseId,
     strongestCourseId: data.strongestCourseId,
     createdAt,
-  }
+  };
 }
 
 export function sessionDateLabel(date: string, now: Date): string {
-  const d = new Date(`${date}T00:00:00`)
+  const d = new Date(`${date}T00:00:00`);
   const formatter = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-  })
+  });
 
   if (d.getFullYear() !== now.getFullYear()) {
     const withYear = new Intl.DateTimeFormat("en-US", {
@@ -353,9 +363,9 @@ export function sessionDateLabel(date: string, now: Date): string {
       month: "short",
       day: "numeric",
       year: "numeric",
-    })
-    return withYear.format(d)
+    });
+    return withYear.format(d);
   }
 
-  return formatter.format(d)
+  return formatter.format(d);
 }

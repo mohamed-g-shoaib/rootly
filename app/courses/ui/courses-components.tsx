@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import * as React from "react"
+import Link from "next/link";
+import * as React from "react";
 
 import {
   Delete01Icon,
@@ -10,15 +10,15 @@ import {
   MoreVerticalIcon,
   Cancel01Icon,
   AddCircleIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Form } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -28,14 +28,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu"
+} from "@/components/ui/menu";
 import {
   Sheet,
   SheetClose,
@@ -44,16 +44,16 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 import {
   Progress,
   ProgressIndicator,
   ProgressTrack,
-} from "@/components/ui/progress"
-import { Slider } from "@/components/ui/slider"
+} from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
 
-import type { Course } from "./courses-model"
-import { isValidUrl } from "./courses-model"
+import type { Course } from "./courses-model";
+import { isValidUrl } from "./courses-model";
 
 export function CourseEditorSheet({
   mode,
@@ -63,59 +63,59 @@ export function CourseEditorSheet({
   isMobile,
   onSave,
 }: {
-  mode: "create" | "edit"
-  course: Course | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  isMobile: boolean
-  onSave: (course: Course) => void
+  mode: "create" | "edit";
+  course: Course | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isMobile: boolean;
+  onSave: (course: Course) => void;
 }) {
-  const [discardOpen, setDiscardOpen] = React.useState(false)
+  const [discardOpen, setDiscardOpen] = React.useState(false);
 
-  const [title, setTitle] = React.useState("")
-  const [instructor, setInstructor] = React.useState("")
-  const [courseLink, setCourseLink] = React.useState("")
-  const [links, setLinks] = React.useState<string[]>([])
-  const [topics, setTopics] = React.useState<string[]>([])
-  const [topicDraft, setTopicDraft] = React.useState("")
-  const [progress, setProgress] = React.useState(0)
+  const [title, setTitle] = React.useState("");
+  const [instructor, setInstructor] = React.useState("");
+  const [courseLink, setCourseLink] = React.useState("");
+  const [links, setLinks] = React.useState<string[]>([]);
+  const [topics, setTopics] = React.useState<string[]>([]);
+  const [topicDraft, setTopicDraft] = React.useState("");
+  const [progress, setProgress] = React.useState(0);
 
-  const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false)
+  const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false);
   const [linkInvalidByIndex, setLinkInvalidByIndex] = React.useState<
     Record<number, boolean>
-  >({})
+  >({});
 
-  const baseId = course?.id ?? ""
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
+  const baseId = course?.id ?? "";
+  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), []);
 
   React.useEffect(() => {
-    if (!open) return
+    if (!open) return;
 
     if (mode === "edit" && course) {
-      setTitle(course.title)
-      setInstructor(course.instructor ?? "")
-      setCourseLink(course.courseLink ?? "")
-      setLinks(course.links)
-      setTopics(course.topics)
-      setTopicDraft("")
-      setProgress(course.progress)
-      setCourseLinkInvalid(false)
-      setLinkInvalidByIndex({})
-      return
+      setTitle(course.title);
+      setInstructor(course.instructor ?? "");
+      setCourseLink(course.courseLink ?? "");
+      setLinks(course.links);
+      setTopics(course.topics);
+      setTopicDraft("");
+      setProgress(course.progress);
+      setCourseLinkInvalid(false);
+      setLinkInvalidByIndex({});
+      return;
     }
 
     if (mode === "create") {
-      setTitle("")
-      setInstructor("")
-      setCourseLink("")
-      setLinks([])
-      setTopics([])
-      setTopicDraft("")
-      setProgress(0)
-      setCourseLinkInvalid(false)
-      setLinkInvalidByIndex({})
+      setTitle("");
+      setInstructor("");
+      setCourseLink("");
+      setLinks([]);
+      setTopics([]);
+      setTopicDraft("");
+      setProgress(0);
+      setCourseLinkInvalid(false);
+      setLinkInvalidByIndex({});
     }
-  }, [course, mode, open])
+  }, [course, mode, open]);
 
   const hasChanges = React.useMemo(() => {
     if (mode === "create") {
@@ -126,10 +126,10 @@ export function CourseEditorSheet({
         links.some((l) => l.trim() !== "") ||
         topics.length > 0 ||
         progress !== 0
-      )
+      );
     }
 
-    if (!course) return false
+    if (!course) return false;
 
     return (
       title.trim() !== course.title.trim() ||
@@ -138,62 +138,62 @@ export function CourseEditorSheet({
       links.join("\n").trim() !== course.links.join("\n").trim() ||
       topics.join("\n").trim() !== course.topics.join("\n").trim() ||
       progress !== course.progress
-    )
-  }, [course, courseLink, instructor, links, mode, progress, title, topics])
+    );
+  }, [course, courseLink, instructor, links, mode, progress, title, topics]);
 
-  const canSave = title.trim() !== "" && !courseLinkInvalid
+  const canSave = title.trim() !== "" && !courseLinkInvalid;
 
   function requestClose(nextOpen: boolean) {
     if (nextOpen) {
-      onOpenChange(true)
-      return
+      onOpenChange(true);
+      return;
     }
 
     if (hasChanges) {
-      setDiscardOpen(true)
-      return
+      setDiscardOpen(true);
+      return;
     }
 
-    onOpenChange(false)
+    onOpenChange(false);
   }
 
   function addLink() {
-    setLinks((prev) => [...prev, ""])
+    setLinks((prev) => [...prev, ""]);
   }
 
   function removeLink(index: number) {
-    setLinks((prev) => prev.filter((_, i) => i !== index))
+    setLinks((prev) => prev.filter((_, i) => i !== index));
     setLinkInvalidByIndex((prev) => {
-      const next: Record<number, boolean> = {}
+      const next: Record<number, boolean> = {};
       for (const [k, v] of Object.entries(prev)) {
-        const i = Number(k)
-        if (i < index) next[i] = v
-        if (i > index) next[i - 1] = v
+        const i = Number(k);
+        if (i < index) next[i] = v;
+        if (i > index) next[i - 1] = v;
       }
-      return next
-    })
+      return next;
+    });
   }
 
   function addTopic(raw: string) {
-    const next = raw.trim().replace(/,$/, "")
-    if (!next) return
-    const normalized = next.toLowerCase()
+    const next = raw.trim().replace(/,$/, "");
+    if (!next) return;
+    const normalized = next.toLowerCase();
     setTopics((prev) =>
-      prev.some((t) => t.toLowerCase() === normalized) ? prev : [...prev, next]
-    )
-    setTopicDraft("")
+      prev.some((t) => t.toLowerCase() === normalized) ? prev : [...prev, next],
+    );
+    setTopicDraft("");
   }
 
   function removeTopic(topic: string) {
-    setTopics((prev) => prev.filter((t) => t !== topic))
+    setTopics((prev) => prev.filter((t) => t !== topic));
   }
 
   function onSubmit() {
-    if (!canSave) return
+    if (!canSave) return;
 
-    const id = mode === "edit" && course ? course.id : `course_${Date.now()}`
+    const id = mode === "edit" && course ? course.id : `course_${Date.now()}`;
     const createdAt =
-      mode === "edit" && course ? course.createdAt : now.toISOString()
+      mode === "edit" && course ? course.createdAt : now.toISOString();
 
     const nextCourse: Course = {
       id,
@@ -205,12 +205,12 @@ export function CourseEditorSheet({
       progress,
       createdAt,
       updatedAt: now.toISOString(),
-    }
+    };
 
-    onSave(nextCourse)
+    onSave(nextCourse);
   }
 
-  const side = isMobile ? "bottom" : "right"
+  const side = isMobile ? "bottom" : "right";
 
   return (
     <>
@@ -250,8 +250,8 @@ export function CourseEditorSheet({
                     aria-invalid={courseLinkInvalid}
                     onBlur={() => setCourseLinkInvalid(!isValidUrl(courseLink))}
                     onValueChange={(v) => {
-                      setCourseLink(v)
-                      if (courseLinkInvalid) setCourseLinkInvalid(false)
+                      setCourseLink(v);
+                      if (courseLinkInvalid) setCourseLinkInvalid(false);
                     }}
                   />
                   {courseLinkInvalid ? (
@@ -281,13 +281,13 @@ export function CourseEditorSheet({
                           }
                           onValueChange={(v) => {
                             setLinks((prev) =>
-                              prev.map((x, i) => (i === index ? v : x))
-                            )
+                              prev.map((x, i) => (i === index ? v : x)),
+                            );
                             if (linkInvalidByIndex[index])
                               setLinkInvalidByIndex((prev) => ({
                                 ...prev,
                                 [index]: false,
-                              }))
+                              }));
                           }}
                         />
                         <Button
@@ -336,8 +336,8 @@ export function CourseEditorSheet({
                     onValueChange={(v) => setTopicDraft(v)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === ",") {
-                        e.preventDefault()
-                        addTopic(topicDraft)
+                        e.preventDefault();
+                        addTopic(topicDraft);
                       }
                     }}
                   />
@@ -393,8 +393,8 @@ export function CourseEditorSheet({
             <Button
               variant="destructive"
               onClick={() => {
-                setDiscardOpen(false)
-                onOpenChange(false)
+                setDiscardOpen(false);
+                onOpenChange(false);
               }}
             >
               Discard
@@ -403,7 +403,7 @@ export function CourseEditorSheet({
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }
 
 export function EmptyState({
@@ -412,10 +412,10 @@ export function EmptyState({
   onNewCourse,
   onClearFilters,
 }: {
-  hasAnyCourses: boolean
-  hasFilters: boolean
-  onNewCourse: () => void
-  onClearFilters: () => void
+  hasAnyCourses: boolean;
+  hasFilters: boolean;
+  onNewCourse: () => void;
+  onClearFilters: () => void;
 }) {
   if (!hasAnyCourses) {
     return (
@@ -426,7 +426,7 @@ export function EmptyState({
         </div>
         <Button onClick={onNewCourse}>New Course</Button>
       </div>
-    )
+    );
   }
 
   if (hasFilters) {
@@ -440,10 +440,10 @@ export function EmptyState({
           Clear filters
         </Button>
       </div>
-    )
+    );
   }
 
-  return null
+  return null;
 }
 
 export function CourseCard({
@@ -453,19 +453,19 @@ export function CourseCard({
   onViewLinks,
   onDelete,
 }: {
-  course: Course
-  now: Date
-  onEdit: () => void
-  onViewLinks: () => void
-  onDelete: () => void
+  course: Course;
+  now: Date;
+  onEdit: () => void;
+  onViewLinks: () => void;
+  onDelete: () => void;
 }) {
-  const showTopics = course.topics.length > 0
-  const visibleTopics = course.topics.slice(0, 3)
+  const showTopics = course.topics.length > 0;
+  const visibleTopics = course.topics.slice(0, 3);
   const remainingTopics = Math.max(
     0,
-    course.topics.length - visibleTopics.length
-  )
-  const hasLinks = Boolean(course.courseLink) || course.links.length > 0
+    course.topics.length - visibleTopics.length,
+  );
+  const hasLinks = Boolean(course.courseLink) || course.links.length > 0;
 
   return (
     <Card className="p-4">
@@ -549,15 +549,15 @@ export function CourseCard({
 
       <div className="pt-4" />
     </Card>
-  )
+  );
 }
 
 function DeleteDialog({
   children,
   onDelete,
 }: {
-  children: React.ReactNode
-  onDelete: () => void
+  children: React.ReactNode;
+  onDelete: () => void;
 }) {
   return (
     <AlertDialog>
@@ -583,7 +583,7 @@ function DeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 export function FilterSheet({
@@ -594,12 +594,12 @@ export function FilterSheet({
   options,
   onValueChange,
 }: {
-  title: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  value: string
-  options: { label: string; value: string }[]
-  onValueChange: (value: string) => void
+  title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  value: string;
+  options: { label: string; value: string }[];
+  onValueChange: (value: string) => void;
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -616,8 +616,8 @@ export function FilterSheet({
                   variant={o.value === value ? "secondary" : "ghost"}
                   className="justify-start"
                   onClick={() => {
-                    onValueChange(o.value)
-                    onOpenChange(false)
+                    onValueChange(o.value);
+                    onOpenChange(false);
                   }}
                 >
                   {o.label}
@@ -631,7 +631,7 @@ export function FilterSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
 
 export function LinksViewerSheet({
@@ -641,13 +641,13 @@ export function LinksViewerSheet({
   isMobile,
   onEditCourse,
 }: {
-  course: Course | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  isMobile: boolean
-  onEditCourse: () => void
+  course: Course | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isMobile: boolean;
+  onEditCourse: () => void;
 }) {
-  const side = isMobile ? "bottom" : "right"
+  const side = isMobile ? "bottom" : "right";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -704,5 +704,5 @@ export function LinksViewerSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
