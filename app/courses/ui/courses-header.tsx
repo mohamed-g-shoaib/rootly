@@ -22,7 +22,6 @@ import {
   SelectItem,
   SelectPopup,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select"
 
 import type { SortKey, TopicFilter } from "./courses-model"
@@ -56,6 +55,21 @@ export function CoursesHeader({
     () => topicItems.find((t) => t.value === topicFilter) ?? topicItems[0],
     [topicFilter, topicItems]
   )
+
+  const sortLabel = React.useMemo(() => {
+    switch (sortKey) {
+      case "date_created":
+        return "Date Created"
+      case "progress_low":
+        return "Progress (Low → High)"
+      case "progress_high":
+        return "Progress (High → Low)"
+      case "alphabetical":
+        return "Alphabetical"
+      default:
+        return "Last Updated"
+    }
+  }, [sortKey])
 
   return (
     <div className="sticky top-0 z-10 border-b bg-background">
@@ -97,9 +111,7 @@ export function CoursesHeader({
               >
                 <SelectTrigger className="w-44 **:data-[slot=select-icon]:hidden">
                   <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                    <span className="min-w-0 truncate">
-                      <SelectValue placeholder="Sort" />
-                    </span>
+                    <span className="min-w-0 truncate">{sortLabel}</span>
                     <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
                   </span>
                 </SelectTrigger>

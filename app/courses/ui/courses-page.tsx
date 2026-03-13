@@ -10,9 +10,10 @@ import { useIsMobile } from "@/hooks/use-media-query"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
 import { PageContainer } from "@/components/ui/page-container"
+import { toastManager } from "@/components/ui/toast"
 
 import type { Course, SortKey, TopicFilter } from "./courses-model"
-import { buildMockCourses } from "./courses-mock-data"
+import { createCourse, deleteCourse, updateCourse } from "./courses-actions"
 import { CoursesHeader } from "./courses-header"
 import {
   CourseCard,
@@ -22,10 +23,16 @@ import {
   LinksViewerSheet,
 } from "./courses-components"
 
-export default function CoursesPage({ user }: { user: User | null }) {
+export default function CoursesPage({
+  user,
+  initialCourses,
+}: {
+  user: User | null
+  initialCourses: Course[]
+}) {
   const isMobile = useIsMobile()
 
-  const [courses, setCourses] = React.useState(() => buildMockCourses())
+  const [courses, setCourses] = React.useState<Course[]>(() => initialCourses)
 
   const [topicFilter, setTopicFilter] = React.useState<TopicFilter>("all")
   const [sortKey, setSortKey] = React.useState<SortKey>("last_updated")
@@ -40,7 +47,7 @@ export default function CoursesPage({ user }: { user: User | null }) {
   const [mobileTopicSheetOpen, setMobileTopicSheetOpen] = React.useState(false)
   const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false)
 
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
+  const now = React.useMemo(() => new Date(), [])
 
   const topicItems = React.useMemo(() => {
     const unique = new Set<string>()
@@ -97,9 +104,80 @@ export default function CoursesPage({ user }: { user: User | null }) {
     setEditOpen(true)
   }
 
-  function deleteCourse(courseId: string) {
-    setCourses((prev) => prev.filter((c) => c.id !== courseId))
+  async function onDeleteCourse(courseId: string) {
+    if (!user) return
+
+    const prev = courses
+
+    setCourses((items) => items.filter((c) => c.id !== courseId))
     if (activeCourseId === courseId) setActiveCourseId(null)
+
+    const res = await deleteCourse({ courseId, userId: user.id })
+    if (!res.success) {
+      setCourses(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not delete course",
+        description: res.error,
+      })
+    }
+  }
+
+  async function onCreateCourse(draft: Course) {
+    if (!user) return
+
+    const optimistic: Course = {
+      ...draft,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    const prev = courses
+
+    setCourses((items) => [optimistic, ...items])
+    setCreateOpen(false)
+
+    const res = await createCourse({ course: optimistic, userId: user.id })
+    if (!res.success) {
+      setCourses(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not create course",
+        description: res.error,
+      })
+      return
+    }
+
+    setCourses((items) =>
+      items.map((c) => (c.id === optimistic.id ? res.data : c))
+    )
+  }
+
+  async function onUpdateCourse(next: Course) {
+    if (!user) return
+
+    const prev = courses
+
+    setCourses((items) => items.map((c) => (c.id === next.id ? next : c)))
+    setEditOpen(false)
+
+    const res = await updateCourse({
+      courseId: next.id,
+      patch: next,
+      userId: user.id,
+    })
+    if (!res.success) {
+      setCourses(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not update course",
+        description: res.error,
+      })
+      return
+    }
+
+    setCourses((items) => items.map((c) => (c.id === next.id ? res.data : c)))
   }
 
   const header = (
@@ -137,12 +215,14 @@ export default function CoursesPage({ user }: { user: User | null }) {
         <div className="pt-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.items.length === 0 ? (
-              <EmptyState
-                hasAnyCourses={courses.length > 0}
-                hasFilters={filtersActive}
-                onNewCourse={() => setCreateOpen(true)}
-                onClearFilters={clearFilters}
-              />
+              <div className="col-span-full">
+                <EmptyState
+                  hasAnyCourses={courses.length > 0}
+                  hasFilters={filtersActive}
+                  onNewCourse={() => setCreateOpen(true)}
+                  onClearFilters={clearFilters}
+                />
+              </div>
             ) : (
               filtered.items.map((course) => (
                 <CourseCard
@@ -151,7 +231,7 @@ export default function CoursesPage({ user }: { user: User | null }) {
                   now={now}
                   onEdit={() => openEdit(course.id)}
                   onViewLinks={() => openLinks(course.id)}
-                  onDelete={() => deleteCourse(course.id)}
+                  onDelete={() => void onDeleteCourse(course.id)}
                 />
               ))
             )}
@@ -201,8 +281,7 @@ export default function CoursesPage({ user }: { user: User | null }) {
         onOpenChange={setCreateOpen}
         breakpoint={isMobile ? "mobile" : "desktop"}
         onSave={(next: Course) => {
-          setCourses((prev) => [next, ...prev])
-          setCreateOpen(false)
+          void onCreateCourse(next)
         }}
       />
 
@@ -213,8 +292,7 @@ export default function CoursesPage({ user }: { user: User | null }) {
         onOpenChange={setEditOpen}
         breakpoint={isMobile ? "mobile" : "desktop"}
         onSave={(next: Course) => {
-          setCourses((prev) => prev.map((c) => (c.id === next.id ? next : c)))
-          setEditOpen(false)
+          void onUpdateCourse(next)
         }}
       />
     </DashboardShell>

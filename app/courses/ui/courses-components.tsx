@@ -100,6 +100,35 @@ export function CourseEditorSheet({
   const _initial = shouldReduceMotion ? undefined : { opacity: 0, y: 10 }
   const _animate = shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
 
+  React.useEffect(() => {
+    if (!open) return
+
+    if (mode === "edit" && course) {
+      setTitle(course.title ?? "")
+      setInstructor(course.instructor ?? "")
+      setCourseLink(course.courseLink ?? "")
+      setLinks(course.links ?? [])
+      setTopics(course.topics ?? [])
+      setTopicDraft("")
+      setProgress(course.progress ?? 0)
+      setCourseLinkInvalid(false)
+      setLinkInvalidByIndex({})
+      return
+    }
+
+    if (mode === "create") {
+      setTitle("")
+      setInstructor("")
+      setCourseLink("")
+      setLinks([])
+      setTopics([])
+      setTopicDraft("")
+      setProgress(0)
+      setCourseLinkInvalid(false)
+      setLinkInvalidByIndex({})
+    }
+  }, [course, mode, open])
+
   return (
     <>
       <Sheet
@@ -376,7 +405,8 @@ export function EmptyState({
           Add your first course to start organizing your notes and tracking
           progress.
         </div>
-        <Button onClick={onNewCourse} className="mt-2">
+        <Button onClick={onNewCourse} className="mt-2 gap-2">
+          <HugeiconsIcon icon={AddCircleIcon} size={18} />
           New Course
         </Button>
       </div>
