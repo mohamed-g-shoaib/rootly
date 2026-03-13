@@ -199,17 +199,7 @@ export function DashboardShell({
 
           <div className="flex items-center gap-2">
             {!mounted ? (
-              <Button
-                variant="outline"
-                type="button"
-                className="min-w-72 justify-between"
-                onClick={() => setCommandOpen(true)}
-              >
-                <span className="text-muted-foreground">
-                  Search or jump to...
-                </span>
-                {shortcut ? <Kbd>{shortcut}</Kbd> : null}
-              </Button>
+              <div className="h-9 w-72 animate-pulse rounded-md bg-muted" />
             ) : isMobile ? (
               <Button
                 variant="ghost"
@@ -235,7 +225,7 @@ export function DashboardShell({
             )}
 
             {!mounted ? (
-              <UserAvatarPopover user={user} />
+              <div className="size-9 animate-pulse rounded-full bg-muted" />
             ) : isMobile ? (
               <Button
                 variant="ghost"
