@@ -46,11 +46,24 @@ const Chart = dynamic(
               tickFormatter={(v) => Number(v).toFixed(0)}
             />
             <Tooltip
-              formatter={(value) => {
-                if (value == null) return ["—", "Avg"]
-                return [`${Number(value).toFixed(1)} / 3`, "Avg"]
+              content={(props) => {
+                if (!props.active || !props.payload?.length) return null
+                const entry = props.payload[0]
+                if (!entry) return null
+                const datum = entry.payload as Datum & {
+                  avgValue: Datum["avg"]
+                }
+                const value = datum.avgValue
+                if (value == null) return null
+                return (
+                  <div className="rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md/5">
+                    <p className="text-muted-foreground">{datum.date}</p>
+                    <p className="font-medium">
+                      {Number(value).toFixed(1)} / 3
+                    </p>
+                  </div>
+                )
               }}
-              labelFormatter={(_, payload) => payload?.[0]?.payload?.date ?? ""}
             />
             <Line
               type="monotone"
