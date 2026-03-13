@@ -25,9 +25,10 @@ The avatar dropdown location must be found by reading the actual dashboard layou
 
 ## Theme Source Data
 
-The color values for all 19 themes come from the `reway` reference repo:
-- `https://github.com/mohamed-g-shoaib/reway/blob/main/docs/themes.md` — themes 1–11
-- `https://github.com/mohamed-g-shoaib/reway/blob/main/docs/themes-2.md` — themes 12–19
+The color values for all 19 themes are in this repo under `docs/themes/`:
+
+- `docs/themes/themes.md` — themes 1–11
+- `docs/themes/themes-2.md` — themes 12–19
 
 From each theme block, extract **only** the color variables inside `:root { }` and `.dark { }`. Ignore `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, `--spacing` entirely.
 
@@ -84,12 +85,15 @@ export type Theme = {
   dark: ThemeColors
 }
 
-export const THEMES: Theme[] = [ /* all 19 themes populated from reference URLs above */ ]
+export const THEMES: Theme[] = [
+  /* all 19 themes populated from reference URLs above */
+]
 
 export const DEFAULT_THEME_ID = "amber-minimal"
 ```
 
 The 19 theme IDs (in order):
+
 1. `amber-minimal`
 2. `amethyst-haze`
 3. `claude`
@@ -108,7 +112,7 @@ The 19 theme IDs (in order):
 16. `vercel`
 17. `vintage-paper`
 18. `bubblegum`
-19. *(last theme in themes-2.md)*
+19. _(last theme in themes-2.md)_
 
 ---
 
@@ -126,6 +130,7 @@ export function useColorTheme(): {
 ```
 
 **Application logic inside the hook:**
+
 1. Find the `Theme` object from `THEMES` by ID.
 2. Read `resolvedTheme` from `next-themes`'s `useTheme()` to determine dark or light.
 3. Pick `theme.dark` or `theme.light` accordingly.
@@ -158,9 +163,11 @@ export function ColorThemeApplicator() {
 The theme picker UI rendered as a `DropdownMenuSub` inside the avatar dropdown.
 
 **Each theme row layout:**
+
 ```
 ● ● ●  Theme Name                    ✓
 ```
+
 - Three small dots: `w-3 h-3 rounded-full` with inline `style={{ backgroundColor: theme.light.primary/background/accent }}`
   - Dot 1: `theme.light.primary`
   - Dot 2: `theme.light.background`
@@ -180,7 +187,7 @@ The theme picker UI rendered as a `DropdownMenuSub` inside the avatar dropdown.
 
 Add `<ColorThemeApplicator />` as a direct child inside `<body>`, alongside the existing `<ThemeProvider>`.
 
-### Avatar Dropdown File *(locate it first)*
+### Avatar Dropdown File _(locate it first)_
 
 Search the codebase for the avatar `DropdownMenu` (look for user name/email + sign out pattern). Add an **"Appearance"** `DropdownMenuSub` with a `Palette` icon (lucide-react) that renders `<ThemeSwitcher />`.
 
