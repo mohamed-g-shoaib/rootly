@@ -10,12 +10,18 @@ import { useIsMobile } from "@/hooks/use-media-query"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
 import { PageContainer } from "@/components/ui/page-container"
+import { toastManager } from "@/components/ui/toast"
 
 import { Spinner } from "@/components/ui/spinner"
 import { useReducedMotion } from "motion/react"
 
-import type { CourseFilter, SortKey, TypeFilter } from "./notes-model"
-import { buildMockCourses, buildMockNotes } from "./notes-mock-data"
+import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
+import {
+  createNote,
+  deleteNote,
+  toggleNoteFlag,
+  updateNote,
+} from "./notes-actions"
 import { NotesHeader } from "./notes-header"
 import { EmptyState, NoteCard, FilterSheet } from "./notes-components"
 import {
@@ -24,17 +30,20 @@ import {
   NoteEditorSheet,
 } from "./notes-sheets"
 
-function deleteNote(noteId: string) {
-  // Mock delete: local-only
-  console.log("Delete note", noteId)
-}
-
-export default function NotesPage({ user }: { user: User | null }) {
+export default function NotesPage({
+  user,
+  initialNotes,
+  initialCourses,
+}: {
+  user: User | null
+  initialNotes: Note[]
+  initialCourses: { id: string; title: string }[]
+}) {
   const isMobile = useIsMobile()
   const shouldReduceMotion = useReducedMotion()
 
-  const courses = React.useMemo(() => buildMockCourses(), [])
-  const allNotes = React.useMemo(() => buildMockNotes(), [])
+  const [courses] = React.useState(() => initialCourses)
+  const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
 
   const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all")
   const [courseFilter, setCourseFilter] = React.useState<CourseFilter>("all")
@@ -64,7 +73,7 @@ export default function NotesPage({ user }: { user: User | null }) {
 
   const loadMoreRef = React.useRef<HTMLDivElement | null>(null)
 
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
+  const now = React.useMemo(() => new Date(), [])
 
   const filtered = React.useMemo(() => {
     const base = allNotes.filter((n) => {
@@ -153,22 +162,111 @@ export default function NotesPage({ user }: { user: User | null }) {
     setEditOpen(true)
   }
 
-  function toggleFlag(noteId: string) {
-    // Mock optimistic update: local-only.
-    // In real app: optimistic update then background DB sync.
-    const next = allNotes.map((n) =>
-      n.id === noteId
-        ? {
-            ...n,
-            flag: !n.flag,
-            updatedAt: now.toISOString(),
-          }
-        : n
+  async function onToggleFlag(noteId: string) {
+    if (!user) return
+
+    const prev = allNotes
+
+    setAllNotes((items) =>
+      items.map((n) =>
+        n.id === noteId
+          ? { ...n, flag: !n.flag, updatedAt: now.toISOString() }
+          : n
+      )
     )
 
-    // This page is mocked/static; we reassign via a no-op state pattern by storing in ref.
-    // We intentionally keep the mock list stable; toggle UX will be implemented when backend wiring starts.
-    void next
+    const res = await toggleNoteFlag({ noteId, userId: user.id })
+    if (!res.success) {
+      setAllNotes(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not update note",
+        description: res.error,
+      })
+      return
+    }
+
+    setAllNotes((items) => items.map((n) => (n.id === noteId ? res.data : n)))
+  }
+
+  async function onDeleteNote(noteId: string) {
+    if (!user) return
+
+    const prev = allNotes
+
+    setAllNotes((items) => items.filter((n) => n.id !== noteId))
+    setAnswerOverrides((prevOverrides) => {
+      const next = { ...prevOverrides }
+      delete next[noteId]
+      return next
+    })
+
+    const res = await deleteNote({ noteId, userId: user.id })
+    if (!res.success) {
+      setAllNotes(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not delete note",
+        description: res.error,
+      })
+    }
+  }
+
+  async function onCreateNote(draft: Note) {
+    if (!user) return
+
+    const optimistic: Note = {
+      ...draft,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    const prev = allNotes
+
+    setAllNotes((items) => [optimistic, ...items])
+    setCreateOpen(false)
+
+    const res = await createNote({ note: optimistic, userId: user.id })
+    if (!res.success) {
+      setAllNotes(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not create note",
+        description: res.error,
+      })
+      return
+    }
+
+    setAllNotes((items) =>
+      items.map((n) => (n.id === optimistic.id ? res.data : n))
+    )
+  }
+
+  async function onUpdateNote(next: Note) {
+    if (!user) return
+
+    const prev = allNotes
+
+    setAllNotes((items) => items.map((n) => (n.id === next.id ? next : n)))
+    setEditOpen(false)
+
+    const res = await updateNote({
+      noteId: next.id,
+      patch: next,
+      userId: user.id,
+    })
+    if (!res.success) {
+      setAllNotes(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not update note",
+        description: res.error,
+      })
+      return
+    }
+
+    setAllNotes((items) => items.map((n) => (n.id === next.id ? res.data : n)))
   }
 
   React.useEffect(() => {
@@ -241,12 +339,14 @@ export default function NotesPage({ user }: { user: User | null }) {
         <div className="pt-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.items.length === 0 ? (
-              <EmptyState
-                hasAnyNotes={allNotes.length > 0}
-                hasFilters={filtersActive}
-                onNewNote={() => setCreateOpen(true)}
-                onClearFilters={clearFilters}
-              />
+              <div className="col-span-full">
+                <EmptyState
+                  hasAnyNotes={allNotes.length > 0}
+                  hasFilters={filtersActive}
+                  onNewNote={() => setCreateOpen(true)}
+                  onClearFilters={clearFilters}
+                />
+              </div>
             ) : (
               visibleNotes.map((note) => (
                 <NoteCard
@@ -263,11 +363,11 @@ export default function NotesPage({ user }: { user: User | null }) {
                       [note.id]: value,
                     }))
                   }
-                  onToggleFlag={() => toggleFlag(note.id)}
+                  onToggleFlag={() => void onToggleFlag(note.id)}
                   onEdit={() => openEdit(note.id)}
                   onViewFull={() => openView(note.id)}
                   onViewCode={() => openCode(note.id)}
-                  onDelete={() => deleteNote(note.id)}
+                  onDelete={() => void onDeleteNote(note.id)}
                 />
               ))
             )}
@@ -369,6 +469,9 @@ export default function NotesPage({ user }: { user: User | null }) {
         open={createOpen}
         onOpenChange={setCreateOpen}
         isMobile={isMobile}
+        onSave={(next) => {
+          void onCreateNote(next)
+        }}
       />
 
       <NoteEditorSheet
@@ -378,6 +481,9 @@ export default function NotesPage({ user }: { user: User | null }) {
         open={editOpen}
         onOpenChange={setEditOpen}
         isMobile={isMobile}
+        onSave={(next) => {
+          void onUpdateNote(next)
+        }}
       />
     </DashboardShell>
   )

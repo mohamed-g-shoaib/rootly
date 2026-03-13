@@ -38,7 +38,6 @@ import {
   SelectItem,
   SelectPopup,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select"
 
 import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
@@ -122,6 +121,21 @@ export function NotesHeader({
     [courseFilter, courseItems]
   )
 
+  const sortLabel = React.useMemo(() => {
+    switch (sortKey) {
+      case "date_created":
+        return "Date Created"
+      case "understanding_low":
+        return "Understanding Level (Low → High)"
+      case "understanding_high":
+        return "Understanding Level (High → Low)"
+      case "course":
+        return "Course"
+      default:
+        return "Last Updated"
+    }
+  }, [sortKey])
+
   const { exportPdf, exporting } = useExportPdf(filteredNotes)
 
   return (
@@ -190,9 +204,7 @@ export function NotesHeader({
               >
                 <SelectTrigger className="w-44 **:data-[slot=select-icon]:hidden">
                   <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                    <span className="min-w-0 truncate">
-                      <SelectValue placeholder="Sort" />
-                    </span>
+                    <span className="min-w-0 truncate">{sortLabel}</span>
                     <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
                   </span>
                 </SelectTrigger>

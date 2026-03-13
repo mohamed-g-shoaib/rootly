@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  AddCircleIcon,
   CheckmarkCircle01Icon,
   CodeIcon,
   Delete01Icon,
@@ -82,7 +83,8 @@ export function EmptyState({
         <div className="max-w-[280px] text-sm text-muted-foreground">
           Create your first note to start building your knowledge base.
         </div>
-        <Button onClick={onNewNote} type="button" className="mt-2">
+        <Button onClick={onNewNote} type="button" className="mt-2 gap-2">
+          <HugeiconsIcon icon={AddCircleIcon} size={18} />
           New Note
         </Button>
       </div>
