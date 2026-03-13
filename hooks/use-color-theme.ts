@@ -53,11 +53,6 @@ export function useColorTheme(): {
     readPreferenceCookie() || "default"
   )
 
-  React.useEffect(() => {
-    const value = readPreferenceCookie()
-    if (value) setThemeIdState(value)
-  }, [])
-
   const setThemeId = React.useCallback((id: string) => {
     setThemeIdState(id)
     setPreferenceCookie(id)
