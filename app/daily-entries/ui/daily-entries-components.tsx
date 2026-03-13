@@ -415,7 +415,7 @@ export function EntryEditorSheet({
   const [mood, setMood] = React.useState<MoodValue | null>(null)
   const [notes, setNotes] = React.useState("")
 
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
+  const now = React.useMemo(() => new Date(), [])
 
   React.useEffect(() => {
     if (!open) return
