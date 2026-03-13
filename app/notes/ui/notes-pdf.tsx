@@ -72,12 +72,20 @@ const styles = StyleSheet.create({
   },
 })
 
-function NotesPdfDocument({ notes, exportDate }: { notes: Note[]; exportDate: Date }) {
+function NotesPdfDocument({
+  notes,
+  exportDate,
+}: {
+  notes: Note[]
+  exportDate: Date
+}) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>Rootly Notes</Text>
-        <Text style={styles.subtitle}>Exported {formatDisplayDate(exportDate)}</Text>
+        <Text style={styles.subtitle}>
+          Exported {formatDisplayDate(exportDate)}
+        </Text>
 
         {notes.map((note) => (
           <View key={note.id} style={styles.noteBlock}>

@@ -8,11 +8,11 @@
     "nextjs",
     "jsx-a11y",
     "import",
-    "promise",
+    "promise"
   ],
   "categories": {
     "correctness": "error",
-    "suspicious": "warn",
+    "suspicious": "warn"
   },
   "ignorePatterns": [
     ".next/**",
@@ -21,25 +21,25 @@
     "coverage/**",
     ".vercel/**",
     "components/ui/**",
-    "next-env.d.ts",
+    "next-env.d.ts"
   ],
   "settings": {
     "next": {
-      "rootDir": ".",
-    },
+      "rootDir": "."
+    }
   },
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
-    "import/no-unassigned-import": "off",
+    "import/no-unassigned-import": "off"
   },
   "overrides": [
     {
       "files": ["**/*.{ts,tsx}"],
       "rules": {
         "typescript/no-explicit-any": "error",
-        "typescript/no-non-null-assertion": "warn",
-      },
-    },
-  ],
+        "typescript/no-non-null-assertion": "warn"
+      }
+    }
+  ]
 }

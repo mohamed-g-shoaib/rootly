@@ -1,7 +1,9 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
+import * as React from "react"
 import dynamic from "next/dynamic"
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, useMemo, useState, useId } from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -28,7 +30,7 @@ const DailyMoodChart = dynamic(() => import("../ui/charts/daily-mood-chart"), {
 
 const UnderstandingProgressChart = dynamic(
   () => import("../ui/charts/understanding-progress-chart"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-48" /> }
+  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> }
 )
 
 const CourseMasteryList = dynamic(
@@ -36,17 +38,76 @@ const CourseMasteryList = dynamic(
   { ssr: false, loading: () => <ChartSkeleton heightClassName="h-64" /> }
 )
 
-export default function OverviewPage() {
+type DailyStudyDatum = { date: string; label: string; minutes: number }
+type DailyMoodDatum = { date: string; label: string; mood: 1 | 2 | 3 | null }
+type UnderstandingDatum = { date: string; label: string; avg: number | null }
+type CourseMasteryRow = { title: string; avg: number }
+type ReviewAccuracyDatum = { date: string; label: string; accuracy: number }
+
+export default function OverviewPage({
+  user,
+  streakDays,
+  todayLabel,
+  todayStudyMinutes,
+  totalCourses,
+  totalNotes,
+  avgUnderstanding,
+  dailyStudyTime,
+  dailyMood,
+  understandingProgress,
+  courseMastery,
+  reviewAccuracyTrend: _reviewAccuracyTrend,
+}: {
+  user: User | null
+  streakDays: number
+  todayLabel: string
+  todayStudyMinutes: number
+  totalCourses: number
+  totalNotes: number
+  avgUnderstanding: number
+  dailyStudyTime: DailyStudyDatum[]
+  dailyMood: DailyMoodDatum[]
+  understandingProgress: UnderstandingDatum[]
+  courseMastery: CourseMasteryRow[]
+  reviewAccuracyTrend: ReviewAccuracyDatum[]
+}) {
   const isMobile = useIsMobile()
+  const [mounted, setMounted] = React.useState(false)
+  const id = useId()
   const [range, setRange] = useState<RangeKey>("7")
 
-  const mock = useMemo(() => buildMockOverview(range), [range])
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const effectiveIsMobile = mounted ? isMobile : false
+
+  const days = range === "7" ? 7 : range === "30" ? 30 : 90
+
+  const slicedStudy = useMemo(
+    () => dailyStudyTime.slice(-days),
+    [dailyStudyTime, days]
+  )
+  const slicedMood = useMemo(() => dailyMood.slice(-days), [dailyMood, days])
+  const slicedUnderstanding = useMemo(
+    () => understandingProgress.slice(-days),
+    [understandingProgress, days]
+  )
+
+  const emptyStates = useMemo(
+    () => ({
+      studyTime: slicedStudy.every((d) => d.minutes === 0),
+      mood: slicedMood.every((d) => d.mood == null),
+      understanding: slicedUnderstanding.every((d) => d.avg == null),
+    }),
+    [slicedMood, slicedStudy, slicedUnderstanding]
+  )
 
   return (
     <DashboardShell
-      streakDays={mock.streakDays}
+      user={user}
       fab={
-        isMobile
+        effectiveIsMobile
           ? {
               ariaLabel: "Primary action",
               icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
@@ -56,36 +117,45 @@ export default function OverviewPage() {
       }
     >
       <PageContainer>
-        {isMobile ? (
+        {effectiveIsMobile ? (
           <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pt-3 pb-3 lg:hidden">
-            <RangeToggle range={range} onRangeChange={setRange} fullWidth />
+            <RangeToggle
+              id={`${id}-mobile`}
+              range={range}
+              onRangeChange={setRange}
+              fullWidth
+            />
           </div>
         ) : null}
 
         <section className="pt-4 lg:pt-6">
           <HeroBlock
-            isMobile={isMobile}
-            streakDays={mock.streakDays}
-            todayLabel={mock.todayLabel}
-            todayStudyMinutes={mock.todayStudyMinutes}
-            totalCourses={mock.totalCourses}
-            totalNotes={mock.totalNotes}
-            avgUnderstanding={mock.avgUnderstanding}
+            isMobile={effectiveIsMobile}
+            streakDays={streakDays}
+            todayLabel={todayLabel}
+            todayStudyMinutes={todayStudyMinutes}
+            totalCourses={totalCourses}
+            totalNotes={totalNotes}
+            avgUnderstanding={avgUnderstanding}
           />
         </section>
 
-        {!isMobile ? (
+        {!effectiveIsMobile ? (
           <section className="pt-6">
-            <RangeToggle range={range} onRangeChange={setRange} />
+            <RangeToggle
+              id={`${id}-desktop`}
+              range={range}
+              onRangeChange={setRange}
+            />
           </section>
         ) : null}
 
         <section className="pt-6">
           <ChartFrame title="Daily Study Time">
             <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
-              <DailyStudyTimeChart data={mock.dailyStudyTime} />
+              <DailyStudyTimeChart data={slicedStudy} />
             </Suspense>
-            {mock.emptyStates.studyTime ? (
+            {emptyStates.studyTime ? (
               <div className="pt-3 text-sm text-muted-foreground">
                 No study sessions logged in this period.
               </div>
@@ -97,9 +167,9 @@ export default function OverviewPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <ChartFrame title="Daily Mood">
               <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
-                <DailyMoodChart data={mock.dailyMood} />
+                <DailyMoodChart data={slicedMood} />
               </Suspense>
-              {mock.emptyStates.mood ? (
+              {emptyStates.mood ? (
                 <div className="pt-3 text-sm text-muted-foreground">
                   No mood entries in this period.
                 </div>
@@ -108,9 +178,9 @@ export default function OverviewPage() {
 
             <ChartFrame title="Understanding Progress">
               <Suspense fallback={<ChartSkeleton heightClassName="h-48" />}>
-                <UnderstandingProgressChart data={mock.understandingProgress} />
+                <UnderstandingProgressChart data={slicedUnderstanding} />
               </Suspense>
-              {mock.emptyStates.understanding ? (
+              {emptyStates.understanding ? (
                 <div className="pt-3 text-sm text-muted-foreground">
                   No understanding data in this period.
                 </div>
@@ -123,7 +193,7 @@ export default function OverviewPage() {
           <ChartFrame title="Course Mastery">
             <Suspense fallback={<ChartSkeleton heightClassName="h-64" />}>
               <CourseMasteryList
-                rows={mock.courseMastery}
+                rows={courseMastery}
                 emptyLabel="No course data for this period."
               />
             </Suspense>
@@ -154,12 +224,6 @@ function HeroBlock({
   return (
     <div className={cn("grid gap-6", !isMobile && "lg:grid-cols-3")}>
       <div className={cn("lg:col-span-2", "flex flex-col gap-2")}>
-        {isMobile ? (
-          <div className="text-sm text-muted-foreground">
-            <span aria-hidden="true">🔥</span> {streakDays} day streak
-          </div>
-        ) : null}
-
         <div className="text-sm text-muted-foreground">
           Today&apos;s Study Time
         </div>
@@ -171,14 +235,19 @@ function HeroBlock({
 
       <div className={cn("flex flex-col gap-3", isMobile && "lg:hidden")}>
         {isMobile ? (
-          <div className="grid grid-cols-3 gap-3">
-            <SummaryCell label="Total Courses" value={String(totalCourses)} />
-            <SummaryCell label="Total Notes" value={String(totalNotes)} />
-            <SummaryCell
-              label="Avg. Understanding"
-              value={`${avgUnderstanding.toFixed(1)} / 3`}
-            />
-          </div>
+          <>
+            <div className="grid grid-cols-3 gap-3">
+              <SummaryCell label="Total Courses" value={String(totalCourses)} />
+              <SummaryCell label="Total Notes" value={String(totalNotes)} />
+              <SummaryCell
+                label="Avg. Understanding"
+                value={`${avgUnderstanding.toFixed(1)} / 3`}
+              />
+            </div>
+            <div className="pt-3 text-sm text-muted-foreground">
+              <span aria-hidden="true">🔥</span> {streakDays} day streak
+            </div>
+          </>
         ) : (
           <div className="flex flex-col gap-3">
             <SummaryRow label="Total Courses" value={String(totalCourses)} />
@@ -187,6 +256,9 @@ function HeroBlock({
               label="Avg. Understanding"
               value={`${avgUnderstanding.toFixed(1)} / 3`}
             />
+            <div className="pt-1 text-sm text-muted-foreground">
+              <span aria-hidden="true">🔥</span> {streakDays} day streak
+            </div>
           </div>
         )}
       </div>
@@ -216,13 +288,16 @@ function RangeToggle({
   range,
   onRangeChange,
   fullWidth = false,
+  id,
 }: {
   range: RangeKey
   onRangeChange: (value: RangeKey) => void
   fullWidth?: boolean
+  id?: string
 }) {
   return (
     <Tabs
+      id={id}
       value={range}
       onValueChange={(v) => onRangeChange(v as RangeKey)}
       orientation="horizontal"
@@ -259,102 +334,4 @@ function ChartFrame({
 
 function ChartSkeleton({ heightClassName }: { heightClassName: string }) {
   return <Skeleton className={cn("w-full", heightClassName)} />
-}
-
-type MockPoint = {
-  date: string
-  label: string
-}
-
-type MockStudy = MockPoint & { minutes: number }
-
-type MockMood = MockPoint & { mood: 1 | 2 | 3 | null }
-
-type MockUnderstanding = MockPoint & { avg: number | null }
-
-type MockCourseMasteryRow = {
-  title: string
-  avg: number
-}
-
-function buildMockOverview(range: RangeKey) {
-  const now = new Date("2026-03-10T12:00:00Z")
-
-  const days = range === "7" ? 7 : range === "30" ? 30 : 90
-
-  const series = buildDaySeries(now, days)
-
-  const dailyStudyTime: MockStudy[] = series.map((d, idx) => {
-    const minutes = idx % 6 === 0 ? 0 : 35 + (idx % 5) * 18
-    return { ...d, minutes }
-  })
-
-  const dailyMood: MockMood[] = series.map((d, idx) => {
-    const hasEntry = idx % 8 !== 0
-    if (!hasEntry) return { ...d, mood: null }
-    const mood: 1 | 2 | 3 = ((idx % 3) + 1) as 1 | 2 | 3
-    return { ...d, mood }
-  })
-
-  const understandingProgress: MockUnderstanding[] = series.map((d, idx) => {
-    const hasData = idx % 7 !== 0
-    if (!hasData) return { ...d, avg: null }
-    const avg = Math.min(3, 1.4 + idx * 0.03)
-    return { ...d, avg: Number(avg.toFixed(2)) }
-  })
-
-  const courseMastery: MockCourseMasteryRow[] = [
-    { title: "Advanced React Patterns", avg: 1.6 },
-    { title: "Postgres Performance", avg: 1.9 },
-    { title: "TypeScript Deep Dive", avg: 2.2 },
-    { title: "Next.js App Router", avg: 2.5 },
-  ]
-
-  const emptyStates = {
-    studyTime: dailyStudyTime.every((d) => d.minutes === 0),
-    mood: dailyMood.every((d) => d.mood == null),
-    understanding: understandingProgress.every((d) => d.avg == null),
-  }
-
-  return {
-    streakDays: 12,
-    todayLabel: formatLongDate(now),
-    todayStudyMinutes: 0,
-    totalCourses: 4,
-    totalNotes: 86,
-    avgUnderstanding: 2.1,
-    dailyStudyTime,
-    dailyMood,
-    understandingProgress,
-    courseMastery,
-    emptyStates,
-  }
-}
-
-function buildDaySeries(now: Date, days: number): MockPoint[] {
-  const items: MockPoint[] = []
-  for (let i = days - 1; i >= 0; i -= 1) {
-    const d = new Date(now)
-    d.setUTCDate(d.getUTCDate() - i)
-    items.push({
-      date: d.toISOString().slice(0, 10),
-      label: formatShortDate(d),
-    })
-  }
-  return items
-}
-
-function formatLongDate(d: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  }).format(d)
-}
-
-function formatShortDate(d: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-  }).format(d)
 }

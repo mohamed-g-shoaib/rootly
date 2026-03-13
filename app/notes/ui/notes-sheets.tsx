@@ -189,6 +189,7 @@ export function NoteEditorSheet({
   onOpenChange,
   isMobile,
   lockedCourse,
+  onSave,
 }: {
   mode: "create" | "edit"
   note: Note | null
@@ -197,6 +198,7 @@ export function NoteEditorSheet({
   onOpenChange: (open: boolean) => void
   isMobile: boolean
   lockedCourse?: { id: string; title: string }
+  onSave?: (note: Note) => void
 }) {
   const [type, setType] = React.useState<NoteType | null>(
     mode === "edit" && note ? note.type : null
@@ -218,6 +220,10 @@ export function NoteEditorSheet({
   const [codeLanguage, setCodeLanguage] = React.useState("tsx")
   const [codeValue, setCodeValue] = React.useState("")
 
+  const [question, setQuestion] = React.useState("")
+  const [answer, setAnswer] = React.useState("")
+  const [body, setBody] = React.useState("")
+
   const courseItems = React.useMemo<{ value: string; label: string }[]>(
     () => [
       { value: "none", label: "No course" },
@@ -233,6 +239,57 @@ export function NoteEditorSheet({
     [courseId, courseItems]
   )
 
+  const canSave = React.useMemo(() => {
+    if (!onSave) return false
+    if (!type) return false
+
+    if (type === "qa") {
+      return Boolean(
+        question.trim() && answer.trim() && understandingLevel != null
+      )
+    }
+
+    return Boolean(body.trim())
+  }, [answer, body, onSave, question, type, understandingLevel])
+
+  function submit() {
+    if (!onSave) return
+    if (!type) return
+
+    const now = new Date().toISOString()
+
+    const id = mode === "edit" && note ? note.id : crypto.randomUUID()
+    const createdAt = mode === "edit" && note ? note.createdAt : now
+
+    const effectiveCourseId = courseId === "none" ? null : courseId
+    const effectiveCourseTitle =
+      effectiveCourseId && effectiveCourseId !== "none"
+        ? (courses.find((c) => c.id === effectiveCourseId)?.title ?? null)
+        : null
+
+    const q = type === "qa" ? question.trim() : ""
+    const a = type === "qa" ? answer.trim() : ""
+    const b = type === "freeform" ? body.trim() : ""
+
+    const next: Note = {
+      id,
+      type,
+      courseId: effectiveCourseId,
+      courseTitle: effectiveCourseTitle,
+      question: q ? q : null,
+      answer: a ? a : null,
+      body: b ? b : null,
+      understandingLevel: type === "qa" ? understandingLevel : null,
+      flag: flagged,
+      codeSnippet: codeEnabled ? (codeValue.trim() ? codeValue : null) : null,
+      codeLanguage: codeEnabled ? codeLanguage : "text",
+      createdAt,
+      updatedAt: now,
+    }
+
+    onSave(next)
+  }
+
   React.useEffect(() => {
     if (mode === "edit" && note) setType(note.type)
     if (mode === "create") setType(null)
@@ -243,6 +300,10 @@ export function NoteEditorSheet({
     setUnderstandingLevel(
       mode === "edit" ? (note?.understandingLevel ?? null) : null
     )
+
+    setQuestion(mode === "edit" ? (note?.question ?? "") : "")
+    setAnswer(mode === "edit" ? (note?.answer ?? "") : "")
+    setBody(mode === "edit" ? (note?.body ?? "") : "")
 
     if (mode === "edit" && note) {
       const snippet = note.codeSnippet ?? ""
@@ -338,7 +399,8 @@ export function NoteEditorSheet({
                         </div>
                         <Textarea
                           placeholder="What is the question?"
-                          defaultValue={note?.question ?? ""}
+                          value={question}
+                          onChange={(e) => setQuestion(e.target.value)}
                         />
                       </div>
                       <div>
@@ -347,7 +409,8 @@ export function NoteEditorSheet({
                         </div>
                         <Textarea
                           placeholder="Write the answer..."
-                          defaultValue={note?.answer ?? ""}
+                          value={answer}
+                          onChange={(e) => setAnswer(e.target.value)}
                         />
                       </div>
                       <div>
@@ -420,7 +483,8 @@ export function NoteEditorSheet({
                       <div className="text-sm text-muted-foreground">Note</div>
                       <Textarea
                         placeholder="Write your note..."
-                        defaultValue={note?.body ?? ""}
+                        value={body}
+                        onChange={(e) => setBody(e.target.value)}
                         className="min-h-40"
                       />
                     </div>
@@ -511,7 +575,9 @@ export function NoteEditorSheet({
           </SheetPanel>
           <SheetFooter>
             <SheetClose render={<Button variant="ghost" />}>Cancel</SheetClose>
-            <Button disabled>Save Note</Button>
+            <Button type="button" disabled={!canSave} onClick={submit}>
+              Save Note
+            </Button>
           </SheetFooter>
         </Form>
       </SheetPopup>

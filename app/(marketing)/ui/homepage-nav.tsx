@@ -7,12 +7,24 @@ import { ArrowRight02Icon, Github01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import RootlyLogo from "@/components/rootly-logo"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
+import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
+import type { User } from "@supabase/supabase-js"
 
 export default function HomepageNav() {
   const [scrolled, setScrolled] = React.useState(false)
+  const [user, setUser] = React.useState<User | null>(null)
+
+  React.useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      return null
+    })
+  }, [])
 
   React.useEffect(() => {
     function onScroll() {
@@ -62,16 +74,54 @@ export default function HomepageNav() {
               Star on GitHub
             </Button>
 
-            <Button render={<Link href="/login" />} className="group">
-              <span className="inline-flex items-center gap-2">
-                Get started
-                <HugeiconsIcon
-                  icon={ArrowRight02Icon}
-                  size={18}
-                  className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
-                />
-              </span>
-            </Button>
+            {user ? (
+              <Button
+                render={<Link href="/overview" />}
+                variant="ghost"
+                size="icon"
+                aria-label="Go to dashboard"
+                className="rounded-full"
+              >
+                <Avatar>
+                  <AvatarImage
+                    src={
+                      user.user_metadata?.avatar_url ??
+                      user.user_metadata?.picture ??
+                      ""
+                    }
+                    alt={
+                      user.user_metadata?.full_name ??
+                      user.user_metadata?.name ??
+                      "User"
+                    }
+                  />
+                  <AvatarFallback>
+                    {(
+                      user.user_metadata?.full_name ??
+                      user.user_metadata?.name ??
+                      user.email ??
+                      "U"
+                    )
+                      .split(" ")
+                      .map((n: string) => n[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            ) : (
+              <Button render={<Link href="/login" />} className="group">
+                <span className="inline-flex items-center gap-2">
+                  Get started
+                  <HugeiconsIcon
+                    icon={ArrowRight02Icon}
+                    size={18}
+                    className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+                  />
+                </span>
+              </Button>
+            )}
           </div>
         </div>
       </PageContainer>

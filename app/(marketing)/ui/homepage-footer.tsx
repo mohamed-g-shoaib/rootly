@@ -5,12 +5,9 @@ import RootlyWord from "@/components/rootly-word"
 import { PageContainer } from "@/components/ui/page-container"
 import { Separator } from "@/components/ui/separator"
 import { ThemeSwitcherMultiButton } from "./theme-switcher-multi-button"
+import { FooterAccountLink } from "./footer-account-link"
 
 const FOOTER_LINKS = [
-  {
-    title: "Account",
-    links: [{ label: "Login", href: "/login" }],
-  },
   {
     title: "Connect",
     links: [
@@ -53,6 +50,15 @@ export default function HomepageFooter() {
               aria-label="Footer"
               className="grid grid-cols-2 gap-10 sm:mt-0 lg:grid-cols-3"
             >
+              <div className="flex flex-col gap-4">
+                <h3 className="font-semibold text-foreground">Account</h3>
+                <ul className="flex flex-col gap-3">
+                  <li>
+                    <FooterAccountLink />
+                  </li>
+                </ul>
+              </div>
+
               {FOOTER_LINKS.map((group) => (
                 <div key={group.title} className="flex flex-col gap-4">
                   <h3 className="font-semibold text-foreground">

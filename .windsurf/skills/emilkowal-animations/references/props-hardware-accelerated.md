@@ -21,12 +21,15 @@ When the main thread is executing JavaScript, requestAnimationFrame-based animat
 
 ```tsx
 // CSS transition (hardware-accelerated)
-<div style={{ transform: 'translateX(100px)' }} className="transition-transform" />
+;<div
+  style={{ transform: "translateX(100px)" }}
+  className="transition-transform"
+/>
 
 // Or WAAPI
 element.animate(
-  [{ transform: 'translateX(0)' }, { transform: 'translateX(100px)' }],
-  { duration: 200, easing: 'ease-out' }
+  [{ transform: "translateX(0)" }, { transform: "translateX(100px)" }],
+  { duration: 200, easing: "ease-out" }
 )
 ```
 

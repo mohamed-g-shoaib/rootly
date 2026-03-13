@@ -102,7 +102,10 @@ export function MockCodeViewerSheet({
                   scrollbarGutter
                 >
                   <div className="pb-6">
-                    <CodeBlock code={note.codeSnippet} language={note.codeLanguage} />
+                    <CodeBlock
+                      code={note.codeSnippet}
+                      language={note.codeLanguage}
+                    />
                   </div>
                 </ScrollArea>
               </div>

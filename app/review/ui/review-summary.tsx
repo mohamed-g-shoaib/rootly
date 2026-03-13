@@ -41,6 +41,7 @@ export type ReviewSummaryData = {
   notesLeveledDown: { id: string; question: string }[]
   weakestCourseId: string | null
   strongestCourseId: string | null
+  courseScores: Record<string, number>
 }
 
 export function ReviewSummary({

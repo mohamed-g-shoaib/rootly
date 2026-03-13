@@ -37,16 +37,22 @@ const Chart = dynamic(
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 8, right: 72, left: 0, bottom: 0 }}
+            margin={{ top: 8, right: 72, left: 8, bottom: 8 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} />
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
             <YAxis
               width={72}
               domain={[1, 3]}
               ticks={[1, 2, 3]}
               tickLine={false}
               axisLine={false}
+              tickMargin={8}
               tickFormatter={(v) => moodLabelMap[v as 1 | 2 | 3] ?? ""}
             />
             <Tooltip

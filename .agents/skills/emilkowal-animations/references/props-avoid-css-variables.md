@@ -16,8 +16,8 @@ function Drawer({ children }) {
   const [dragY, setDragY] = useState(0)
 
   return (
-    <div style={{ '--drag-y': `${dragY}px` }}>
-      <div style={{ transform: 'translateY(var(--drag-y))' }}>
+    <div style={{ "--drag-y": `${dragY}px` }}>
+      <div style={{ transform: "translateY(var(--drag-y))" }}>
         {children} {/* All children recalculate styles */}
       </div>
     </div>

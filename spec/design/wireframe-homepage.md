@@ -22,7 +22,7 @@
 
 ## Animation Rules (from Emil Kowalski + Raphael Salaja)
 
-The homepage is seen once or twice by a user — it can breathe. The dashboard is seen every day — it stays restrained. This is the *only* place in the product where richer motion is acceptable.
+The homepage is seen once or twice by a user — it can breathe. The dashboard is seen every day — it stays restrained. This is the _only_ place in the product where richer motion is acceptable.
 
 ```
 ✅ Animate only `transform` and `opacity`. Never animate layout properties (width, height, top, left).
@@ -356,15 +356,16 @@ How it works
 
 ### 5 Steps (implemented)
 
-| Step | Title | Visual |
-| --- | --- | --- |
-| 1 | `Create a course` | `CreateCourseVisual` — Card with course title "Machine Learning Fundamentals", instructor "Andrew Ng", and an **interactive** `Slider` showing progress at 42% |
-| 2 | `Capture notes` | `CaptureVisual` — Card with a Q&A note ("When should you use useMemo?"), interactive show/hide answer toggle, `PreviewCard` (hover desktop) or `Popover` (touch) for "Peek answer", Understanding + language badges |
-| 3 | `Log daily progress` | `DailyLogVisual` — Card with study time "2h 25m", reflective text, and **interactive** 3-button mood selector (Burned / Neutral / Focused with emoji icons) |
-| 4 | `Start a review session` | `ReviewVisual` — Card with session progress "3 / 10 questions", question text, `PreviewCard`/`Popover` "Peek answer", and **interactive** 3-button understanding level selector (Confused / Getting It / Clear with Hugeicons) |
-| 5 | `Watch analytics` | `TrackVisual` — Card with a live `BarChart` (5 hardcoded bars, no axes/tooltips), "Study minutes" label, and "avg. 2.4h / day" stat |
+| Step | Title                    | Visual                                                                                                                                                                                                                         |
+| ---- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1    | `Create a course`        | `CreateCourseVisual` — Card with course title "Machine Learning Fundamentals", instructor "Andrew Ng", and an **interactive** `Slider` showing progress at 42%                                                                 |
+| 2    | `Capture notes`          | `CaptureVisual` — Card with a Q&A note ("When should you use useMemo?"), interactive show/hide answer toggle, `PreviewCard` (hover desktop) or `Popover` (touch) for "Peek answer", Understanding + language badges            |
+| 3    | `Log daily progress`     | `DailyLogVisual` — Card with study time "2h 25m", reflective text, and **interactive** 3-button mood selector (Burned / Neutral / Focused with emoji icons)                                                                    |
+| 4    | `Start a review session` | `ReviewVisual` — Card with session progress "3 / 10 questions", question text, `PreviewCard`/`Popover` "Peek answer", and **interactive** 3-button understanding level selector (Confused / Getting It / Clear with Hugeicons) |
+| 5    | `Watch analytics`        | `TrackVisual` — Card with a live `BarChart` (5 hardcoded bars, no axes/tooltips), "Study minutes" label, and "avg. 2.4h / day" stat                                                                                            |
 
 > **Changes from original plan:**
+>
 > - Was 4 steps; now 5 steps (added "Create a course" and "Log daily progress").
 > - Was vertical numbered list; now horizontal scroll carousel.
 > - Was static visual mockups; visuals are now interactive (Slider, mood picker, understanding picker).
@@ -415,7 +416,7 @@ How it works
 └─────────────────────────────────────────────────────┘
 ```
 
-> **Change from original plan:** The sub-copy `"Rootly is free to use. No credit card required."` was replaced with an italic motivational quote from John C. Maxwell: *"All disciplines repeated with consistency every day lead to great achievements gained slowly over time."* The `"Rootly is free to use."` line is kept below the button (shorter, no "No credit card required" line).
+> **Change from original plan:** The sub-copy `"Rootly is free to use. No credit card required."` was replaced with an italic motivational quote from John C. Maxwell: _"All disciplines repeated with consistency every day lead to great achievements gained slowly over time."_ The `"Rootly is free to use."` line is kept below the button (shorter, no "No credit card required" line).
 
 - Wrapped in a coss ui `Card` with `py-14`.
 - `"Start learning with intention."` — `text-3xl font-semibold`.
@@ -454,6 +455,7 @@ How it works
 ```
 
 > **Changes from original plan:**
+>
 > - Footer is significantly expanded from the original single-line layout.
 > - Left column: logo + wordmark, tagline, copyright, and a `ThemeSwitcherMultiButton` (Light / Dark / System tri-state selector).
 > - Right column: `nav` grid with 3 link groups — **Account** (Login), **Connect** (GitHub), **Legal** (Privacy Policy, Terms of Service — both `#` placeholders).

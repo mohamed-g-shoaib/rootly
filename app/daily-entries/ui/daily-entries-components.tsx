@@ -223,71 +223,85 @@ export function EntryCard({
   const isToday = isSameDay(entry.date, toDateInputValue(now))
 
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex min-w-0 items-center gap-2">
-            <div className="min-w-0 truncate font-medium">
-              {formatEntryDate(entry.date, now)}
+    <div className="h-[160px]">
+      {/* EntryCard is intentionally shorter — less content than other card types */}
+      <Card className="h-full p-4">
+        <div className="flex h-full flex-col gap-3">
+          <div className="flex shrink-0 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <div className="truncate font-medium">
+                {formatEntryDate(entry.date, now)}
+              </div>
+              {isToday ? (
+                <Badge variant="outline" className="shrink-0">
+                  Today
+                </Badge>
+              ) : null}
             </div>
-            {isToday ? <Badge variant="outline">Today</Badge> : null}
+            <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
+              <HugeiconsIcon icon={Clock01Icon} size={16} />
+              <span className="tabular-nums">
+                {formatStudyTime(entry.studyTimeMinutes)}
+              </span>
+            </div>
           </div>
 
-          <div className="pt-3">
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={Clock01Icon} size={18} />
-                <span className="tabular-nums">
-                  {formatStudyTime(entry.studyTimeMinutes)}
-                </span>
-              </div>
+          <div className="flex min-h-0 flex-1 items-center overflow-hidden">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {entry.mood === 1 ? (
+                <EmojioneV1WearyFace className="size-5" aria-hidden="true" />
+              ) : entry.mood === 2 ? (
+                <EmojioneV1SlightlySmilingFace
+                  className="size-5"
+                  aria-hidden="true"
+                />
+              ) : (
+                <EmojioneV1GrinningFaceWithSmilingEyes
+                  className="size-5"
+                  aria-hidden="true"
+                />
+              )}
+              <span>{moodLabel(entry.mood)}</span>
+            </div>
+          </div>
 
-              <div className="flex items-center gap-2">
-                {entry.mood === 1 ? (
-                  <EmojioneV1WearyFace className="size-5" aria-hidden="true" />
-                ) : entry.mood === 2 ? (
-                  <EmojioneV1SlightlySmilingFace
-                    className="size-5"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <EmojioneV1GrinningFaceWithSmilingEyes
-                    className="size-5"
-                    aria-hidden="true"
-                  />
-                )}
-                <span>{moodLabel(entry.mood)}</span>
-              </div>
-
+          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
+            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
               {entry.notes ? (
-                <div className="min-w-0 flex-1 truncate">{entry.notes}</div>
+                <span className="truncate text-xs text-muted-foreground">
+                  {entry.notes}
+                </span>
               ) : null}
+            </div>
+
+            <div className="-mr-2 flex shrink-0 items-center gap-1">
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="ghost" size="icon" aria-label="More" />
+                  }
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={onEdit}>
+                    <HugeiconsIcon icon={Edit01Icon} size={18} />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DeleteDialog onDelete={onDelete}>
+                    <DropdownMenuItem variant="destructive">
+                      <HugeiconsIcon icon={Delete01Icon} size={18} />
+                      Delete
+                    </DropdownMenuItem>
+                  </DeleteDialog>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={<Button variant="ghost" size="icon" aria-label="More" />}
-          >
-            <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onEdit}>
-              <HugeiconsIcon icon={Edit01Icon} size={18} />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DeleteDialog onDelete={onDelete}>
-              <DropdownMenuItem variant="destructive">
-                <HugeiconsIcon icon={Delete01Icon} size={18} />
-                Delete
-              </DropdownMenuItem>
-            </DeleteDialog>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </Card>
+      </Card>
+    </div>
   )
 }
 
@@ -401,7 +415,7 @@ export function EntryEditorSheet({
   const [mood, setMood] = React.useState<MoodValue | null>(null)
   const [notes, setNotes] = React.useState("")
 
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
+  const now = React.useMemo(() => new Date(), [])
 
   React.useEffect(() => {
     if (!open) return

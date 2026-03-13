@@ -435,12 +435,12 @@ Observed conventions and guardrails in this repo:
 
 All currently implemented feature areas are mocked (in-memory state + mock builders/constants). Backend wiring is the next layer.
 
-| Area | Route(s) | Status (UI) | Data | Notes |
-| --- | --- | --- | --- | --- |
-| Overview | `/` | Implemented | Mocked | Charts are client-only via dynamic import. |
-| Courses | `/courses`, `/courses/[id]` | Implemented | Mocked | Detail page reuses Notes UI. |
-| Notes | `/notes` | Implemented (Save disabled) | Mocked | Includes Markdown and PDF export. |
-| Daily Entries | `/daily-entries` | Implemented | Mocked + local state | Create/edit/delete are local-only. |
-| Review | `/review` | Implemented | Mocked + local state | Session flow + summary exist without navigation to separate routes. |
+| Area          | Route(s)                    | Status (UI)                 | Data                 | Notes                                                               |
+| ------------- | --------------------------- | --------------------------- | -------------------- | ------------------------------------------------------------------- |
+| Overview      | `/`                         | Implemented                 | Mocked               | Charts are client-only via dynamic import.                          |
+| Courses       | `/courses`, `/courses/[id]` | Implemented                 | Mocked               | Detail page reuses Notes UI.                                        |
+| Notes         | `/notes`                    | Implemented (Save disabled) | Mocked               | Includes Markdown and PDF export.                                   |
+| Daily Entries | `/daily-entries`            | Implemented                 | Mocked + local state | Create/edit/delete are local-only.                                  |
+| Review        | `/review`                   | Implemented                 | Mocked + local state | Session flow + summary exist without navigation to separate routes. |
 
 ---

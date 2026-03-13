@@ -21,7 +21,7 @@ function Counter({ value }) {
 **Correct (spring-interpolated value):**
 
 ```tsx
-import { useSpring, motion } from 'framer-motion'
+import { useSpring, motion } from "framer-motion"
 
 function Counter({ value }) {
   const spring = useSpring(value, { stiffness: 100, damping: 30 })
@@ -31,6 +31,7 @@ function Counter({ value }) {
 ```
 
 **When NOT to use springs:**
+
 - Functional interfaces where speed matters (banking apps, data entry)
 - High-frequency interactions the user performs hundreds of times daily
 

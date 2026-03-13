@@ -21,7 +21,7 @@ export type FloatingDockItem = {
 }
 
 function isDockItemActive(pathname: string, link: string) {
-  if (link === "/") return pathname === "/" || pathname === "/overview"
+  if (link === "/overview") return pathname === "/overview"
   return pathname === link
 }
 
@@ -65,7 +65,7 @@ function FloatingDockMobile({
       )}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <nav className="mx-auto mb-3 flex items-center gap-2 rounded-2xl border bg-background/95 p-2 shadow-sm backdrop-blur">
+      <nav className="mx-auto mb-3 flex items-center gap-2 rounded-2xl border bg-background p-2 shadow-sm">
         {navigationItems.map((item) => {
           const isActive = isDockItemActive(pathname, item.link)
           return (
@@ -77,7 +77,7 @@ function FloatingDockMobile({
                 "flex size-11 items-center justify-center rounded-xl border transition-colors",
                 isActive
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-muted text-foreground hover:bg-accent"
+                  : "border-border bg-muted text-foreground hover:bg-muted"
               )}
             >
               <div className="size-5">{item.icon}</div>
@@ -111,7 +111,7 @@ function FloatingDockDesktop({
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className={cn(
-          "mx-auto mb-6 flex h-16 items-end gap-4 rounded-2xl border bg-background/95 px-4 pb-3 shadow-sm backdrop-blur"
+          "mx-auto mb-6 flex h-16 items-end gap-4 rounded-2xl border bg-background px-4 pb-3 shadow-sm"
         )}
       >
         {navigationItems.map((item) => (
@@ -184,7 +184,7 @@ function DesktopIconContainer({
           "relative flex aspect-square items-center justify-center rounded-full border transition-colors",
           active
             ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-muted text-foreground"
+            : "border-border bg-muted text-foreground hover:bg-muted"
         )}
       >
         <AnimatePresence>

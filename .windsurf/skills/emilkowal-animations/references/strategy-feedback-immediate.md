@@ -16,7 +16,7 @@ const onSubmit = async () => {
   await saveData() // User waits with no feedback
 }
 
-<button onClick={onSubmit}>Save</button>
+;<button onClick={onSubmit}>Save</button>
 // User wonders if click registered
 ```
 
@@ -30,10 +30,12 @@ const onSubmit = async () => {
   setShowSuccess(true)
 }
 
-<button onClick={onSubmit} disabled={isLoading}>
-  {isLoading ? <Spinner /> : 'Save'}
+;<button onClick={onSubmit} disabled={isLoading}>
+  {isLoading ? <Spinner /> : "Save"}
 </button>
-{showSuccess && <CheckAnimation />}
+{
+  showSuccess && <CheckAnimation />
+}
 // User knows action is processing
 ```
 

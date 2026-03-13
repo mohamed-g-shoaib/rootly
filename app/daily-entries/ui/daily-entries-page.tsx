@@ -1,5 +1,6 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
@@ -10,6 +11,7 @@ import { PageContainer } from "@/components/ui/page-container"
 import { useIsMobile } from "@/hooks/use-media-query"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { toastManager } from "@/components/ui/toast"
 
 import {
   DateRangeFilterSheet,
@@ -19,7 +21,7 @@ import {
   MoodFilterSheet,
 } from "./daily-entries-components"
 import { DailyEntriesHeader } from "./daily-entries-header"
-import { DAILY_ENTRIES_MOCK } from "./daily-entries-mock-data"
+import { createEntry, deleteEntry, updateEntry } from "./daily-entries-actions"
 import {
   isSameDay,
   toDateInputValue,
@@ -27,13 +29,27 @@ import {
   type MoodFilter,
 } from "./daily-entries-model"
 
-export function DailyEntriesPage() {
+export default function DailyEntriesPage({
+  user,
+  initialEntries,
+}: {
+  user: User | null
+  initialEntries: DailyEntry[]
+}) {
   const isMobile = useIsMobile()
 
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
+  const now = React.useMemo(() => new Date(), [])
   const today = React.useMemo(() => toDateInputValue(now), [now])
 
-  const [entries, setEntries] = React.useState<DailyEntry[]>(DAILY_ENTRIES_MOCK)
+  const [entries, setEntries] = React.useState<DailyEntry[]>(
+    () => initialEntries
+  )
+
+  const entriesRef = React.useRef(entries)
+
+  React.useEffect(() => {
+    entriesRef.current = entries
+  }, [entries])
 
   const [fromDate, setFromDate] = React.useState("")
   const [toDate, setToDate] = React.useState("")
@@ -88,31 +104,94 @@ export function DailyEntriesPage() {
     setCreateOpen(true)
   }
 
-  function saveEntry(next: DailyEntry) {
-    setEntries((prev) => {
-      const existingIndex = prev.findIndex((e) => e.id === next.id)
-      if (existingIndex >= 0) {
-        return prev.map((e) => (e.id === next.id ? next : e))
-      }
+  async function onCreateEntry(draft: DailyEntry) {
+    if (!user) return
 
-      if (prev.some((e) => e.date === next.date)) {
-        return prev
-      }
+    if (entriesRef.current.some((e) => e.date === draft.date)) {
+      toastManager.add({
+        type: "error",
+        title: "Could not create entry",
+        description: "An entry for this date already exists.",
+      })
+      return
+    }
 
-      return [next, ...prev]
-    })
+    const optimistic: DailyEntry = {
+      ...draft,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
 
+    const prev = entriesRef.current
+
+    setEntries((items) => [optimistic, ...items])
     setCreateOpen(false)
-    setEditOpen(false)
+
+    const res = await createEntry({ entry: optimistic, userId: user.id })
+    if (!res.success) {
+      setEntries(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not create entry",
+        description: res.error,
+      })
+      return
+    }
+
+    setEntries((items) =>
+      items.map((e) => (e.id === optimistic.id ? res.data : e))
+    )
   }
 
-  function deleteEntry(id: string) {
-    setEntries((prev) => prev.filter((e) => e.id !== id))
+  async function onUpdateEntry(next: DailyEntry) {
+    if (!user) return
+
+    const prev = entriesRef.current
+
+    setEntries((items) => items.map((e) => (e.id === next.id ? next : e)))
+    setEditOpen(false)
+
+    const res = await updateEntry({
+      entryId: next.id,
+      patch: next,
+      userId: user.id,
+    })
+    if (!res.success) {
+      setEntries(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not update entry",
+        description: res.error,
+      })
+      return
+    }
+
+    setEntries((items) => items.map((e) => (e.id === next.id ? res.data : e)))
+  }
+
+  async function onDeleteEntry(id: string) {
+    if (!user) return
+
+    const prev = entriesRef.current
+
+    setEntries((items) => items.filter((e) => e.id !== id))
     if (activeEntryId === id) setActiveEntryId(null)
+
+    const res = await deleteEntry({ entryId: id, userId: user.id })
+    if (!res.success) {
+      setEntries(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not delete entry",
+        description: res.error,
+      })
+    }
   }
 
   return (
     <DashboardShell
+      user={user}
       fab={{
         ariaLabel: todayHasEntry ? "Edit today's entry" : "Log today",
         icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
@@ -138,12 +217,14 @@ export function DailyEntriesPage() {
       <PageContainer>
         <div className="py-6">
           {filteredEntries.length === 0 ? (
-            <EmptyState
-              hasAnyEntries={entries.length > 0}
-              hasFilters={filtersActive}
-              onLogToday={openPrimaryAction}
-              onClearFilters={clearFilters}
-            />
+            <div className="flex justify-center">
+              <EmptyState
+                hasAnyEntries={entries.length > 0}
+                hasFilters={filtersActive}
+                onLogToday={openPrimaryAction}
+                onClearFilters={clearFilters}
+              />
+            </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {filteredEntries.map((e) => (
@@ -155,7 +236,7 @@ export function DailyEntriesPage() {
                     setActiveEntryId(e.id)
                     setEditOpen(true)
                   }}
-                  onDelete={() => deleteEntry(e.id)}
+                  onDelete={() => void onDeleteEntry(e.id)}
                 />
               ))}
             </div>
@@ -187,7 +268,9 @@ export function DailyEntriesPage() {
         isMobile={isMobile}
         lockDate
         lockedDateValue={today}
-        onSave={saveEntry}
+        onSave={(next) => {
+          void onCreateEntry(next)
+        }}
       />
 
       <EntryEditorSheet
@@ -198,7 +281,9 @@ export function DailyEntriesPage() {
         isMobile={isMobile}
         lockDate={false}
         lockedDateValue={today}
-        onSave={saveEntry}
+        onSave={(next) => {
+          void onUpdateEntry(next)
+        }}
       />
     </DashboardShell>
   )

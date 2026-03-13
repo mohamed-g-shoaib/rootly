@@ -29,22 +29,41 @@ const Chart = dynamic(
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            margin={{ top: 8, right: 16, left: 8, bottom: 8 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} />
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
             <YAxis
               domain={[1, 3]}
               tickLine={false}
               axisLine={false}
+              tickMargin={8}
               tickFormatter={(v) => Number(v).toFixed(0)}
             />
             <Tooltip
-              formatter={(value) => {
-                if (value == null) return ["—", "Avg"]
-                return [`${Number(value).toFixed(1)} / 3`, "Avg"]
+              content={(props) => {
+                if (!props.active || !props.payload?.length) return null
+                const entry = props.payload[0]
+                if (!entry) return null
+                const datum = entry.payload as Datum & {
+                  avgValue: Datum["avg"]
+                }
+                const value = datum.avgValue
+                if (value == null) return null
+                return (
+                  <div className="rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md/5">
+                    <p className="text-muted-foreground">{datum.date}</p>
+                    <p className="font-medium">
+                      {Number(value).toFixed(1)} / 3
+                    </p>
+                  </div>
+                )
               }}
-              labelFormatter={(_, payload) => payload?.[0]?.payload?.date ?? ""}
             />
             <Line
               type="monotone"
@@ -77,7 +96,7 @@ export default function UnderstandingProgressChart({
   )
 
   return (
-    <div className="h-48 w-full">
+    <div className="h-56 w-full">
       <Chart chartData={chartData} />
     </div>
   )

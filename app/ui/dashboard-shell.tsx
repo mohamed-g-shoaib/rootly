@@ -16,7 +16,10 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
+import type { User } from "@supabase/supabase-js"
+import { signOut } from "@/app/auth/actions"
 
 import RootlyLogo from "@/components/rootly-logo"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -85,16 +88,18 @@ function ThemeToggle({
 
 export function DashboardShell({
   children,
-  streakDays,
   fab,
+  user,
 }: {
   children: React.ReactNode
-  streakDays?: number
   fab?: ShellFab
+  user: User | null
 }) {
   const [isMobile, setIsMobile] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+    setMounted(true)
     const mql = window.matchMedia("(max-width: 768px)")
     const onChange = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches)
@@ -107,13 +112,35 @@ export function DashboardShell({
   const [commandOpen, setCommandOpen] = React.useState(false)
   const [avatarOpen, setAvatarOpen] = React.useState(false)
 
-  const shortcut = isMobile ? null : getDesktopShortcutLabel()
+  const shortcut = mounted && !isMobile ? getDesktopShortcutLabel() : null
+
+  const displayName =
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
+    user?.email?.split("@")[0] ??
+    "You"
+
+  const displayEmail = user?.email ?? ""
+
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+
+  const initials = displayName
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
+
+  // Ensure these are "used" to satisfy linting
+  void displayEmail
+  void avatarUrl
 
   const navigationItems = React.useMemo(
     () => [
       {
         label: "Overview",
-        link: "/",
+        link: "/overview",
         icon: <HugeiconsIcon icon={Home01Icon} size={18} />,
       },
       {
@@ -162,14 +189,20 @@ export function DashboardShell({
             </Link>
           </div>
 
-          {!isMobile && typeof streakDays === "number" ? (
-            <div className="text-sm text-muted-foreground tabular-nums">
-              <span aria-hidden="true">🔥</span> {streakDays} day streak
-            </div>
-          ) : null}
-
           <div className="flex items-center gap-2">
-            {isMobile ? (
+            {!mounted ? (
+              <Button
+                variant="outline"
+                type="button"
+                className="min-w-72 justify-between"
+                onClick={() => setCommandOpen(true)}
+              >
+                <span className="text-muted-foreground">
+                  Search or jump to...
+                </span>
+                {shortcut ? <Kbd>{shortcut}</Kbd> : null}
+              </Button>
+            ) : isMobile ? (
               <Button
                 variant="ghost"
                 size="icon"
@@ -193,21 +226,24 @@ export function DashboardShell({
               </Button>
             )}
 
-            {isMobile ? (
+            {!mounted ? (
+              <UserAvatarPopover user={user} />
+            ) : isMobile ? (
               <Button
                 variant="ghost"
                 size="icon"
                 type="button"
                 aria-label="User menu"
+                className="rounded-full"
                 onClick={() => setAvatarOpen(true)}
               >
                 <Avatar>
-                  <AvatarImage src="" alt="" />
-                  <AvatarFallback>RR</AvatarFallback>
+                  <AvatarImage src={avatarUrl} alt={displayName} />
+                  <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </Button>
             ) : (
-              <UserAvatarPopover />
+              <UserAvatarPopover user={user} />
             )}
           </div>
         </div>
@@ -217,7 +253,7 @@ export function DashboardShell({
 
       <FloatingDock navigationItems={navigationItems} />
 
-      {isMobile && fab ? (
+      {mounted && isMobile && fab ? (
         <Button
           size="icon-lg"
           type="button"
@@ -235,31 +271,61 @@ export function DashboardShell({
         onOpenChange={setCommandOpen}
       />
 
-      <MobileAvatarSheet open={avatarOpen} onOpenChange={setAvatarOpen} />
+      {mounted && (
+        <MobileAvatarSheet
+          open={avatarOpen}
+          onOpenChange={setAvatarOpen}
+          user={user}
+        />
+      )}
     </div>
   )
 }
 
-function UserAvatarPopover() {
+function UserAvatarPopover({ user }: { user: User | null }) {
   const { resolvedTheme, setTheme } = useTheme()
+  const router = useRouter()
+
+  const displayName =
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
+    user?.email?.split("@")[0] ??
+    "You"
+
+  const displayEmail = user?.email ?? ""
+
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+
+  const initials = displayName
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
     <Popover>
       <PopoverTrigger
-        render={<Button variant="ghost" size="icon" aria-label="User menu" />}
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="User menu"
+            className="rounded-full"
+          />
+        }
       >
         <Avatar>
-          <AvatarImage src="" alt="" />
-          <AvatarFallback>RR</AvatarFallback>
+          <AvatarImage src={avatarUrl} alt={displayName} />
+          <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="w-72">
         <div className="flex flex-col gap-4">
           <div>
-            <div className="font-medium">Rami R</div>
-            <div className="text-sm text-muted-foreground">
-              rami@example.com
-            </div>
+            <div className="font-medium">{displayName}</div>
+            <div className="text-sm text-muted-foreground">{displayEmail}</div>
           </div>
 
           <div className="flex items-center justify-between">
@@ -272,7 +338,17 @@ function UserAvatarPopover() {
             />
           </div>
 
-          <Button variant="destructive-outline">Logout</Button>
+          <Button
+            variant="destructive-outline"
+            className="w-full"
+            type="button"
+            onClick={async () => {
+              await signOut()
+              router.push("/login")
+            }}
+          >
+            Logout
+          </Button>
         </div>
       </PopoverContent>
     </Popover>
@@ -282,11 +358,27 @@ function UserAvatarPopover() {
 function MobileAvatarSheet({
   open,
   onOpenChange,
+  user,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  user: User | null
 }) {
   const { resolvedTheme, setTheme } = useTheme()
+  const router = useRouter()
+
+  const displayName =
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
+    user?.email?.split("@")[0] ??
+    "You"
+
+  const displayEmail = user?.email ?? ""
+
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+
+  void avatarUrl
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -297,9 +389,9 @@ function MobileAvatarSheet({
         <SheetPanel className="px-4 pb-5">
           <div className="flex flex-col gap-4">
             <div>
-              <div className="font-medium">Rami R</div>
+              <div className="font-medium">{displayName}</div>
               <div className="text-sm text-muted-foreground">
-                rami@example.com
+                {displayEmail}
               </div>
             </div>
 
@@ -313,7 +405,17 @@ function MobileAvatarSheet({
               />
             </div>
 
-            <Button variant="destructive-outline">Logout</Button>
+            <Button
+              variant="destructive-outline"
+              className="w-full"
+              type="button"
+              onClick={async () => {
+                await signOut()
+                router.push("/login")
+              }}
+            >
+              Logout
+            </Button>
           </div>
         </SheetPanel>
         <SheetFooter>

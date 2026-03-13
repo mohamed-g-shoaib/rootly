@@ -1,5 +1,6 @@
 "use client"
 
+import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { PlayIcon, Target01Icon } from "@hugeicons/core-free-icons"
@@ -22,22 +23,19 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
+import { toastManager } from "@/components/ui/toast"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
-
-import {
-  REVIEW_MOCK_COURSES,
-  REVIEW_MOCK_NOTES_POOL,
-  REVIEW_MOCK_SESSIONS,
-  getMockAvailableQaNotes,
-} from "./review-mock-data"
+import { deleteReviewSession, saveReviewSession } from "./review-actions"
 import {
   ReviewEmptyState,
-  ReviewSessionSkeletonList,
   SessionCard,
   formatMinutes,
 } from "./review-components"
-import { ReviewSession, type ReviewSessionState } from "./review-session"
+import {
+  ReviewSession as ReviewSessionView,
+  type ReviewSessionState,
+} from "./review-session"
 import {
   ReviewSummary,
   type ReviewSummaryData,
@@ -47,6 +45,7 @@ import {
 import type {
   ReviewCourse,
   ReviewNote,
+  ReviewSession as ReviewSessionModel,
   ReviewSessionConfig,
 } from "./review-model"
 
@@ -83,6 +82,8 @@ function buildSummary(nextState: ReviewSessionState): ReviewSummaryData {
     courseBuckets.set(n.courseId, list)
   }
 
+  const courseScores: Record<string, number> = {}
+
   let weakestCourseId: string | null = null
   let strongestCourseId: string | null = null
   let weakestAvg = Infinity
@@ -90,6 +91,10 @@ function buildSummary(nextState: ReviewSessionState): ReviewSummaryData {
 
   for (const [courseId, levels] of courseBuckets.entries()) {
     const avg = levels.reduce((a, b) => a + b, 0) / levels.length
+    courseScores[courseId] = Math.max(
+      0,
+      Math.min(100, Math.round(((avg - 1) / 2) * 100))
+    )
     if (avg < weakestAvg) {
       weakestAvg = avg
       weakestCourseId = courseId
@@ -110,6 +115,7 @@ function buildSummary(nextState: ReviewSessionState): ReviewSummaryData {
     notesLeveledDown: leveledDown,
     weakestCourseId,
     strongestCourseId,
+    courseScores,
   }
 }
 
@@ -118,20 +124,29 @@ type ViewState =
   | { type: "active" }
   | { type: "summary"; data: ReviewSummaryData; config: ReviewSessionConfig }
 
-export function ReviewPage() {
+export default function ReviewPage({
+  user,
+  initialSessions,
+  courses,
+  initialNotesPool,
+}: {
+  user: User | null
+  initialSessions: ReviewSessionModel[]
+  courses: ReviewCourse[]
+  initialNotesPool: ReviewNote[]
+}) {
   const isMobile = useIsMobile()
-  const now = React.useMemo(() => new Date("2026-03-10T12:00:00Z"), [])
+  const now = React.useMemo(() => new Date(), [])
 
   const [view, setView] = React.useState<ViewState>({ type: "list" })
 
-  const [courses] = React.useState<ReviewCourse[]>(REVIEW_MOCK_COURSES)
-
   const [notesPool, setNotesPool] = React.useState<ReviewNote[]>(
-    REVIEW_MOCK_NOTES_POOL
+    () => initialNotesPool
   )
 
-  const [sessions, setSessions] = React.useState(REVIEW_MOCK_SESSIONS)
-  const [loadingSessions, setLoadingSessions] = React.useState(true)
+  const [sessions, setSessions] = React.useState<ReviewSessionModel[]>(
+    () => initialSessions
+  )
 
   const [detailOpen, setDetailOpen] = React.useState(false)
   const [selectedSessionId, setSelectedSessionId] = React.useState<
@@ -146,15 +161,82 @@ export function ReviewPage() {
   const [shuffled, setShuffled] = React.useState(false)
   const [flaggedOnly, setFlaggedOnly] = React.useState(false)
 
-  React.useEffect(() => {
-    const t = window.setTimeout(() => setLoadingSessions(false), 250)
-    return () => window.clearTimeout(t)
-  }, [])
-
   const availableNotes = React.useMemo(
-    () => getMockAvailableQaNotes({ flaggedOnly }),
-    [flaggedOnly]
+    () => notesPool.filter((n) => (flaggedOnly ? n.flag : true)),
+    [flaggedOnly, notesPool]
   )
+
+  const sessionsRef = React.useRef(sessions)
+
+  React.useEffect(() => {
+    sessionsRef.current = sessions
+  }, [sessions])
+
+  async function onSaveSession({
+    sessionName,
+    data,
+    config,
+  }: {
+    sessionName: string
+    data: ReviewSummaryData
+    config: { shuffled: boolean; flaggedOnly: boolean }
+  }) {
+    if (!user) return
+
+    const createdAt = new Date().toISOString()
+    const date = createdAt.slice(0, 10)
+
+    const optimistic = buildSessionFromSummary({
+      data,
+      id: crypto.randomUUID(),
+      createdAt,
+      date,
+      name: sessionName,
+      userId: user.id,
+      config,
+    })
+
+    const prev = sessionsRef.current
+    setSessions((items) => [optimistic, ...items])
+    setView({ type: "list" })
+
+    const res = await saveReviewSession({
+      session: optimistic,
+      userId: user.id,
+      courseScores: data.courseScores,
+    })
+
+    if (!res.success) {
+      setSessions(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not save session",
+        description: res.error,
+      })
+      return
+    }
+
+    setSessions((items) =>
+      items.map((s) => (s.id === optimistic.id ? res.data : s))
+    )
+  }
+
+  async function onDeleteSession(id: string) {
+    if (!user) return
+
+    const prev = sessionsRef.current
+    setSessions((items) => items.filter((s) => s.id !== id))
+
+    const res = await deleteReviewSession({ sessionId: id, userId: user.id })
+    if (!res.success) {
+      setSessions(prev)
+      toastManager.add({
+        type: "error",
+        title: "Could not delete session",
+        description: res.error,
+      })
+    }
+  }
 
   const configuredCount = React.useMemo(() => {
     if (questionCountMode === "10") return 10
@@ -292,7 +374,7 @@ export function ReviewPage() {
 
   if (view.type === "active" && activeState) {
     return (
-      <ReviewSession
+      <ReviewSessionView
         state={activeState}
         onReveal={() =>
           setActiveState((prev) => (prev ? { ...prev, revealed: true } : prev))
@@ -315,6 +397,7 @@ export function ReviewPage() {
 
   return (
     <DashboardShell
+      user={user}
       fab={{
         ariaLabel: "Start review",
         icon: <HugeiconsIcon icon={PlayIcon} size={20} />,
@@ -344,29 +427,17 @@ export function ReviewPage() {
               data={view.data}
               courses={courses}
               onSave={(sessionName) => {
-                const date = "2026-03-10"
-                const createdAt = new Date().toISOString()
-
-                const next = buildSessionFromSummary({
+                void onSaveSession({
+                  sessionName,
                   data: view.data,
-                  id: `session_${Date.now()}`,
-                  createdAt,
-                  date,
-                  name: sessionName,
-                  userId: "user_1",
                   config: {
                     shuffled: view.config.shuffled,
                     flaggedOnly: view.config.flaggedOnly,
                   },
                 })
-
-                setSessions((prev) => [next, ...prev])
-                setView({ type: "list" })
               }}
               onDiscard={() => setView({ type: "list" })}
             />
-          ) : loadingSessions ? (
-            <ReviewSessionSkeletonList />
           ) : sessions.length === 0 ? (
             <ReviewEmptyState onStart={() => setSetupOpen(true)} />
           ) : (
@@ -394,9 +465,7 @@ export function ReviewPage() {
                         setSelectedSessionId(s.id)
                         setDetailOpen(true)
                       }}
-                      onDelete={() =>
-                        setSessions((prev) => prev.filter((x) => x.id !== s.id))
-                      }
+                      onDelete={() => void onDeleteSession(s.id)}
                     />
                   )
                 })}
@@ -420,7 +489,7 @@ export function ReviewPage() {
         onShuffledChange={setShuffled}
         onFlaggedOnlyChange={(value) => {
           setFlaggedOnly(value)
-          const count = getMockAvailableQaNotes({ flaggedOnly: value }).length
+          const count = notesPool.filter((n) => (value ? n.flag : true)).length
           if (questionCountMode === "all") return
           if (questionCountMode === "10") return
           if (questionCountMode === "20") return
@@ -609,7 +678,7 @@ function SessionDetailSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
   isMobile: boolean
-  session: (typeof REVIEW_MOCK_SESSIONS)[number] | null
+  session: ReviewSessionModel | null
   now: Date
   courses: ReviewCourse[]
   notesPool: ReviewNote[]

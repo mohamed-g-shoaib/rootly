@@ -232,6 +232,7 @@ export default function App() {
 const \[isVisible, setIsVisible\] = useState(true);
 
 return (
+
 <div className\={styles.root}\>
 <div className\={styles.container}\>
 <AnimatePresence\>
@@ -292,6 +293,7 @@ transition\={{ duration: 0.8, ease: \[0.19, 1, 0.22, 1\] }}
 <span className\={styles.label}\>
 {propagate ? "With Propagate" : "No Propagate"}
 </span\>
+
 <div className\={styles.items}\>
 <AnimatePresence propagate\={propagate}\>
 {items.map((item) \=> (
@@ -314,6 +316,7 @@ transition\={{ duration: 0.5 }}
 );
 
 return (
+
 <div className\={styles.root}\>
 <div className\={styles.cards}\>
 {renderCard(false)}
@@ -360,6 +363,7 @@ const modes: Mode\[\] = \["sync", "wait", "popLayout"\];
 
 function ModeExample({ mode, show }: { mode: Mode; show: boolean }) {
 return (
+
 <div className\={styles.example}\>
 <div className\={styles.label}\>{mode}</div\>
 <div className\={styles.icon}\>
@@ -383,6 +387,7 @@ export default function App() {
 const \[show, setShow\] = useState(true);
 
 return (
+
 <div className\={styles.root}\>
 <div className\={styles.grid}\>
 {modes.map((mode) \=> (

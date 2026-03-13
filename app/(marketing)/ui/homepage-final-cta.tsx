@@ -1,13 +1,9 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
-
-import { ArrowRight02Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { motion, useReducedMotion } from "motion/react"
 
-import { Button } from "@/components/ui/button"
+import { AuthAwareCta } from "./auth-aware-cta"
 import { Card } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-container"
 
@@ -35,16 +31,7 @@ export default function HomepageFinalCta() {
                 to great achievements gained slowly over time.&quot;, John C.
                 Maxwell
               </div>
-              <Button render={<Link href="/login" />} className="group">
-                <span className="inline-flex items-center gap-2">
-                  Get started
-                  <HugeiconsIcon
-                    icon={ArrowRight02Icon}
-                    size={18}
-                    className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
-                  />
-                </span>
-              </Button>
+              <AuthAwareCta />
               <div className="text-sm text-muted-foreground">
                 Rootly is free to use.
               </div>
