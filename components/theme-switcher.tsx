@@ -24,7 +24,7 @@ export function ThemeSwitcher() {
 
   const items = React.useMemo(
     () => [
-      { label: "Default", value: "default" },
+      { label: "Coss UI (Default)", value: "default" },
       ...THEMES.map((t) => ({ label: t.label, value: t.id })),
     ],
     []
@@ -71,7 +71,7 @@ export function ThemeSwitcher() {
                           style={{
                             backgroundColor:
                               item.value === "default"
-                                ? "var(--primary)"
+                                ? "var(--color-neutral-800)"
                                 : (theme?.light.primary ?? "transparent"),
                           }}
                         />
@@ -80,7 +80,7 @@ export function ThemeSwitcher() {
                           style={{
                             backgroundColor:
                               item.value === "default"
-                                ? "var(--background)"
+                                ? "var(--color-white)"
                                 : (theme?.light.background ?? "transparent"),
                           }}
                         />
@@ -89,7 +89,7 @@ export function ThemeSwitcher() {
                           style={{
                             backgroundColor:
                               item.value === "default"
-                                ? "var(--accent)"
+                                ? "rgb(0 0 0 / 0.04)"
                                 : (theme?.light.accent ?? "transparent"),
                           }}
                         />

@@ -29,6 +29,12 @@ function setPreferenceCookie(value: string) {
   )}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax${secureFlag}`
 }
 
+function clearPreferenceCookie() {
+  if (typeof document === "undefined") return
+  const secureFlag = IS_PRODUCTION ? "; secure" : ""
+  document.cookie = `${COOKIE_NAME}=; path=/; max-age=0; samesite=lax${secureFlag}`
+}
+
 function applyColors(colors: ThemeColors) {
   for (const [key, value] of Object.entries(colors)) {
     document.documentElement.style.setProperty(`--${key}`, value)
@@ -49,12 +55,19 @@ export function useColorTheme(): {
 } {
   const { resolvedTheme } = useTheme()
 
-  const [themeId, setThemeIdState] = React.useState<string>(
-    readPreferenceCookie() || "default"
-  )
+  const [themeId, setThemeIdState] = React.useState<string>("default")
+
+  React.useEffect(() => {
+    const value = readPreferenceCookie()
+    if (value) setThemeIdState(value)
+  }, [])
 
   const setThemeId = React.useCallback((id: string) => {
     setThemeIdState(id)
+    if (id === "default") {
+      clearPreferenceCookie()
+      return
+    }
     setPreferenceCookie(id)
   }, [])
 
