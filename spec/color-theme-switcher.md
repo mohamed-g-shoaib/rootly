@@ -10,6 +10,16 @@ The active theme's color tokens are applied live to `document.documentElement` v
 
 ---
 
+## Project Context
+
+- **Framework:** Next.js (App Router) with TypeScript
+- **UI library:** coss/ui — a component library with a strict CSS token system. Tokens are defined as CSS custom properties in `app/globals.css`. The `@theme inline` block maps them to Tailwind. **Do not fight this system** — work with it.
+- **Dark mode:** Already handled by `next-themes` via `components/theme-provider.tsx`. Dark mode applies a `.dark` class to `<html>`. This must remain untouched.
+- **Styling:** Tailwind CSS v4. No inline styles except for the theme dot previews.
+- **Package manager:** pnpm
+
+---
+
 ## Existing Files to Be Aware Of
 
 - `components/theme-provider.tsx` — already wraps `next-themes` for dark/light mode. **Do not break or replace this.**
@@ -25,12 +35,12 @@ The avatar dropdown location must be found by reading the actual dashboard layou
 
 ## Theme Source Data
 
-The color values for all 19 themes are in this repo under `docs/themes/`:
+The color values for all 19 themes are in this repo under `docs/themes/` on the `feature/themes` branch (will be merged into `main`):
 
 - `docs/themes/themes.md` — themes 1–11
 - `docs/themes/themes-2.md` — themes 12–19
 
-From each theme block, extract **only** the color variables inside `:root { }` and `.dark { }`. Ignore `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, `--spacing` entirely.
+From each theme block, extract **only** the color variables inside `:root { }` and `.dark { }`. Ignore `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, `--spacing` entirely — do not include them in `lib/themes.ts` at all.
 
 > Note: In `themes-2.md`, the theme titled "Theme to replace Dark Forge theme, number 10" is `sunset-horizon` and occupies slot #10 in the ordered list.
 
@@ -86,7 +96,7 @@ export type Theme = {
 }
 
 export const THEMES: Theme[] = [
-  /* all 19 themes populated from reference URLs above */
+  /* all 19 themes populated from docs/themes/themes.md and docs/themes/themes-2.md */
 ]
 
 export const DEFAULT_THEME_ID = "amber-minimal"
@@ -168,7 +178,7 @@ The theme picker UI rendered as a `DropdownMenuSub` inside the avatar dropdown.
 ● ● ●  Theme Name                    ✓
 ```
 
-- Three small dots: `w-3 h-3 rounded-full` with inline `style={{ backgroundColor: theme.light.primary/background/accent }}`
+- Three small dots: `w-3 h-3 rounded-full` with inline `style={{ backgroundColor: ... }}`
   - Dot 1: `theme.light.primary`
   - Dot 2: `theme.light.background`
   - Dot 3: `theme.light.accent`
@@ -211,6 +221,6 @@ Avatar dropdown
 - **No CSS blocks in `globals.css`** for these themes.
 - **Never set** `--radius`, `--font-sans`, `--font-serif`, `--font-mono`, any `--shadow-*` variable, `--tracking-normal`, or `--spacing` from the theme switcher code.
 - **No `data-theme` attribute or CSS selectors** — use `element.style.setProperty` only.
-- **Do not add a new ThemeProvider** — reuse the existing `next-themes` one.
-- **Do not modify `globals.css` `@theme inline` block.**
+- **Do not add a new ThemeProvider** — reuse the existing `next-themes` one in `components/theme-provider.tsx`.
+- **Do not modify `globals.css` or its `@theme inline` block.**
 - **No new dependencies** — use only what is already in `package.json`.
