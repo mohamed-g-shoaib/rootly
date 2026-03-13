@@ -1,4 +1,7 @@
+import { cookies } from "next/headers"
+
 import { createClient } from "@/lib/supabase/server"
+import { getThemeById, THEME_IDS } from "@/lib/themes"
 import CourseDetailPageUI from "../ui/course-detail-page"
 import type { Course } from "../ui/courses-model"
 import type { Note } from "@/app/notes/ui/notes-model"
@@ -24,6 +27,29 @@ export default async function CourseDetailPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+  const cookieStore = await cookies()
+  const paletteCookie = cookieStore.get("reway.dashboard.paletteTheme")?.value
+  const paletteThemeId =
+    paletteCookie === "default" ||
+    (paletteCookie && THEME_IDS.includes(paletteCookie))
+      ? paletteCookie
+      : "default"
+
+  const paletteCss =
+    paletteThemeId && paletteThemeId !== "default"
+      ? (() => {
+          const theme = getThemeById(paletteThemeId)
+          if (!theme) return ""
+          const light = Object.entries(theme.light)
+            .map(([k, v]) => `--${k}:${v};`)
+            .join("")
+          const dark = Object.entries(theme.dark)
+            .map(([k, v]) => `--${k}:${v};`)
+            .join("")
+          return `:root{${light}}.dark{${dark}}`
+        })()
+      : ""
+
   const { id } = await params
   const supabase = await createClient()
   const {
@@ -88,11 +114,14 @@ export default async function CourseDetailPage({
   }
 
   return (
-    <CourseDetailPageUI
-      courseId={id}
-      user={user}
-      course={course}
-      initialNotes={initialNotes}
-    />
+    <>
+      {paletteCss ? <style>{paletteCss}</style> : null}
+      <CourseDetailPageUI
+        courseId={id}
+        user={user}
+        course={course}
+        initialNotes={initialNotes}
+      />
+    </>
   )
 }

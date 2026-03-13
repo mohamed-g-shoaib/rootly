@@ -10,8 +10,10 @@ import {
   Calendar01Icon,
   DatabaseLightningIcon,
   Home01Icon,
-  Moon01Icon,
+  Loading01Icon,
+  Moon02Icon,
   NoteIcon,
+  Logout01Icon,
   Sun01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -26,10 +28,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/menu"
 import {
   Sheet,
   SheetClose,
@@ -60,6 +64,9 @@ import {
   CommandShortcut,
 } from "@/components/ui/command"
 
+import { ThemeSwitcher } from "@/components/theme-switcher"
+import { ColorThemeApplicator } from "@/components/color-theme-applicator"
+
 type ShellFab = {
   ariaLabel: string
   icon: React.ReactNode
@@ -81,7 +88,7 @@ function ThemeToggle({
         checked={checked}
         onCheckedChange={(value) => onCheckedChange(Boolean(value))}
       />
-      <HugeiconsIcon icon={Moon01Icon} size={18} />
+      <HugeiconsIcon icon={Moon02Icon} size={18} />
     </div>
   )
 }
@@ -112,7 +119,7 @@ export function DashboardShell({
   const [commandOpen, setCommandOpen] = React.useState(false)
   const [avatarOpen, setAvatarOpen] = React.useState(false)
 
-  const shortcut = mounted && !isMobile ? getDesktopShortcutLabel() : null
+  const shortcut = mounted ? getDesktopShortcutLabel() : null
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -181,6 +188,7 @@ export function DashboardShell({
 
   return (
     <div className="min-h-svh">
+      <ColorThemeApplicator />
       <header className="fixed inset-x-0 top-0 z-20 border-b bg-background">
         <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-2">
@@ -191,17 +199,7 @@ export function DashboardShell({
 
           <div className="flex items-center gap-2">
             {!mounted ? (
-              <Button
-                variant="outline"
-                type="button"
-                className="min-w-72 justify-between"
-                onClick={() => setCommandOpen(true)}
-              >
-                <span className="text-muted-foreground">
-                  Search or jump to...
-                </span>
-                {shortcut ? <Kbd>{shortcut}</Kbd> : null}
-              </Button>
+              <div className="h-9 w-72 animate-pulse rounded-md bg-muted" />
             ) : isMobile ? (
               <Button
                 variant="ghost"
@@ -227,7 +225,7 @@ export function DashboardShell({
             )}
 
             {!mounted ? (
-              <UserAvatarPopover user={user} />
+              <div className="size-9 animate-pulse rounded-full bg-muted" />
             ) : isMobile ? (
               <Button
                 variant="ghost"
@@ -285,6 +283,7 @@ export function DashboardShell({
 function UserAvatarPopover({ user }: { user: User | null }) {
   const { resolvedTheme, setTheme } = useTheme()
   const router = useRouter()
+  const [loggingOut, setLoggingOut] = React.useState(false)
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -305,8 +304,8 @@ function UserAvatarPopover({ user }: { user: User | null }) {
     .toUpperCase()
 
   return (
-    <Popover>
-      <PopoverTrigger
+    <DropdownMenu>
+      <DropdownMenuTrigger
         render={
           <Button
             variant="ghost"
@@ -320,13 +319,16 @@ function UserAvatarPopover({ user }: { user: User | null }) {
           <AvatarImage src={avatarUrl} alt={displayName} />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
-      </PopoverTrigger>
-      <PopoverContent side="bottom" align="end" className="w-72">
-        <div className="flex flex-col gap-4">
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="bottom" align="end" className="w-72">
+        <div className="flex flex-col gap-4 p-2">
           <div>
             <div className="font-medium">{displayName}</div>
             <div className="text-sm text-muted-foreground">{displayEmail}</div>
           </div>
+
+          <DropdownMenuSeparator />
+          <ThemeSwitcher />
 
           <div className="flex items-center justify-between">
             <div className="text-sm">Theme</div>
@@ -338,20 +340,33 @@ function UserAvatarPopover({ user }: { user: User | null }) {
             />
           </div>
 
-          <Button
-            variant="destructive-outline"
-            className="w-full"
-            type="button"
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
+            variant="destructive"
+            disabled={loggingOut}
+            className="text-destructive data-highlighted:bg-destructive/10 data-highlighted:text-destructive"
             onClick={async () => {
-              await signOut()
-              router.push("/login")
+              if (loggingOut) return
+              setLoggingOut(true)
+              try {
+                await signOut()
+                router.push("/login")
+              } finally {
+                setLoggingOut(false)
+              }
             }}
           >
+            <HugeiconsIcon
+              icon={loggingOut ? Loading01Icon : Logout01Icon}
+              size={18}
+              className={loggingOut ? "animate-spin" : undefined}
+            />
             Logout
-          </Button>
+          </DropdownMenuItem>
         </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -366,6 +381,7 @@ function MobileAvatarSheet({
 }) {
   const { resolvedTheme, setTheme } = useTheme()
   const router = useRouter()
+  const [loggingOut, setLoggingOut] = React.useState(false)
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -395,6 +411,8 @@ function MobileAvatarSheet({
               </div>
             </div>
 
+            <ThemeSwitcher />
+
             <div className="flex items-center justify-between">
               <div className="text-sm">Theme</div>
               <ThemeToggle
@@ -409,11 +427,23 @@ function MobileAvatarSheet({
               variant="destructive-outline"
               className="w-full"
               type="button"
+              disabled={loggingOut}
               onClick={async () => {
-                await signOut()
-                router.push("/login")
+                if (loggingOut) return
+                setLoggingOut(true)
+                try {
+                  await signOut()
+                  router.push("/login")
+                } finally {
+                  setLoggingOut(false)
+                }
               }}
             >
+              <HugeiconsIcon
+                icon={loggingOut ? Loading01Icon : Logout01Icon}
+                size={18}
+                className={loggingOut ? "animate-spin" : undefined}
+              />
               Logout
             </Button>
           </div>

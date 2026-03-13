@@ -5,9 +5,6 @@ import * as React from "react"
 import dynamic from "next/dynamic"
 import { Suspense, useMemo, useState, useId } from "react"
 
-import { AddCircleIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-
 import { useIsMobile } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
 
@@ -104,18 +101,7 @@ export default function OverviewPage({
   )
 
   return (
-    <DashboardShell
-      user={user}
-      fab={
-        effectiveIsMobile
-          ? {
-              ariaLabel: "Primary action",
-              icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
-              onClick: () => {},
-            }
-          : undefined
-      }
-    >
+    <DashboardShell user={user}>
       <PageContainer>
         {effectiveIsMobile ? (
           <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pt-3 pb-3 lg:hidden">
