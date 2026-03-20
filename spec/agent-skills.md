@@ -31,6 +31,7 @@ Skills in this repository live under the `.agents/skills/` directory. Depending 
 | 8 | [PostgreSQL Pro](#8-postgresql-pro) | Jeff Allan | `v1.1.0` | `.agents/skills/postgres-pro/` |
 | 9 | [TypeScript Advanced Types](#9-typescript-advanced-types) | Project-local | Single-file skill | `.agents/skills/typescript-advanced-types/` |
 | 10 | [SEO Audit](#10-seo-audit) | Project-local | `v1.1.0` | `.agents/skills/seo-audit/` |
+| 11 | [React useEffect](#11-react-useeffect) | Project-local | Official-docs-inspired guidance | `.agents/skills/react-useeffect/` |
 
 ---
 
@@ -375,3 +376,37 @@ Structured SEO audit guidance for diagnosing why a site is underperforming in or
 | `SKILL.md` | Full audit workflow covering technical SEO, on-page SEO, content quality, outputs, and tooling |
 | `references/ai-writing-detection.md` | Reference on common AI-writing patterns to avoid during SEO/content review |
 | `evals/evals.json` | Evaluation fixture for validating the skill's behavior |
+
+---
+
+## 11. React useEffect
+
+**Publisher:** Project-local
+**Version / Notes:** Official-docs-inspired guidance focused on when not to use `useEffect`
+**When to load:** Writing or reviewing `useEffect`, derived state, event-driven logic, data fetching, state synchronization, or any React code where effects may be overused
+
+### Purpose
+
+Focused React guidance based on the principle that Effects are an escape hatch for synchronizing with external systems, not a default tool for ordinary state and rendering logic. The skill teaches when to replace `useEffect` with render-time calculation, `useMemo`, event handlers, `key` props, lifted state, or subscription-specific APIs.
+
+### Top 10 Rules by Priority
+
+1. **Use Effects only for external synchronization** - If no external system is involved, an Effect is usually the wrong tool
+2. **Do not derive state with `useEffect`** - Compute values from props and state during render instead
+3. **Do not use Effects to respond to user events** - Put that logic directly in the event handler
+4. **Use `useMemo` for expensive pure calculations** - Do not cache render-derived values with `useEffect`
+5. **Use `key` props to reset state on identity changes** - Do not manually reset state in an Effect when component identity changed
+6. **Avoid chaining state updates through Effects** - Calculate the next state in one place instead of reacting after the fact
+7. **Call parent callbacks at the source of change** - Do not watch local state in an Effect just to notify parents
+8. **Use cleanup for data fetching when Effects are required** - Or prefer framework-native data-fetching mechanisms when available
+9. **Use `useSyncExternalStore` for subscriptions when possible** - Prefer subscription-specific React APIs over ad hoc Effects
+10. **Start from the decision tree** - Distinguish between event handler, Effect, render-time calculation, `useMemo`, and `key`-based reset before writing code
+
+### Available Files
+
+| File | Description |
+| ---- | ----------- |
+| `SKILL.md` | Entry point with quick reference, decision tree, and links to deeper guidance |
+| `anti-patterns.md` | Common `useEffect` mistakes and how to fix them |
+| `alternatives.md` | Better patterns such as `useMemo`, `key`, lifted state, and `useSyncExternalStore` |
+| `README.md` | Human-facing documentation for the skill |

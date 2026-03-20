@@ -36,6 +36,11 @@
       "sourceType": "github",
       "computedHash": "e7562fd37e464bf1ddbf41085ce93179c274c0c6ca9cc5cf6b68b535e80648d4"
     },
+    "react-useeffect": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "computedHash": "1fdf524f8335afac6f44d3460d6d20e71db9c1d14643e4a31ea17d6463504447"
+    },
     "seo-audit": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
