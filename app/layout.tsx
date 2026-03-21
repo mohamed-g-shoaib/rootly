@@ -1,6 +1,7 @@
 import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
+import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
 
@@ -13,7 +14,7 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
@@ -30,6 +31,7 @@ export default function RootLayout({
       )}
     >
       <body suppressHydrationWarning>
+        <DashboardColorThemeStyle />
         <ThemeProvider>
           <ToastProvider>
             <AnchoredToastProvider>{children}</AnchoredToastProvider>

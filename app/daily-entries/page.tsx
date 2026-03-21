@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server"
-import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import DailyEntriesPageUI from "./ui/daily-entries-page"
 import type { DailyEntry } from "./ui/daily-entries-model"
 
@@ -41,10 +40,5 @@ export default async function DailyEntriesPage() {
     }
   }
 
-  return (
-    <>
-      <DashboardColorThemeStyle />
-      <DailyEntriesPageUI user={user} initialEntries={initialEntries} />
-    </>
-  )
+  return <DailyEntriesPageUI user={user} initialEntries={initialEntries} />
 }

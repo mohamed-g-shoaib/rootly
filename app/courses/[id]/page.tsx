@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server"
-import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import CourseDetailPageUI from "../ui/course-detail-page"
 import type { Course } from "../ui/courses-model"
 import type { Note } from "@/app/notes/ui/notes-model"
@@ -89,14 +88,11 @@ export default async function CourseDetailPage({
   }
 
   return (
-    <>
-      <DashboardColorThemeStyle />
-      <CourseDetailPageUI
-        courseId={id}
-        user={user}
-        course={course}
-        initialNotes={initialNotes}
-      />
-    </>
+    <CourseDetailPageUI
+      courseId={id}
+      user={user}
+      course={course}
+      initialNotes={initialNotes}
+    />
   )
 }

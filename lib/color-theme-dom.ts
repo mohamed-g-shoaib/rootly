@@ -2,7 +2,6 @@
 
 import {
   buildColorThemeCss,
-  COSS_UI_THEME_ID,
   DASHBOARD_COLOR_THEME_STYLE_ID,
   type ColorThemeId,
 } from "@/lib/color-theme"
@@ -31,9 +30,4 @@ export function syncDashboardThemeStyle(themeId: ColorThemeId) {
 
   style.dataset.colorThemeId = themeId
   style.textContent = buildColorThemeCss(themeId)
-}
-
-export function resetDashboardTheme() {
-  clearThemeColors()
-  syncDashboardThemeStyle(COSS_UI_THEME_ID)
 }

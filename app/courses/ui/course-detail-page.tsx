@@ -16,6 +16,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { useAnswerVisibility } from "@/hooks/use-answer-visibility"
 import { useIsMobile } from "@/hooks/use-media-query"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
@@ -74,7 +75,6 @@ import {
 import {
   createNote,
   deleteNote,
-  toggleNoteFlag,
   updateNote,
 } from "@/app/notes/ui/notes-actions"
 
@@ -99,10 +99,7 @@ export default function CourseDetailPage({
   const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all")
   const [flaggedOnly, setFlaggedOnly] = React.useState(false)
   const [sortKey, setSortKey] = React.useState<SortKey>("last_updated")
-  const [globalShowAnswers, setGlobalShowAnswers] = React.useState(false)
-  const [answerOverrides, setAnswerOverrides] = React.useState<
-    Record<string, boolean>
-  >({})
+  const answerVisibility = useAnswerVisibility()
 
   const [createOpen, setCreateOpen] = React.useState(false)
   const [editOpen, setEditOpen] = React.useState(false)
@@ -176,6 +173,15 @@ export default function CourseDetailPage({
 
   const filtersActive =
     typeFilter !== "all" || flaggedOnly || sortKey !== "last_updated"
+
+  const qaNoteIds = React.useMemo(
+    () =>
+      filtered.items.filter((note) => note.type === "qa").map((note) => note.id),
+    [filtered.items]
+  )
+
+  const globalShowAnswers =
+    qaNoteIds.length > 0 && qaNoteIds.every((id) => answerVisibility.isShown(id))
 
   const sortLabel = React.useMemo(() => {
     switch (sortKey) {
@@ -260,38 +266,12 @@ export default function CourseDetailPage({
     setEditOpen(true)
   }
 
-  async function onToggleFlag(noteId: string) {
-    if (!user) return
-
-    const prev = allNotes
-
-    setAllNotes((items) =>
-      items.map((n) =>
-        n.id === noteId
-          ? { ...n, flag: !n.flag, updatedAt: new Date().toISOString() }
-          : n
-      )
-    )
-
-    const res = await toggleNoteFlag({ noteId, userId: user.id })
-    if (!res.success) {
-      setAllNotes(prev)
-      toastManager.add({
-        type: "error",
-        title: "Could not update note",
-        description: res.error,
-      })
-      return
-    }
-
-    setAllNotes((items) => items.map((n) => (n.id === noteId ? res.data : n)))
-  }
-
   async function onDeleteNote(noteId: string) {
     if (!user) return
 
     const prev = allNotes
     setAllNotes((items) => items.filter((n) => n.id !== noteId))
+    answerVisibility.clearForId(noteId)
 
     const res = await deleteNote({ noteId, userId: user.id })
     if (!res.success) {
@@ -666,7 +646,7 @@ export default function CourseDetailPage({
               {filtered.hasQa ? (
                 <Button
                   variant={globalShowAnswers ? "secondary" : "outline"}
-                  onClick={() => setGlobalShowAnswers((v) => !v)}
+                  onClick={() => answerVisibility.setAllShown(!globalShowAnswers)}
                 >
                   {globalShowAnswers ? "Hide All Answers" : "Show All Answers"}
                 </Button>
@@ -690,18 +670,13 @@ export default function CourseDetailPage({
                     note={note}
                     now={now}
                     isMobile={isMobile}
-                    globalShowAnswers={globalShowAnswers}
-                    overrideShow={answerOverrides[note.id]}
-                    onOverrideChange={(value) =>
-                      setAnswerOverrides((prev) => ({
-                        ...prev,
-                        [note.id]: value,
-                      }))
+                    showAnswer={answerVisibility.isShown(note.id)}
+                    onShowAnswerChange={(value) =>
+                      answerVisibility.setShown(note.id, value)
                     }
                     onEdit={() => openEdit(note.id)}
                     onViewFull={() => openView(note.id)}
                     onViewCode={() => openCode(note.id)}
-                    onToggleFlag={() => void onToggleFlag(note.id)}
                     onDelete={() => void onDeleteNote(note.id)}
                   />
                 ))

@@ -40,7 +40,7 @@ export type Theme = {
   dark: ThemeColors
 }
 
-export const THEMES: Theme[] = [
+const ALL_THEMES: Theme[] = [
   {
     id: "amethyst-haze",
     label: "Milka",
@@ -691,7 +691,12 @@ export const THEMES: Theme[] = [
   },
 ]
 
-export const DEFAULT_THEME_ID = "amethyst-haze"
+export const DEFAULT_THEME_ID = "claude"
+
+export const THEMES: Theme[] = [
+  ...ALL_THEMES.filter((theme) => theme.id === DEFAULT_THEME_ID),
+  ...ALL_THEMES.filter((theme) => theme.id !== DEFAULT_THEME_ID),
+]
 
 export const THEME_IDS = THEMES.map((t) => t.id)
 

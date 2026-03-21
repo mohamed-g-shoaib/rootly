@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server"
-import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import CoursesPageUI from "./ui/courses-page"
 import type { Course } from "./ui/courses-model"
 
@@ -47,10 +46,5 @@ export default async function CoursesPage() {
     }
   }
 
-  return (
-    <>
-      <DashboardColorThemeStyle />
-      <CoursesPageUI user={user} initialCourses={initialCourses} />
-    </>
-  )
+  return <CoursesPageUI user={user} initialCourses={initialCourses} />
 }

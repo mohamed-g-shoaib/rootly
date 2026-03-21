@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server"
-import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import ReviewPageUI from "./ui/review-page"
 import type { ReviewCourse, ReviewNote, ReviewSession } from "./ui/review-model"
 
@@ -126,14 +125,11 @@ export default async function ReviewPage() {
   }
 
   return (
-    <>
-      <DashboardColorThemeStyle />
-      <ReviewPageUI
-        user={user}
-        initialSessions={initialSessions}
-        courses={courses}
-        initialNotesPool={initialNotesPool}
-      />
-    </>
+    <ReviewPageUI
+      user={user}
+      initialSessions={initialSessions}
+      courses={courses}
+      initialNotesPool={initialNotesPool}
+    />
   )
 }

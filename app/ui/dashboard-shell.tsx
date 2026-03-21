@@ -65,7 +65,6 @@ import {
 } from "@/components/ui/command"
 
 import { ThemeSwitcher } from "@/components/theme-switcher"
-import { ColorThemeApplicator } from "@/components/color-theme-applicator"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 type ShellFab = {
@@ -169,7 +168,6 @@ export function DashboardShell({
 
   return (
     <div className="min-h-svh">
-      <ColorThemeApplicator />
       <header className="fixed inset-x-0 top-0 z-20 border-b bg-background">
         <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-2">

@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server"
-import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import OverviewPageUI from "./ui/overview-page"
 
 type DailyStudyDatum = { date: string; label: string; minutes: number }
@@ -230,22 +229,19 @@ export default async function OverviewPage() {
   }
 
   return (
-    <>
-      <DashboardColorThemeStyle />
-      <OverviewPageUI
-        user={user}
-        streakDays={streakDays}
-        todayLabel={formatLongDate(now)}
-        todayStudyMinutes={todayStudyMinutes}
-        totalCourses={totalCourses}
-        totalNotes={totalNotes}
-        avgUnderstanding={avgUnderstanding}
-        dailyStudyTime={dailyStudyTime}
-        dailyMood={dailyMood}
-        understandingProgress={understandingProgress}
-        courseMastery={courseMastery}
-        reviewAccuracyTrend={reviewAccuracyTrend}
-      />
-    </>
+    <OverviewPageUI
+      user={user}
+      streakDays={streakDays}
+      todayLabel={formatLongDate(now)}
+      todayStudyMinutes={todayStudyMinutes}
+      totalCourses={totalCourses}
+      totalNotes={totalNotes}
+      avgUnderstanding={avgUnderstanding}
+      dailyStudyTime={dailyStudyTime}
+      dailyMood={dailyMood}
+      understandingProgress={understandingProgress}
+      courseMastery={courseMastery}
+      reviewAccuracyTrend={reviewAccuracyTrend}
+    />
   )
 }

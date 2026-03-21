@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/combobox"
 import { SelectButton } from "@/components/ui/select"
 import { useColorTheme } from "@/hooks/use-color-theme"
-import { THEMES } from "@/lib/themes"
+import { DEFAULT_THEME_ID, THEMES } from "@/lib/themes"
 import { cn } from "@/lib/utils"
 
 type ThemeOption = {
@@ -38,8 +38,12 @@ type ThemeOption = {
 type ThemeIconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>
 
 const THEME_ITEMS: ThemeOption[] = [
-  { label: "Coss UI (Default)", value: "default" },
-  ...THEMES.map((theme) => ({ label: theme.label, value: theme.id })),
+  { label: "Claude (Default)", value: DEFAULT_THEME_ID },
+  { label: "Coss UI", value: "default" },
+  ...THEMES.filter((theme) => theme.id !== DEFAULT_THEME_ID).map((theme) => ({
+    label: theme.label,
+    value: theme.id,
+  })),
 ]
 
 const THEME_ITEMS_BY_ID = new Map(THEME_ITEMS.map((item) => [item.value, item]))

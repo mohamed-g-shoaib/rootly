@@ -58,7 +58,13 @@ import {
 } from "@/components/ui/sheet"
 import { Form } from "@/components/ui/form"
 
-import { understandingLabel, type Note, toCodeBadgeLabel } from "./notes-model"
+import {
+  understandingColor,
+  understandingIcon,
+  understandingLabel,
+  type Note,
+  toCodeBadgeLabel,
+} from "./notes-model"
 
 export function EmptyState({
   hasAnyNotes,
@@ -126,10 +132,8 @@ export function NoteCard({
   note,
   now: _now,
   isMobile,
-  globalShowAnswers,
-  overrideShow,
-  onOverrideChange,
-  onToggleFlag,
+  showAnswer,
+  onShowAnswerChange,
   onEdit,
   onViewFull,
   onViewCode,
@@ -140,10 +144,8 @@ export function NoteCard({
   note: Note
   now: Date
   isMobile: boolean
-  globalShowAnswers: boolean
-  overrideShow: boolean | undefined
-  onOverrideChange: (value: boolean) => void
-  onToggleFlag: () => void
+  showAnswer: boolean
+  onShowAnswerChange: (value: boolean) => void
   onEdit: () => void
   onViewFull: () => void
   onViewCode: () => void
@@ -152,7 +154,6 @@ export function NoteCard({
   canAnimate?: boolean
 }) {
   const isQa = note.type === "qa"
-  const showAnswer = overrideShow ?? globalShowAnswers
 
   const _initial = canAnimate ? { opacity: 0, y: 10 } : undefined
   const _animate = canAnimate ? { opacity: 1, y: 0 } : undefined
@@ -194,7 +195,7 @@ export function NoteCard({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onOverrideChange(true)}
+                    onClick={() => onShowAnswerChange(true)}
                   >
                     Show Answer
                   </Button>
@@ -226,18 +227,24 @@ export function NoteCard({
 
               {note.type === "qa" && note.understandingLevel ? (
                 <Badge variant="outline" className="shrink-0">
+                  <HugeiconsIcon
+                    icon={understandingIcon(note.understandingLevel)}
+                    size={14}
+                    color={understandingColor(note.understandingLevel)}
+                  />
                   {understandingLabel(note.understandingLevel)}
                 </Badge>
               ) : null}
+
             </div>
 
             <div className="-mr-2 flex shrink-0 items-center gap-1">
-              {isQa && overrideShow === true ? (
+              {isQa && showAnswer ? (
                 <Button
                   variant="ghost"
                   size="icon"
                   aria-label="Hide answer"
-                  onClick={() => onOverrideChange(false)}
+                  onClick={() => onShowAnswerChange(false)}
                 >
                   <HugeiconsIcon
                     icon={ViewOffIcon}
@@ -246,21 +253,15 @@ export function NoteCard({
                   />
                 </Button>
               ) : null}
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={note.flag ? "Remove flag" : "Flag for review"}
-                onClick={onToggleFlag}
-              >
-                <HugeiconsIcon
-                  icon={Flag01Icon}
-                  size={18}
-                  className={cn(
-                    "cursor-pointer",
-                    note.flag ? "text-destructive" : "text-muted-foreground"
-                  )}
-                />
-              </Button>
+              {note.flag ? (
+                <div
+                  aria-label="Flagged for review"
+                  className="flex size-8 items-center justify-center text-destructive"
+                  title="Flagged for review"
+                >
+                  <HugeiconsIcon icon={Flag01Icon} size={18} />
+                </div>
+              ) : null}
 
               {!readOnly ? (
                 <DropdownMenu>

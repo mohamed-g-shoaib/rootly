@@ -1,4 +1,4 @@
-import { getThemeById, THEME_IDS } from "@/lib/themes"
+import { DEFAULT_THEME_ID, getThemeById, THEME_IDS } from "@/lib/themes"
 
 export const COSS_UI_THEME_ID = "default"
 export const COLOR_THEME_COOKIE_NAME = "reway.dashboard.paletteTheme"
@@ -18,7 +18,7 @@ export function normalizeColorThemeId(
   value: string | null | undefined
 ): ColorThemeId {
   if (value === COSS_UI_THEME_ID) return COSS_UI_THEME_ID
-  return isStoredColorThemeId(value) ? value : COSS_UI_THEME_ID
+  return isStoredColorThemeId(value) ? value : DEFAULT_THEME_ID
 }
 
 export function buildColorThemeCss(themeId: ColorThemeId): string {

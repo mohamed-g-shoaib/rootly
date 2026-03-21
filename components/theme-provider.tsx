@@ -3,6 +3,8 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 
+import { ColorThemeApplicator } from "@/components/color-theme-applicator"
+
 function ThemeProvider({
   children,
   ...props
@@ -14,6 +16,7 @@ function ThemeProvider({
       enableSystem
       {...props}
     >
+      <ColorThemeApplicator />
       <ThemeHotkey />
       {children}
     </NextThemesProvider>

@@ -5,12 +5,9 @@ import * as React from "react"
 import dynamic from "next/dynamic"
 
 import {
-  CheckmarkCircle01Icon,
   CodeIcon,
   Flag01Icon,
-  InformationCircleIcon,
   Search02Icon,
-  AlertCircleIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
@@ -53,7 +50,11 @@ const CodeEditor = dynamic(
 )
 
 import type { Note, NoteType } from "./notes-model"
-import { toCodeBadgeLabel } from "./notes-model"
+import {
+  understandingColor,
+  understandingIcon,
+  toCodeBadgeLabel,
+} from "./notes-model"
 
 type CodeLanguageOption = { value: string; label: string }
 
@@ -436,11 +437,11 @@ function NoteEditorSheetBody({
                             onClick={() => setUnderstandingLevel(1)}
                           >
                             <HugeiconsIcon
-                              icon={AlertCircleIcon}
+                              icon={understandingIcon(1)}
                               size={18}
                               color={
                                 understandingLevel === 1
-                                  ? "var(--warning)"
+                                  ? understandingColor(1)
                                   : "currentColor"
                               }
                             />
@@ -455,11 +456,11 @@ function NoteEditorSheetBody({
                             onClick={() => setUnderstandingLevel(2)}
                           >
                             <HugeiconsIcon
-                              icon={InformationCircleIcon}
+                              icon={understandingIcon(2)}
                               size={18}
                               color={
                                 understandingLevel === 2
-                                  ? "var(--info)"
+                                  ? understandingColor(2)
                                   : "currentColor"
                               }
                             />
@@ -474,11 +475,11 @@ function NoteEditorSheetBody({
                             onClick={() => setUnderstandingLevel(3)}
                           >
                             <HugeiconsIcon
-                              icon={CheckmarkCircle01Icon}
+                              icon={understandingIcon(3)}
                               size={18}
                               color={
                                 understandingLevel === 3
-                                  ? "var(--success)"
+                                  ? understandingColor(3)
                                   : "currentColor"
                               }
                             />
