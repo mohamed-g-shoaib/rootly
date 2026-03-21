@@ -34,6 +34,8 @@ Skills in this repository live under the `.agents/skills/` directory. Depending 
 | 11 | [React useEffect](#11-react-useeffect) | Project-local | Official-docs-inspired guidance | `.agents/skills/react-useeffect/` |
 | 12 | [Make Interfaces Feel Better](#12-make-interfaces-feel-better) | Project-local | UI polish skill with focused reference files | `.agents/skills/make-interfaces-feel-better/` |
 | 13 | [User Interface Wiki](#13-user-interface-wiki) | Raphael Salaja | `v3.0.0` | `.agents/skills/userinterface-wiki/` |
+| 14 | [Tailwind CSS Patterns](#14-tailwind-css-patterns) | Project-local | Utility-first styling and responsive composition guide | `.agents/skills/tailwind-css-patterns/` |
+| 15 | [Tailwind CSS Advanced Layouts](#15-tailwind-css-advanced-layouts) | Project-local | Grid, flex, sticky, overflow, and fluid sizing patterns | `.agents/skills/tailwindcss-advanced-layouts/` |
 
 ---
 
@@ -480,3 +482,65 @@ Comprehensive UI/UX best-practices reference for web interfaces. The skill conta
 | `SKILL.md` | Entry point with category overview, quick reference, and usage guidance |
 | `AGENTS.md` | Fully compiled guide covering all 152 rules |
 | `rules/` | Individual rule files grouped by animation, UX, typography, visual design, and related topics |
+
+---
+
+## 14. Tailwind CSS Patterns
+
+**Publisher:** Project-local
+**Version / Notes:** Single-file utility-first styling guide
+**When to load:** Building or refining Tailwind-based UI where responsive layout, spacing, typography, states, accessibility, or reusable utility composition matter
+
+### Purpose
+
+Practical Tailwind guidance for day-to-day component work. The skill focuses on mobile-first styling, consistent use of design tokens, composed utility patterns, responsive layouts, accessibility states, and keeping repeated class patterns intentional rather than ad hoc.
+
+### Top 10 Rules by Priority
+
+1. **Start mobile-first** - Write the base layout for small screens first and add breakpoint prefixes only where needed
+2. **Use design tokens over arbitrary values** - Prefer Tailwind scales for spacing, color, and type whenever possible
+3. **Compose utilities deliberately** - Build clear utility groups instead of scattered one-off classes
+4. **Extract repeated patterns** - Turn recurring utility bundles into shared components or class helpers
+5. **Use semantic layout primitives** - Flexbox for one-dimensional alignment, grid for two-dimensional structure
+6. **Respect interaction states** - Hover, focus, active, disabled, and reduced-motion states all need explicit styling
+7. **Keep accessibility visible** - Preserve focus rings, touch targets, and contrast rather than styling them away
+8. **Use responsive typography and spacing** - Let layout density expand with breakpoint changes instead of staying rigid
+9. **Test responsive behavior intentionally** - Verify small, medium, and large layouts instead of assuming utilities compose well
+10. **Keep production output clean** - Favor maintainable class composition and valid content paths over brittle dynamic utilities
+
+### Available Files
+
+| File | Description |
+| ---- | ----------- |
+| `SKILL.md` | Full self-contained Tailwind patterns guide covering layout, spacing, typography, states, accessibility, and performance notes |
+
+---
+
+## 15. Tailwind CSS Advanced Layouts
+
+**Publisher:** Project-local
+**Version / Notes:** Single-file advanced layout technique guide
+**When to load:** Solving tricky layout problems with CSS Grid, Flexbox, sticky positioning, scrolling containers, container queries, fluid sizing, or layered responsive structure
+
+### Purpose
+
+Focused layout guidance for more complex Tailwind work. The skill emphasizes robust grid and flex patterns, fluid sizing with `minmax()` and `clamp()`, safe overflow handling, sticky and fixed positioning, scroll behavior, and layout patterns that hold up across breakpoints.
+
+### Top 10 Rules by Priority
+
+1. **Use the right layout model** - Reach for grid for two-dimensional composition and flex for one-dimensional alignment
+2. **Prevent overflow blowouts** - Add `min-w-0`, `overflow-hidden`, and resilient track sizing where text or content can stretch containers
+3. **Use fluid sizing where fixed widths fail** - Prefer `min()`, `max()`, `minmax()`, and `clamp()` for responsive surfaces
+4. **Handle mobile toolbars deliberately** - Use scrollable rows, sticky positioning, and fixed actions intentionally on small screens
+5. **Build safe sticky layers** - Sticky headers and sidebars need explicit offsets, z-index discipline, and backdrop treatment
+6. **Use scroll containers intentionally** - Horizontal overflow, snap, and scroll padding should feel designed rather than incidental
+7. **Design for shrinking content** - Flex and grid children should opt into shrink behavior when labels or values can be long
+8. **Prefer semantic spacing structures** - Use gaps, divides, and logical spacing instead of brittle margins
+9. **Use container-aware responsiveness when helpful** - Let components respond to their own space, not only the viewport
+10. **Test breakpoint edge cases** - Validate narrow mobile widths, intermediate tablet widths, and dense desktop layouts for blowouts and awkward wrapping
+
+### Available Files
+
+| File | Description |
+| ---- | ----------- |
+| `SKILL.md` | Full self-contained layout guide covering grid, flex, sticky/fixed positioning, scrolling, fluid sizing, and responsive patterns |

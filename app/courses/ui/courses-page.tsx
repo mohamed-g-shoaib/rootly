@@ -229,6 +229,7 @@ export default function CoursesPage({
                   key={course.id}
                   course={course}
                   now={now}
+                  isMobile={isMobile}
                   onEdit={() => openEdit(course.id)}
                   onViewLinks={() => openLinks(course.id)}
                   onDelete={() => void onDeleteCourse(course.id)}

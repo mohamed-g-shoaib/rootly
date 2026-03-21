@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Form } from "@/components/ui/form"
+import { Form, FormSection } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -406,37 +406,63 @@ export function EntryEditorSheet({
   lockedDateValue: string
   onSave: (entry: DailyEntry) => void
 }) {
+  const editorKey =
+    mode === "edit" ? `edit-${entry?.id ?? "missing"}` : `create-${lockedDateValue}`
+
+  if (!open) {
+    return <Sheet open={open} onOpenChange={onOpenChange} />
+  }
+
+  return (
+    <EntryEditorSheetBody
+      key={`${editorKey}-${lockDate ? "locked" : "unlocked"}`}
+      mode={mode}
+      entry={entry}
+      open={open}
+      onOpenChange={onOpenChange}
+      isMobile={isMobile}
+      lockDate={lockDate}
+      lockedDateValue={lockedDateValue}
+      onSave={onSave}
+    />
+  )
+}
+
+type EntryEditorSheetBodyProps = {
+  mode: "create" | "edit"
+  entry: DailyEntry | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  isMobile: boolean
+  lockDate: boolean
+  lockedDateValue: string
+  onSave: (entry: DailyEntry) => void
+}
+
+function EntryEditorSheetBody({
+  mode,
+  entry,
+  open,
+  onOpenChange,
+  isMobile,
+  lockDate,
+  lockedDateValue,
+  onSave,
+}: EntryEditorSheetBodyProps) {
   const [discardOpen, setDiscardOpen] = React.useState(false)
   const [datePopoverOpen, setDatePopoverOpen] = React.useState(false)
 
-  const [date, setDate] = React.useState(lockedDateValue)
-  const [studyHours, setStudyHours] = React.useState<number>(0)
-  const [studyMinutes, setStudyMinutes] = React.useState<number>(0)
-  const [mood, setMood] = React.useState<MoodValue | null>(null)
-  const [notes, setNotes] = React.useState("")
+  const [date, setDate] = React.useState(entry?.date ?? lockedDateValue)
+  const [studyHours, setStudyHours] = React.useState<number>(
+    entry ? Math.floor(entry.studyTimeMinutes / 60) : 0
+  )
+  const [studyMinutes, setStudyMinutes] = React.useState<number>(
+    entry ? entry.studyTimeMinutes % 60 : 0
+  )
+  const [mood, setMood] = React.useState<MoodValue | null>(entry?.mood ?? null)
+  const [notes, setNotes] = React.useState(entry?.notes ?? "")
 
   const now = React.useMemo(() => new Date(), [])
-
-  React.useEffect(() => {
-    if (!open) return
-
-    if (mode === "edit" && entry) {
-      setDate(entry.date)
-      setStudyHours(Math.floor(entry.studyTimeMinutes / 60))
-      setStudyMinutes(entry.studyTimeMinutes % 60)
-      setMood(entry.mood)
-      setNotes(entry.notes ?? "")
-      return
-    }
-
-    if (mode === "create") {
-      setDate(lockedDateValue)
-      setStudyHours(0)
-      setStudyMinutes(0)
-      setMood(null)
-      setNotes("")
-    }
-  }, [entry, lockedDateValue, mode, open])
 
   const totalStudyMinutes = React.useMemo(() => {
     const safeH = Number.isFinite(studyHours) ? studyHours : 0
@@ -484,7 +510,7 @@ export function EntryEditorSheet({
     if (!hasValidStudyTime) return
     if (!mood) return
 
-    const id = mode === "edit" && entry ? entry.id : `entry_${Date.now()}`
+    const id = mode === "edit" && entry ? entry.id : crypto.randomUUID()
     const createdAt =
       mode === "edit" && entry ? entry.createdAt : now.toISOString()
 
@@ -517,8 +543,8 @@ export function EntryEditorSheet({
             </SheetHeader>
 
             <SheetPanel className="px-4 pb-5">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-5">
+                <FormSection>
                   <Label>Date</Label>
                   <Popover
                     open={datePopoverOpen}
@@ -554,9 +580,9 @@ export function EntryEditorSheet({
                       />
                     </PopoverPopup>
                   </Popover>
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <Label>Study Time</Label>
                   <div className="grid grid-cols-2 gap-2">
                     <Field>
@@ -595,9 +621,9 @@ export function EntryEditorSheet({
                       Enter a study time greater than 0.
                     </div>
                   ) : null}
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <Label>Mood</Label>
                   <div className="grid grid-cols-3 gap-2">
                     <Button
@@ -644,16 +670,16 @@ export function EntryEditorSheet({
                       Focused
                     </Button>
                   </div>
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <Label>Notes</Label>
                   <Textarea
                     value={notes}
                     placeholder="How did your study session go?"
                     onChange={(e) => setNotes(e.target.value)}
                   />
-                </div>
+                </FormSection>
               </div>
             </SheetPanel>
 

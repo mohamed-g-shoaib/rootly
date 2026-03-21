@@ -9,6 +9,8 @@ import type { DateRange } from "react-day-picker"
 import { cn } from "@/lib/utils"
 
 import { PageContainer } from "@/components/ui/page-container"
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
+import { DashboardMobileActionRow } from "@/app/ui/dashboard-mobile-action-row"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -90,7 +92,7 @@ export function DailyEntriesHeader({
   }, [selectedRange?.from, selectedRange?.to])
 
   return (
-    <div className="sticky top-0 z-10 border-b bg-background">
+    <DashboardStickyHeader>
       <PageContainer>
         {!isMobile ? (
           <div className="flex items-center gap-3 py-4">
@@ -178,7 +180,7 @@ export function DailyEntriesHeader({
             </div>
 
             <div className="pt-3">
-              <div className="flex flex-wrap justify-center gap-2">
+              <DashboardMobileActionRow>
                 <Button
                   variant="outline"
                   className={cn(
@@ -205,11 +207,11 @@ export function DailyEntriesHeader({
                     Clear
                   </Button>
                 ) : null}
-              </div>
+              </DashboardMobileActionRow>
             </div>
           </div>
         )}
       </PageContainer>
-    </div>
+    </DashboardStickyHeader>
   )
 }

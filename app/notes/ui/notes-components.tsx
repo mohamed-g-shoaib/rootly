@@ -9,15 +9,17 @@ import {
   Flag01Icon,
   MoreVerticalIcon,
   Note01Icon,
-  Pdf01Icon,
   Search01Icon,
-  TextSquareIcon,
   ViewOffIcon,
+  Loading01Icon,
+  Pdf01Icon,
+  TextSquareIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { motion } from "motion/react"
 import * as React from "react"
 
+import { useElementOverflow } from "@/hooks/use-element-overflow"
 import { cn } from "@/lib/utils"
 
 import {
@@ -182,39 +184,12 @@ export function NoteCard({
             {isQa ? (
               <div className="flex min-h-0 flex-1 items-start overflow-hidden">
                 {showAnswer ? (
-                  isMobile ? (
-                    <button
-                      type="button"
-                      className="min-h-0 flex-1 cursor-pointer overflow-hidden text-left"
-                      onClick={onViewFull}
-                    >
-                      <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
-                        {note.answer}
-                      </p>
-                    </button>
-                  ) : (
-                    <PreviewCard>
-                      <PreviewCardTrigger
-                        render={
-                          <div className="min-h-0 flex-1 cursor-pointer overflow-hidden" />
-                        }
-                      >
-                        <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
-                          {note.answer}
-                        </p>
-                      </PreviewCardTrigger>
-                      <PreviewCardPopup>
-                        <div className="flex flex-col gap-3">
-                          <div className="text-sm font-medium whitespace-pre-wrap">
-                            {note.question}
-                          </div>
-                          <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                            {note.answer}
-                          </div>
-                        </div>
-                      </PreviewCardPopup>
-                    </PreviewCard>
-                  )
+                  <NoteCardExcerpt
+                    text={note.answer ?? ""}
+                    isMobile={isMobile}
+                    onOpen={onViewFull}
+                    previewTitle={note.question ?? ""}
+                  />
                 ) : (
                   <Button
                     variant="outline"
@@ -225,33 +200,12 @@ export function NoteCard({
                   </Button>
                 )}
               </div>
-            ) : isMobile ? (
-              <button
-                type="button"
-                className="min-h-0 flex-1 cursor-pointer overflow-hidden text-left"
-                onClick={onViewFull}
-              >
-                <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
-                  {note.body}
-                </p>
-              </button>
             ) : (
-              <PreviewCard>
-                <PreviewCardTrigger
-                  render={
-                    <div className="min-h-0 flex-1 cursor-pointer overflow-hidden" />
-                  }
-                >
-                  <p className="line-clamp-3 text-sm text-muted-foreground decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
-                    {note.body}
-                  </p>
-                </PreviewCardTrigger>
-                <PreviewCardPopup>
-                  <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                    {note.body}
-                  </div>
-                </PreviewCardPopup>
-              </PreviewCard>
+              <NoteCardExcerpt
+                text={note.body ?? ""}
+                isMobile={isMobile}
+                onOpen={onViewFull}
+              />
             )}
           </div>
 
@@ -332,14 +286,6 @@ export function NoteCard({
                         View code
                       </DropdownMenuItem>
                     ) : null}
-                    <DropdownMenuItem>
-                      <HugeiconsIcon icon={Pdf01Icon} size={18} />
-                      Export as PDF
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <HugeiconsIcon icon={TextSquareIcon} size={18} />
-                      Export as Markdown
-                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DeleteDialog onDelete={onDelete}>
                       <DropdownMenuItem variant="destructive">
@@ -355,6 +301,147 @@ export function NoteCard({
         </div>
       </Card>
     </motion.div>
+  )
+}
+
+export function ExportSheet({
+  open,
+  onOpenChange,
+  exporting,
+  onExportPdf,
+  onExportMarkdown,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  exporting: boolean
+  onExportPdf: () => void | Promise<void>
+  onExportMarkdown: () => void
+}) {
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetPopup side="bottom" variant="inset">
+        <Form className="h-full gap-0">
+          <SheetHeader>
+            <SheetTitle>Export</SheetTitle>
+          </SheetHeader>
+          <SheetPanel className="px-4 pb-5">
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="outline"
+                className="justify-start gap-2"
+                onClick={() => void onExportPdf()}
+                disabled={exporting}
+              >
+                <HugeiconsIcon
+                  icon={exporting ? Loading01Icon : Pdf01Icon}
+                  size={18}
+                  className={exporting ? "animate-spin" : undefined}
+                />
+                Export as PDF
+              </Button>
+              <Button
+                variant="outline"
+                className="justify-start gap-2"
+                onClick={onExportMarkdown}
+              >
+                <HugeiconsIcon icon={TextSquareIcon} size={18} />
+                Export as Markdown
+              </Button>
+            </div>
+          </SheetPanel>
+          <SheetFooter>
+            <SheetClose render={<Button variant="ghost" type="button" />}>
+              Close
+            </SheetClose>
+          </SheetFooter>
+        </Form>
+      </SheetPopup>
+    </Sheet>
+  )
+}
+
+function NoteCardExcerpt({
+  text,
+  isMobile,
+  onOpen,
+  previewTitle,
+}: {
+  text: string
+  isMobile: boolean
+  onOpen: () => void
+  previewTitle?: string
+}) {
+  const { contentRef, isOverflowing, targetRef } =
+    useElementOverflow<HTMLParagraphElement>({
+      watch: text,
+    })
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 overflow-hidden">
+      <div className="relative min-h-0 flex-1 overflow-hidden">
+        <p
+          ref={targetRef}
+          className="line-clamp-3 break-words text-sm text-muted-foreground"
+        >
+          {text}
+        </p>
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 overflow-visible opacity-0"
+        >
+          <div
+            ref={contentRef}
+            className="break-words whitespace-pre-wrap text-sm text-muted-foreground"
+          >
+            {text}
+          </div>
+        </div>
+      </div>
+
+      {isOverflowing ? (
+        <div className="flex items-center gap-2 self-start">
+          {!isMobile ? (
+            <PreviewCard>
+              <PreviewCardTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    type="button"
+                    className="h-6 px-1.5 text-xs text-muted-foreground hover:text-foreground"
+                  />
+                }
+              >
+                Preview
+              </PreviewCardTrigger>
+              <PreviewCardPopup className="w-[min(18rem,calc(100vw-2rem))]">
+                <div className="flex flex-col gap-3">
+                  {previewTitle ? (
+                    <div className="text-sm font-medium whitespace-pre-wrap break-words">
+                      {previewTitle}
+                    </div>
+                  ) : null}
+                  <div className="line-clamp-8 text-sm whitespace-pre-wrap break-words text-muted-foreground">
+                    {text}
+                  </div>
+                </div>
+              </PreviewCardPopup>
+            </PreviewCard>
+          ) : null}
+
+          <Button
+            variant="ghost"
+            size="xs"
+            type="button"
+            className="h-6 px-1.5 text-xs text-muted-foreground hover:text-foreground"
+            onClick={onOpen}
+          >
+            Open full
+          </Button>
+        </div>
+      ) : null}
+    </div>
   )
 }
 

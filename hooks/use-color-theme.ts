@@ -7,11 +7,15 @@ import { useTheme } from "next-themes"
 import {
   COLOR_THEME_COOKIE_NAME,
   COSS_UI_THEME_ID,
-  DASHBOARD_COLOR_THEME_STYLE_ID,
   normalizeColorThemeId,
   type ColorThemeId,
 } from "@/lib/color-theme"
-import { getThemeById, THEMES, type ThemeColors } from "@/lib/themes"
+import {
+  applyThemeColors,
+  clearThemeColors,
+  syncDashboardThemeStyle,
+} from "@/lib/color-theme-dom"
+import { getThemeById } from "@/lib/themes"
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60
 const IS_PRODUCTION = process.env.NODE_ENV === "production"
@@ -42,25 +46,6 @@ function clearPreferenceCookie() {
   if (typeof document === "undefined") return
   const secureFlag = IS_PRODUCTION ? "; secure" : ""
   document.cookie = `${COLOR_THEME_COOKIE_NAME}=; path=/; max-age=0; samesite=lax${secureFlag}`
-}
-
-function applyColors(colors: ThemeColors) {
-  for (const [key, value] of Object.entries(colors)) {
-    document.documentElement.style.setProperty(`--${key}`, value)
-  }
-}
-
-function clearColors() {
-  const theme = THEMES[0]
-  if (!theme) return
-  for (const key of Object.keys(theme.light)) {
-    document.documentElement.style.removeProperty(`--${key}`)
-  }
-}
-
-function removeServerThemeStyle() {
-  if (typeof document === "undefined") return
-  document.getElementById(DASHBOARD_COLOR_THEME_STYLE_ID)?.remove()
 }
 
 function subscribe(listener: () => void) {
@@ -123,21 +108,29 @@ export function useColorTheme(): {
 
   React.useEffect(() => {
     if (themeId === COSS_UI_THEME_ID) {
-      clearColors()
-      removeServerThemeStyle()
+      clearThemeColors()
+      syncDashboardThemeStyle(themeId)
       return
     }
 
     const theme = getThemeById(themeId)
     if (!theme) {
-      clearColors()
-      removeServerThemeStyle()
+      clearThemeColors()
+      syncDashboardThemeStyle(COSS_UI_THEME_ID)
       return
     }
 
     const variant = resolvedTheme === "dark" ? theme.dark : theme.light
-    applyColors(variant)
+    applyThemeColors(variant)
+    syncDashboardThemeStyle(themeId)
   }, [resolvedTheme, themeId])
+
+  React.useEffect(() => {
+    return () => {
+      clearThemeColors()
+      syncDashboardThemeStyle(COSS_UI_THEME_ID)
+    }
+  }, [])
 
   return { themeId, setThemeId }
 }

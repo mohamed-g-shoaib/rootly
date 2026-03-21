@@ -18,7 +18,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Form } from "@/components/ui/form"
+import { Form, FormSection } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -52,6 +52,7 @@ import {
   PreviewCardPopup,
   PreviewCardTrigger,
 } from "@/components/ui/preview-card"
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
 import {
   Progress,
   ProgressIndicator,
@@ -62,6 +63,15 @@ import { Slider } from "@/components/ui/slider"
 import type { Course } from "./courses-model"
 import { isValidUrl } from "./courses-model"
 
+type CourseEditorSheetProps = {
+  mode: "create" | "edit"
+  course: Course | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  breakpoint: "mobile" | "tablet" | "desktop"
+  onSave: (course: Course) => void
+}
+
 export function CourseEditorSheet({
   mode,
   course,
@@ -69,60 +79,53 @@ export function CourseEditorSheet({
   onOpenChange,
   breakpoint,
   onSave,
-}: {
-  mode: "create" | "edit"
-  course: Course | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  breakpoint: "mobile" | "tablet" | "desktop"
-  onSave: (course: Course) => void
-}) {
+}: CourseEditorSheetProps) {
+  const editorKey =
+    mode === "edit" ? `edit-${course?.id ?? "missing"}` : "create"
+
+  if (!open) {
+    return <Sheet open={open} onOpenChange={onOpenChange} />
+  }
+
+  return (
+    <CourseEditorSheetBody
+      key={`${editorKey}-${breakpoint}`}
+      mode={mode}
+      course={course}
+      open={open}
+      onOpenChange={onOpenChange}
+      breakpoint={breakpoint}
+      onSave={onSave}
+    />
+  )
+}
+
+function CourseEditorSheetBody({
+  mode,
+  course,
+  open,
+  onOpenChange,
+  breakpoint,
+  onSave,
+}: CourseEditorSheetProps) {
   const [discardOpen, setDiscardOpen] = React.useState(false)
 
-  const [title, setTitle] = React.useState("")
-  const [instructor, setInstructor] = React.useState("")
-  const [courseLink, setCourseLink] = React.useState("")
-  const [links, setLinks] = React.useState<string[]>([])
-  const [topics, setTopics] = React.useState<string[]>([])
+  const [title, setTitle] = React.useState(course?.title ?? "")
+  const [instructor, setInstructor] = React.useState(course?.instructor ?? "")
+  const [courseLink, setCourseLink] = React.useState(course?.courseLink ?? "")
+  const [links, setLinks] = React.useState<string[]>(() => course?.links ?? [])
+  const [topics, setTopics] = React.useState<string[]>(
+    () => course?.topics ?? []
+  )
   const [topicDraft, setTopicDraft] = React.useState("")
-  const [progress, setProgress] = React.useState(0)
+  const [progress, setProgress] = React.useState(course?.progress ?? 0)
 
   const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false)
   const [linkInvalidByIndex, setLinkInvalidByIndex] = React.useState<
     Record<number, boolean>
   >({})
 
-  const isMobile = breakpoint === "mobile"
-  const side = isMobile ? "bottom" : "right"
-
-  React.useEffect(() => {
-    if (!open) return
-
-    if (mode === "edit" && course) {
-      setTitle(course.title ?? "")
-      setInstructor(course.instructor ?? "")
-      setCourseLink(course.courseLink ?? "")
-      setLinks(course.links ?? [])
-      setTopics(course.topics ?? [])
-      setTopicDraft("")
-      setProgress(course.progress ?? 0)
-      setCourseLinkInvalid(false)
-      setLinkInvalidByIndex({})
-      return
-    }
-
-    if (mode === "create") {
-      setTitle("")
-      setInstructor("")
-      setCourseLink("")
-      setLinks([])
-      setTopics([])
-      setTopicDraft("")
-      setProgress(0)
-      setCourseLinkInvalid(false)
-      setLinkInvalidByIndex({})
-    }
-  }, [course, mode, open])
+  const side = breakpoint === "mobile" ? "bottom" : "right"
 
   return (
     <>
@@ -139,9 +142,10 @@ export function CourseEditorSheet({
               progress !== (course?.progress ?? 0))
           ) {
             setDiscardOpen(true)
-          } else {
-            onOpenChange(next)
+            return
           }
+
+          onOpenChange(next)
         }}
       >
         <SheetPopup side={side} variant="inset">
@@ -152,32 +156,34 @@ export function CourseEditorSheet({
               </SheetTitle>
             </SheetHeader>
             <SheetPanel className="px-4 pb-5">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-5">
+                <FormSection>
                   <Label>Course Title</Label>
                   <Input
                     value={title}
                     placeholder="e.g. Machine Learning Fundamentals"
                     onValueChange={(v) => setTitle(v)}
                   />
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <Label>Instructor</Label>
                   <Input
                     value={instructor}
                     placeholder="e.g. Andrew Ng"
                     onValueChange={(v) => setInstructor(v)}
                   />
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <Label>Main Course URL</Label>
                   <Input
                     value={courseLink}
                     placeholder="https://..."
                     aria-invalid={courseLinkInvalid}
-                    onBlur={() => setCourseLinkInvalid(!isValidUrl(courseLink))}
+                    onBlur={() =>
+                      setCourseLinkInvalid(!isValidUrl(courseLink))
+                    }
                     onValueChange={(v) => {
                       setCourseLink(v)
                       if (courseLinkInvalid) setCourseLinkInvalid(false)
@@ -188,9 +194,9 @@ export function CourseEditorSheet({
                       Enter a valid URL.
                     </div>
                   ) : null}
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <Label>Additional Links</Label>
                   <div className="flex flex-col gap-2">
                     {links.map((value, index) => (
@@ -213,11 +219,12 @@ export function CourseEditorSheet({
                             setLinks((prev) =>
                               prev.map((x, i) => (i === index ? v : x))
                             )
-                            if (linkInvalidByIndex[index])
+                            if (linkInvalidByIndex[index]) {
                               setLinkInvalidByIndex((prev) => ({
                                 ...prev,
                                 [index]: false,
                               }))
+                            }
                           }}
                         />
                         <Button
@@ -245,9 +252,9 @@ export function CourseEditorSheet({
                     <HugeiconsIcon icon={AddCircleIcon} size={18} />
                     Add link
                   </Button>
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <Label>Topics</Label>
                   <div className="flex flex-wrap gap-2">
                     {(topics ?? []).map((t) => (
@@ -285,9 +292,9 @@ export function CourseEditorSheet({
                       }
                     }}
                   />
-                </div>
+                </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <FormSection>
                   <div className="flex items-center justify-between">
                     <Label>Progress</Label>
                     <div className="text-sm tabular-nums">{progress}%</div>
@@ -300,7 +307,7 @@ export function CourseEditorSheet({
                     min={0}
                     max={100}
                   />
-                </div>
+                </FormSection>
               </div>
             </SheetPanel>
             <SheetFooter>
@@ -313,7 +320,7 @@ export function CourseEditorSheet({
                   if (!title.trim()) return
                   onSave({
                     ...course,
-                    id: course?.id ?? `course_${Date.now()}`,
+                    id: course?.id ?? crypto.randomUUID(),
                     title: title.trim(),
                     instructor: instructor.trim(),
                     courseLink: courseLink.trim(),
@@ -435,12 +442,14 @@ export function EmptyState({
 export function CourseCard({
   course,
   now: _now,
+  isMobile,
   onEdit,
   onViewLinks,
   onDelete,
 }: {
   course: Course
   now: Date
+  isMobile: boolean
   onEdit: () => void
   onViewLinks: () => void
   onDelete: () => void
@@ -479,7 +488,7 @@ export function CourseCard({
             <div>
               <Progress value={course.progress}>
                 <ProgressTrack>
-                  <ProgressIndicator style={{ width: `${course.progress}%` }} />
+                  <ProgressIndicator />
                 </ProgressTrack>
               </Progress>
             </div>
@@ -495,27 +504,11 @@ export function CourseCard({
                     </Badge>
                   ))}
                   {remainingTopics > 0 ? (
-                    <PreviewCard>
-                      <PreviewCardTrigger
-                        render={
-                          <Badge
-                            variant="outline"
-                            className="shrink-0 cursor-pointer"
-                          />
-                        }
-                      >
-                        +{remainingTopics} more
-                      </PreviewCardTrigger>
-                      <PreviewCardPopup>
-                        <div className="flex flex-wrap gap-1.5">
-                          {course.topics.map((t) => (
-                            <Badge key={t} variant="outline">
-                              {t}
-                            </Badge>
-                          ))}
-                        </div>
-                      </PreviewCardPopup>
-                    </PreviewCard>
+                    <TopicsOverflowBadge
+                      topics={course.topics}
+                      remainingTopics={remainingTopics}
+                      isMobile={isMobile}
+                    />
                   ) : null}
                 </>
               ) : null}
@@ -566,6 +559,52 @@ export function CourseCard({
         </div>
       </Card>
     </div>
+  )
+}
+
+function TopicsOverflowBadge({
+  topics,
+  remainingTopics,
+  isMobile,
+}: {
+  topics: string[]
+  remainingTopics: number
+  isMobile: boolean
+}) {
+  const content = (
+    <div className="flex flex-wrap gap-1.5">
+      {topics.map((topic) => (
+        <Badge key={topic} variant="outline">
+          {topic}
+        </Badge>
+      ))}
+    </div>
+  )
+
+  if (isMobile) {
+    return (
+      <Popover>
+        <PopoverTrigger
+          render={<Badge variant="outline" className="shrink-0 cursor-pointer" />}
+        >
+          +{remainingTopics} more
+        </PopoverTrigger>
+        <PopoverPopup align="start" className="w-64">
+          {content}
+        </PopoverPopup>
+      </Popover>
+    )
+  }
+
+  return (
+    <PreviewCard>
+      <PreviewCardTrigger
+        render={<Badge variant="outline" className="shrink-0 cursor-pointer" />}
+      >
+        +{remainingTopics} more
+      </PreviewCardTrigger>
+      <PreviewCardPopup>{content}</PreviewCardPopup>
+    </PreviewCard>
   )
 }
 

@@ -88,7 +88,7 @@ export function ReviewSession({
             <div className="pt-2">
               <Progress value={progressValue}>
                 <ProgressTrack>
-                  <ProgressIndicator style={{ width: `${progressValue}%` }} />
+                  <ProgressIndicator />
                 </ProgressTrack>
               </Progress>
             </div>

@@ -19,6 +19,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { useIsMobile } from "@/hooks/use-media-query"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
 import { PageContainer } from "@/components/ui/page-container"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -91,12 +92,6 @@ export default function CourseDetailPage({
   const isMobile = useIsMobile()
 
   const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
-
-  const notesRef = React.useRef(allNotes)
-
-  React.useEffect(() => {
-    notesRef.current = allNotes
-  }, [allNotes])
 
   const [linksOpen, setLinksOpen] = React.useState(false)
   const [editCourseOpen, setEditCourseOpen] = React.useState(false)
@@ -268,7 +263,7 @@ export default function CourseDetailPage({
   async function onToggleFlag(noteId: string) {
     if (!user) return
 
-    const prev = notesRef.current
+    const prev = allNotes
 
     setAllNotes((items) =>
       items.map((n) =>
@@ -295,7 +290,7 @@ export default function CourseDetailPage({
   async function onDeleteNote(noteId: string) {
     if (!user) return
 
-    const prev = notesRef.current
+    const prev = allNotes
     setAllNotes((items) => items.filter((n) => n.id !== noteId))
 
     const res = await deleteNote({ noteId, userId: user.id })
@@ -322,7 +317,7 @@ export default function CourseDetailPage({
         updatedAt: new Date().toISOString(),
       }
 
-      const prev = notesRef.current
+      const prev = allNotes
       setAllNotes((items) => [optimistic, ...items])
       setCreateOpen(false)
 
@@ -343,7 +338,7 @@ export default function CourseDetailPage({
       return
     }
 
-    const prev = notesRef.current
+    const prev = allNotes
     setAllNotes((items) => items.map((n) => (n.id === next.id ? next : n)))
     setEditOpen(false)
 
@@ -508,7 +503,7 @@ export default function CourseDetailPage({
           : undefined
       }
     >
-      <div className="sticky top-0 z-10 border-b bg-background">
+      <DashboardStickyHeader>
         <PageContainer>
           <div className="py-4">
             <div className="flex items-center justify-between gap-3">
@@ -552,9 +547,7 @@ export default function CourseDetailPage({
                 <div className="pt-2">
                   <Progress value={course.progress}>
                     <ProgressTrack>
-                      <ProgressIndicator
-                        style={{ width: `${course.progress}%` }}
-                      />
+                      <ProgressIndicator />
                     </ProgressTrack>
                   </Progress>
                 </div>
@@ -562,7 +555,7 @@ export default function CourseDetailPage({
             </div>
           </div>
         </PageContainer>
-      </div>
+      </DashboardStickyHeader>
 
       <PageContainer>
         <div className="pt-4">

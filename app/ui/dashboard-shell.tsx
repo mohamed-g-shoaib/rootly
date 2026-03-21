@@ -66,6 +66,7 @@ import {
 
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { ColorThemeApplicator } from "@/components/color-theme-applicator"
+import { useMediaQuery } from "@/hooks/use-media-query"
 
 type ShellFab = {
   ariaLabel: string
@@ -102,32 +103,16 @@ export function DashboardShell({
   fab?: ShellFab
   user: User | null
 }) {
-  const [isMobile, setIsMobile] = React.useState(false)
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-    const mql = window.matchMedia("(max-width: 768px)")
-    const onChange = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches)
-    }
-    setIsMobile(mql.matches)
-    mql.addEventListener("change", onChange)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
+  const isMobile = useMediaQuery("(max-width: 768px)")
 
   const [commandOpen, setCommandOpen] = React.useState(false)
   const [avatarOpen, setAvatarOpen] = React.useState(false)
-
-  const shortcut = mounted ? getDesktopShortcutLabel() : null
 
   const displayName =
     user?.user_metadata?.full_name ??
     user?.user_metadata?.name ??
     user?.email?.split("@")[0] ??
     "You"
-
-  const displayEmail = user?.email ?? ""
 
   const avatarUrl =
     user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
@@ -138,10 +123,6 @@ export function DashboardShell({
     .join("")
     .slice(0, 2)
     .toUpperCase()
-
-  // Ensure these are "used" to satisfy linting
-  void displayEmail
-  void avatarUrl
 
   const navigationItems = React.useMemo(
     () => [
@@ -198,51 +179,47 @@ export function DashboardShell({
           </div>
 
           <div className="flex items-center gap-2">
-            {!mounted ? (
-              <div className="h-9 w-72 animate-pulse rounded-md bg-muted" />
-            ) : isMobile ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                aria-label="Search"
-                onClick={() => setCommandOpen(true)}
-              >
-                <HugeiconsIcon icon={AiSearchIcon} size={18} />
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                type="button"
-                className="min-w-72 justify-between"
-                onClick={() => setCommandOpen(true)}
-              >
-                <span className="text-muted-foreground">
-                  Search or jump to...
-                </span>
-                {shortcut ? <Kbd>{shortcut}</Kbd> : null}
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              aria-label="Search"
+              onClick={() => setCommandOpen(true)}
+              className="md:hidden"
+            >
+              <HugeiconsIcon icon={AiSearchIcon} size={18} />
+            </Button>
 
-            {!mounted ? (
-              <div className="size-9 animate-pulse rounded-full bg-muted" />
-            ) : isMobile ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                aria-label="User menu"
-                className="rounded-full"
-                onClick={() => setAvatarOpen(true)}
-              >
-                <Avatar>
-                  <AvatarImage src={avatarUrl} alt={displayName} />
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-              </Button>
-            ) : (
+            <Button
+              variant="outline"
+              type="button"
+              className="hidden min-w-72 justify-between md:inline-flex"
+              onClick={() => setCommandOpen(true)}
+            >
+              <span className="text-muted-foreground">Search or jump to...</span>
+              <KbdGroup>
+                <Kbd>Ctrl</Kbd>
+                <Kbd>K</Kbd>
+              </KbdGroup>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              aria-label="User menu"
+              className="rounded-full md:hidden"
+              onClick={() => setAvatarOpen(true)}
+            >
+              <Avatar>
+                <AvatarImage src={avatarUrl} alt={displayName} />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+            </Button>
+
+            <div className="hidden md:block">
               <UserAvatarPopover user={user} />
-            )}
+            </div>
           </div>
         </div>
       </header>
@@ -251,11 +228,11 @@ export function DashboardShell({
 
       <FloatingDock navigationItems={navigationItems} />
 
-      {mounted && isMobile && fab ? (
+      {fab ? (
         <Button
           size="icon-lg"
           type="button"
-          className="fixed right-4 bottom-20 z-30 rounded-full"
+          className="fixed right-4 bottom-20 z-30 rounded-full md:hidden"
           aria-label={fab.ariaLabel}
           onClick={fab.onClick}
         >
@@ -269,13 +246,11 @@ export function DashboardShell({
         onOpenChange={setCommandOpen}
       />
 
-      {mounted && (
-        <MobileAvatarSheet
-          open={avatarOpen}
-          onOpenChange={setAvatarOpen}
-          user={user}
-        />
-      )}
+      <MobileAvatarSheet
+        open={avatarOpen}
+        onOpenChange={setAvatarOpen}
+        user={user}
+      />
     </div>
   )
 }
@@ -587,12 +562,4 @@ function CommandPalette({
       <CommandDialogPopup>{content}</CommandDialogPopup>
     </CommandDialog>
   )
-}
-
-function getDesktopShortcutLabel(): "⌘K" | "Ctrl K" {
-  if (typeof navigator === "undefined") return "Ctrl K"
-  const isMac = navigator.userAgentData?.platform
-    ? navigator.userAgentData.platform.toLowerCase().includes("mac")
-    : navigator.userAgent.toLowerCase().includes("mac")
-  return isMac ? "⌘K" : "Ctrl K"
 }

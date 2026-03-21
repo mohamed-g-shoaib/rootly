@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 function Field({ className, ...props }: FieldPrimitive.Root.Props) {
   return (
     <FieldPrimitive.Root
-      className={cn("flex flex-col items-start gap-2", className)}
+      className={cn("flex flex-col items-start gap-3", className)}
       data-slot="field"
       {...props}
     />

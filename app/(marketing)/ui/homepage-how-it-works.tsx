@@ -3,7 +3,6 @@
 import * as React from "react"
 
 import {
-  AlertCircleIcon,
   ArrowLeft02Icon,
   ArrowRight02Icon,
   CheckmarkCircle01Icon,
@@ -38,35 +37,112 @@ const TRACK_DATA = [
   { day: "Fri", minutes: "48m", value: 86 },
 ] as const
 
-function CreateCourseVisual() {
+const HOW_IT_WORKS_CARD_CLASS =
+  "w-[min(20rem,calc(100vw-2rem))] shrink-0 snap-start sm:w-96"
+const HOW_IT_WORKS_VISUAL_CLASS = "h-60 p-4"
+
+function SurfaceLabel({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <Card className="h-48 p-4">
-      <div className="flex h-full flex-col gap-4">
-        <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
-          <Badge variant="outline">Course</Badge>
-          <div>3 resources</div>
+    <div className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+      {children}
+    </div>
+  )
+}
+
+function SurfaceFooter({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex min-h-12 shrink-0 flex-wrap items-start gap-2 border-t pt-3">
+      {children}
+    </div>
+  )
+}
+
+function HowItWorksSurface({
+  body,
+  footer,
+  label,
+  meta,
+}: {
+  body: React.ReactNode
+  footer: React.ReactNode
+  label: string
+  meta: React.ReactNode
+}) {
+  return (
+    <Card className={HOW_IT_WORKS_VISUAL_CLASS}>
+      <div className="grid h-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <SurfaceLabel>{label}</SurfaceLabel>
+          <div className="text-right text-sm text-muted-foreground">{meta}</div>
         </div>
-        <div className="flex flex-1 flex-col gap-1">
-          <div className="font-medium text-balance">
-            Machine Learning Fundamentals
-          </div>
-          <div className="text-sm text-muted-foreground">Andrew Ng</div>
-          <div className="pt-2 text-sm text-muted-foreground text-pretty">
-            Keep the course, docs, and reference links together so every study
-            session starts with context.
-          </div>
-        </div>
-        <Progress value={42}>
-          <div className="flex items-center justify-between gap-2">
-            <ProgressLabel>Progress</ProgressLabel>
-            <ProgressValue />
-          </div>
-          <ProgressTrack>
-            <ProgressIndicator />
-          </ProgressTrack>
-        </Progress>
+        <div className="min-h-0 overflow-hidden">{body}</div>
+        <SurfaceFooter>{footer}</SurfaceFooter>
       </div>
     </Card>
+  )
+}
+
+function HowItWorksStep({
+  visual,
+  title,
+  description,
+}: {
+  visual: React.ReactNode
+  title: string
+  description: string
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      {visual}
+      <div className="flex flex-col gap-1">
+        <div className="text-lg font-semibold text-balance">{title}</div>
+        <div className="text-sm text-muted-foreground text-pretty">
+          {description}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CreateCourseVisual() {
+  return (
+    <HowItWorksSurface
+      label="Organize"
+      meta="3 resources"
+      body={
+        <div className="flex h-full min-h-0 flex-col gap-2 overflow-hidden">
+          <div className="flex flex-col gap-1">
+            <div className="font-medium leading-5">
+              Machine Learning Fundamentals
+            </div>
+            <div className="text-sm text-muted-foreground">Andrew Ng</div>
+          </div>
+          <Progress value={42} className="mt-auto">
+            <div className="flex items-center justify-between gap-2">
+              <ProgressLabel>Progress</ProgressLabel>
+              <ProgressValue />
+            </div>
+            <ProgressTrack>
+              <ProgressIndicator />
+            </ProgressTrack>
+          </Progress>
+        </div>
+      }
+      footer={
+        <>
+          <Badge variant="outline">Course</Badge>
+          <Badge variant="secondary">42% complete</Badge>
+        </>
+      }
+    />
   )
 }
 
@@ -76,7 +152,7 @@ function SurfaceCaption({
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border bg-muted/35 px-3 py-2 text-sm text-muted-foreground text-pretty">
+    <div className="line-clamp-4 rounded-xl border bg-muted/35 px-3 py-2 text-sm text-muted-foreground text-pretty">
       {children}
     </div>
   )
@@ -84,15 +160,12 @@ function SurfaceCaption({
 
 function CaptureVisual() {
   return (
-    <Card className="h-48 p-4">
-      <div className="flex h-full flex-col gap-3">
-        <div className="flex items-center justify-between gap-2">
-          <Badge variant="outline">React</Badge>
-          <Badge variant="info">Ready to review</Badge>
-        </div>
-
-        <div className="flex flex-1 flex-col gap-3">
-          <div className="font-medium text-balance">
+    <HowItWorksSurface
+      label="Capture"
+      meta="React"
+      body={
+        <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
+          <div className="line-clamp-2 font-medium text-balance">
             When should you use <code>useMemo</code>?
           </div>
           <SurfaceCaption>
@@ -100,34 +173,35 @@ function CaptureVisual() {
             make rerenders noisier than they need to be.
           </SurfaceCaption>
         </div>
-
-        <div className="flex flex-wrap gap-2">
+      }
+      footer={
+        <>
           <Badge variant="secondary">Q&amp;A note</Badge>
-          <Badge variant="outline">JavaScript</Badge>
-          <Badge variant="outline">Getting It</Badge>
-        </div>
-      </div>
-    </Card>
+          <Badge variant="info">Ready to review</Badge>
+        </>
+      }
+    />
   )
 }
 
 function DailyLogVisual() {
   return (
-    <Card className="h-48 p-4">
-      <div className="flex h-full flex-col gap-3">
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div>Today</div>
-          <div className="tabular-nums">2h 25m</div>
-        </div>
-
-        <div className="flex flex-1 flex-col justify-center">
+    <HowItWorksSurface
+      label="Reflect"
+      meta={<span className="tabular-nums">2h 25m</span>}
+      body={
+        <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
+          <div className="line-clamp-2 font-medium text-balance">
+            Today I learned
+          </div>
           <SurfaceCaption>
-            Today I learned why <code>useMemo</code> is mostly about expensive
-            work and stable references, not premature optimization.
+            I learned that <code>useMemo</code> is about expensive work and
+            stable references, not premature optimization.
           </SurfaceCaption>
         </div>
-
-        <div className="grid grid-cols-3 gap-2">
+      }
+      footer={
+        <>
           <Badge variant="outline" className="justify-center gap-2">
             <EmojioneV1WearyFace className="size-4" aria-hidden="true" />
             Burned
@@ -146,23 +220,20 @@ function DailyLogVisual() {
             />
             Focused
           </Badge>
-        </div>
-      </div>
-    </Card>
+        </>
+      }
+    />
   )
 }
 
 function ReviewVisual() {
   return (
-    <Card className="h-48 p-4">
-      <div className="flex h-full flex-col gap-3">
-        <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
-          <div>Review session</div>
-          <div>3 / 10 questions</div>
-        </div>
-
-        <div className="flex flex-1 flex-col gap-3">
-          <div className="font-medium text-balance">
+    <HowItWorksSurface
+      label="Review"
+      meta="3 / 10 questions"
+      body={
+        <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
+          <div className="line-clamp-2 font-medium text-balance">
             What problem does <code>useMemo</code> solve?
           </div>
           <SurfaceCaption>
@@ -170,12 +241,9 @@ function ReviewVisual() {
             when that stability actually matters.
           </SurfaceCaption>
         </div>
-
-        <div className="grid grid-cols-3 gap-2">
-          <Badge variant="outline" className="justify-center gap-2">
-            <HugeiconsIcon icon={AlertCircleIcon} size={16} />
-            Confused
-          </Badge>
+      }
+      footer={
+        <>
           <Badge variant="info" className="justify-center gap-2">
             <HugeiconsIcon icon={InformationCircleIcon} size={16} />
             Getting It
@@ -184,26 +252,23 @@ function ReviewVisual() {
             <HugeiconsIcon icon={CheckmarkCircle01Icon} size={16} />
             Clear
           </Badge>
-        </div>
-      </div>
-    </Card>
+        </>
+      }
+    />
   )
 }
 
 function TrackVisual() {
   return (
-    <Card className="h-48 p-4">
-      <div className="flex h-full flex-col gap-4">
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div>Study minutes</div>
-          <div>avg. 2.4h / day</div>
-        </div>
-
-        <div className="grid flex-1 gap-3">
+    <HowItWorksSurface
+      label="Track"
+      meta="avg. 2.4h / day"
+      body={
+        <div className="grid h-full min-h-0 gap-2 overflow-hidden">
           {TRACK_DATA.map((item) => (
             <div
               key={item.day}
-              className="grid grid-cols-[2.25rem_1fr_auto] items-center gap-3"
+              className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3"
             >
               <div className="text-sm text-muted-foreground">{item.day}</div>
               <Progress value={item.value} className="gap-0">
@@ -217,8 +282,14 @@ function TrackVisual() {
             </div>
           ))}
         </div>
-      </div>
-    </Card>
+      }
+      footer={
+        <>
+          <Badge variant="outline">5 day streak</Badge>
+          <Badge variant="secondary">Study minutes</Badge>
+        </>
+      }
+    />
   )
 }
 
@@ -309,7 +380,7 @@ export default function HomepageHowItWorks() {
             >
               <Button
                 type="button"
-                size="icon"
+                size="icon-lg"
                 variant="outline"
                 aria-label="Previous"
                 disabled={!canScrollPrev}
@@ -319,7 +390,7 @@ export default function HomepageHowItWorks() {
               </Button>
               <Button
                 type="button"
-                size="icon"
+                size="icon-lg"
                 variant="outline"
                 aria-label="Next"
                 disabled={!canScrollNext}
@@ -331,73 +402,60 @@ export default function HomepageHowItWorks() {
           </div>
 
           <HowItWorksCarousel scrollerRef={scrollerRef}>
-            <Reveal amount={0.1} className="w-80 shrink-0 snap-start sm:w-96">
-              <div className="flex flex-col gap-3">
-                <CreateCourseVisual />
-                <div className="text-lg font-semibold">Create a course</div>
-                <div className="text-sm text-muted-foreground">
-                  Add what you&apos;re learning and keep resources in one place.
-                </div>
-              </div>
+            <Reveal amount={0.1} className={HOW_IT_WORKS_CARD_CLASS}>
+              <HowItWorksStep
+                visual={<CreateCourseVisual />}
+                title="Create a course"
+                description="Add what you&apos;re learning and keep resources in one place."
+              />
             </Reveal>
 
             <Reveal
               amount={0.1}
               delay={0.05}
-              className="w-80 shrink-0 snap-start sm:w-96"
+              className={HOW_IT_WORKS_CARD_CLASS}
             >
-              <div className="flex flex-col gap-3">
-                <CaptureVisual />
-                <div className="text-lg font-semibold">Capture notes</div>
-                <div className="text-sm text-muted-foreground">
-                  Q&amp;A and freeform notes with code snippets and
-                  understanding levels.
-                </div>
-              </div>
+              <HowItWorksStep
+                visual={<CaptureVisual />}
+                title="Capture notes"
+                description="Q&amp;A and freeform notes with code snippets and understanding levels."
+              />
             </Reveal>
 
             <Reveal
               amount={0.1}
               delay={0.1}
-              className="w-80 shrink-0 snap-start sm:w-96"
+              className={HOW_IT_WORKS_CARD_CLASS}
             >
-              <div className="flex flex-col gap-3">
-                <DailyLogVisual />
-                <div className="text-lg font-semibold">Log daily progress</div>
-                <div className="text-sm text-muted-foreground">
-                  Track study time and mood to build consistency.
-                </div>
-              </div>
+              <HowItWorksStep
+                visual={<DailyLogVisual />}
+                title="Log daily progress"
+                description="Track study time and mood to build consistency."
+              />
             </Reveal>
 
             <Reveal
               amount={0.1}
               delay={0.15}
-              className="w-80 shrink-0 snap-start sm:w-96"
+              className={HOW_IT_WORKS_CARD_CLASS}
             >
-              <div className="flex flex-col gap-3">
-                <ReviewVisual />
-                <div className="text-lg font-semibold">
-                  Start a review session
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Spaced repetition sessions built around your own notes.
-                </div>
-              </div>
+              <HowItWorksStep
+                visual={<ReviewVisual />}
+                title="Start a review session"
+                description="Spaced repetition sessions built around your own notes."
+              />
             </Reveal>
 
             <Reveal
               amount={0.1}
               delay={0.2}
-              className="w-80 shrink-0 snap-start sm:w-96"
+              className={HOW_IT_WORKS_CARD_CLASS}
             >
-              <div className="flex flex-col gap-3">
-                <TrackVisual />
-                <div className="text-lg font-semibold">Watch analytics</div>
-                <div className="text-sm text-muted-foreground">
-                  Watch your study time trend and keep improving.
-                </div>
-              </div>
+              <HowItWorksStep
+                visual={<TrackVisual />}
+                title="Watch analytics"
+                description="Watch your study time trend and keep improving."
+              />
             </Reveal>
           </HowItWorksCarousel>
         </div>

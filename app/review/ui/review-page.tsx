@@ -24,8 +24,14 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { toastManager } from "@/components/ui/toast"
+import {
+  FormSection,
+  FormSectionDescription,
+  FormSectionTitle,
+} from "@/components/ui/form"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
 import { deleteReviewSession, saveReviewSession } from "./review-actions"
 import {
   ReviewEmptyState,
@@ -166,12 +172,6 @@ export default function ReviewPage({
     [flaggedOnly, notesPool]
   )
 
-  const sessionsRef = React.useRef(sessions)
-
-  React.useEffect(() => {
-    sessionsRef.current = sessions
-  }, [sessions])
-
   async function onSaveSession({
     sessionName,
     data,
@@ -196,7 +196,7 @@ export default function ReviewPage({
       config,
     })
 
-    const prev = sessionsRef.current
+    const prev = sessions
     setSessions((items) => [optimistic, ...items])
     setView({ type: "list" })
 
@@ -224,7 +224,7 @@ export default function ReviewPage({
   async function onDeleteSession(id: string) {
     if (!user) return
 
-    const prev = sessionsRef.current
+    const prev = sessions
     setSessions((items) => items.filter((s) => s.id !== id))
 
     const res = await deleteReviewSession({ sessionId: id, userId: user.id })
@@ -404,7 +404,7 @@ export default function ReviewPage({
         onClick: () => setSetupOpen(true),
       }}
     >
-      <div className="sticky top-0 z-10 border-b bg-background">
+      <DashboardStickyHeader>
         <PageContainer>
           <div className="flex items-center justify-between py-4">
             <div className="text-lg font-medium">Review Sessions</div>
@@ -418,7 +418,7 @@ export default function ReviewPage({
             </Button>
           </div>
         </PageContainer>
-      </div>
+      </DashboardStickyHeader>
 
       <PageContainer>
         <div className="py-6">
@@ -426,6 +426,7 @@ export default function ReviewPage({
             <ReviewSummary
               data={view.data}
               courses={courses}
+              isMobile={isMobile}
               onSave={(sessionName) => {
                 void onSaveSession({
                   sessionName,
@@ -553,8 +554,11 @@ function SetupSheet({
           </SheetHeader>
           <SheetPanel className="px-4 pb-5">
             <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <div className="text-sm font-medium">Questions</div>
+              <FormSection>
+                <FormSectionTitle>Questions</FormSectionTitle>
+                <FormSectionDescription>
+                  Choose how many prompts to include in this session.
+                </FormSectionDescription>
                 <div className="grid grid-cols-4 gap-2">
                   <Button
                     variant={questionCountMode === "10" ? "secondary" : "ghost"}
@@ -610,29 +614,32 @@ function SetupSheet({
                     ) : null}
                   </div>
                 ) : null}
-              </div>
+              </FormSection>
 
-              <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="text-sm font-medium">Shuffle questions</div>
+              <FormSection>
+                <FormSectionTitle>Session options</FormSectionTitle>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="text-sm">Shuffle questions</div>
+                  </div>
+                  <Switch
+                    checked={shuffled}
+                    aria-label="Shuffle questions"
+                    onCheckedChange={(v) => onShuffledChange(Boolean(v))}
+                  />
                 </div>
-                <Switch
-                  checked={shuffled}
-                  aria-label="Shuffle questions"
-                  onCheckedChange={(v) => onShuffledChange(Boolean(v))}
-                />
-              </div>
 
-              <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="text-sm font-medium">Flagged notes only</div>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="text-sm">Flagged notes only</div>
+                  </div>
+                  <Switch
+                    checked={flaggedOnly}
+                    aria-label="Flagged notes only"
+                    onCheckedChange={(v) => onFlaggedOnlyChange(Boolean(v))}
+                  />
                 </div>
-                <Switch
-                  checked={flaggedOnly}
-                  aria-label="Flagged notes only"
-                  onCheckedChange={(v) => onFlaggedOnlyChange(Boolean(v))}
-                />
-              </div>
+              </FormSection>
 
               {flaggedOnly && availableCount < customCount ? (
                 <Card className="p-4">

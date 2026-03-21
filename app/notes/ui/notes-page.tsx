@@ -23,12 +23,19 @@ import {
   updateNote,
 } from "./notes-actions"
 import { NotesHeader } from "./notes-header"
-import { EmptyState, NoteCard, FilterSheet } from "./notes-components"
+import {
+  EmptyState,
+  ExportSheet,
+  NoteCard,
+  FilterSheet,
+} from "./notes-components"
 import {
   NoteViewerSheet,
   CodeViewerSheet,
   NoteEditorSheet,
 } from "./notes-sheets"
+import { exportNotesAsMarkdown } from "./notes-export"
+import { useExportPdf } from "./notes-pdf"
 
 export default function NotesPage({
   user,
@@ -119,6 +126,7 @@ export default function NotesPage({
 
     return { items: sorted, hasQa: listHasQa }
   }, [allNotes, courseFilter, flaggedOnly, sortKey, typeFilter])
+  const { exportPdf, exporting } = useExportPdf(filtered.items)
 
   const visibleNotes = React.useMemo(
     () =>
@@ -298,7 +306,6 @@ export default function NotesPage({
       isMobile={isMobile}
       courses={courses}
       filteredCount={filtered.items.length}
-      filteredNotes={filtered.items}
       hasQa={filtered.hasQa}
       filtersActive={filtersActive}
       typeFilter={typeFilter}
@@ -317,6 +324,9 @@ export default function NotesPage({
       onOpenMobileCourse={() => setMobileCourseSheetOpen(true)}
       onOpenMobileSort={() => setMobileSortSheetOpen(true)}
       onOpenMobileExport={() => setMobileExportSheetOpen(true)}
+      onExportPdf={() => void exportPdf()}
+      onExportMarkdown={() => exportNotesAsMarkdown(filtered.items)}
+      exporting={exporting}
     />
   )
 
@@ -426,16 +436,16 @@ export default function NotesPage({
         onValueChange={(v) => setSortKey(v as SortKey)}
       />
 
-      <FilterSheet
-        title="Export"
+      <ExportSheet
         open={mobileExportSheetOpen}
         onOpenChange={setMobileExportSheetOpen}
-        value="pdf"
-        options={[
-          { label: "Export as PDF", value: "pdf" },
-          { label: "Export as Markdown", value: "md" },
-        ]}
-        onValueChange={() => {
+        exporting={exporting}
+        onExportPdf={async () => {
+          await exportPdf()
+          setMobileExportSheetOpen(false)
+        }}
+        onExportMarkdown={() => {
+          exportNotesAsMarkdown(filtered.items)
           setMobileExportSheetOpen(false)
         }}
       />

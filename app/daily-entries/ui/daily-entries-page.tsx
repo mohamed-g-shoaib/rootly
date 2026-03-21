@@ -45,12 +45,6 @@ export default function DailyEntriesPage({
     () => initialEntries
   )
 
-  const entriesRef = React.useRef(entries)
-
-  React.useEffect(() => {
-    entriesRef.current = entries
-  }, [entries])
-
   const [fromDate, setFromDate] = React.useState("")
   const [toDate, setToDate] = React.useState("")
   const [moodFilter, setMoodFilter] = React.useState<MoodFilter>("all")
@@ -107,7 +101,7 @@ export default function DailyEntriesPage({
   async function onCreateEntry(draft: DailyEntry) {
     if (!user) return
 
-    if (entriesRef.current.some((e) => e.date === draft.date)) {
+    if (entries.some((e) => e.date === draft.date)) {
       toastManager.add({
         type: "error",
         title: "Could not create entry",
@@ -123,7 +117,7 @@ export default function DailyEntriesPage({
       updatedAt: new Date().toISOString(),
     }
 
-    const prev = entriesRef.current
+    const prev = entries
 
     setEntries((items) => [optimistic, ...items])
     setCreateOpen(false)
@@ -147,7 +141,7 @@ export default function DailyEntriesPage({
   async function onUpdateEntry(next: DailyEntry) {
     if (!user) return
 
-    const prev = entriesRef.current
+    const prev = entries
 
     setEntries((items) => items.map((e) => (e.id === next.id ? next : e)))
     setEditOpen(false)
@@ -173,7 +167,7 @@ export default function DailyEntriesPage({
   async function onDeleteEntry(id: string) {
     if (!user) return
 
-    const prev = entriesRef.current
+    const prev = entries
 
     setEntries((items) => items.filter((e) => e.id !== id))
     if (activeEntryId === id) setActiveEntryId(null)

@@ -18,6 +18,15 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
 import {
+  Sheet,
+  SheetClose,
+  SheetFooter,
+  SheetHeader,
+  SheetPanel,
+  SheetPopup,
+  SheetTitle,
+} from "@/components/ui/sheet"
+import {
   AlertDialog,
   AlertDialogClose,
   AlertDialogContent,
@@ -47,12 +56,14 @@ export type ReviewSummaryData = {
 export function ReviewSummary({
   data,
   courses,
+  isMobile,
   onSave,
   onDiscard,
   onClose,
 }: {
   data: ReviewSummaryData
   courses: ReviewCourse[]
+  isMobile: boolean
   onSave: (sessionName: string) => void
   onDiscard: () => void
   onClose?: () => void
@@ -87,6 +98,28 @@ export function ReviewSummary({
     }
     return { label: "Needs Study", badgeVariant: "destructive" as const }
   }, [data.accuracy])
+
+  function resetSaveDraft() {
+    setSaveOpen(false)
+    setName("")
+  }
+
+  function submitSave() {
+    if (!name.trim()) return
+    onSave(name.trim())
+    resetSaveDraft()
+  }
+
+  const saveFields = (
+    <div className="flex flex-col gap-3">
+      <div className="text-sm font-medium">Session name</div>
+      <Input
+        value={name}
+        placeholder="e.g. React Hooks Deep Dive"
+        onValueChange={(v) => setName(v)}
+      />
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-4 py-6">
@@ -222,45 +255,65 @@ export function ReviewSummary({
               </Button>
             </DiscardDialog>
 
-            <Popover open={saveOpen} onOpenChange={setSaveOpen}>
-              <PopoverTrigger render={<Button type="button" />}>
-                Save Session
-              </PopoverTrigger>
-              <PopoverPopup align="end" className="w-80">
-                <div className="flex flex-col gap-3">
-                  <div className="text-sm font-medium">Session name</div>
-                  <Input
-                    value={name}
-                    placeholder="e.g. React Hooks Deep Dive"
-                    onValueChange={(v) => setName(v)}
-                  />
-                  <div className="flex items-center justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={() => {
-                        setSaveOpen(false)
-                        setName("")
-                      }}
+            {isMobile ? (
+              <Sheet open={saveOpen} onOpenChange={setSaveOpen}>
+                <Button type="button" onClick={() => setSaveOpen(true)}>
+                  Save Session
+                </Button>
+                <SheetPopup
+                  side="bottom"
+                  variant="inset"
+                  showCloseButton={false}
+                >
+                  <SheetHeader>
+                    <SheetTitle>Save Session</SheetTitle>
+                  </SheetHeader>
+                  <SheetPanel className="px-4 pb-4">{saveFields}</SheetPanel>
+                  <SheetFooter>
+                    <SheetClose
+                      render={<Button variant="ghost" type="button" />}
+                      onClick={resetSaveDraft}
                     >
                       Cancel
-                    </Button>
+                    </SheetClose>
                     <Button
                       type="button"
-                      onClick={() => {
-                        if (!name.trim()) return
-                        onSave(name.trim())
-                        setSaveOpen(false)
-                        setName("")
-                      }}
+                      onClick={submitSave}
                       disabled={!name.trim()}
                     >
                       Save
                     </Button>
+                  </SheetFooter>
+                </SheetPopup>
+              </Sheet>
+            ) : (
+              <Popover open={saveOpen} onOpenChange={setSaveOpen}>
+                <PopoverTrigger render={<Button type="button" />}>
+                  Save Session
+                </PopoverTrigger>
+                <PopoverPopup align="end" className="w-80">
+                  <div className="flex flex-col gap-3">
+                    {saveFields}
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        onClick={resetSaveDraft}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={submitSave}
+                        disabled={!name.trim()}
+                      >
+                        Save
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </PopoverPopup>
-            </Popover>
+                </PopoverPopup>
+              </Popover>
+            )}
           </>
         )}
       </div>

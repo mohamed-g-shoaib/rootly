@@ -15,7 +15,12 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Button } from "@/components/ui/button"
-import { Form } from "@/components/ui/form"
+import {
+  Form,
+  FormSection,
+  FormSectionDescription,
+  FormSectionTitle,
+} from "@/components/ui/form"
 import {
   Combobox,
   ComboboxEmpty,
@@ -38,6 +43,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { SelectButton } from "@/components/ui/select"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Label } from "@/components/ui/label"
 
 import { CodeBlock } from "@/components/ui/code-block"
 
@@ -50,6 +56,17 @@ import type { Note, NoteType } from "./notes-model"
 import { toCodeBadgeLabel } from "./notes-model"
 
 type CodeLanguageOption = { value: string; label: string }
+
+type NoteEditorSheetProps = {
+  mode: "create" | "edit"
+  note: Note | null
+  courses: { id: string; title: string }[]
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  isMobile: boolean
+  lockedCourse?: { id: string; title: string }
+  onSave?: (note: Note) => void
+}
 
 const CODE_LANGUAGE_OPTIONS: CodeLanguageOption[] = [
   { value: "tsx", label: "TypeScript / TSX" },
@@ -190,16 +207,36 @@ export function NoteEditorSheet({
   isMobile,
   lockedCourse,
   onSave,
-}: {
-  mode: "create" | "edit"
-  note: Note | null
-  courses: { id: string; title: string }[]
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  isMobile: boolean
-  lockedCourse?: { id: string; title: string }
-  onSave?: (note: Note) => void
-}) {
+}: NoteEditorSheetProps) {
+  const editorKey =
+    mode === "edit" ? `edit-${note?.id ?? "missing"}` : "create"
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      {open ? (
+        <NoteEditorSheetBody
+          key={`${editorKey}-${lockedCourse?.id ?? "unlocked"}`}
+          mode={mode}
+          note={note}
+          courses={courses}
+          onOpenChange={onOpenChange}
+          isMobile={isMobile}
+          lockedCourse={lockedCourse}
+          onSave={onSave}
+        />
+      ) : null}
+    </Sheet>
+  )
+}
+
+function NoteEditorSheetBody({
+  mode,
+  note,
+  courses,
+  isMobile,
+  lockedCourse,
+  onSave,
+}: Omit<NoteEditorSheetProps, "open">) {
   const [type, setType] = React.useState<NoteType | null>(
     mode === "edit" && note ? note.type : null
   )
@@ -216,13 +253,23 @@ export function NoteEditorSheet({
     1 | 2 | 3 | null
   >(mode === "edit" ? (note?.understandingLevel ?? null) : null)
 
-  const [codeEnabled, setCodeEnabled] = React.useState(false)
-  const [codeLanguage, setCodeLanguage] = React.useState("tsx")
-  const [codeValue, setCodeValue] = React.useState("")
+  const [codeEnabled, setCodeEnabled] = React.useState(
+    mode === "edit" ? Boolean(note?.codeSnippet ?? "") : false
+  )
+  const [codeLanguage, setCodeLanguage] = React.useState(
+    mode === "edit" && note?.codeLanguage?.trim() ? note.codeLanguage : "tsx"
+  )
+  const [codeValue, setCodeValue] = React.useState(
+    mode === "edit" ? (note?.codeSnippet ?? "") : ""
+  )
 
-  const [question, setQuestion] = React.useState("")
-  const [answer, setAnswer] = React.useState("")
-  const [body, setBody] = React.useState("")
+  const [question, setQuestion] = React.useState(
+    mode === "edit" ? (note?.question ?? "") : ""
+  )
+  const [answer, setAnswer] = React.useState(
+    mode === "edit" ? (note?.answer ?? "") : ""
+  )
+  const [body, setBody] = React.useState(mode === "edit" ? (note?.body ?? "") : "")
 
   const courseItems = React.useMemo<{ value: string; label: string }[]>(
     () => [
@@ -290,37 +337,7 @@ export function NoteEditorSheet({
     onSave(next)
   }
 
-  React.useEffect(() => {
-    if (mode === "edit" && note) setType(note.type)
-    if (mode === "create") setType(null)
-
-    setCourseId(lockedCourse ? lockedCourse.id : (note?.courseId ?? "none"))
-
-    setFlagged(mode === "edit" ? (note?.flag ?? false) : false)
-    setUnderstandingLevel(
-      mode === "edit" ? (note?.understandingLevel ?? null) : null
-    )
-
-    setQuestion(mode === "edit" ? (note?.question ?? "") : "")
-    setAnswer(mode === "edit" ? (note?.answer ?? "") : "")
-    setBody(mode === "edit" ? (note?.body ?? "") : "")
-
-    if (mode === "edit" && note) {
-      const snippet = note.codeSnippet ?? ""
-      setCodeEnabled(Boolean(snippet))
-      setCodeLanguage(note.codeLanguage?.trim() ? note.codeLanguage : "tsx")
-      setCodeValue(snippet)
-    }
-
-    if (mode === "create") {
-      setCodeEnabled(false)
-      setCodeLanguage("tsx")
-      setCodeValue("")
-    }
-  }, [lockedCourse, mode, note, note?.courseId])
-
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetPopup side={isMobile ? "bottom" : "right"} variant="inset">
         <Form className="h-full gap-0">
           <SheetHeader>
@@ -329,10 +346,10 @@ export function NoteEditorSheet({
             </SheetTitle>
           </SheetHeader>
           <SheetPanel className="px-4 pb-5">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               {mode === "create" ? (
-                <div className="flex flex-col gap-2">
-                  <div className="text-sm text-muted-foreground">Note type</div>
+                <FormSection>
+                  <FormSectionTitle>Note type</FormSectionTitle>
                   <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant={type === "qa" ? "secondary" : "outline"}
@@ -349,7 +366,7 @@ export function NoteEditorSheet({
                       Freeform
                     </Button>
                   </div>
-                </div>
+                </FormSection>
               ) : (
                 <div className="text-sm text-muted-foreground">
                   Type: {note?.type === "qa" ? "Q&A" : "Freeform"}
@@ -358,10 +375,8 @@ export function NoteEditorSheet({
 
               {type ? (
                 <>
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      Course (optional)
-                    </div>
+                  <FormSection>
+                    <Label>Course (optional)</Label>
                     {lockedCourse ? (
                       <div className="pt-1 text-sm">{lockedCourse.title}</div>
                     ) : (
@@ -387,36 +402,30 @@ export function NoteEditorSheet({
                             )}
                           </ComboboxList>
                         </ComboboxPopup>
-                      </Combobox>
-                    )}
-                  </div>
+                        </Combobox>
+                      )}
+                  </FormSection>
 
                   {type === "qa" ? (
                     <>
-                      <div>
-                        <div className="text-sm text-muted-foreground">
-                          Question
-                        </div>
+                      <FormSection>
+                        <Label>Question</Label>
                         <Textarea
                           placeholder="What is the question?"
                           value={question}
                           onChange={(e) => setQuestion(e.target.value)}
                         />
-                      </div>
-                      <div>
-                        <div className="text-sm text-muted-foreground">
-                          Answer
-                        </div>
+                      </FormSection>
+                      <FormSection>
+                        <Label>Answer</Label>
                         <Textarea
                           placeholder="Write the answer..."
                           value={answer}
                           onChange={(e) => setAnswer(e.target.value)}
                         />
-                      </div>
-                      <div>
-                        <div className="text-sm text-muted-foreground">
-                          Understanding Level
-                        </div>
+                      </FormSection>
+                      <FormSection>
+                        <Label>Understanding level</Label>
                         <div className="grid grid-cols-3 gap-2">
                           <Button
                             type="button"
@@ -476,52 +485,60 @@ export function NoteEditorSheet({
                             Clear
                           </Button>
                         </div>
-                      </div>
+                      </FormSection>
                     </>
                   ) : (
-                    <div>
-                      <div className="text-sm text-muted-foreground">Note</div>
+                    <FormSection>
+                      <Label>Note</Label>
                       <Textarea
                         placeholder="Write your note..."
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                         className="min-h-40"
                       />
-                    </div>
+                    </FormSection>
                   )}
 
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <Button
-                      type="button"
-                      variant={flagged ? "secondary" : "outline"}
-                      className="w-full justify-start gap-2"
-                      onClick={() => setFlagged((v) => !v)}
-                    >
-                      <HugeiconsIcon
-                        icon={Flag01Icon}
-                        size={18}
-                        color={flagged ? "var(--destructive)" : "currentColor"}
-                      />
-                      Flag for review
-                    </Button>
+                  <FormSection>
+                    <FormSectionTitle>Options</FormSectionTitle>
+                    <FormSectionDescription>
+                      Mark notes for future review or attach a code example when
+                      it helps explain the idea.
+                    </FormSectionDescription>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <Button
+                        type="button"
+                        variant={flagged ? "secondary" : "outline"}
+                        className="w-full justify-start gap-2"
+                        onClick={() => setFlagged((v) => !v)}
+                      >
+                        <HugeiconsIcon
+                          icon={Flag01Icon}
+                          size={18}
+                          color={flagged ? "var(--destructive)" : "currentColor"}
+                        />
+                        Flag for review
+                      </Button>
 
-                    <Button
-                      type="button"
-                      variant={codeEnabled ? "secondary" : "outline"}
-                      className="w-full justify-start gap-2"
-                      onClick={() => setCodeEnabled((v) => !v)}
-                    >
-                      <HugeiconsIcon
-                        icon={CodeIcon}
-                        size={18}
-                        color={codeEnabled ? "var(--info)" : "currentColor"}
-                      />
-                      Add code snippet
-                    </Button>
-                  </div>
+                      <Button
+                        type="button"
+                        variant={codeEnabled ? "secondary" : "outline"}
+                        className="w-full justify-start gap-2"
+                        onClick={() => setCodeEnabled((v) => !v)}
+                      >
+                        <HugeiconsIcon
+                          icon={CodeIcon}
+                          size={18}
+                          color={codeEnabled ? "var(--info)" : "currentColor"}
+                        />
+                        Add code snippet
+                      </Button>
+                    </div>
+                  </FormSection>
 
                   {codeEnabled ? (
-                    <div className="flex flex-col gap-2">
+                    <FormSection>
+                      <Label>Code snippet</Label>
                       <Combobox
                         items={[...CODE_LANGUAGE_OPTIONS]}
                         value={
@@ -567,7 +584,7 @@ export function NoteEditorSheet({
                         onChange={setCodeValue}
                         className="min-h-40"
                       />
-                    </div>
+                    </FormSection>
                   ) : null}
                 </>
               ) : null}
@@ -581,6 +598,5 @@ export function NoteEditorSheet({
           </SheetFooter>
         </Form>
       </SheetPopup>
-    </Sheet>
   )
 }

@@ -8,10 +8,13 @@ import { Suspense, useMemo, useState, useId } from "react"
 import { useIsMobile } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
 
+import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs"
 import { PageContainer } from "@/components/ui/page-container"
 import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
 
 type RangeKey = "7" | "30" | "90"
 
@@ -69,15 +72,8 @@ export default function OverviewPage({
   reviewAccuracyTrend: ReviewAccuracyDatum[]
 }) {
   const isMobile = useIsMobile()
-  const [mounted, setMounted] = React.useState(false)
   const id = useId()
   const [range, setRange] = useState<RangeKey>("7")
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const effectiveIsMobile = mounted ? isMobile : false
 
   const days = range === "7" ? 7 : range === "30" ? 30 : 90
 
@@ -103,20 +99,21 @@ export default function OverviewPage({
   return (
     <DashboardShell user={user}>
       <PageContainer>
-        {effectiveIsMobile ? (
-          <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pt-3 pb-3 lg:hidden">
-            <RangeToggle
-              id={`${id}-mobile`}
-              range={range}
-              onRangeChange={setRange}
-              fullWidth
-            />
-          </div>
+        {isMobile ? (
+          <DashboardStickyHeader className="lg:hidden">
+            <div className="-mx-4 px-4 pt-3 pb-3">
+              <RangeToggle
+                id={`${id}-mobile`}
+                range={range}
+                onRangeChange={setRange}
+                fullWidth
+              />
+            </div>
+          </DashboardStickyHeader>
         ) : null}
 
         <section className="pt-4 lg:pt-6">
           <HeroBlock
-            isMobile={effectiveIsMobile}
             streakDays={streakDays}
             todayLabel={todayLabel}
             todayStudyMinutes={todayStudyMinutes}
@@ -126,7 +123,7 @@ export default function OverviewPage({
           />
         </section>
 
-        {!effectiveIsMobile ? (
+        {!isMobile ? (
           <section className="pt-6">
             <RangeToggle
               id={`${id}-desktop`}
@@ -137,7 +134,10 @@ export default function OverviewPage({
         ) : null}
 
         <section className="pt-6">
-          <ChartFrame title="Daily Study Time">
+          <ChartFrame
+            title="Daily Study Time"
+            description="Minutes logged across your selected range."
+          >
             <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
               <DailyStudyTimeChart data={slicedStudy} />
             </Suspense>
@@ -151,7 +151,10 @@ export default function OverviewPage({
 
         <section className="pt-6">
           <div className="grid gap-6 lg:grid-cols-2">
-            <ChartFrame title="Daily Mood">
+            <ChartFrame
+              title="Daily Mood"
+              description="A quick read on how your study sessions have felt."
+            >
               <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
                 <DailyMoodChart data={slicedMood} />
               </Suspense>
@@ -162,7 +165,10 @@ export default function OverviewPage({
               ) : null}
             </ChartFrame>
 
-            <ChartFrame title="Understanding Progress">
+            <ChartFrame
+              title="Understanding Progress"
+              description="Average understanding level across your Q&A notes."
+            >
               <Suspense fallback={<ChartSkeleton heightClassName="h-48" />}>
                 <UnderstandingProgressChart data={slicedUnderstanding} />
               </Suspense>
@@ -176,7 +182,10 @@ export default function OverviewPage({
         </section>
 
         <section className="pt-6 pb-6">
-          <ChartFrame title="Course Mastery">
+          <ChartFrame
+            title="Course Mastery"
+            description="Which courses need more review, and which ones feel settled."
+          >
             <Suspense fallback={<ChartSkeleton heightClassName="h-64" />}>
               <CourseMasteryList
                 rows={courseMastery}
@@ -191,7 +200,6 @@ export default function OverviewPage({
 }
 
 function HeroBlock({
-  isMobile,
   streakDays,
   todayLabel,
   todayStudyMinutes,
@@ -199,7 +207,6 @@ function HeroBlock({
   totalNotes,
   avgUnderstanding,
 }: {
-  isMobile: boolean
   streakDays: number
   todayLabel: string
   todayStudyMinutes: number
@@ -208,65 +215,47 @@ function HeroBlock({
   avgUnderstanding: number
 }) {
   return (
-    <div className={cn("grid gap-6", !isMobile && "lg:grid-cols-3")}>
-      <div className={cn("lg:col-span-2", "flex flex-col gap-2")}>
-        <div className="text-sm text-muted-foreground">
-          Today&apos;s Study Time
-        </div>
-        <div className="text-4xl leading-none font-semibold">
-          {todayStudyMinutes} min
-        </div>
-        <div className="text-sm text-muted-foreground">{todayLabel}</div>
-      </div>
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <Card className="overflow-hidden">
+        <div className="flex h-full flex-col gap-6 p-6">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline">Overview</Badge>
+            <Badge variant="secondary">{streakDays} day streak</Badge>
+          </div>
 
-      <div className={cn("flex flex-col gap-3", isMobile && "lg:hidden")}>
-        {isMobile ? (
-          <>
-            <div className="grid grid-cols-3 gap-3">
-              <SummaryCell label="Total Courses" value={String(totalCourses)} />
-              <SummaryCell label="Total Notes" value={String(totalNotes)} />
-              <SummaryCell
-                label="Avg. Understanding"
-                value={`${avgUnderstanding.toFixed(1)} / 3`}
-              />
+          <div className="flex flex-col gap-2">
+            <div className="text-sm text-muted-foreground">{todayLabel}</div>
+            <div className="text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl">
+              {formatMinutesLabel(todayStudyMinutes)}
             </div>
-            <div className="pt-3 text-sm text-muted-foreground">
-              <span aria-hidden="true">🔥</span> {streakDays} day streak
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col gap-3">
-            <SummaryRow label="Total Courses" value={String(totalCourses)} />
-            <SummaryRow label="Total Notes" value={String(totalNotes)} />
-            <SummaryRow
-              label="Avg. Understanding"
-              value={`${avgUnderstanding.toFixed(1)} / 3`}
-            />
-            <div className="pt-1 text-sm text-muted-foreground">
-              <span aria-hidden="true">🔥</span> {streakDays} day streak
+            <div className="max-w-xl text-sm text-muted-foreground text-pretty">
+              A steady snapshot of your current learning rhythm, so you can see
+              momentum instead of guessing at it.
             </div>
           </div>
-        )}
+        </div>
+      </Card>
+
+      <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+        <SummaryStatCard label="Total Courses" value={String(totalCourses)} />
+        <SummaryStatCard label="Total Notes" value={String(totalNotes)} />
+        <SummaryStatCard
+          label="Avg. Understanding"
+          value={`${avgUnderstanding.toFixed(1)} / 3`}
+        />
       </div>
     </div>
   )
 }
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
+function SummaryStatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4">
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="font-semibold">{value}</div>
-    </div>
-  )
-}
-
-function SummaryCell({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="font-semibold">{value}</div>
-    </div>
+    <Card>
+      <div className="flex flex-col gap-2 p-5">
+        <div className="text-sm text-muted-foreground">{label}</div>
+        <div className="font-semibold tabular-nums">{value}</div>
+      </div>
+    </Card>
   )
 }
 
@@ -305,19 +294,36 @@ function RangeToggle({
 
 function ChartFrame({
   title,
+  description,
   children,
 }: {
   title: string
+  description: string
   children: React.ReactNode
 }) {
   return (
-    <div>
-      <div className="font-medium">{title}</div>
-      <div className="pt-3">{children}</div>
-    </div>
+    <Card>
+      <div className="flex flex-col gap-4 p-5">
+        <div className="flex flex-col gap-1">
+          <div className="font-medium">{title}</div>
+          <div className="text-sm text-muted-foreground text-pretty">
+            {description}
+          </div>
+        </div>
+        <div>{children}</div>
+      </div>
+    </Card>
   )
 }
 
 function ChartSkeleton({ heightClassName }: { heightClassName: string }) {
   return <Skeleton className={cn("w-full", heightClassName)} />
+}
+
+function formatMinutesLabel(minutes: number) {
+  if (minutes < 60) return `${minutes} min`
+  const hours = Math.floor(minutes / 60)
+  const remainingMinutes = minutes % 60
+  if (remainingMinutes === 0) return `${hours}h`
+  return `${hours}h ${remainingMinutes}m`
 }

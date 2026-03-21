@@ -1,6 +1,4 @@
 "use client"
-
-import { useMemo } from "react"
 import dynamic from "next/dynamic"
 
 type Datum = {
@@ -68,11 +66,9 @@ const Chart = dynamic(
 )
 
 export default function DailyStudyTimeChart({ data }: { data: Datum[] }) {
-  const chartData = useMemo(() => data, [data])
-
   return (
     <div className="h-56 w-full">
-      <Chart chartData={chartData} />
+      <Chart chartData={data} />
     </div>
   )
 }

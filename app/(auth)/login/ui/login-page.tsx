@@ -137,7 +137,17 @@ export default function LoginPageUI() {
 
         <p className="max-w-xs text-center text-xs text-muted-foreground text-pretty">
           By signing in, you agree to our{" "}
-          <span className="font-medium">Terms and Privacy Policy</span>.
+          <Link href="/terms" className="font-medium underline underline-offset-4">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            className="font-medium underline underline-offset-4"
+          >
+            Privacy Policy
+          </Link>
+          .
         </p>
       </Card>
     </div>

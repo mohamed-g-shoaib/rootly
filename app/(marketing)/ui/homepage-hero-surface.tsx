@@ -54,10 +54,75 @@ function StatCard({
   )
 }
 
+function MobileSurfaceSection({
+  badge,
+  body,
+  children,
+  title,
+}: {
+  badge: string
+  body: string
+  children?: React.ReactNode
+  title: string
+}) {
+  return (
+    <div className="rounded-xl border bg-muted/35 p-3">
+      <div className="flex flex-col gap-2">
+        <Badge variant="outline" className="w-fit">
+          {badge}
+        </Badge>
+        <div className="text-sm font-medium text-balance">{title}</div>
+        <div className="text-sm text-muted-foreground text-pretty">{body}</div>
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export function HomepageHeroSurface() {
   return (
-    <Card className="overflow-hidden">
-      <CardPanel className="grid gap-4 p-3 sm:p-4 lg:grid-cols-2 lg:p-6">
+    <>
+      <Card className="overflow-hidden lg:hidden">
+        <CardPanel className="flex flex-col gap-3 p-3">
+          <MobileSurfaceSection
+            badge="Before Rootly"
+            title="Learning happens in fragments."
+            body="Tabs, tutorials, and loose notes split the context you need."
+          >
+            <div className="flex flex-wrap gap-2 pt-1">
+              {LEARNING_INPUTS.slice(0, 3).map((item) => (
+                <Badge key={item} variant="outline">
+                  {item}
+                </Badge>
+              ))}
+            </div>
+          </MobileSurfaceSection>
+
+          <MobileSurfaceSection
+            badge="With Rootly"
+            title="One calm system for learning on purpose."
+            body="Notes, progress, and review stay connected, so your next session starts warm."
+          >
+            <div className="rounded-xl border bg-background/80 px-3 py-2">
+              <div className="text-xs text-muted-foreground">
+                Advanced React Patterns
+              </div>
+              <div className="pt-1 text-sm font-medium text-balance">
+                What problem does <code>useMemo</code> actually solve?
+              </div>
+            </div>
+          </MobileSurfaceSection>
+
+          <div className="grid grid-cols-2 gap-2">
+            {SURFACE_STATS.slice(0, 2).map((item) => (
+              <StatCard key={item.label} label={item.label} value={item.value} />
+            ))}
+          </div>
+        </CardPanel>
+      </Card>
+
+      <Card className="hidden overflow-hidden lg:flex">
+        <CardPanel className="grid gap-4 p-4 lg:grid-cols-2 lg:p-6">
         <Card className="bg-muted/35">
           <CardHeader className="border-b bg-muted/40">
             <Badge variant="outline" className="w-fit">
@@ -134,7 +199,8 @@ export function HomepageHeroSurface() {
             </div>
           </CardPanel>
         </Card>
-      </CardPanel>
-    </Card>
+        </CardPanel>
+      </Card>
+    </>
   )
 }

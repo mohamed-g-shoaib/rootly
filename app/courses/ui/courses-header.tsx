@@ -8,6 +8,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@/lib/utils"
 
 import { PageContainer } from "@/components/ui/page-container"
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
+import { DashboardMobileActionRow } from "@/app/ui/dashboard-mobile-action-row"
 import { Button } from "@/components/ui/button"
 import {
   Combobox,
@@ -72,7 +74,7 @@ export function CoursesHeader({
   }, [sortKey])
 
   return (
-    <div className="sticky top-0 z-10 border-b bg-background">
+    <DashboardStickyHeader>
       <PageContainer>
         {!isMobile ? (
           <div className="flex items-center gap-3 py-4">
@@ -155,7 +157,7 @@ export function CoursesHeader({
             </div>
 
             <div className="pt-3">
-              <div className="flex flex-wrap justify-center gap-2">
+              <DashboardMobileActionRow>
                 <Button
                   variant="outline"
                   className={cn(topicFilter !== "all" && "bg-muted")}
@@ -180,11 +182,11 @@ export function CoursesHeader({
                     Clear
                   </Button>
                 ) : null}
-              </div>
+              </DashboardMobileActionRow>
             </div>
           </div>
         )}
       </PageContainer>
-    </div>
+    </DashboardStickyHeader>
   )
 }

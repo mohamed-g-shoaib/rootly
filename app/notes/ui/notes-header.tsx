@@ -18,6 +18,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@/lib/utils"
 
 import { PageContainer } from "@/components/ui/page-container"
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
+import { DashboardMobileActionRow } from "@/app/ui/dashboard-mobile-action-row"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -40,15 +42,11 @@ import {
   SelectTrigger,
 } from "@/components/ui/select"
 
-import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
-import { exportNotesAsMarkdown } from "./notes-export"
-import { useExportPdf } from "./notes-pdf"
-
+import type { CourseFilter, SortKey, TypeFilter } from "./notes-model"
 export function NotesHeader({
   isMobile,
   courses,
   filteredCount,
-  filteredNotes,
   hasQa,
   filtersActive,
   typeFilter,
@@ -67,11 +65,13 @@ export function NotesHeader({
   onOpenMobileCourse,
   onOpenMobileSort,
   onOpenMobileExport,
+  onExportPdf,
+  onExportMarkdown,
+  exporting,
 }: {
   isMobile: boolean
   courses: { id: string; title: string }[]
   filteredCount: number
-  filteredNotes: Note[]
   hasQa: boolean
   filtersActive: boolean
   typeFilter: TypeFilter
@@ -90,6 +90,9 @@ export function NotesHeader({
   onOpenMobileCourse: () => void
   onOpenMobileSort: () => void
   onOpenMobileExport: () => void
+  onExportPdf: () => void
+  onExportMarkdown: () => void
+  exporting: boolean
 }) {
   const typeItems = React.useMemo<{ value: TypeFilter; label: string }[]>(
     () => [
@@ -136,10 +139,8 @@ export function NotesHeader({
     }
   }, [sortKey])
 
-  const { exportPdf, exporting } = useExportPdf(filteredNotes)
-
   return (
-    <div className="sticky top-0 z-10 border-b bg-background">
+    <DashboardStickyHeader>
       <PageContainer>
         {!isMobile ? (
           <div className="flex items-center gap-3 py-4">
@@ -239,7 +240,7 @@ export function NotesHeader({
                     <Button
                       variant="outline"
                       className="gap-2"
-                      onClick={() => void exportPdf()}
+                      onClick={onExportPdf}
                       disabled={exporting}
                     >
                       <HugeiconsIcon
@@ -252,7 +253,7 @@ export function NotesHeader({
                     <Button
                       variant="outline"
                       className="gap-2"
-                      onClick={() => exportNotesAsMarkdown(filteredNotes)}
+                      onClick={onExportMarkdown}
                     >
                       <HugeiconsIcon icon={TextSquareIcon} size={18} />
                       Export as Markdown
@@ -358,7 +359,7 @@ export function NotesHeader({
             </div>
 
             <div className="pt-3">
-              <div className="flex flex-wrap justify-center gap-2">
+              <DashboardMobileActionRow>
                 <Button
                   variant="outline"
                   className={cn(typeFilter !== "all" && "bg-muted")}
@@ -399,11 +400,11 @@ export function NotesHeader({
                     Clear
                   </Button>
                 ) : null}
-              </div>
+              </DashboardMobileActionRow>
             </div>
           </div>
         )}
       </PageContainer>
-    </div>
+    </DashboardStickyHeader>
   )
 }
