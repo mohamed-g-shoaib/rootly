@@ -59,7 +59,6 @@ import {
 } from "@/components/ui/progress"
 import { Slider } from "@/components/ui/slider"
 
-import { useReducedMotion } from "motion/react"
 import type { Course } from "./courses-model"
 import { isValidUrl } from "./courses-model"
 
@@ -95,10 +94,6 @@ export function CourseEditorSheet({
 
   const isMobile = breakpoint === "mobile"
   const side = isMobile ? "bottom" : "right"
-  const shouldReduceMotion = useReducedMotion()
-
-  const _initial = shouldReduceMotion ? undefined : { opacity: 0, y: 10 }
-  const _animate = shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
 
   React.useEffect(() => {
     if (!open) return

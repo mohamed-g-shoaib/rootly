@@ -133,7 +133,7 @@ export function NoteCard({
   onViewCode,
   onDelete,
   readOnly = false,
-  shouldReduceMotion = false,
+  canAnimate = false,
 }: {
   note: Note
   now: Date
@@ -147,13 +147,13 @@ export function NoteCard({
   onViewCode: () => void
   onDelete: () => void
   readOnly?: boolean
-  shouldReduceMotion?: boolean
+  canAnimate?: boolean
 }) {
   const isQa = note.type === "qa"
   const showAnswer = overrideShow ?? globalShowAnswers
 
-  const _initial = shouldReduceMotion ? undefined : { opacity: 0, y: 10 }
-  const _animate = shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+  const _initial = canAnimate ? { opacity: 0, y: 10 } : undefined
+  const _animate = canAnimate ? { opacity: 1, y: 0 } : undefined
 
   return (
     <motion.div

@@ -6,6 +6,7 @@ import * as React from "react"
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { useCanAnimate } from "@/hooks/use-can-animate"
 import { useIsMobile } from "@/hooks/use-media-query"
 
 import { DashboardShell } from "@/app/ui/dashboard-shell"
@@ -13,7 +14,6 @@ import { PageContainer } from "@/components/ui/page-container"
 import { toastManager } from "@/components/ui/toast"
 
 import { Spinner } from "@/components/ui/spinner"
-import { useReducedMotion } from "motion/react"
 
 import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
 import {
@@ -40,7 +40,7 @@ export default function NotesPage({
   initialCourses: { id: string; title: string }[]
 }) {
   const isMobile = useIsMobile()
-  const shouldReduceMotion = useReducedMotion()
+  const canAnimate = useCanAnimate()
 
   const [courses] = React.useState(() => initialCourses)
   const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
@@ -354,7 +354,7 @@ export default function NotesPage({
                   note={note}
                   now={now}
                   isMobile={isMobile}
-                  shouldReduceMotion={shouldReduceMotion ?? undefined}
+                  canAnimate={canAnimate}
                   globalShowAnswers={globalShowAnswers}
                   overrideShow={answerOverrides[note.id]}
                   onOverrideChange={(value) =>

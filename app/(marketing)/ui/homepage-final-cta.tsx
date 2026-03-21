@@ -1,26 +1,15 @@
 "use client"
 
-import * as React from "react"
-import { motion, useReducedMotion } from "motion/react"
-
 import { AuthAwareCta } from "./auth-aware-cta"
+import { Reveal } from "./reveal"
 import { Card } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-container"
 
-const easeOut = [0.32, 0.72, 0, 1] as const
-
 export default function HomepageFinalCta() {
-  const shouldReduceMotion = useReducedMotion()
-
   return (
     <section className="pt-14">
       <PageContainer>
-        <motion.div
-          initial={shouldReduceMotion ? undefined : { opacity: 0, y: 16 }}
-          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={{ duration: 0.3, ease: easeOut }}
-        >
+        <Reveal y={16}>
           <Card className="py-14">
             <div className="flex flex-col items-center gap-4 px-6 text-center">
               <div className="text-3xl font-semibold">
@@ -37,7 +26,7 @@ export default function HomepageFinalCta() {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </Reveal>
       </PageContainer>
     </section>
   )

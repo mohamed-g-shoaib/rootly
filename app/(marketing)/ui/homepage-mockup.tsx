@@ -2,8 +2,6 @@
 
 import * as React from "react"
 
-import { motion, useReducedMotion } from "motion/react"
-
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-container"
@@ -11,8 +9,7 @@ import { PageContainer } from "@/components/ui/page-container"
 import { DemoStoreProvider } from "./mock-store"
 import { MockNotesPage } from "./mock-notes-page"
 import { MockSheetPortalProvider } from "./mock-sheet"
-
-const easeOut = [0.32, 0.72, 0, 1] as const
+import { Reveal } from "./reveal"
 
 function useBreakpoint(): "mobile" | "tablet" | "desktop" {
   const [breakpoint, setBreakpoint] = React.useState<
@@ -56,29 +53,15 @@ export default function HomepageMockup() {
   const [createOpen, setCreateOpen] = React.useState(false)
   const url = React.useMemo(() => `rootly.app/notes`, [])
 
-  const shouldReduceMotion = useReducedMotion()
-
   return (
     <section id="mockup" className="pt-14">
       <PageContainer>
         <div className="flex flex-col items-center gap-4">
-          <motion.div
-            initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.3, ease: easeOut }}
-            className="text-sm text-muted-foreground"
-          >
+          <Reveal className="text-sm text-muted-foreground">
             Try it — no account needed.
-          </motion.div>
+          </Reveal>
 
-          <motion.div
-            initial={shouldReduceMotion ? undefined : { opacity: 0, y: 20 }}
-            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.3, ease: easeOut }}
-            className="w-full"
-          >
+          <Reveal y={20} amount={0.15} className="w-full">
             <Card className="w-full overflow-hidden">
               <div className="hidden items-center justify-between gap-3 border-b bg-muted/40 px-4 py-2 sm:flex">
                 <div className="flex items-center gap-2">
@@ -122,7 +105,7 @@ export default function HomepageMockup() {
                 </div>
               </DemoStoreProvider>
             </Card>
-          </motion.div>
+          </Reveal>
         </div>
       </PageContainer>
     </section>

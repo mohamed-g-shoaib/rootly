@@ -12,9 +12,7 @@ import {
   ViewOffIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { motion } from "motion/react"
 import dynamic from "next/dynamic"
-import { useReducedMotion } from "motion/react"
 
 import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
@@ -34,6 +32,7 @@ import {
   EmojioneV1SlightlySmilingFace,
   EmojioneV1WearyFace,
 } from "@/app/daily-entries/ui/daily-entries-emojis"
+import { Reveal } from "./reveal"
 
 function useIsHoverDesktop() {
   const [value, setValue] = React.useState(false)
@@ -46,8 +45,6 @@ function useIsHoverDesktop() {
   }, [])
   return value
 }
-
-const easeOut = [0.32, 0.72, 0, 1] as const
 
 const TRACK_DATA = [
   { day: "Mon", minutes: 42 },
@@ -409,43 +406,25 @@ function HowItWorksCarousel({
 export default function HomepageHowItWorks() {
   const { scrollerRef, canScrollPrev, canScrollNext, scrollPrev, scrollNext } =
     useCarouselControls()
-  const shouldReduceMotion = useReducedMotion()
 
   return (
     <section className="pt-14">
       <PageContainer>
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-2">
-            <motion.h2
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.3, ease: easeOut }}
-              className="text-2xl font-semibold"
-            >
+            <Reveal as="h2" className="text-2xl font-semibold">
               How it works
-            </motion.h2>
-            <motion.p
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.3, ease: easeOut, delay: 0.05 }}
+            </Reveal>
+            <Reveal
+              as="p"
+              delay={0.05}
               className="text-sm text-muted-foreground"
             >
               Set up a course, capture notes, log daily progress, review what
               you learned, and watch your stats.
-            </motion.p>
-            <motion.div
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.3, ease: easeOut, delay: 0.1 }}
+            </Reveal>
+            <Reveal
+              delay={0.1}
               className="flex items-center gap-2 pt-2"
             >
               <Button
@@ -468,19 +447,11 @@ export default function HomepageHowItWorks() {
               >
                 <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
               </Button>
-            </motion.div>
+            </Reveal>
           </div>
 
           <HowItWorksCarousel scrollerRef={scrollerRef}>
-            <motion.div
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.3, ease: easeOut, delay: 0 }}
-              className="w-80 shrink-0 snap-start sm:w-96"
-            >
+            <Reveal amount={0.1} className="w-80 shrink-0 snap-start sm:w-96">
               <div className="flex flex-col gap-3">
                 <CreateCourseVisual />
                 <div className="text-lg font-semibold">Create a course</div>
@@ -488,15 +459,11 @@ export default function HomepageHowItWorks() {
                   Add what you&apos;re learning and keep resources in one place.
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
 
-            <motion.div
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.3, ease: easeOut, delay: 0.05 }}
+            <Reveal
+              amount={0.1}
+              delay={0.05}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -507,15 +474,11 @@ export default function HomepageHowItWorks() {
                   understanding levels.
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
 
-            <motion.div
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.3, ease: easeOut, delay: 0.1 }}
+            <Reveal
+              amount={0.1}
+              delay={0.1}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -525,15 +488,11 @@ export default function HomepageHowItWorks() {
                   Track study time and mood to build consistency.
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
 
-            <motion.div
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.3, ease: easeOut, delay: 0.15 }}
+            <Reveal
+              amount={0.1}
+              delay={0.15}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -545,15 +504,11 @@ export default function HomepageHowItWorks() {
                   Spaced repetition sessions built around your own notes.
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
 
-            <motion.div
-              initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
-              whileInView={
-                shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
-              }
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.3, ease: easeOut, delay: 0.2 }}
+            <Reveal
+              amount={0.1}
+              delay={0.2}
               className="w-80 shrink-0 snap-start sm:w-96"
             >
               <div className="flex flex-col gap-3">
@@ -563,7 +518,7 @@ export default function HomepageHowItWorks() {
                   Watch your study time trend and keep improving.
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
           </HowItWorksCarousel>
         </div>
       </PageContainer>
