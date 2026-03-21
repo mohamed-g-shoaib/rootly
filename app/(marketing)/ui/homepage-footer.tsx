@@ -5,7 +5,6 @@ import RootlyWord from "@/components/rootly-word"
 import { PageContainer } from "@/components/ui/page-container"
 import { Separator } from "@/components/ui/separator"
 import { ThemeSwitcherMultiButton } from "./theme-switcher-multi-button"
-import { FooterAccountLink } from "./footer-account-link"
 
 const FOOTER_LINKS = [
   {
@@ -54,7 +53,12 @@ export default function HomepageFooter() {
                 <h3 className="font-semibold text-foreground">Account</h3>
                 <ul className="flex flex-col gap-3">
                   <li>
-                    <FooterAccountLink />
+                    <Link
+                      href="/login"
+                      className="transition-colors hover:text-foreground"
+                    >
+                      Login
+                    </Link>
                   </li>
                 </ul>
               </div>

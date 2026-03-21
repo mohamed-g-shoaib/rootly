@@ -1,7 +1,7 @@
 "use client"
 
-import { AuthAwareCta } from "./auth-aware-cta"
 import { Reveal } from "./reveal"
+import { MarketingPrimaryCta } from "./marketing-primary-cta"
 import { Card } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-container"
 
@@ -20,7 +20,7 @@ export default function HomepageFinalCta() {
                 to great achievements gained slowly over time.&quot;, John C.
                 Maxwell
               </div>
-              <AuthAwareCta />
+              <MarketingPrimaryCta label="Start with Rootly" />
               <div className="text-sm text-muted-foreground">
                 Rootly is free to use.
               </div>

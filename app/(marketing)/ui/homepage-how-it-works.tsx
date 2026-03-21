@@ -408,7 +408,7 @@ export default function HomepageHowItWorks() {
     useCarouselControls()
 
   return (
-    <section className="pt-14">
+    <section id="how-it-works" className="pt-14">
       <PageContainer>
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-2">
