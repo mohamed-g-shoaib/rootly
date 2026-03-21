@@ -32,6 +32,8 @@ Skills in this repository live under the `.agents/skills/` directory. Depending 
 | 9 | [TypeScript Advanced Types](#9-typescript-advanced-types) | Project-local | Single-file skill | `.agents/skills/typescript-advanced-types/` |
 | 10 | [SEO Audit](#10-seo-audit) | Project-local | `v1.1.0` | `.agents/skills/seo-audit/` |
 | 11 | [React useEffect](#11-react-useeffect) | Project-local | Official-docs-inspired guidance | `.agents/skills/react-useeffect/` |
+| 12 | [Make Interfaces Feel Better](#12-make-interfaces-feel-better) | Project-local | UI polish skill with focused reference files | `.agents/skills/make-interfaces-feel-better/` |
+| 13 | [User Interface Wiki](#13-user-interface-wiki) | Raphael Salaja | `v3.0.0` | `.agents/skills/userinterface-wiki/` |
 
 ---
 
@@ -410,3 +412,71 @@ Focused React guidance based on the principle that Effects are an escape hatch f
 | `anti-patterns.md` | Common `useEffect` mistakes and how to fix them |
 | `alternatives.md` | Better patterns such as `useMemo`, `key`, lifted state, and `useSyncExternalStore` |
 | `README.md` | Human-facing documentation for the skill |
+
+---
+
+## 12. Make Interfaces Feel Better
+
+**Publisher:** Project-local
+**Version / Notes:** UI polish skill with 4 focused reference files
+**When to load:** Refining interface feel, visual polish, typography, shadows, hover/press states, enter/exit animations, or reviewing why a UI feels slightly off
+
+### Purpose
+
+Practical design-engineering guidance focused on the small details that compound into a polished interface. The skill emphasizes typography, surfaces, animation feel, and performance hygiene, with short rules that are especially useful during UI review and final refinement passes.
+
+### Top 10 Rules by Priority
+
+1. **Concentric border radius** - Nested rounded elements should use radii derived from padding, not identical corner values
+2. **Optical over geometric alignment** - Icons and asymmetrical shapes often need manual visual alignment
+3. **Shadows over borders** - Prefer layered, transparent depth over hard visual separation where appropriate
+4. **Interruptible animations** - Use transitions for interactive states so motion can retarget smoothly
+5. **Split and stagger enter animations** - Animate semantic chunks, not a single large container
+6. **Subtle exit animations** - Keep exits softer with small fixed offsets instead of dramatic travel
+7. **Contextual icon animations** - Icon swaps should use opacity, scale, and blur thoughtfully
+8. **Font smoothing** - Apply antialiasing for crisper text rendering on macOS/retina displays
+9. **Tabular numbers** - Use tabular numerals for dynamic or comparable values to prevent layout jitter
+10. **Text wrapping** - Use `text-wrap: balance` for headings and `text-wrap: pretty` for body copy
+
+### Available Files
+
+| File | Description |
+| ---- | ----------- |
+| `SKILL.md` | Entry point with core principles, checklist, and linked references |
+| `typography.md` | Text wrapping, font smoothing, tabular numbers, and typographic polish |
+| `surfaces.md` | Border radius, shadows, outlines, hit areas, and visual structure |
+| `animations.md` | Interruptible motion, icon transitions, enter/exit animation details |
+| `performance.md` | Transition specificity and careful use of `will-change` |
+
+---
+
+## 13. User Interface Wiki
+
+**Publisher:** Raphael Salaja
+**Version:** `3.0.0`
+**When to load:** Deep UI review or generation work spanning motion, timing, typography, visual design, UX laws, pseudo-elements, icons, container animation, or perceived-performance patterns
+
+### Purpose
+
+Comprehensive UI/UX best-practices reference for web interfaces. The skill contains 152 rules across 12 categories, ranging from animation timing and motion systems to typography, visual design, cognitive-load reduction, and predictive prefetching. It is particularly well-suited for systematic design/code reviews.
+
+### Top 10 Rules by Priority
+
+1. **`timing-under-300ms`** - User-initiated animations should complete within 300ms
+2. **`timing-consistent`** - Similar elements should use consistent timing values
+3. **`physics-active-state`** - Interactive elements need a pressed-state scale transform
+4. **`staging-one-focal-point`** - Only one element should animate prominently at a time
+5. **`easing-entrance-ease-out`** - Entrances should use ease-out timing
+6. **`duration-press-hover`** - Hover and press feedback should stay in the 120-180ms range
+7. **`ux-progressive-disclosure`** - Show what matters now and reveal complexity later
+8. **`ux-cognitive-load-reduce`** - Remove redundant or distracting interface burden
+9. **`type-text-wrap-balance-headings`** - Headings should use balanced text wrapping where supported
+10. **`visual-concentric-radius`** - Nested rounded surfaces should use concentric radius relationships
+
+### Available Files
+
+| File | Description |
+| ---- | ----------- |
+| `SKILL.md` | Entry point with category overview, quick reference, and usage guidance |
+| `AGENTS.md` | Fully compiled guide covering all 152 rules |
+| `rules/` | Individual rule files grouped by animation, UX, typography, visual design, and related topics |

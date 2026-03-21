@@ -19,21 +19,21 @@ import RootlyLogo from "@/components/rootly-logo"
 export default function LoginPageUI() {
   const searchParams = useSearchParams()
   const errorParam = searchParams.get("error")
+  const callbackErrorMessage =
+    errorParam === "auth_callback_failed"
+      ? "Authentication failed. Please try again."
+      : null
 
   const [loadingProvider, setLoadingProvider] = React.useState<string | null>(
     null
   )
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
-
-  React.useEffect(() => {
-    if (errorParam === "auth_callback_failed") {
-      setErrorMessage("Authentication failed. Please try again.")
-    }
-  }, [errorParam])
+  const [oauthErrorMessage, setOauthErrorMessage] = React.useState<
+    string | null
+  >(null)
 
   async function handleOAuthSignIn(provider: "google" | "github" | "linkedin") {
     setLoadingProvider(provider)
-    setErrorMessage(null)
+    setOauthErrorMessage(null)
 
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
@@ -44,12 +44,13 @@ export default function LoginPageUI() {
     })
 
     if (error) {
-      setErrorMessage(error.message)
+      setOauthErrorMessage(error.message)
       setLoadingProvider(null)
     }
   }
 
   const isLoading = !!loadingProvider
+  const errorMessage = oauthErrorMessage ?? callbackErrorMessage
 
   return (
     <div className="flex flex-col gap-4">
@@ -67,11 +68,11 @@ export default function LoginPageUI() {
             <RootlyLogo className="size-8 text-primary" aria-hidden="true" />
             <span className="text-2xl font-bold tracking-tight">Rootly</span>
           </div>
-          <h1 className="mt-4 text-xl font-semibold tracking-tight">
-            Welcome back
+          <h1 className="mt-4 text-xl font-semibold tracking-tight text-balance">
+            Continue with Rootly
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Sign in to your learning notebook
+          <p className="max-w-xs text-sm text-muted-foreground text-pretty">
+            Sign in or create your learning notebook with one account.
           </p>
         </div>
 
@@ -126,14 +127,17 @@ export default function LoginPageUI() {
         </div>
 
         {errorMessage && (
-          <p className="text-sm font-medium text-destructive" role="alert">
+          <div
+            className="w-full rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive"
+            role="alert"
+          >
             {errorMessage}
-          </p>
+          </div>
         )}
 
-        <p className="text-center text-xs text-muted-foreground">
-          By signing in, you agree to our <br />
-          <span className="font-medium">Terms and Privacy Policy</span>
+        <p className="max-w-xs text-center text-xs text-muted-foreground text-pretty">
+          By signing in, you agree to our{" "}
+          <span className="font-medium">Terms and Privacy Policy</span>.
         </p>
       </Card>
     </div>

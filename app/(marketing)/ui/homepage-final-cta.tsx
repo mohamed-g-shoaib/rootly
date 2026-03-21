@@ -12,13 +12,12 @@ export default function HomepageFinalCta() {
         <Reveal y={16}>
           <Card className="py-14">
             <div className="flex flex-col items-center gap-4 px-6 text-center">
-              <div className="text-3xl font-semibold">
+              <div className="text-3xl font-semibold text-balance">
                 Start learning with intention.
               </div>
-              <div className="max-w-2xl text-sm text-muted-foreground italic">
-                &quot;All disciplines repeated with consistency every day lead
-                to great achievements gained slowly over time.&quot;, John C.
-                Maxwell
+              <div className="max-w-2xl text-sm text-muted-foreground text-pretty">
+                Rootly gives your study sessions a place to build on each other
+                instead of starting from scratch every time.
               </div>
               <MarketingPrimaryCta label="Start with Rootly" />
               <div className="text-sm text-muted-foreground">

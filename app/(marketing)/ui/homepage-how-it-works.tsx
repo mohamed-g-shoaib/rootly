@@ -7,25 +7,21 @@ import {
   ArrowLeft02Icon,
   ArrowRight02Icon,
   CheckmarkCircle01Icon,
-  EyeIcon,
   InformationCircleIcon,
-  ViewOffIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import dynamic from "next/dynamic"
 
 import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Slider, SliderValue } from "@/components/ui/slider"
 import {
-  PreviewCard,
-  PreviewCardPopup,
-  PreviewCardTrigger,
-} from "@/components/ui/preview-card"
-import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
+  Progress,
+  ProgressIndicator,
+  ProgressLabel,
+  ProgressTrack,
+  ProgressValue,
+} from "@/components/ui/progress"
 
 import {
   EmojioneV1GrinningFaceWithSmilingEyes,
@@ -34,109 +30,80 @@ import {
 } from "@/app/daily-entries/ui/daily-entries-emojis"
 import { Reveal } from "./reveal"
 
-function useIsHoverDesktop() {
-  const [value, setValue] = React.useState(false)
-  React.useEffect(() => {
-    const mql = window.matchMedia("(hover: hover) and (pointer: fine)")
-    const update = () => setValue(mql.matches)
-    update()
-    mql.addEventListener("change", update)
-    return () => mql.removeEventListener("change", update)
-  }, [])
-  return value
-}
-
 const TRACK_DATA = [
-  { day: "Mon", minutes: 42 },
-  { day: "Tue", minutes: 28 },
-  { day: "Wed", minutes: 55 },
-  { day: "Thu", minutes: 20 },
-  { day: "Fri", minutes: 48 },
+  { day: "Mon", minutes: "42m", value: 74 },
+  { day: "Tue", minutes: "28m", value: 48 },
+  { day: "Wed", minutes: "55m", value: 100 },
+  { day: "Thu", minutes: "20m", value: 36 },
+  { day: "Fri", minutes: "48m", value: 86 },
 ] as const
 
 function CreateCourseVisual() {
   return (
     <Card className="h-48 p-4">
-      <div className="flex h-full flex-col gap-3">
+      <div className="flex h-full flex-col gap-4">
         <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
-          <div>Course</div>
-          <div>3 links</div>
+          <Badge variant="outline">Course</Badge>
+          <div>3 resources</div>
         </div>
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="font-medium">Machine Learning Fundamentals</div>
+        <div className="flex flex-1 flex-col gap-1">
+          <div className="font-medium text-balance">
+            Machine Learning Fundamentals
+          </div>
           <div className="text-sm text-muted-foreground">Andrew Ng</div>
+          <div className="pt-2 text-sm text-muted-foreground text-pretty">
+            Keep the course, docs, and reference links together so every study
+            session starts with context.
+          </div>
         </div>
-        <Field>
-          <Slider defaultValue={42}>
-            <div className="mb-2 flex items-center justify-between gap-1">
-              <FieldLabel className="text-sm font-medium">Progress</FieldLabel>
-              <SliderValue />
-            </div>
-          </Slider>
-        </Field>
+        <Progress value={42}>
+          <div className="flex items-center justify-between gap-2">
+            <ProgressLabel>Progress</ProgressLabel>
+            <ProgressValue />
+          </div>
+          <ProgressTrack>
+            <ProgressIndicator />
+          </ProgressTrack>
+        </Progress>
       </div>
     </Card>
   )
 }
 
-function CaptureVisual() {
-  const [showAnswer, setShowAnswer] = React.useState(false)
-  const isHoverDesktop = useIsHoverDesktop()
+function SurfaceCaption({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-xl border bg-muted/35 px-3 py-2 text-sm text-muted-foreground text-pretty">
+      {children}
+    </div>
+  )
+}
 
+function CaptureVisual() {
   return (
     <Card className="h-48 p-4">
       <div className="flex h-full flex-col gap-3">
         <div className="flex items-center justify-between gap-2">
-          <div className="text-sm text-muted-foreground">React</div>
-          <Button
-            type="button"
-            size="icon"
-            variant={showAnswer ? "secondary" : "outline"}
-            aria-label={showAnswer ? "Hide answer" : "Show answer"}
-            onClick={() => setShowAnswer((prev) => !prev)}
-          >
-            <HugeiconsIcon
-              icon={showAnswer ? ViewOffIcon : EyeIcon}
-              size={18}
-              color={showAnswer ? "var(--info)" : "currentColor"}
-            />
-          </Button>
+          <Badge variant="outline">React</Badge>
+          <Badge variant="info">Ready to review</Badge>
         </div>
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="font-medium">When should you use useMemo?</div>
-          {showAnswer ? (
-            <div className="text-sm text-muted-foreground">
-              When the computation is expensive and the reference needs to be
-              stable across renders.
-            </div>
-          ) : isHoverDesktop ? (
-            <PreviewCard>
-              <PreviewCardTrigger render={<Button variant="ghost" size="sm" />}>
-                Peek answer
-              </PreviewCardTrigger>
-              <PreviewCardPopup>
-                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                  When the computation is expensive and the reference needs to
-                  be stable across renders.
-                </div>
-              </PreviewCardPopup>
-            </PreviewCard>
-          ) : (
-            <Popover>
-              <PopoverTrigger render={<Button variant="ghost" size="sm" />}>
-                Peek answer
-              </PopoverTrigger>
-              <PopoverPopup align="start" className="w-64">
-                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                  When the computation is expensive and the reference needs to
-                  be stable across renders.
-                </div>
-              </PopoverPopup>
-            </Popover>
-          )}
+
+        <div className="flex flex-1 flex-col gap-3">
+          <div className="font-medium text-balance">
+            When should you use <code>useMemo</code>?
+          </div>
+          <SurfaceCaption>
+            Use it when expensive work or unstable references would otherwise
+            make rerenders noisier than they need to be.
+          </SurfaceCaption>
         </div>
-        <div className="flex items-center justify-between gap-2">
-          <Badge variant="outline">{"{ }"} JavaScript</Badge>
+
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="secondary">Q&amp;A note</Badge>
+          <Badge variant="outline">JavaScript</Badge>
           <Badge variant="outline">Getting It</Badge>
         </div>
       </div>
@@ -145,10 +112,6 @@ function CaptureVisual() {
 }
 
 function DailyLogVisual() {
-  const [mood, setMood] = React.useState<"burned" | "neutral" | "focused">(
-    "focused"
-  )
-
   return (
     <Card className="h-48 p-4">
       <div className="flex h-full flex-col gap-3">
@@ -158,48 +121,31 @@ function DailyLogVisual() {
         </div>
 
         <div className="flex flex-1 flex-col justify-center">
-          <div className="text-center text-sm text-muted-foreground">
-            Today I learned about useMemo and why I might not need useEffect.
-          </div>
+          <SurfaceCaption>
+            Today I learned why <code>useMemo</code> is mostly about expensive
+            work and stable references, not premature optimization.
+          </SurfaceCaption>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <Button
-            type="button"
-            variant={mood === "burned" ? "secondary" : "outline"}
-            size="sm"
-            className="gap-2"
-            onClick={() => setMood("burned")}
-          >
+          <Badge variant="outline" className="justify-center gap-2">
             <EmojioneV1WearyFace className="size-4" aria-hidden="true" />
             Burned
-          </Button>
-          <Button
-            type="button"
-            variant={mood === "neutral" ? "secondary" : "outline"}
-            size="sm"
-            className="gap-2"
-            onClick={() => setMood("neutral")}
-          >
+          </Badge>
+          <Badge variant="outline" className="justify-center gap-2">
             <EmojioneV1SlightlySmilingFace
               className="size-4"
               aria-hidden="true"
             />
             Neutral
-          </Button>
-          <Button
-            type="button"
-            variant={mood === "focused" ? "secondary" : "outline"}
-            size="sm"
-            className="gap-2"
-            onClick={() => setMood("focused")}
-          >
+          </Badge>
+          <Badge variant="success" className="justify-center gap-2">
             <EmojioneV1GrinningFaceWithSmilingEyes
               className="size-4"
               aria-hidden="true"
             />
             Focused
-          </Button>
+          </Badge>
         </div>
       </div>
     </Card>
@@ -207,124 +153,42 @@ function DailyLogVisual() {
 }
 
 function ReviewVisual() {
-  const [understandingLevel, setUnderstandingLevel] = React.useState<1 | 2 | 3>(
-    2
-  )
-  const isHoverDesktop = useIsHoverDesktop()
-
   return (
     <Card className="h-48 p-4">
       <div className="flex h-full flex-col gap-3">
-        <div className="text-sm text-muted-foreground">3 / 10 questions</div>
+        <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+          <div>Review session</div>
+          <div>3 / 10 questions</div>
+        </div>
 
         <div className="flex flex-1 flex-col gap-3">
-          <div className="font-medium">What problem does useMemo solve?</div>
-          {isHoverDesktop ? (
-            <PreviewCard>
-              <PreviewCardTrigger render={<Button variant="ghost" size="sm" />}>
-                Peek answer
-              </PreviewCardTrigger>
-              <PreviewCardPopup>
-                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                  It memoizes expensive computations to avoid re-running them
-                  unnecessarily, and it can help keep references stable.
-                </div>
-              </PreviewCardPopup>
-            </PreviewCard>
-          ) : (
-            <Popover>
-              <PopoverTrigger render={<Button variant="ghost" size="sm" />}>
-                Peek answer
-              </PopoverTrigger>
-              <PopoverPopup align="start" className="w-64">
-                <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                  It memoizes expensive computations to avoid re-running them
-                  unnecessarily, and it can help keep references stable.
-                </div>
-              </PopoverPopup>
-            </Popover>
-          )}
+          <div className="font-medium text-balance">
+            What problem does <code>useMemo</code> solve?
+          </div>
+          <SurfaceCaption>
+            It memoizes expensive computations and helps keep references stable
+            when that stability actually matters.
+          </SurfaceCaption>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <Button
-            type="button"
-            variant={understandingLevel === 1 ? "secondary" : "outline"}
-            size="sm"
-            className="gap-2"
-            onClick={() => setUnderstandingLevel(1)}
-          >
-            <HugeiconsIcon
-              icon={AlertCircleIcon}
-              size={18}
-              color={
-                understandingLevel === 1 ? "var(--warning)" : "currentColor"
-              }
-            />
+          <Badge variant="outline" className="justify-center gap-2">
+            <HugeiconsIcon icon={AlertCircleIcon} size={16} />
             Confused
-          </Button>
-          <Button
-            type="button"
-            variant={understandingLevel === 2 ? "secondary" : "outline"}
-            size="sm"
-            className="gap-2"
-            onClick={() => setUnderstandingLevel(2)}
-          >
-            <HugeiconsIcon
-              icon={InformationCircleIcon}
-              size={18}
-              color={understandingLevel === 2 ? "var(--info)" : "currentColor"}
-            />
+          </Badge>
+          <Badge variant="info" className="justify-center gap-2">
+            <HugeiconsIcon icon={InformationCircleIcon} size={16} />
             Getting It
-          </Button>
-          <Button
-            type="button"
-            variant={understandingLevel === 3 ? "secondary" : "outline"}
-            size="sm"
-            className="gap-2"
-            onClick={() => setUnderstandingLevel(3)}
-          >
-            <HugeiconsIcon
-              icon={CheckmarkCircle01Icon}
-              size={18}
-              color={
-                understandingLevel === 3 ? "var(--success)" : "currentColor"
-              }
-            />
+          </Badge>
+          <Badge variant="outline" className="justify-center gap-2">
+            <HugeiconsIcon icon={CheckmarkCircle01Icon} size={16} />
             Clear
-          </Button>
+          </Badge>
         </div>
       </div>
     </Card>
   )
 }
-
-const TrackVisualChart = dynamic(
-  async () => {
-    const { Bar, BarChart, ResponsiveContainer } = await import("recharts")
-    return {
-      default: ({
-        data,
-      }: {
-        data: ReadonlyArray<{ readonly day: string; readonly minutes: number }>
-      }) => (
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={data}
-            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-          >
-            <Bar
-              dataKey="minutes"
-              fill="var(--color-chart-1)"
-              radius={[6, 6, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      ),
-    }
-  },
-  { ssr: false }
-)
 
 function TrackVisual() {
   return (
@@ -334,8 +198,24 @@ function TrackVisual() {
           <div>Study minutes</div>
           <div>avg. 2.4h / day</div>
         </div>
-        <div className="w-full flex-1 overflow-hidden">
-          <TrackVisualChart data={TRACK_DATA} />
+
+        <div className="grid flex-1 gap-3">
+          {TRACK_DATA.map((item) => (
+            <div
+              key={item.day}
+              className="grid grid-cols-[2.25rem_1fr_auto] items-center gap-3"
+            >
+              <div className="text-sm text-muted-foreground">{item.day}</div>
+              <Progress value={item.value} className="gap-0">
+                <ProgressTrack className="h-2">
+                  <ProgressIndicator />
+                </ProgressTrack>
+              </Progress>
+              <div className="text-sm tabular-nums text-muted-foreground">
+                {item.minutes}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </Card>
@@ -421,7 +301,7 @@ export default function HomepageHowItWorks() {
               className="text-sm text-muted-foreground"
             >
               Set up a course, capture notes, log daily progress, review what
-              you learned, and watch your stats.
+              you learned, and see the pattern in your effort.
             </Reveal>
             <Reveal
               delay={0.1}
