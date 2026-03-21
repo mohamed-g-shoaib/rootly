@@ -43,7 +43,7 @@ export type Theme = {
 export const THEMES: Theme[] = [
   {
     id: "amethyst-haze",
-    label: "Amethyst Haze",
+    label: "Milka",
     light: {
       background: "oklch(0.9777 0.0041 301.4256)",
       foreground: "oklch(0.3651 0.0325 287.0807)",
@@ -547,7 +547,7 @@ export const THEMES: Theme[] = [
   },
   {
     id: "vintage-paper",
-    label: "Vintage Paper",
+    label: "Louis Vuitton",
     light: {
       background: "oklch(0.9582 0.0152 90.2357)",
       foreground: "oklch(0.3760 0.0225 64.3434)",

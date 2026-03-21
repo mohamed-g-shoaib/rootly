@@ -1,4 +1,4 @@
-## Theme 1: Amethyst Haze
+## Theme 1: Milka
 
 ```json
 :root {

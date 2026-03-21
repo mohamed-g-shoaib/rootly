@@ -349,7 +349,7 @@
 }
 ```
 
-## Theme 8: Vintage Paper
+## Theme 8: Louis Vuitton
 
 ```json
 :root {
