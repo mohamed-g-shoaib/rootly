@@ -30,6 +30,8 @@ The dashboard supports a color theme selector with **9 curated color themes** pl
 - `components/color-theme-applicator.tsx` - client-only applicator that subscribes to the shared color-theme state
 - `components/dashboard-color-theme-style.tsx` - server-side first-paint style injector for dashboard pages
 - `components/theme-switcher.tsx` - dashboard theme picker UI
+- `components/theme-icons/` - branded SVG icon components used by the dashboard theme picker
+- `components/ui/combobox.tsx` - shared combobox wrapper; theme switcher disables the built-in left selection indicator
 - `hooks/use-color-theme.ts` - shared client theme state, cookie sync, and token application logic
 - `lib/themes.ts` - typed registry of the available custom themes
 - `lib/color-theme.ts` - cookie key, theme normalization, and SSR CSS builder helpers
@@ -184,8 +186,11 @@ Current behavior:
 
 - `Coss UI (Default)` is the first selectable option
 - Custom themes are listed after it in the order defined by `THEMES`
-- Each option shows three preview dots using the theme's light `primary`, `background`, and `accent` values
-- The active option shows a checkmark
+- The picker uses the coss/ui `Combobox` with `SelectButton` styling so theme search remains available
+- Each option renders a branded icon from `components/theme-icons/` plus the theme label
+- The active option shows a single right-side `CheckmarkCircle02Icon`
+- The shared left combobox item indicator is intentionally disabled for this picker so the icon remains the leading visual
+- Selected theme names must truncate cleanly inside the avatar dropdown without causing horizontal scroll
 - Selecting `default` restores the base coss/ui tokens immediately
 
 ---
