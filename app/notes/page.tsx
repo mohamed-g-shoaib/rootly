@@ -1,34 +1,9 @@
-import { cookies } from "next/headers"
-
 import { createClient } from "@/lib/supabase/server"
-import { getThemeById, THEME_IDS } from "@/lib/themes"
+import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import NotesPageUI from "./ui/notes-page"
 import type { Note } from "./ui/notes-model"
 
 export default async function NotesPage() {
-  const cookieStore = await cookies()
-  const paletteCookie = cookieStore.get("reway.dashboard.paletteTheme")?.value
-  const paletteThemeId =
-    paletteCookie === "default" ||
-    (paletteCookie && THEME_IDS.includes(paletteCookie))
-      ? paletteCookie
-      : "default"
-
-  const paletteCss =
-    paletteThemeId && paletteThemeId !== "default"
-      ? (() => {
-          const theme = getThemeById(paletteThemeId)
-          if (!theme) return ""
-          const light = Object.entries(theme.light)
-            .map(([k, v]) => `--${k}:${v};`)
-            .join("")
-          const dark = Object.entries(theme.dark)
-            .map(([k, v]) => `--${k}:${v};`)
-            .join("")
-          return `:root{${light}}.dark{${dark}}`
-        })()
-      : ""
-
   const supabase = await createClient()
   const {
     data: { user },
@@ -102,7 +77,7 @@ export default async function NotesPage() {
 
   return (
     <>
-      {paletteCss ? <style>{paletteCss}</style> : null}
+      <DashboardColorThemeStyle />
       <NotesPageUI
         user={user}
         initialNotes={initialNotes}

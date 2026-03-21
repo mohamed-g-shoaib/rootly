@@ -1,7 +1,5 @@
-import { cookies } from "next/headers"
-
 import { createClient } from "@/lib/supabase/server"
-import { getThemeById, THEME_IDS } from "@/lib/themes"
+import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import OverviewPageUI from "./ui/overview-page"
 
 type DailyStudyDatum = { date: string; label: string; minutes: number }
@@ -49,29 +47,6 @@ function buildDaySeries(
 }
 
 export default async function OverviewPage() {
-  const cookieStore = await cookies()
-  const paletteCookie = cookieStore.get("reway.dashboard.paletteTheme")?.value
-  const paletteThemeId =
-    paletteCookie === "default" ||
-    (paletteCookie && THEME_IDS.includes(paletteCookie))
-      ? paletteCookie
-      : "default"
-
-  const paletteCss =
-    paletteThemeId && paletteThemeId !== "default"
-      ? (() => {
-          const theme = getThemeById(paletteThemeId)
-          if (!theme) return ""
-          const light = Object.entries(theme.light)
-            .map(([k, v]) => `--${k}:${v};`)
-            .join("")
-          const dark = Object.entries(theme.dark)
-            .map(([k, v]) => `--${k}:${v};`)
-            .join("")
-          return `:root{${light}}.dark{${dark}}`
-        })()
-      : ""
-
   const supabase = await createClient()
   const {
     data: { user },
@@ -256,7 +231,7 @@ export default async function OverviewPage() {
 
   return (
     <>
-      {paletteCss ? <style>{paletteCss}</style> : null}
+      <DashboardColorThemeStyle />
       <OverviewPageUI
         user={user}
         streakDays={streakDays}

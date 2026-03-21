@@ -2,47 +2,49 @@
 
 ## Overview
 
-Add the ability for users to switch between 19 curated color themes. The entry point lives in the **avatar dropdown menu** in the dashboard layout. Each theme row shows **three color preview dots** (primary, background, accent) beside the theme name, plus a checkmark on the active theme.
+The dashboard supports a color theme selector with **9 curated color themes** plus **Coss UI (Default)** as the first selectable option.
 
-The active theme's color tokens are applied live to `document.documentElement` via inline CSS custom properties using `style.setProperty()`.
+- `Coss UI (Default)` means "use the base coss/ui tokens exactly as shipped"
+- Custom color themes override only dashboard color tokens
+- The active custom theme is applied live to `document.documentElement` via inline CSS custom properties
+- The selected custom theme is stored in a cookie so dashboard pages can render the correct colors on first paint without a flash
 
-**Critical constraint:** Only color tokens are swapped. `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, and `--spacing` are **never touched** — these remain under coss/ui's control at all times.
+**Critical constraint:** Only color tokens are swapped. `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, and `--spacing` are never touched.
 
 ---
 
 ## Project Context
 
 - **Framework:** Next.js (App Router) with TypeScript
-- **UI library:** coss/ui — a component library with a strict CSS token system. Tokens are defined as CSS custom properties in `app/globals.css`. The `@theme inline` block maps them to Tailwind. **Do not fight this system** — work with it.
-- **Dark mode:** Already handled by `next-themes` via `components/theme-provider.tsx`. Dark mode applies a `.dark` class to `<html>`. This must remain untouched.
-- **Styling:** Tailwind CSS v4. No inline styles except for the theme dot previews.
+- **UI library:** coss/ui
+- **Dark mode:** handled by `next-themes` via the existing theme provider and `.dark` on `<html>`
+- **Styling:** Tailwind CSS v4
 - **Package manager:** pnpm
 
 ---
 
 ## Existing Files to Be Aware Of
 
-- `components/theme-provider.tsx` — already wraps `next-themes` for dark/light mode. **Do not break or replace this.**
-- `app/layout.tsx` — root layout, add `<ColorThemeApplicator />` here.
-- `app/globals.css` — coss/ui token definitions. **Do not add any theme CSS blocks here.**
-- `hooks/` — place new hooks here.
-- `lib/` — place new theme registry here.
-- `spec/` — this file lives here.
-
-The avatar dropdown location must be found by reading the actual dashboard layout files under `app/`. Search for where `DropdownMenu` with user avatar/name is rendered and modify that file.
+- `app/ui/dashboard-shell.tsx` - mounts the client applicator and renders the dashboard theme selector UI
+- `components/theme-provider.tsx` - existing dark/light mode provider
+- `components/color-theme-applicator.tsx` - client-only applicator that subscribes to the shared color-theme state
+- `components/dashboard-color-theme-style.tsx` - server-side first-paint style injector for dashboard pages
+- `components/theme-switcher.tsx` - dashboard theme picker UI
+- `hooks/use-color-theme.ts` - shared client theme state, cookie sync, and token application logic
+- `lib/themes.ts` - typed registry of the available custom themes
+- `lib/color-theme.ts` - cookie key, theme normalization, and SSR CSS builder helpers
+- `app/globals.css` - base coss/ui token definitions; do not add theme blocks here
 
 ---
 
 ## Theme Source Data
 
-The color values for all 19 themes are in this repo under `docs/themes/` on the `feature/themes` branch (will be merged into `main`):
+The source palette docs live in `docs/themes/`:
 
-- `docs/themes/themes.md` — themes 1–11
-- `docs/themes/themes-2.md` — themes 12–19
+- `docs/themes/themes.md` - themes 1-6
+- `docs/themes/themes-2.md` - themes 7-9
 
-From each theme block, extract **only** the color variables inside `:root { }` and `.dark { }`. Ignore `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, `--spacing` entirely — do not include them in `lib/themes.ts` at all.
-
-> Note: In `themes-2.md`, the theme titled "Theme to replace Dark Forge theme, number 10" is `sunset-horizon` and occupies slot #10 in the ordered list.
+Only the color variables from `:root {}` and `.dark {}` belong in `lib/themes.ts`. Font, radius, shadow, tracking, and spacing variables stay out of the runtime theme registry.
 
 ---
 
@@ -50,7 +52,7 @@ From each theme block, extract **only** the color variables inside `:root { }` a
 
 ### `lib/themes.ts`
 
-Typed registry of all 19 themes. Each entry contains **only color tokens** — no radius, no font, no shadow keys.
+Typed registry of the 9 custom dashboard themes. Each entry contains color tokens only.
 
 ```ts
 export type ThemeColors = {
@@ -96,39 +98,45 @@ export type Theme = {
 }
 
 export const THEMES: Theme[] = [
-  /* all 19 themes populated from docs/themes/themes.md and docs/themes/themes-2.md */
+  /* 9 custom themes populated from docs/themes */
 ]
-
-export const DEFAULT_THEME_ID = "amber-minimal"
 ```
 
-The 19 theme IDs (in order):
+The custom theme IDs in order:
 
-1. `amber-minimal`
-2. `amethyst-haze`
-3. `claude`
-4. `modern-minimal`
-5. `notebook`
-6. `supabase`
-7. `t3-chat`
-8. `perplexity`
-9. `sage-green`
-10. `sunset-horizon`
-11. `cyberpunk`
-12. `kodama-grove`
-13. `crimson`
-14. `retro`
-15. `tangerine`
-16. `vercel`
-17. `vintage-paper`
-18. `bubblegum`
-19. _(last theme in themes-2.md)_
+1. `amethyst-haze`
+2. `claude`
+3. `twitter`
+4. `supabase`
+5. `sakura`
+6. `perplexity`
+7. `vercel`
+8. `vintage-paper`
+9. `zen`
+
+---
+
+### `lib/color-theme.ts`
+
+Shared dashboard color-theme helpers.
+
+```ts
+export const COSS_UI_THEME_ID = "default"
+export const COLOR_THEME_COOKIE_NAME = "reway.dashboard.paletteTheme"
+export const DASHBOARD_COLOR_THEME_STYLE_ID = "dashboard-color-theme-ssr"
+```
+
+Responsibilities:
+
+1. Normalize any stored theme ID to either a valid custom theme ID or `default`
+2. Treat invalid or stale cookie values as `default`
+3. Build the server-rendered first-paint CSS for valid custom themes only
 
 ---
 
 ### `hooks/use-color-theme.ts`
 
-Manages active color theme ID. Persists to `localStorage` under key `"rootly-color-theme"`. On mount, reads saved value (defaults to `"amber-minimal"`). Re-applies color tokens whenever the theme ID or dark/light mode changes.
+Shared client hook for the dashboard color theme.
 
 ```ts
 "use client"
@@ -139,88 +147,77 @@ export function useColorTheme(): {
 }
 ```
 
-**Application logic inside the hook:**
+Responsibilities:
 
-1. Find the `Theme` object from `THEMES` by ID.
-2. Read `resolvedTheme` from `next-themes`'s `useTheme()` to determine dark or light.
-3. Pick `theme.dark` or `theme.light` accordingly.
-4. For each key in `ThemeColors`, call:
-   ```ts
-   document.documentElement.style.setProperty(`--${key}`, value)
-   ```
-5. **Never set** `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, or `--spacing`.
+1. Keep a single shared client-side color-theme state across all hook consumers
+2. Read the dashboard theme cookie on first client load
+3. Re-apply the active theme whenever the selected color theme or `resolvedTheme` changes
+4. Persist custom themes back to the cookie
+5. Clear the cookie and remove all inline token overrides when `default` is selected
 
 ---
 
 ### `components/color-theme-applicator.tsx`
 
-A tiny `"use client"` component that calls `useColorTheme()` purely for its side effect. Renders `null`. Must be placed once in `app/layout.tsx`.
+Tiny client component that subscribes to `useColorTheme()` for its side effects and renders `null`.
 
-```tsx
-"use client"
-import { useColorTheme } from "@/hooks/use-color-theme"
+---
 
-export function ColorThemeApplicator() {
-  useColorTheme()
-  return null
-}
-```
+### `components/dashboard-color-theme-style.tsx`
+
+Server component used on dashboard pages to inject a first-paint `<style>` tag from the theme cookie.
+
+Rules:
+
+1. Read the cookie on the server
+2. Normalize it through `lib/color-theme.ts`
+3. Render no `<style>` tag for `default`
+4. Render a single style tag with `id="dashboard-color-theme-ssr"` for valid custom themes
 
 ---
 
 ### `components/theme-switcher.tsx`
 
-The theme picker UI rendered as a `DropdownMenuSub` inside the avatar dropdown.
+Dashboard theme picker UI.
 
-**Each theme row layout:**
+Current behavior:
 
-```
-● ● ●  Theme Name                    ✓
-```
-
-- Three small dots: `w-3 h-3 rounded-full` with inline `style={{ backgroundColor: ... }}`
-  - Dot 1: `theme.light.primary`
-  - Dot 2: `theme.light.background`
-  - Dot 3: `theme.light.accent`
-  - Always use **light** variant values for dots regardless of active dark/light mode — gives better visual distinction between themes
-- Theme label text
-- `Check` icon (lucide-react) on the currently active theme row, invisible otherwise
-- Clicking a row calls `setThemeId(theme.id)`
-- List is scrollable: `max-h-80 overflow-y-auto`
-- Component is `"use client"`
+- `Coss UI (Default)` is the first selectable option
+- Custom themes are listed after it in the order defined by `THEMES`
+- Each option shows three preview dots using the theme's light `primary`, `background`, and `accent` values
+- The active option shows a checkmark
+- Selecting `default` restores the base coss/ui tokens immediately
 
 ---
 
 ## Files to Modify
 
-### `app/layout.tsx`
+### `app/ui/dashboard-shell.tsx`
 
-Add `<ColorThemeApplicator />` as a direct child inside `<body>`, alongside the existing `<ThemeProvider>`.
+- Mount `<ColorThemeApplicator />` once near the top of the dashboard shell
+- Render `<ThemeSwitcher />` in both the desktop account menu and the mobile account sheet
 
-### Avatar Dropdown File _(locate it first)_
+### Dashboard pages
 
-Search the codebase for the avatar `DropdownMenu` (look for user name/email + sign out pattern). Add an **"Appearance"** `DropdownMenuSub` with a `Palette` icon (lucide-react) that renders `<ThemeSwitcher />`.
+Render `<DashboardColorThemeStyle />` from each dashboard page that needs first-paint theme parity:
 
-Target dropdown structure:
-
-```
-Avatar dropdown
-├── [user name / email]
-├── ─────────────────
-├── Appearance  ›
-│     └── [19 theme rows with color dots + checkmark]
-├── Dark mode toggle   ← existing, do not remove
-├── ─────────────────
-└── Sign out
-```
+- `app/overview/page.tsx`
+- `app/review/page.tsx`
+- `app/notes/page.tsx`
+- `app/courses/page.tsx`
+- `app/courses/[id]/page.tsx`
+- `app/daily-entries/page.tsx`
 
 ---
 
 ## Hard Rules — Do Not Violate
 
-- **No CSS blocks in `globals.css`** for these themes.
-- **Never set** `--radius`, `--font-sans`, `--font-serif`, `--font-mono`, any `--shadow-*` variable, `--tracking-normal`, or `--spacing` from the theme switcher code.
-- **No `data-theme` attribute or CSS selectors** — use `element.style.setProperty` only.
-- **Do not add a new ThemeProvider** — reuse the existing `next-themes` one in `components/theme-provider.tsx`.
-- **Do not modify `globals.css` or its `@theme inline` block.**
-- **No new dependencies** — use only what is already in `package.json`.
+- `Coss UI (Default)` must remain the first selectable option
+- Selecting `default` must remove custom dashboard token overrides immediately, not only after reload
+- Persist dashboard color theme in the cookie `reway.dashboard.paletteTheme`, not `localStorage`
+- Invalid or stale cookie values must normalize to `default`
+- SSR first-paint theme CSS must only be rendered for valid custom themes
+- No CSS theme blocks in `app/globals.css`
+- Never set `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, or `--spacing`
+- Do not add another dark/light theme provider
+- Do not introduce a parallel theming system such as `data-theme`
