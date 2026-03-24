@@ -1,5 +1,10 @@
+import type { Metadata } from "next"
 import { createClient } from "@/lib/supabase/server"
 import OverviewPageUI from "./ui/overview-page"
+
+export const metadata: Metadata = {
+  title: "Overview",
+}
 
 type DailyStudyDatum = { date: string; label: string; minutes: number }
 type DailyMoodDatum = { date: string; label: string; mood: 1 | 2 | 3 | null }

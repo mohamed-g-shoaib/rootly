@@ -1,6 +1,11 @@
+import type { Metadata } from "next"
 import { createClient } from "@/lib/supabase/server"
 import ReviewPageUI from "./ui/review-page"
 import type { ReviewCourse, ReviewNote, ReviewSession } from "./ui/review-model"
+
+export const metadata: Metadata = {
+  title: "Review",
+}
 
 export default async function ReviewPage() {
   const supabase = await createClient()

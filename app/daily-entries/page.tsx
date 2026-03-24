@@ -1,6 +1,11 @@
+import type { Metadata } from "next"
 import { createClient } from "@/lib/supabase/server"
 import DailyEntriesPageUI from "./ui/daily-entries-page"
 import type { DailyEntry } from "./ui/daily-entries-model"
+
+export const metadata: Metadata = {
+  title: "Daily Entries",
+}
 
 export default async function DailyEntriesPage() {
   const supabase = await createClient()

@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { createClient } from "@/lib/supabase/server"
 import CourseDetailPageUI from "../ui/course-detail-page"
 import type { Course } from "../ui/courses-model"
@@ -17,6 +18,35 @@ type NoteRow = {
   created_at: string
   updated_at: string
   courses: { title: string }[] | { title: string } | null
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return {
+      title: "Course",
+    }
+  }
+
+  const { data: courseRow } = await supabase
+    .from("courses")
+    .select("title")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .maybeSingle()
+
+  return {
+    title: courseRow?.title ?? "Course",
+  }
 }
 
 export default async function CourseDetailPage({
