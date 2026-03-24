@@ -23,6 +23,16 @@ export type FloatingDockItem = {
   link: string
 }
 
+function DockIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="grid size-5 place-items-center [&_svg]:block">
+      <div className="flex items-center justify-center translate-y-[0.5px]">
+        {children}
+      </div>
+    </div>
+  )
+}
+
 function isDockItemActive(pathname: string, link: string) {
   if (link === "/overview") return pathname === "/overview"
   return pathname === link
@@ -83,7 +93,7 @@ function FloatingDockMobile({
                   : "border-border bg-muted text-foreground hover:bg-muted"
               )}
             >
-              <div className="size-5">{item.icon}</div>
+              <DockIcon>{item.icon}</DockIcon>
             </Link>
           )
         })}
@@ -118,7 +128,7 @@ function FloatingDockDesktop({
         onMouseLeave={
           shouldReduceMotion ? undefined : () => mouseX.set(Infinity)
         }
-        className="mx-auto mb-6 flex h-16 items-end gap-4 rounded-2xl border bg-background px-4 pb-3 shadow-sm"
+        className="mx-auto mb-6 flex h-16 items-end gap-4 rounded-2xl border bg-background p-3 shadow-sm"
       >
         {navigationItems.map((item) => (
           <DesktopIconContainer
@@ -216,7 +226,7 @@ function DesktopIconContainer({
           style={iconStyle}
           className="flex items-center justify-center"
         >
-          {icon}
+          <DockIcon>{icon}</DockIcon>
         </m.div>
       </m.div>
     </Link>
