@@ -11,7 +11,9 @@ Style view transition pseudo-elements for custom animations.
 **Incorrect (default crossfade only):**
 
 ```ts
-document.startViewTransition(() => { /* ... */ });
+document.startViewTransition(() => {
+  /* ... */
+})
 ```
 
 **Correct (custom animation):**

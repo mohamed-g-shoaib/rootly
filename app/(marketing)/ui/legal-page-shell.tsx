@@ -50,7 +50,7 @@ export function LegalPageShell({
                 <div className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
                   {title}
                 </div>
-                <p className="max-w-2xl text-sm text-muted-foreground text-pretty sm:text-base">
+                <p className="max-w-2xl text-sm text-pretty text-muted-foreground sm:text-base">
                   {description}
                 </p>
               </header>
@@ -59,7 +59,7 @@ export function LegalPageShell({
                 {sections.map((section) => (
                   <section key={section.title} className="flex flex-col gap-3">
                     <h2 className="text-lg font-semibold">{section.title}</h2>
-                    <div className="flex flex-col gap-3 text-sm text-muted-foreground text-pretty sm:text-base">
+                    <div className="flex flex-col gap-3 text-sm text-pretty text-muted-foreground sm:text-base">
                       {section.body.map((paragraph) => (
                         <p key={paragraph}>{paragraph}</p>
                       ))}

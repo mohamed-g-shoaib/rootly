@@ -1,4 +1,9 @@
-import { createRootlySocialImage, socialImageAlt, socialImageContentType, socialImageSize } from "@/lib/og-image"
+import {
+  createRootlySocialImage,
+  socialImageAlt,
+  socialImageContentType,
+  socialImageSize,
+} from "@/lib/og-image"
 
 export const alt = socialImageAlt
 export const size = socialImageSize

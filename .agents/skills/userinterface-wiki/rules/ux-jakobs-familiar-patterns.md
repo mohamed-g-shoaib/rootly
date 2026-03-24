@@ -17,7 +17,7 @@ function Nav() {
       <button onClick={() => navigate("/")}>⬡</button>
       <button onClick={() => navigate("/search")}>⬢</button>
     </nav>
-  );
+  )
 }
 ```
 
@@ -30,7 +30,7 @@ function Nav() {
       <Link href="/">Home</Link>
       <Link href="/search">Search</Link>
     </nav>
-  );
+  )
 }
 ```
 

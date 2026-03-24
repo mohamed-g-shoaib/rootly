@@ -17,7 +17,7 @@ Rotation between grouped icons should use spring physics for natural motion.
 **Correct (spring rotation):**
 
 ```tsx
-const rotation = useSpring(definition.rotation ?? 0, activeTransition);
+const rotation = useSpring(definition.rotation ?? 0, activeTransition)
 
-<motion.g style={{ rotate: rotation, transformOrigin: "center" }} />
+;<motion.g style={{ rotate: rotation, transformOrigin: "center" }} />
 ```

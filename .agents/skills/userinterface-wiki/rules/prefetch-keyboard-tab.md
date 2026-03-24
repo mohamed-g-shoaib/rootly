@@ -15,5 +15,5 @@ const { elementRef } = useForesight({
   callback: () => router.prefetch("/settings"),
   name: "settings-link",
   // Tab prediction fires when focus approaches
-});
+})
 ```

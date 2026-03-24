@@ -1,24 +1,24 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardDescription,
   CardHeader,
   CardPanel,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 
 const LEARNING_INPUTS = [
   "React course",
   "Docs tab",
   "YouTube lesson",
   "SQL article",
-] as const;
+] as const
 
 const SURFACE_STATS = [
   { label: "Today", value: "2h 25m" },
   { label: "Review accuracy", value: "82%" },
   { label: "Current focus", value: "React patterns" },
-] as const;
+] as const
 
 function SourceCard({ body, title }: { body: string; title: string }) {
   return (
@@ -28,7 +28,7 @@ function SourceCard({ body, title }: { body: string; title: string }) {
         <div className="text-sm text-muted-foreground">{body}</div>
       </CardPanel>
     </Card>
-  );
+  )
 }
 
 function StatCard({ label, value }: { label: string; value: string }) {
@@ -41,7 +41,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
         </div>
       </CardPanel>
     </Card>
-  );
+  )
 }
 
 function MobileSurfaceSection({
@@ -50,10 +50,10 @@ function MobileSurfaceSection({
   children,
   title,
 }: {
-  badge: string;
-  body: string;
-  children?: React.ReactNode;
-  title: string;
+  badge: string
+  body: string
+  children?: React.ReactNode
+  title: string
 }) {
   return (
     <div className="rounded-xl border bg-muted/35 p-3">
@@ -62,11 +62,11 @@ function MobileSurfaceSection({
           {badge}
         </Badge>
         <div className="text-sm font-medium text-balance">{title}</div>
-        <div className="text-sm text-muted-foreground text-pretty">{body}</div>
+        <div className="text-sm text-pretty text-muted-foreground">{body}</div>
         {children}
       </div>
     </div>
-  );
+  )
 }
 
 export function HomepageHeroSurface() {
@@ -187,7 +187,7 @@ export function HomepageHeroSurface() {
                   <div className="font-medium text-balance">
                     What problem does <code>useMemo</code> actually solve?
                   </div>
-                  <div className="text-sm text-muted-foreground text-pretty">
+                  <div className="text-sm text-pretty text-muted-foreground">
                     It gives expensive work and unstable references a deliberate
                     home, so rerenders stay predictable and easier to reason
                     about.
@@ -209,5 +209,5 @@ export function HomepageHeroSurface() {
         </CardPanel>
       </Card>
     </>
-  );
+  )
 }

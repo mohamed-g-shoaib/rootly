@@ -17,9 +17,8 @@ function formatDisplayDate(d: Date) {
 }
 
 async function createPdfDocument(notes: Note[], exportDate: Date) {
-  const { Document, Page, StyleSheet, Text, View } = await import(
-    "@react-pdf/renderer"
-  )
+  const { Document, Page, StyleSheet, Text, View } =
+    await import("@react-pdf/renderer")
 
   const styles = StyleSheet.create({
     page: {

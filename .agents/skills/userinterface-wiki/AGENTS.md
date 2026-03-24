@@ -197,13 +197,17 @@ User-initiated animations must complete within 300ms.
 **Incorrect (exceeds 300ms limit):**
 
 ```css
-.button { transition: transform 400ms; }
+.button {
+  transition: transform 400ms;
+}
 ```
 
 **Correct (within 300ms):**
 
 ```css
-.button { transition: transform 200ms; }
+.button {
+  transition: transform 200ms;
+}
 ```
 
 ### 1.2 Consistent Timing for Similar Elements
@@ -213,15 +217,23 @@ Similar elements must use identical timing values.
 **Incorrect (inconsistent timing):**
 
 ```css
-.button-primary { transition: 200ms; }
-.button-secondary { transition: 150ms; }
+.button-primary {
+  transition: 200ms;
+}
+.button-secondary {
+  transition: 150ms;
+}
 ```
 
 **Correct (consistent timing):**
 
 ```css
-.button-primary { transition: 200ms; }
-.button-secondary { transition: 200ms; }
+.button-primary {
+  transition: 200ms;
+}
+.button-secondary {
+  transition: 200ms;
+}
 ```
 
 ### 1.3 No Entrance Animation on Context Menus
@@ -247,13 +259,13 @@ Use exponential ramps, not linear, for natural decay.
 **Incorrect (linear ramp):**
 
 ```ts
-gain.gain.linearRampToValueAtTime(0, t + 0.05);
+gain.gain.linearRampToValueAtTime(0, t + 0.05)
 ```
 
 **Correct (exponential ramp):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
 ```
 
 ### 1.5 No Linear Easing for Motion
@@ -263,13 +275,17 @@ Linear easing should only be used for progress indicators, not motion.
 **Incorrect (linear for motion):**
 
 ```css
-.card { transition: transform 200ms linear; }
+.card {
+  transition: transform 200ms linear;
+}
 ```
 
 **Correct (linear for progress only):**
 
 ```css
-.progress-bar { transition: width 100ms linear; }
+.progress-bar {
+  transition: width 100ms linear;
+}
 ```
 
 ### 1.6 Active State Scale Transform
@@ -279,14 +295,18 @@ Interactive elements must have active/pressed state with scale transform.
 **Incorrect (no active state):**
 
 ```css
-.button:hover { background: var(--gray-3); }
+.button:hover {
+  background: var(--gray-3);
+}
 /* Missing :active state */
 ```
 
 **Correct (active state present):**
 
 ```css
-.button:active { transform: scale(0.98); }
+.button:active {
+  transform: scale(0.98);
+}
 ```
 
 ### 1.7 Subtle Squash and Stretch
@@ -355,13 +375,17 @@ Modal/dialog backgrounds should dim to direct focus.
 **Incorrect (transparent overlay):**
 
 ```css
-.overlay { background: transparent; }
+.overlay {
+  background: transparent;
+}
 ```
 
 **Correct (dimmed overlay):**
 
 ```css
-.overlay { background: var(--black-a6); }
+.overlay {
+  background: var(--black-a6);
+}
 ```
 
 ### 1.12 Z-Index Layering for Animated Elements
@@ -371,13 +395,17 @@ Animated elements must respect z-index layering.
 **Incorrect (no z-index):**
 
 ```css
-.tooltip { /* No z-index, may render behind other elements */ }
+.tooltip {
+  /* No z-index, may render behind other elements */
+}
 ```
 
 **Correct (explicit z-index):**
 
 ```css
-.tooltip { z-index: 50; }
+.tooltip {
+  z-index: 50;
+}
 ```
 
 ---
@@ -388,12 +416,12 @@ Animated elements must respect z-index layering.
 
 **Decision framework:** Is this motion reacting to the user, or is the system speaking?
 
-| Motion Type | Best Choice | Why |
-|-------------|-------------|-----|
-| User-driven (drag, flick, gesture) | Spring | Survives interruption, preserves velocity |
-| System-driven (state change, feedback) | Easing | Clear start/end, predictable timing |
-| Time representation (progress, loading) | Linear | 1:1 relationship between time and progress |
-| High-frequency (typing, fast toggles) | None | Animation adds noise, feels slower |
+| Motion Type                             | Best Choice | Why                                        |
+| --------------------------------------- | ----------- | ------------------------------------------ |
+| User-driven (drag, flick, gesture)      | Spring      | Survives interruption, preserves velocity  |
+| System-driven (state change, feedback)  | Easing      | Clear start/end, predictable timing        |
+| Time representation (progress, loading) | Linear      | 1:1 relationship between time and progress |
+| High-frequency (typing, fast toggles)   | None        | Animation adds noise, feels slower         |
 
 ### 2.1 Springs for Gesture-Driven Motion
 
@@ -402,10 +430,7 @@ Gesture-driven motion (drag, flick, swipe) must use springs.
 **Incorrect (easing for drag):**
 
 ```tsx
-<motion.div
-  drag="x"
-  transition={{ duration: 0.3, ease: "easeOut" }}
-/>
+<motion.div drag="x" transition={{ duration: 0.3, ease: "easeOut" }} />
 ```
 
 **Correct (spring for drag):**
@@ -424,10 +449,7 @@ Motion that can be interrupted must use springs.
 **Incorrect (easing for interruptible):**
 
 ```tsx
-<motion.div
-  animate={{ x: isOpen ? 200 : 0 }}
-  transition={{ duration: 0.3 }}
-/>
+<motion.div animate={{ x: isOpen ? 200 : 0 }} transition={{ duration: 0.3 }} />
 ```
 
 **Correct (spring for interruptible):**
@@ -493,10 +515,7 @@ System-initiated state changes should use easing curves.
 **Incorrect (spring for announcement):**
 
 ```tsx
-<motion.div
-  animate={{ y: 0 }}
-  transition={{ type: "spring" }}
-/>
+<motion.div animate={{ y: 0 }} transition={{ type: "spring" }} />
 ```
 
 **Correct (easing for announcement):**
@@ -515,13 +534,17 @@ Entrances must use ease-out (arrive fast, settle gently).
 **Incorrect (ease-in for entrance):**
 
 ```css
-.modal-enter { animation-timing-function: ease-in; }
+.modal-enter {
+  animation-timing-function: ease-in;
+}
 ```
 
 **Correct (ease-out for entrance):**
 
 ```css
-.modal-enter { animation-timing-function: ease-out; }
+.modal-enter {
+  animation-timing-function: ease-out;
+}
 ```
 
 ### 2.7 Ease-In for Exits
@@ -531,13 +554,17 @@ Exits must use ease-in (build momentum before departure).
 **Incorrect (ease-out for exit):**
 
 ```css
-.modal-exit { animation-timing-function: ease-out; }
+.modal-exit {
+  animation-timing-function: ease-out;
+}
 ```
 
 **Correct (ease-in for exit):**
 
 ```css
-.modal-exit { animation-timing-function: ease-in; }
+.modal-exit {
+  animation-timing-function: ease-in;
+}
 ```
 
 ### 2.8 Ease-In-Out for View Transitions
@@ -547,7 +574,9 @@ View/mode transitions use ease-in-out for neutral attention.
 **Correct:**
 
 ```css
-.page-transition { animation-timing-function: ease-in-out; }
+.page-transition {
+  animation-timing-function: ease-in-out;
+}
 ```
 
 ### 2.9 Linear Easing Only for Progress
@@ -557,13 +586,17 @@ Linear easing only for progress bars and time representation.
 **Incorrect (linear for motion):**
 
 ```css
-.card-slide { transition: transform 200ms linear; }
+.card-slide {
+  transition: transform 200ms linear;
+}
 ```
 
 **Correct (linear for progress):**
 
 ```css
-.progress-bar { transition: width 100ms linear; }
+.progress-bar {
+  transition: width 100ms linear;
+}
 ```
 
 ### 2.10 Press and Hover 120-180ms
@@ -573,13 +606,17 @@ Press and hover interactions should use 120-180ms duration.
 **Incorrect (too slow):**
 
 ```css
-.button:hover { transition: background-color 400ms; }
+.button:hover {
+  transition: background-color 400ms;
+}
 ```
 
 **Correct (appropriate duration):**
 
 ```css
-.button:hover { transition: background-color 150ms; }
+.button:hover {
+  transition: background-color 150ms;
+}
 ```
 
 ### 2.11 Small State Changes 180-260ms
@@ -589,7 +626,9 @@ Small state changes should use 180-260ms duration.
 **Correct:**
 
 ```css
-.toggle { transition: transform 200ms ease; }
+.toggle {
+  transition: transform 200ms ease;
+}
 ```
 
 ### 2.12 Max 300ms for User Actions
@@ -615,13 +654,17 @@ If animation feels slow, shorten duration before adjusting curve.
 **Incorrect (adjusting curve instead):**
 
 ```css
-.element { transition: 400ms cubic-bezier(0, 0.9, 0.1, 1); }
+.element {
+  transition: 400ms cubic-bezier(0, 0.9, 0.1, 1);
+}
 ```
 
 **Correct (shorter duration):**
 
 ```css
-.element { transition: 200ms ease-out; }
+.element {
+  transition: 200ms ease-out;
+}
 ```
 
 ### 2.14 No Animation for High-Frequency Interactions
@@ -636,7 +679,7 @@ function SearchInput() {
     <motion.div animate={{ scale: [1, 1.02, 1] }}>
       <input onChange={handleSearch} />
     </motion.div>
-  );
+  )
 }
 ```
 
@@ -644,7 +687,7 @@ function SearchInput() {
 
 ```tsx
 function SearchInput() {
-  return <input onChange={handleSearch} />;
+  return <input onChange={handleSearch} />
 }
 ```
 
@@ -656,12 +699,9 @@ Keyboard navigation should be instant, no animation.
 
 ```tsx
 function Menu() {
-  return items.map(item => (
-    <motion.li
-      whileFocus={{ scale: 1.05 }}
-      transition={{ duration: 0.2 }}
-    />
-  ));
+  return items.map((item) => (
+    <motion.li whileFocus={{ scale: 1.05 }} transition={{ duration: 0.2 }} />
+  ))
 }
 ```
 
@@ -669,9 +709,7 @@ function Menu() {
 
 ```tsx
 function Menu() {
-  return items.map(item => (
-    <li className={styles.menuItem} />
-  ));
+  return items.map((item) => <li className={styles.menuItem} />)
 }
 ```
 
@@ -697,15 +735,15 @@ Context menus should not animate on entrance (exit only).
 
 **Quick reference:**
 
-| Interaction | Timing | Type |
-|-------------|--------|------|
-| Drag release | Spring | `stiffness: 500, damping: 30` |
-| Button press | 150ms | `ease` |
-| Modal enter | 200ms | `ease-out` |
-| Modal exit | 150ms | `ease-in` |
-| Page transition | 250ms | `ease-in-out` |
-| Progress bar | varies | `linear` |
-| Typing feedback | 0ms | none |
+| Interaction     | Timing | Type                          |
+| --------------- | ------ | ----------------------------- |
+| Drag release    | Spring | `stiffness: 500, damping: 30` |
+| Button press    | 150ms  | `ease`                        |
+| Modal enter     | 200ms  | `ease-out`                    |
+| Modal exit      | 150ms  | `ease-in`                     |
+| Page transition | 250ms  | `ease-in-out`                 |
+| Progress bar    | varies | `linear`                      |
+| Typing feedback | 0ms    | none                          |
 
 ---
 
@@ -720,18 +758,16 @@ Conditional motion elements must be wrapped in AnimatePresence.
 **Incorrect (no wrapper):**
 
 ```tsx
-{isVisible && (
-  <motion.div exit={{ opacity: 0 }} />
-)}
+{
+  isVisible && <motion.div exit={{ opacity: 0 }} />
+}
 ```
 
 **Correct (wrapped):**
 
 ```tsx
 <AnimatePresence>
-  {isVisible && (
-    <motion.div exit={{ opacity: 0 }} />
-  )}
+  {isVisible && <motion.div exit={{ opacity: 0 }} />}
 </AnimatePresence>
 ```
 
@@ -743,9 +779,7 @@ Elements inside AnimatePresence should have exit prop defined.
 
 ```tsx
 <AnimatePresence>
-  {isOpen && (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} />
-  )}
+  {isOpen && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} />}
 </AnimatePresence>
 ```
 
@@ -819,12 +853,8 @@ useIsPresent must be called from child of AnimatePresence, not parent.
 
 ```tsx
 function Parent() {
-  const isPresent = useIsPresent();
-  return (
-    <AnimatePresence>
-      {show && <Child />}
-    </AnimatePresence>
-  );
+  const isPresent = useIsPresent()
+  return <AnimatePresence>{show && <Child />}</AnimatePresence>
 }
 ```
 
@@ -832,8 +862,8 @@ function Parent() {
 
 ```tsx
 function Child() {
-  const isPresent = useIsPresent();
-  return <motion.div data-exiting={!isPresent} />;
+  const isPresent = useIsPresent()
+  return <motion.div data-exiting={!isPresent} />
 }
 ```
 
@@ -845,13 +875,13 @@ When using usePresence, always call safeToRemove after async work.
 
 ```tsx
 function AsyncComponent() {
-  const [isPresent, safeToRemove] = usePresence();
+  const [isPresent, safeToRemove] = usePresence()
 
   useEffect(() => {
     if (!isPresent) {
-      cleanup();
+      cleanup()
     }
-  }, [isPresent]);
+  }, [isPresent])
 }
 ```
 
@@ -859,13 +889,13 @@ function AsyncComponent() {
 
 ```tsx
 function AsyncComponent() {
-  const [isPresent, safeToRemove] = usePresence();
+  const [isPresent, safeToRemove] = usePresence()
 
   useEffect(() => {
     if (!isPresent) {
-      cleanup().then(safeToRemove);
+      cleanup().then(safeToRemove)
     }
-  }, [isPresent, safeToRemove]);
+  }, [isPresent, safeToRemove])
 }
 ```
 
@@ -877,8 +907,8 @@ Disable interactions on exiting elements using isPresent.
 
 ```tsx
 function Card() {
-  const isPresent = useIsPresent();
-  return <button onClick={handleClick}>Click</button>;
+  const isPresent = useIsPresent()
+  return <button onClick={handleClick}>Click</button>
 }
 ```
 
@@ -886,12 +916,12 @@ function Card() {
 
 ```tsx
 function Card() {
-  const isPresent = useIsPresent();
+  const isPresent = useIsPresent()
   return (
     <button onClick={handleClick} disabled={!isPresent}>
       Click
     </button>
-  );
+  )
 }
 ```
 
@@ -923,7 +953,7 @@ Mode "sync" causes layout conflicts; position exiting elements absolutely.
 
 ```tsx
 <AnimatePresence mode="sync">
-  {items.map(item => (
+  {items.map((item) => (
     <motion.div exit={{ opacity: 0 }}>{item}</motion.div>
   ))}
 </AnimatePresence>
@@ -933,7 +963,7 @@ Mode "sync" causes layout conflicts; position exiting elements absolutely.
 
 ```tsx
 <AnimatePresence mode="popLayout">
-  {items.map(item => (
+  {items.map((item) => (
     <motion.div exit={{ opacity: 0 }}>{item}</motion.div>
   ))}
 </AnimatePresence>
@@ -947,7 +977,9 @@ Use popLayout mode for list reordering animations.
 
 ```tsx
 <AnimatePresence>
-  {items.map(item => <ListItem key={item.id} />)}
+  {items.map((item) => (
+    <ListItem key={item.id} />
+  ))}
 </AnimatePresence>
 ```
 
@@ -955,7 +987,9 @@ Use popLayout mode for list reordering animations.
 
 ```tsx
 <AnimatePresence mode="popLayout">
-  {items.map(item => <ListItem key={item.id} />)}
+  {items.map((item) => (
+    <ListItem key={item.id} />
+  ))}
 </AnimatePresence>
 ```
 
@@ -970,7 +1004,7 @@ Nested AnimatePresence must use propagate prop for coordinated exits.
   {isOpen && (
     <motion.div exit={{ opacity: 0 }}>
       <AnimatePresence>
-        {items.map(item => (
+        {items.map((item) => (
           <motion.div key={item.id} exit={{ scale: 0 }} />
         ))}
       </AnimatePresence>
@@ -986,7 +1020,7 @@ Nested AnimatePresence must use propagate prop for coordinated exits.
   {isOpen && (
     <motion.div exit={{ opacity: 0 }}>
       <AnimatePresence propagate>
-        {items.map(item => (
+        {items.map((item) => (
           <motion.div key={item.id} exit={{ scale: 0 }} />
         ))}
       </AnimatePresence>
@@ -1062,9 +1096,7 @@ Use pseudo-elements for decorative content instead of extra DOM nodes.
 **Correct (pseudo-element):**
 
 ```tsx
-<button className={styles.button}>
-  Click me
-</button>
+<button className={styles.button}>Click me</button>
 ```
 
 ```css
@@ -1169,18 +1201,18 @@ Elements participating in view transitions need view-transition-name.
 
 ```ts
 document.startViewTransition(() => {
-  targetImg.src = newSrc;
-});
+  targetImg.src = newSrc
+})
 ```
 
 **Correct (transition name assigned):**
 
 ```ts
-sourceImg.style.viewTransitionName = "card";
+sourceImg.style.viewTransitionName = "card"
 document.startViewTransition(() => {
-  sourceImg.style.viewTransitionName = "";
-  targetImg.style.viewTransitionName = "card";
-});
+  sourceImg.style.viewTransitionName = ""
+  targetImg.style.viewTransitionName = "card"
+})
 ```
 
 ### 4.7 Unique View Transition Names
@@ -1199,7 +1231,7 @@ Each view-transition-name must be unique on the page during transition.
 **Correct (unique per element):**
 
 ```ts
-element.style.viewTransitionName = `card-${id}`;
+element.style.viewTransitionName = `card-${id}`
 ```
 
 ### 4.8 Clean Up View Transition Names
@@ -1209,20 +1241,20 @@ Remove view-transition-name after transition completes.
 **Incorrect (stale name):**
 
 ```ts
-sourceImg.style.viewTransitionName = "card";
+sourceImg.style.viewTransitionName = "card"
 document.startViewTransition(() => {
-  targetImg.style.viewTransitionName = "card";
-});
+  targetImg.style.viewTransitionName = "card"
+})
 ```
 
 **Correct (name cleaned up):**
 
 ```ts
-sourceImg.style.viewTransitionName = "card";
+sourceImg.style.viewTransitionName = "card"
 document.startViewTransition(() => {
-  sourceImg.style.viewTransitionName = "";
-  targetImg.style.viewTransitionName = "card";
-});
+  sourceImg.style.viewTransitionName = ""
+  targetImg.style.viewTransitionName = "card"
+})
 ```
 
 ### 4.9 View Transitions Over JS Libraries
@@ -1232,12 +1264,10 @@ Prefer View Transitions API over JavaScript animation libraries for page transit
 **Incorrect (JS-based transition):**
 
 ```tsx
-import { motion } from "motion/react";
+import { motion } from "motion/react"
 
 function ImageLightbox() {
-  return (
-    <motion.img layoutId="hero" />
-  );
+  return <motion.img layoutId="hero" />
 }
 ```
 
@@ -1245,10 +1275,10 @@ function ImageLightbox() {
 
 ```ts
 function openLightbox(img: HTMLImageElement) {
-  img.style.viewTransitionName = "hero";
+  img.style.viewTransitionName = "hero"
   document.startViewTransition(() => {
     // Native browser transition
-  });
+  })
 }
 ```
 
@@ -1259,7 +1289,9 @@ Style view transition pseudo-elements for custom animations.
 **Incorrect (default crossfade only):**
 
 ```ts
-document.startViewTransition(() => { /* ... */ });
+document.startViewTransition(() => {
+  /* ... */
+})
 ```
 
 **Correct (custom animation):**
@@ -1390,9 +1422,9 @@ Every audio cue must have a visual equivalent; sound never replaces visual feedb
 ```tsx
 function SubmitButton({ onClick }) {
   const handleClick = () => {
-    playSound("success");
-    onClick();
-  };
+    playSound("success")
+    onClick()
+  }
 }
 ```
 
@@ -1400,15 +1432,15 @@ function SubmitButton({ onClick }) {
 
 ```tsx
 function SubmitButton({ onClick }) {
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState("idle")
 
   const handleClick = () => {
-    playSound("success");
-    setStatus("success");
-    onClick();
-  };
+    playSound("success")
+    setStatus("success")
+    onClick()
+  }
 
-  return <button data-status={status}>Submit</button>;
+  return <button data-status={status}>Submit</button>
 }
 ```
 
@@ -1420,7 +1452,7 @@ Provide explicit toggle to disable sounds in settings.
 
 ```tsx
 function App() {
-  return <SoundProvider>{children}</SoundProvider>;
+  return <SoundProvider>{children}</SoundProvider>
 }
 ```
 
@@ -1428,12 +1460,8 @@ function App() {
 
 ```tsx
 function App() {
-  const { soundEnabled } = usePreferences();
-  return (
-    <SoundProvider enabled={soundEnabled}>
-      {children}
-    </SoundProvider>
-  );
+  const { soundEnabled } = usePreferences()
+  return <SoundProvider enabled={soundEnabled}>{children}</SoundProvider>
 }
 ```
 
@@ -1445,7 +1473,7 @@ Respect prefers-reduced-motion as proxy for sound sensitivity.
 
 ```tsx
 function playSound(name: string) {
-  audio.play();
+  audio.play()
 }
 ```
 
@@ -1455,10 +1483,10 @@ function playSound(name: string) {
 function playSound(name: string) {
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
-  ).matches;
+  ).matches
 
-  if (prefersReducedMotion) return;
-  audio.play();
+  if (prefersReducedMotion) return
+  audio.play()
 }
 ```
 
@@ -1470,8 +1498,8 @@ Allow volume adjustment independent of system volume.
 
 ```tsx
 function playSound() {
-  audio.volume = 1;
-  audio.play();
+  audio.volume = 1
+  audio.play()
 }
 ```
 
@@ -1479,9 +1507,9 @@ function playSound() {
 
 ```tsx
 function playSound() {
-  const { volume } = usePreferences();
-  audio.volume = volume;
-  audio.play();
+  const { volume } = usePreferences()
+  audio.volume = volume
+  audio.play()
 }
 ```
 
@@ -1494,9 +1522,9 @@ Do not add sound to high-frequency interactions (typing, keyboard navigation).
 ```tsx
 function Input({ onChange }) {
   const handleChange = (e) => {
-    playSound("keystroke");
-    onChange(e);
-  };
+    playSound("keystroke")
+    onChange(e)
+  }
 }
 ```
 
@@ -1504,7 +1532,7 @@ function Input({ onChange }) {
 
 ```tsx
 function Input({ onChange }) {
-  return <input onChange={onChange} />;
+  return <input onChange={onChange} />
 }
 ```
 
@@ -1516,9 +1544,9 @@ Sound is appropriate for confirmations: payments, uploads, form submissions.
 
 ```tsx
 async function handlePayment() {
-  await processPayment();
-  playSound("success");
-  showConfirmation();
+  await processPayment()
+  playSound("success")
+  showConfirmation()
 }
 ```
 
@@ -1530,8 +1558,8 @@ Sound is appropriate for errors and warnings that can't be overlooked.
 
 ```tsx
 function handleError(error: Error) {
-  playSound("error");
-  showErrorToast(error.message);
+  playSound("error")
+  showErrorToast(error.message)
 }
 ```
 
@@ -1543,11 +1571,7 @@ Do not add sound to decorative moments with no informational value.
 
 ```tsx
 function Card({ onHover }) {
-  return (
-    <div onMouseEnter={() => playSound("hover")}>
-      {children}
-    </div>
-  );
+  return <div onMouseEnter={() => playSound("hover")}>{children}</div>
 }
 ```
 
@@ -1559,8 +1583,8 @@ Sound should inform, not punish; avoid harsh sounds for user mistakes.
 
 ```tsx
 function ValidationError() {
-  playSound("loud-buzzer");
-  return <span>Invalid input</span>;
+  playSound("loud-buzzer")
+  return <span>Invalid input</span>
 }
 ```
 
@@ -1568,8 +1592,8 @@ function ValidationError() {
 
 ```tsx
 function ValidationError() {
-  playSound("gentle-alert");
-  return <span>Invalid input</span>;
+  playSound("gentle-alert")
+  return <span>Invalid input</span>
 }
 ```
 
@@ -1581,8 +1605,8 @@ Preload audio files to avoid playback delay.
 
 ```tsx
 function playSound(name: string) {
-  const audio = new Audio(`/sounds/${name}.mp3`);
-  audio.play();
+  const audio = new Audio(`/sounds/${name}.mp3`)
+  audio.play()
 }
 ```
 
@@ -1592,13 +1616,13 @@ function playSound(name: string) {
 const sounds = {
   success: new Audio("/sounds/success.mp3"),
   error: new Audio("/sounds/error.mp3"),
-};
+}
 
-Object.values(sounds).forEach(audio => audio.load());
+Object.values(sounds).forEach((audio) => audio.load())
 
 function playSound(name: keyof typeof sounds) {
-  sounds[name].currentTime = 0;
-  sounds[name].play();
+  sounds[name].currentTime = 0
+  sounds[name].play()
 }
 ```
 
@@ -1609,13 +1633,13 @@ Default volume should be subtle, not loud.
 **Incorrect (too loud):**
 
 ```tsx
-const DEFAULT_VOLUME = 1.0;
+const DEFAULT_VOLUME = 1.0
 ```
 
 **Correct (subtle):**
 
 ```tsx
-const DEFAULT_VOLUME = 0.3;
+const DEFAULT_VOLUME = 0.3
 ```
 
 ### 5.12 Reset currentTime Before Replay
@@ -1626,7 +1650,7 @@ Reset audio currentTime before replay to allow rapid triggering.
 
 ```tsx
 function playSound() {
-  audio.play();
+  audio.play()
 }
 ```
 
@@ -1634,8 +1658,8 @@ function playSound() {
 
 ```tsx
 function playSound() {
-  audio.currentTime = 0;
-  audio.play();
+  audio.currentTime = 0
+  audio.play()
 }
 ```
 
@@ -1647,8 +1671,8 @@ Sound weight should match action importance.
 
 ```tsx
 function handleToggle() {
-  playSound("triumphant-fanfare");
-  setEnabled(!enabled);
+  playSound("triumphant-fanfare")
+  setEnabled(!enabled)
 }
 ```
 
@@ -1656,13 +1680,13 @@ function handleToggle() {
 
 ```tsx
 function handleToggle() {
-  playSound("soft-click");
-  setEnabled(!enabled);
+  playSound("soft-click")
+  setEnabled(!enabled)
 }
 
 function handlePurchase() {
-  playSound("success-chime");
-  completePurchase();
+  playSound("success-chime")
+  completePurchase()
 }
 ```
 
@@ -1674,7 +1698,7 @@ Sound duration should match action duration.
 
 ```tsx
 function handleClick() {
-  playSound("long-whoosh"); // 2000ms
+  playSound("long-whoosh") // 2000ms
 }
 ```
 
@@ -1682,27 +1706,27 @@ function handleClick() {
 
 ```tsx
 function handleClick() {
-  playSound("click"); // 50ms
+  playSound("click") // 50ms
 }
 
 function handleUpload() {
-  playSound("upload-progress"); // Matches upload duration
+  playSound("upload-progress") // Matches upload duration
 }
 ```
 
 **Sound appropriateness matrix:**
 
-| Interaction | Sound? | Reason |
-|-------------|--------|--------|
-| Payment success | Yes | Significant confirmation |
-| Form submission | Yes | User needs assurance |
-| Error state | Yes | Can't be overlooked |
-| Notification | Yes | May not be looking at screen |
-| Button click | Maybe | Only for significant buttons |
-| Typing | No | Too frequent |
-| Hover | No | Decorative only |
-| Scroll | No | Too frequent |
-| Navigation | No | Keyboard nav would be noisy |
+| Interaction     | Sound? | Reason                       |
+| --------------- | ------ | ---------------------------- |
+| Payment success | Yes    | Significant confirmation     |
+| Form submission | Yes    | User needs assurance         |
+| Error state     | Yes    | Can't be overlooked          |
+| Notification    | Yes    | May not be looking at screen |
+| Button click    | Maybe  | Only for significant buttons |
+| Typing          | No     | Too frequent                 |
+| Hover           | No     | Decorative only              |
+| Scroll          | No     | Too frequent                 |
+| Navigation      | No     | Keyboard nav would be noisy  |
 
 Reference: [Web Audio API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API), [prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion)
 
@@ -1720,20 +1744,20 @@ Reuse a single AudioContext instance; do not create new ones per sound.
 
 ```ts
 function playSound() {
-  const ctx = new AudioContext();
+  const ctx = new AudioContext()
 }
 ```
 
 **Correct (singleton):**
 
 ```ts
-let audioContext: AudioContext | null = null;
+let audioContext: AudioContext | null = null
 
 function getAudioContext(): AudioContext {
   if (!audioContext) {
-    audioContext = new AudioContext();
+    audioContext = new AudioContext()
   }
-  return audioContext;
+  return audioContext
 }
 ```
 
@@ -1745,7 +1769,7 @@ Check and resume suspended AudioContext before playing.
 
 ```ts
 function playSound() {
-  const ctx = getAudioContext();
+  const ctx = getAudioContext()
 }
 ```
 
@@ -1753,9 +1777,9 @@ function playSound() {
 
 ```ts
 function playSound() {
-  const ctx = getAudioContext();
+  const ctx = getAudioContext()
   if (ctx.state === "suspended") {
-    ctx.resume();
+    ctx.resume()
   }
 }
 ```
@@ -1767,17 +1791,17 @@ Disconnect and clean up audio nodes after playback.
 **Incorrect (nodes remain connected):**
 
 ```ts
-source.start();
+source.start()
 ```
 
 **Correct (cleaned up on end):**
 
 ```ts
-source.start();
+source.start()
 source.onended = () => {
-  source.disconnect();
-  gain.disconnect();
-};
+  source.disconnect()
+  gain.disconnect()
+}
 ```
 
 ### 6.4 Exponential Decay for Natural Sound
@@ -1787,13 +1811,13 @@ Use exponential ramps for natural decay, not linear.
 **Incorrect (linear ramp):**
 
 ```ts
-gain.gain.linearRampToValueAtTime(0, t + 0.05);
+gain.gain.linearRampToValueAtTime(0, t + 0.05)
 ```
 
 **Correct (exponential ramp):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
 ```
 
 ### 6.5 No Zero Target for Exponential Ramps
@@ -1803,13 +1827,13 @@ Exponential ramps cannot target 0; use 0.001 or similar small value.
 **Incorrect (targets zero):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0, t + 0.05)
 ```
 
 **Correct (targets near-zero):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
 ```
 
 ### 6.6 Set Initial Value Before Ramp
@@ -1819,14 +1843,14 @@ Set initial value before ramping to avoid glitches.
 **Incorrect (no initial value):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
 ```
 
 **Correct (initial value set):**
 
 ```ts
-gain.gain.setValueAtTime(0.3, t);
-gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+gain.gain.setValueAtTime(0.3, t)
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
 ```
 
 ### 6.7 Noise for Percussive Sounds
@@ -1836,17 +1860,17 @@ Use filtered noise for clicks/taps, not oscillators.
 **Incorrect (oscillator for click):**
 
 ```ts
-const osc = ctx.createOscillator();
-osc.type = "sine";
+const osc = ctx.createOscillator()
+osc.type = "sine"
 ```
 
 **Correct (noise burst for click):**
 
 ```ts
-const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.008, ctx.sampleRate);
-const data = buffer.getChannelData(0);
+const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.008, ctx.sampleRate)
+const data = buffer.getChannelData(0)
 for (let i = 0; i < data.length; i++) {
-  data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 50);
+  data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 50)
 }
 ```
 
@@ -1857,14 +1881,14 @@ Use oscillators with pitch movement for tonal sounds (pops, confirmations).
 **Incorrect (static frequency):**
 
 ```ts
-osc.frequency.value = 400;
+osc.frequency.value = 400
 ```
 
 **Correct (pitch sweep):**
 
 ```ts
-osc.frequency.setValueAtTime(400, t);
-osc.frequency.exponentialRampToValueAtTime(600, t + 0.04);
+osc.frequency.setValueAtTime(400, t)
+osc.frequency.exponentialRampToValueAtTime(600, t + 0.04)
 ```
 
 ### 6.9 Bandpass Filter for Sound Character
@@ -1874,17 +1898,17 @@ Apply bandpass filter to shape percussive sounds.
 **Incorrect (raw noise):**
 
 ```ts
-source.connect(gain).connect(ctx.destination);
+source.connect(gain).connect(ctx.destination)
 ```
 
 **Correct (filtered noise):**
 
 ```ts
-const filter = ctx.createBiquadFilter();
-filter.type = "bandpass";
-filter.frequency.value = 4000;
-filter.Q.value = 3;
-source.connect(filter).connect(gain).connect(ctx.destination);
+const filter = ctx.createBiquadFilter()
+filter.type = "bandpass"
+filter.frequency.value = 4000
+filter.Q.value = 3
+source.connect(filter).connect(gain).connect(ctx.destination)
 ```
 
 ### 6.10 Click Duration 5-15ms
@@ -1894,13 +1918,13 @@ Click/tap sounds should be 5-15ms duration.
 **Incorrect (too long):**
 
 ```ts
-const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate)
 ```
 
 **Correct (appropriate duration):**
 
 ```ts
-const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.008, ctx.sampleRate);
+const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.008, ctx.sampleRate)
 ```
 
 ### 6.11 Click Filter 3000-6000Hz
@@ -1910,13 +1934,13 @@ Bandpass filter for clicks should be 3000-6000Hz.
 **Incorrect (too low):**
 
 ```ts
-filter.frequency.value = 500;
+filter.frequency.value = 500
 ```
 
 **Correct (crisp range):**
 
 ```ts
-filter.frequency.value = 4000;
+filter.frequency.value = 4000
 ```
 
 ### 6.12 Gain Under 1.0
@@ -1926,13 +1950,13 @@ Gain values should not exceed 1.0 to prevent clipping.
 **Incorrect (clipping):**
 
 ```ts
-gain.gain.setValueAtTime(1.5, t);
+gain.gain.setValueAtTime(1.5, t)
 ```
 
 **Correct (safe gain):**
 
 ```ts
-gain.gain.setValueAtTime(0.3, t);
+gain.gain.setValueAtTime(0.3, t)
 ```
 
 ### 6.13 Filter Q Value 2-5
@@ -1942,25 +1966,25 @@ Filter Q for clicks should be 2-5 for focused but not harsh sound.
 **Incorrect (too resonant):**
 
 ```ts
-filter.Q.value = 15;
+filter.Q.value = 15
 ```
 
 **Correct (balanced Q):**
 
 ```ts
-filter.Q.value = 3;
+filter.Q.value = 3
 ```
 
 **Parameter translation table:**
 
-| User Says | Parameter Change |
-|-----------|------------------|
-| "too harsh" | Lower filter frequency, reduce Q |
-| "too muffled" | Higher filter frequency |
-| "too long" | Shorter duration, faster decay |
-| "cuts off abruptly" | Use exponential decay |
-| "more mechanical" | Higher Q, faster decay |
-| "softer" | Lower gain, triangle wave |
+| User Says           | Parameter Change                 |
+| ------------------- | -------------------------------- |
+| "too harsh"         | Lower filter frequency, reduce Q |
+| "too muffled"       | Higher filter frequency          |
+| "too long"          | Shorter duration, faster decay   |
+| "cuts off abruptly" | Use exponential decay            |
+| "more mechanical"   | Higher Q, faster decay           |
+| "softer"            | Lower gain, triangle wave        |
 
 Reference: [Web Audio API - MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
 
@@ -1976,23 +2000,27 @@ Reference: [Web Audio API - MDN](https://developer.mozilla.org/en-US/docs/Web/AP
 
 ```ts
 interface IconLine {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  opacity?: number;
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  opacity?: number
 }
 
 interface IconDefinition {
-  lines: [IconLine, IconLine, IconLine];
-  rotation?: number;
-  group?: string;
+  lines: [IconLine, IconLine, IconLine]
+  rotation?: number
+  group?: string
 }
 
-const CENTER = 7;
+const CENTER = 7
 const collapsed: IconLine = {
-  x1: CENTER, y1: CENTER, x2: CENTER, y2: CENTER, opacity: 0,
-};
+  x1: CENTER,
+  y1: CENTER,
+  x2: CENTER,
+  y2: CENTER,
+  opacity: 0,
+}
 ```
 
 ### 7.1 Icons Must Use Exactly Three Lines
@@ -2007,7 +2035,7 @@ const checkIcon = {
     { x1: 2, y1: 7.5, x2: 5.5, y2: 11 },
     { x1: 5.5, y1: 11, x2: 12, y2: 3 },
   ],
-};
+}
 ```
 
 **Correct (3 lines with collapsed):**
@@ -2019,7 +2047,7 @@ const checkIcon = {
     { x1: 5.5, y1: 11, x2: 12, y2: 3 },
     collapsed,
   ],
-};
+}
 ```
 
 ### 7.2 Use Collapsed Constant for Unused Lines
@@ -2030,24 +2058,16 @@ Unused lines must use the collapsed constant, not omission or null.
 
 ```ts
 const minusIcon = {
-  lines: [
-    { x1: 2, y1: 7, x2: 12, y2: 7 },
-    null,
-    null,
-  ],
-};
+  lines: [{ x1: 2, y1: 7, x2: 12, y2: 7 }, null, null],
+}
 ```
 
 **Correct (collapsed constant):**
 
 ```ts
 const minusIcon = {
-  lines: [
-    { x1: 2, y1: 7, x2: 12, y2: 7 },
-    collapsed,
-    collapsed,
-  ],
-};
+  lines: [{ x1: 2, y1: 7, x2: 12, y2: 7 }, collapsed, collapsed],
+}
 ```
 
 ### 7.3 Consistent ViewBox Size
@@ -2064,8 +2084,8 @@ const icon2 = { lines: [{ x1: 4, y1: 14, x2: 24, y2: 14 }, ...] }; // 28x28
 **Correct (consistent scale):**
 
 ```ts
-const VIEWBOX_SIZE = 14;
-const CENTER = 7;
+const VIEWBOX_SIZE = 14
+const CENTER = 7
 ```
 
 ### 7.4 Shared Group for Rotational Variants
@@ -2086,14 +2106,14 @@ const arrowLines: [IconLine, IconLine, IconLine] = [
   { x1: 2, y1: 7, x2: 12, y2: 7 },
   { x1: 7.5, y1: 2.5, x2: 12, y2: 7 },
   { x1: 7.5, y1: 11.5, x2: 12, y2: 7 },
-];
+]
 
 const icons = {
   "arrow-right": { lines: arrowLines, rotation: 0, group: "arrow" },
   "arrow-down": { lines: arrowLines, rotation: 90, group: "arrow" },
   "arrow-left": { lines: arrowLines, rotation: 180, group: "arrow" },
   "arrow-up": { lines: arrowLines, rotation: -90, group: "arrow" },
-};
+}
 ```
 
 ### 7.5 Spring Physics for Rotation
@@ -2109,9 +2129,9 @@ Rotation between grouped icons should use spring physics for natural motion.
 **Correct (spring rotation):**
 
 ```tsx
-const rotation = useSpring(definition.rotation ?? 0, activeTransition);
+const rotation = useSpring(definition.rotation ?? 0, activeTransition)
 
-<motion.g style={{ rotate: rotation, transformOrigin: "center" }} />
+;<motion.g style={{ rotate: rotation, transformOrigin: "center" }} />
 ```
 
 ### 7.6 Reduced Motion Support for Icons
@@ -2145,8 +2165,8 @@ When transitioning between icons NOT in the same group, rotation should jump ins
 
 ```tsx
 useEffect(() => {
-  rotation.set(definition.rotation ?? 0);
-}, [definition]);
+  rotation.set(definition.rotation ?? 0)
+}, [definition])
 ```
 
 **Correct (jumps when not grouped):**
@@ -2154,11 +2174,11 @@ useEffect(() => {
 ```tsx
 useEffect(() => {
   if (shouldRotate) {
-    rotation.set(definition.rotation ?? 0);
+    rotation.set(definition.rotation ?? 0)
   } else {
-    rotation.jump(definition.rotation ?? 0);
+    rotation.jump(definition.rotation ?? 0)
   }
-}, [definition, shouldRotate]);
+}, [definition, shouldRotate])
 ```
 
 ### 7.8 Round Stroke Line Caps
@@ -2184,13 +2204,17 @@ Icon SVGs should be aria-hidden since they're decorative.
 **Incorrect (no aria attribute):**
 
 ```tsx
-<svg width={size} height={size}>...</svg>
+<svg width={size} height={size}>
+  ...
+</svg>
 ```
 
 **Correct (aria-hidden):**
 
 ```tsx
-<svg width={size} height={size} aria-hidden="true">...</svg>
+<svg width={size} height={size} aria-hidden="true">
+  ...
+</svg>
 ```
 
 **Common icon patterns:**
@@ -2203,7 +2227,7 @@ const check = {
     { x1: 5.5, y1: 11, x2: 12, y2: 3 },
     collapsed,
   ],
-};
+}
 
 // Three-line icons (menu, asterisk) — all lines used
 const menu = {
@@ -2212,7 +2236,7 @@ const menu = {
     { x1: 2, y1: 7, x2: 12, y2: 7 },
     { x1: 2, y1: 10.5, x2: 12, y2: 10.5 },
   ],
-};
+}
 
 // Point icons (more, grip) — zero-length lines as dots
 const more = {
@@ -2221,7 +2245,7 @@ const more = {
     { x1: 7, y1: 7, x2: 7, y2: 7 },
     { x1: 11, y1: 7, x2: 11, y2: 7 },
   ],
-};
+}
 ```
 
 **Recommended transition:**
@@ -2230,7 +2254,7 @@ const more = {
 const defaultTransition: Transition = {
   ease: [0.19, 1, 0.22, 1],
   duration: 0.4,
-};
+}
 ```
 
 Reference: [Motion useSpring](https://motion.dev/docs/react-use-spring), [SVG Line Element](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line)
@@ -2249,12 +2273,12 @@ Use an outer animated div and an inner measured div. Never measure and animate t
 
 ```tsx
 function AnimatedContainer({ children }) {
-  const [ref, bounds] = useMeasure();
+  const [ref, bounds] = useMeasure()
   return (
     <motion.div ref={ref} animate={{ height: bounds.height }}>
       {children}
     </motion.div>
-  );
+  )
 }
 ```
 
@@ -2262,12 +2286,12 @@ function AnimatedContainer({ children }) {
 
 ```tsx
 function AnimatedContainer({ children }) {
-  const [ref, bounds] = useMeasure();
+  const [ref, bounds] = useMeasure()
   return (
     <motion.div animate={{ height: bounds.height }}>
       <div ref={ref}>{children}</div>
     </motion.div>
-  );
+  )
 }
 ```
 
@@ -2299,14 +2323,14 @@ Use ResizeObserver to track element dimensions. It fires on resize without causi
 
 ```tsx
 function useMeasure(ref) {
-  const [bounds, setBounds] = useState({ width: 0, height: 0 });
+  const [bounds, setBounds] = useState({ width: 0, height: 0 })
   useEffect(() => {
     if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setBounds({ width: rect.width, height: rect.height });
+      const rect = ref.current.getBoundingClientRect()
+      setBounds({ width: rect.width, height: rect.height })
     }
-  });
-  return bounds;
+  })
+  return bounds
 }
 ```
 
@@ -2314,23 +2338,23 @@ function useMeasure(ref) {
 
 ```tsx
 function useMeasure() {
-  const [element, setElement] = useState(null);
-  const [bounds, setBounds] = useState({ width: 0, height: 0 });
-  const ref = useCallback((node) => setElement(node), []);
+  const [element, setElement] = useState(null)
+  const [bounds, setBounds] = useState({ width: 0, height: 0 })
+  const ref = useCallback((node) => setElement(node), [])
 
   useEffect(() => {
-    if (!element) return;
+    if (!element) return
     const observer = new ResizeObserver(([entry]) => {
       setBounds({
         width: entry.contentRect.width,
         height: entry.contentRect.height,
-      });
-    });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [element]);
+      })
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [element])
 
-  return [ref, bounds];
+  return [ref, bounds]
 }
 ```
 
@@ -2369,23 +2393,23 @@ Use a callback ref (not useRef) for measurement hooks so the observer attaches w
 **Incorrect (useRef may be null on first effect):**
 
 ```tsx
-const ref = useRef(null);
+const ref = useRef(null)
 useEffect(() => {
-  if (!ref.current) return;
-  observer.observe(ref.current);
-}, []);
+  if (!ref.current) return
+  observer.observe(ref.current)
+}, [])
 ```
 
 **Correct (callback ref guarantees node):**
 
 ```tsx
-const [element, setElement] = useState(null);
-const ref = useCallback((node) => setElement(node), []);
+const [element, setElement] = useState(null)
+const ref = useCallback((node) => setElement(node), [])
 useEffect(() => {
-  if (!element) return;
-  observer.observe(element);
-  return () => observer.disconnect();
-}, [element]);
+  if (!element) return
+  observer.observe(element)
+  return () => observer.disconnect()
+}, [element])
 ```
 
 ### 8.7 Add Delay for Natural Container Transitions
@@ -2472,11 +2496,11 @@ Decision time increases logarithmically with the number of choices (Hick's Law).
 function Settings() {
   return (
     <div>
-      {allSettings.map(setting => (
+      {allSettings.map((setting) => (
         <SettingRow key={setting.id} {...setting} />
       ))}
     </div>
-  );
+  )
 }
 ```
 
@@ -2486,17 +2510,17 @@ function Settings() {
 function Settings() {
   return (
     <div>
-      {commonSettings.map(setting => (
+      {commonSettings.map((setting) => (
         <SettingRow key={setting.id} {...setting} />
       ))}
       <details>
         <summary>Advanced</summary>
-        {advancedSettings.map(setting => (
+        {advancedSettings.map((setting) => (
           <SettingRow key={setting.id} {...setting} />
         ))}
       </details>
     </div>
-  );
+  )
 }
 ```
 
@@ -2524,8 +2548,8 @@ Interactions must respond within 400ms to feel instant (Doherty Threshold). Abov
 
 ```tsx
 async function handleClick() {
-  const data = await fetchData();
-  setResult(data);
+  const data = await fetchData()
+  setResult(data)
 }
 ```
 
@@ -2533,9 +2557,9 @@ async function handleClick() {
 
 ```tsx
 async function handleClick() {
-  setResult(optimisticData);
-  const data = await fetchData();
-  setResult(data);
+  setResult(optimisticData)
+  const data = await fetchData()
+  setResult(data)
 }
 ```
 
@@ -2547,9 +2571,9 @@ If you can't make something fast, make it feel fast with optimistic UI, skeleton
 
 ```tsx
 function Page() {
-  const { data, isLoading } = useFetch("/api/data");
-  if (isLoading) return null;
-  return <Content data={data} />;
+  const { data, isLoading } = useFetch("/api/data")
+  if (isLoading) return null
+  return <Content data={data} />
 }
 ```
 
@@ -2557,9 +2581,9 @@ function Page() {
 
 ```tsx
 function Page() {
-  const { data, isLoading } = useFetch("/api/data");
-  if (isLoading) return <Skeleton />;
-  return <Content data={data} />;
+  const { data, isLoading } = useFetch("/api/data")
+  if (isLoading) return <Skeleton />
+  return <Content data={data} />
 }
 ```
 
@@ -2578,7 +2602,7 @@ function DateInput({ onChange }) {
       pattern="\d{4}-\d{2}-\d{2}"
       onChange={onChange}
     />
-  );
+  )
 }
 ```
 
@@ -2587,17 +2611,13 @@ function DateInput({ onChange }) {
 ```tsx
 function DateInput({ onChange }) {
   function handleChange(e) {
-    const parsed = parseFlexibleDate(e.target.value);
-    if (parsed) onChange(parsed);
+    const parsed = parseFlexibleDate(e.target.value)
+    if (parsed) onChange(parsed)
   }
 
   return (
-    <input
-      type="text"
-      placeholder="Any date format"
-      onChange={handleChange}
-    />
-  );
+    <input type="text" placeholder="Any date format" onChange={handleChange} />
+  )
 }
 ```
 
@@ -2616,7 +2636,7 @@ function Editor() {
       <ExpertTools />
       <DebugTools />
     </div>
-  );
+  )
 }
 ```
 
@@ -2624,16 +2644,14 @@ function Editor() {
 
 ```tsx
 function Editor() {
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false)
   return (
     <div>
       <BasicTools />
       {showAdvanced && <AdvancedTools />}
-      <button onClick={() => setShowAdvanced(!showAdvanced)}>
-        Toggle
-      </button>
+      <button onClick={() => setShowAdvanced(!showAdvanced)}>Toggle</button>
     </div>
-  );
+  )
 }
 ```
 
@@ -2650,7 +2668,7 @@ function Nav() {
       <button onClick={() => navigate("/")}>⬡</button>
       <button onClick={() => navigate("/search")}>⬢</button>
     </nav>
-  );
+  )
 }
 ```
 
@@ -2663,7 +2681,7 @@ function Nav() {
       <Link href="/">Home</Link>
       <Link href="/search">Search</Link>
     </nav>
-  );
+  )
 }
 ```
 
@@ -2766,7 +2784,7 @@ function Settings() {
       <Input label="Email" />
       <Input label="Password" />
     </div>
-  );
+  )
 }
 ```
 
@@ -2786,7 +2804,7 @@ function Settings() {
         <Input label="Password" />
       </section>
     </div>
-  );
+  )
 }
 ```
 
@@ -2844,8 +2862,8 @@ People judge experiences by their peak moment and their end (Peak-End Rule). Inv
 
 ```tsx
 async function handleSubmit() {
-  await submitForm(data);
-  router.push("/");
+  await submitForm(data)
+  router.push("/")
 }
 ```
 
@@ -2853,15 +2871,15 @@ async function handleSubmit() {
 
 ```tsx
 async function handleSubmit() {
-  await submitForm(data);
-  setStatus("success");
+  await submitForm(data)
+  setStatus("success")
 }
 
 return status === "success" ? (
   <SuccessScreen message="You're all set." />
 ) : (
   <Form onSubmit={handleSubmit} />
-);
+)
 ```
 
 ### 9.17 Move Complexity to the System
@@ -2871,18 +2889,13 @@ Every system has irreducible complexity (Tesler's Law). The question is who hand
 **Incorrect (complexity pushed to user):**
 
 ```tsx
-<input
-  type="text"
-  placeholder="Enter date as YYYY-MM-DDTHH:mm:ss.sssZ"
-/>
+<input type="text" placeholder="Enter date as YYYY-MM-DDTHH:mm:ss.sssZ" />
 ```
 
 **Correct (system absorbs complexity):**
 
 ```tsx
-<DatePicker
-  onChange={(date) => setDate(date.toISOString())}
-/>
+<DatePicker onChange={(date) => setDate(date.toISOString())} />
 ```
 
 ### 9.18 Show Progress Toward Completion
@@ -2893,7 +2906,7 @@ People accelerate behavior as they approach a goal (Goal-Gradient Effect). Show 
 
 ```tsx
 function Onboarding({ step }) {
-  return <OnboardingStep step={step} />;
+  return <OnboardingStep step={step} />
 }
 ```
 
@@ -2904,10 +2917,12 @@ function Onboarding({ step, totalSteps }) {
   return (
     <div>
       <ProgressBar value={step} max={totalSteps} />
-      <span>Step {step} of {totalSteps}</span>
+      <span>
+        Step {step} of {totalSteps}
+      </span>
       <OnboardingStep step={step} />
     </div>
-  );
+  )
 }
 ```
 
@@ -2919,7 +2934,7 @@ People remember incomplete tasks better than completed ones (Zeigarnik Effect).
 
 ```tsx
 function Dashboard() {
-  return <DashboardContent />;
+  return <DashboardContent />
 }
 ```
 
@@ -2936,7 +2951,7 @@ function Dashboard({ profile }) {
       )}
       <DashboardContent />
     </div>
-  );
+  )
 }
 ```
 
@@ -2950,7 +2965,9 @@ People interpret complex visuals as the simplest form possible (Law of Pragnanz)
 .card {
   border: 2px dashed red;
   background: linear-gradient(45deg, #f0f, #0ff);
-  box-shadow: 5px 5px 0 black, 10px 10px 0 gray;
+  box-shadow:
+    5px 5px 0 black,
+    10px 10px 0 gray;
   outline: 3px dotted blue;
 }
 ```
@@ -2976,9 +2993,11 @@ People interpret complex visuals as the simplest form possible (Law of Pragnanz)
 function Toolbar() {
   return (
     <div>
-      {allFeatures.map(f => <Button key={f.id}>{f.label}</Button>)}
+      {allFeatures.map((f) => (
+        <Button key={f.id}>{f.label}</Button>
+      ))}
     </div>
-  );
+  )
 }
 ```
 
@@ -2988,10 +3007,12 @@ function Toolbar() {
 function Toolbar() {
   return (
     <div>
-      {criticalFeatures.map(f => <Button key={f.id}>{f.label}</Button>)}
+      {criticalFeatures.map((f) => (
+        <Button key={f.id}>{f.label}</Button>
+      ))}
       <MoreMenu features={secondaryFeatures} />
     </div>
-  );
+  )
 }
 ```
 
@@ -3016,7 +3037,7 @@ function DeleteDialog() {
         <button>Learn More</button>
       </div>
     </dialog>
-  );
+  )
 }
 ```
 
@@ -3033,7 +3054,7 @@ function DeleteDialog() {
         <button>Delete</button>
       </div>
     </dialog>
-  );
+  )
 }
 ```
 
@@ -3051,7 +3072,7 @@ function Steps({ current }) {
       <span>Step 2</span>
       <span>Step 3</span>
     </div>
-  );
+  )
 }
 ```
 
@@ -3069,7 +3090,7 @@ function Steps({ current }) {
         </div>
       ))}
     </div>
-  );
+  )
 }
 ```
 
@@ -3088,10 +3109,7 @@ Hover prefetching starts too late. Trajectory prediction fires while the cursor 
 **Incorrect (waits for hover):**
 
 ```tsx
-<Link
-  href="/about"
-  onMouseEnter={() => router.prefetch("/about")}
->
+<Link href="/about" onMouseEnter={() => router.prefetch("/about")}>
   About
 </Link>
 ```
@@ -3103,9 +3121,11 @@ const { elementRef } = useForesight({
   callback: () => router.prefetch("/about"),
   hitSlop: 20,
   name: "about-link",
-});
+})
 
-<Link ref={elementRef} href="/about">About</Link>
+;<Link ref={elementRef} href="/about">
+  About
+</Link>
 ```
 
 ### 10.2 Prefetch by Intent, Not Viewport
@@ -3115,13 +3135,17 @@ Don't prefetch everything visible in the viewport. Prefetch based on user intent
 **Incorrect (prefetch all visible links):**
 
 ```tsx
-<Link href="/page" prefetch={true}>Page</Link>
+<Link href="/page" prefetch={true}>
+  Page
+</Link>
 ```
 
 **Correct (intent-based prefetching):**
 
 ```tsx
-<Link href="/page" prefetch={false}>Page</Link>
+<Link href="/page" prefetch={false}>
+  Page
+</Link>
 ```
 
 ### 10.3 Use hitSlop to Trigger Predictions Earlier
@@ -3134,7 +3158,7 @@ Expand the invisible prediction area around elements with hitSlop to start loadi
 const { elementRef } = useForesight({
   callback: () => prefetch(),
   hitSlop: 0,
-});
+})
 ```
 
 **Correct (expanded prediction area):**
@@ -3143,7 +3167,7 @@ const { elementRef } = useForesight({
 const { elementRef } = useForesight({
   callback: () => prefetch(),
   hitSlop: 20,
-});
+})
 ```
 
 ### 10.4 Fall Back Gracefully on Touch Devices
@@ -3155,13 +3179,10 @@ Touch devices have no cursor. Fall back to viewport or touch-start strategies au
 ```tsx
 function PrefetchLink({ href, children }) {
   return (
-    <Link
-      href={href}
-      onMouseMove={() => prefetch(href)}
-    >
+    <Link href={href} onMouseMove={() => prefetch(href)}>
       {children}
     </Link>
-  );
+  )
 }
 ```
 
@@ -3171,7 +3192,7 @@ function PrefetchLink({ href, children }) {
 const { elementRef } = useForesight({
   callback: () => router.prefetch(href),
   hitSlop: 20,
-});
+})
 ```
 
 ### 10.5 Prefetch on Keyboard Navigation
@@ -3184,7 +3205,7 @@ Monitor focus changes and prefetch when the user is a few tab stops away from a 
 const { elementRef } = useForesight({
   callback: () => router.prefetch("/settings"),
   name: "settings-link",
-});
+})
 ```
 
 ### 10.6 Use Predictive Prefetching Selectively
@@ -3210,13 +3231,17 @@ Use tabular-nums for any numeric data that should align in columns.
 **Incorrect (proportional numbers misalign):**
 
 ```css
-.price { font-variant-numeric: proportional-nums; }
+.price {
+  font-variant-numeric: proportional-nums;
+}
 ```
 
 **Correct (tabular numbers align):**
 
 ```css
-.price { font-variant-numeric: tabular-nums; }
+.price {
+  font-variant-numeric: tabular-nums;
+}
 ```
 
 ### 11.2 Oldstyle Numbers for Body Text
@@ -3226,13 +3251,17 @@ Use oldstyle-nums in body text so numbers blend with lowercase letters. Use lini
 **Correct (prose):**
 
 ```css
-.body-text { font-variant-numeric: oldstyle-nums; }
+.body-text {
+  font-variant-numeric: oldstyle-nums;
+}
 ```
 
 **Correct (data):**
 
 ```css
-.data-table { font-variant-numeric: lining-nums tabular-nums; }
+.data-table {
+  font-variant-numeric: lining-nums tabular-nums;
+}
 ```
 
 ### 11.3 Slashed Zero for Disambiguation
@@ -3242,7 +3271,9 @@ Enable slashed zero in code-adjacent UIs so users never confuse 0 with O.
 **Correct:**
 
 ```css
-.code { font-variant-numeric: slashed-zero; }
+.code {
+  font-variant-numeric: slashed-zero;
+}
 ```
 
 ### 11.4 Enable Contextual Alternates
@@ -3252,7 +3283,9 @@ Keep contextual alternates (calt) enabled. They adjust punctuation and glyph sha
 **Correct (usually on by default — don't disable):**
 
 ```css
-body { font-feature-settings: "calt" 1; }
+body {
+  font-feature-settings: "calt" 1;
+}
 ```
 
 ### 11.5 Use Disambiguation Stylistic Set for UI
@@ -3262,7 +3295,9 @@ Enable ss02 (or your font's disambiguation set) in code-facing UIs to distinguis
 **Correct:**
 
 ```css
-.code-ui { font-feature-settings: "ss02"; }
+.code-ui {
+  font-feature-settings: "ss02";
+}
 ```
 
 ### 11.6 Keep Optical Sizing Auto
@@ -3272,13 +3307,17 @@ Leave font-optical-sizing at auto. The font adjusts glyph shapes for the current
 **Incorrect (forced off):**
 
 ```css
-body { font-optical-sizing: none; }
+body {
+  font-optical-sizing: none;
+}
 ```
 
 **Correct (automatic adjustment):**
 
 ```css
-body { font-optical-sizing: auto; }
+body {
+  font-optical-sizing: auto;
+}
 ```
 
 ### 11.7 Use Antialiased Font Smoothing
@@ -3301,13 +3340,17 @@ Use text-wrap: balance on headings to make lines roughly equal length instead of
 **Incorrect (unbalanced heading):**
 
 ```css
-h1 { /* default text-wrap */ }
+h1 {
+  /* default text-wrap */
+}
 ```
 
 **Correct (balanced):**
 
 ```css
-h1 { text-wrap: balance; }
+h1 {
+  text-wrap: balance;
+}
 ```
 
 ### 11.9 Offset Underlines from Descenders
@@ -3317,7 +3360,9 @@ Use text-underline-offset to push underlines below descenders so they look inten
 **Incorrect (underline collides with descenders):**
 
 ```css
-a { text-decoration: underline; }
+a {
+  text-decoration: underline;
+}
 ```
 
 **Correct (offset underline):**
@@ -3345,17 +3390,17 @@ Set font-synthesis: none to prevent the browser from faking bold or italic. Brow
 
 **Typography quick reference:**
 
-| Property | Use Case | Value |
-|----------|----------|-------|
-| `font-variant-numeric: tabular-nums` | Data tables, pricing | Fixed-width digits |
-| `font-variant-numeric: oldstyle-nums` | Body text | Blends with lowercase |
-| `font-variant-numeric: slashed-zero` | Code UIs | Distinguishes 0 from O |
-| `font-feature-settings: "ss02"` | Code UIs | Disambiguates I/l/1 |
-| `font-optical-sizing: auto` | Everywhere | Size-adaptive glyphs |
-| `-webkit-font-smoothing: antialiased` | Retina displays | Thinner, cleaner text |
-| `text-wrap: balance` | Headings | Even line lengths |
-| `text-underline-offset: 3px` | Links | Clear descender space |
-| `font-synthesis: none` | Display/icon fonts | Prevents faux styles |
+| Property                              | Use Case             | Value                  |
+| ------------------------------------- | -------------------- | ---------------------- |
+| `font-variant-numeric: tabular-nums`  | Data tables, pricing | Fixed-width digits     |
+| `font-variant-numeric: oldstyle-nums` | Body text            | Blends with lowercase  |
+| `font-variant-numeric: slashed-zero`  | Code UIs             | Distinguishes 0 from O |
+| `font-feature-settings: "ss02"`       | Code UIs             | Disambiguates I/l/1    |
+| `font-optical-sizing: auto`           | Everywhere           | Size-adaptive glyphs   |
+| `-webkit-font-smoothing: antialiased` | Retina displays      | Thinner, cleaner text  |
+| `text-wrap: balance`                  | Headings             | Even line lengths      |
+| `text-underline-offset: 3px`          | Links                | Clear descender space  |
+| `font-synthesis: none`                | Display/icon fonts   | Prevents faux styles   |
 
 ### 11.11 Use font-display swap
 
@@ -3378,8 +3423,12 @@ Variable fonts accept any integer from 100-900, not just standard stops.
 **Correct (precise weight):**
 
 ```css
-.medium { font-weight: 450; }
-.semibold { font-weight: 550; }
+.medium {
+  font-weight: 450;
+}
+.semibold {
+  font-weight: 550;
+}
 ```
 
 ### 11.13 text-wrap pretty for Body Text
@@ -3389,8 +3438,14 @@ Use text-wrap: pretty for body text to reduce orphans. Use balance for headings.
 **Correct:**
 
 ```css
-p { text-wrap: pretty; }
-h1, h2, h3 { text-wrap: balance; }
+p {
+  text-wrap: pretty;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
 ```
 
 ### 11.14 Pair Justified Text with Hyphens
@@ -3400,7 +3455,9 @@ Justified text without hyphens creates rivers of whitespace.
 **Incorrect (rivers):**
 
 ```css
-.article { text-align: justify; }
+.article {
+  text-align: justify;
+}
 ```
 
 **Correct (hyphenation prevents rivers):**
@@ -3442,7 +3499,9 @@ Enable diagonal-fractions to convert 1/2, 1/3 into proper typographic fractions.
 **Correct:**
 
 ```css
-.recipe { font-variant-numeric: diagonal-fractions; }
+.recipe {
+  font-variant-numeric: diagonal-fractions;
+}
 ```
 
 Reference: [Inter Typeface](https://rsms.me/inter/), [MDN font-feature-settings](https://developer.mozilla.org/en-US/docs/Web/CSS/font-feature-settings), [MDN font-variant-numeric](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric)
@@ -3516,17 +3575,29 @@ All shadows must share the same offset direction to imply a single light source.
 **Incorrect (conflicting light sources):**
 
 ```css
-.card { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-.modal { box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1); }
-.tooltip { box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1); }
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.modal {
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
+}
+.tooltip {
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+}
 ```
 
 **Correct (consistent top-down light):**
 
 ```css
-.card { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
-.modal { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); }
-.tooltip { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+.card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.modal {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.tooltip {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 ```
 
 ### 12.4 Use Neutral Colors for Shadows
@@ -3562,9 +3633,15 @@ Larger blur and offset means higher elevation. Use a consistent shadow scale.
   --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.card { box-shadow: var(--shadow-1); }
-.dropdown { box-shadow: var(--shadow-2); }
-.modal { box-shadow: var(--shadow-3); }
+.card {
+  box-shadow: var(--shadow-1);
+}
+.dropdown {
+  box-shadow: var(--shadow-2);
+}
+.modal {
+  box-shadow: var(--shadow-3);
+}
 ```
 
 ### 12.6 Animate Shadows via Pseudo-Element Opacity
@@ -3613,9 +3690,15 @@ Don't use arbitrary pixel values. Define a scale and use it throughout.
 **Incorrect (arbitrary values):**
 
 ```css
-.header { padding: 17px; }
-.card { margin-bottom: 13px; }
-.section { gap: 22px; }
+.header {
+  padding: 17px;
+}
+.card {
+  margin-bottom: 13px;
+}
+.section {
+  gap: 22px;
+}
 ```
 
 **Correct (consistent scale):**
@@ -3631,9 +3714,15 @@ Don't use arbitrary pixel values. Define a scale and use it throughout.
   --space-7: 48px;
 }
 
-.header { padding: var(--space-4); }
-.card { margin-bottom: var(--space-3); }
-.section { gap: var(--space-5); }
+.header {
+  padding: var(--space-4);
+}
+.card {
+  margin-bottom: var(--space-3);
+}
+.section {
+  gap: var(--space-5);
+}
 ```
 
 ### 12.8 Use Semi-Transparent Borders
@@ -3719,11 +3808,11 @@ components/drawer/index.tsx:23 - [spring-for-gestures] Drag interaction using ea
 
 After findings, output a summary:
 
-| Rule | Count | Severity |
-|------|-------|----------|
-| `timing-under-300ms` | 2 | HIGH |
-| `physics-active-state` | 3 | MEDIUM |
-| `exit-requires-wrapper` | 1 | HIGH |
+| Rule                    | Count | Severity |
+| ----------------------- | ----- | -------- |
+| `timing-under-300ms`    | 2     | HIGH     |
+| `physics-active-state`  | 3     | MEDIUM   |
+| `exit-requires-wrapper` | 1     | HIGH     |
 
 ## References
 

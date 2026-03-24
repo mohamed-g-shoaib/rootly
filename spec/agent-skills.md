@@ -4,38 +4,38 @@
 
 Skills in this repository live under the `.agents/skills/` directory. Depending on the skill publisher, each skill directory may contain some or all of the following:
 
-| File / Folder | Purpose |
-| ------------- | ------- |
-| `SKILL.md` | Lightweight entry point describing when to apply the skill and how to use it |
-| `AGENTS.md` | Fully compiled, expanded version of the rules for deeper context |
-| `README.md` | Human-facing documentation about structure and contribution |
-| `CLAUDE.md` | Publisher-specific companion guidance file |
-| `rules/` | Individual rule files, typically one rule per file |
-| `references/` | Topic-specific reference documents loaded as needed |
-| `evals/` | Evaluation fixtures or validation assets used by the skill |
-| `*.md` topic files | Standalone topic guides linked directly from `SKILL.md` |
+| File / Folder      | Purpose                                                                      |
+| ------------------ | ---------------------------------------------------------------------------- |
+| `SKILL.md`         | Lightweight entry point describing when to apply the skill and how to use it |
+| `AGENTS.md`        | Fully compiled, expanded version of the rules for deeper context             |
+| `README.md`        | Human-facing documentation about structure and contribution                  |
+| `CLAUDE.md`        | Publisher-specific companion guidance file                                   |
+| `rules/`           | Individual rule files, typically one rule per file                           |
+| `references/`      | Topic-specific reference documents loaded as needed                          |
+| `evals/`           | Evaluation fixtures or validation assets used by the skill                   |
+| `*.md` topic files | Standalone topic guides linked directly from `SKILL.md`                      |
 
 ---
 
 ## Skills Index
 
-| # | Skill | Publisher | Version / Notes | Path |
-| --- | --- | --- | --- | --- |
-| 1 | [Vercel React Best Practices](#1-vercel-react-best-practices) | Vercel | `v1.0.0` | `.agents/skills/vercel-react-best-practices/` |
-| 2 | [Next.js Best Practices](#2-nextjs-best-practices) | Project-local | Topic index skill | `.agents/skills/next-best-practices/` |
-| 3 | [React Composition Patterns](#3-react-composition-patterns) | Vercel | `v1.0.0` | `.agents/skills/vercel-composition-patterns/` |
-| 4 | [Design Engineering](#4-design-engineering) | Project-local (Emil Kowalski-inspired) | Single-file skill | `.agents/skills/emil-design-eng/` |
-| 5 | [Fixing Motion Performance](#5-fixing-motion-performance) | Project-local | Single-file audit/fix skill | `.agents/skills/fixing-motion-performance/` |
-| 6 | [Supabase Postgres Best Practices](#6-supabase-postgres-best-practices) | Supabase | `v1.1.0` | `.agents/skills/supabase-postgres-best-practices/` |
-| 7 | [PostgreSQL Table Design](#7-postgresql-table-design) | Project-local | Single-file skill | `.agents/skills/postgresql-table-design/` |
-| 8 | [PostgreSQL Pro](#8-postgresql-pro) | Jeff Allan | `v1.1.0` | `.agents/skills/postgres-pro/` |
-| 9 | [TypeScript Advanced Types](#9-typescript-advanced-types) | Project-local | Single-file skill | `.agents/skills/typescript-advanced-types/` |
-| 10 | [SEO Audit](#10-seo-audit) | Project-local | `v1.1.0` | `.agents/skills/seo-audit/` |
-| 11 | [React useEffect](#11-react-useeffect) | Project-local | Official-docs-inspired guidance | `.agents/skills/react-useeffect/` |
-| 12 | [Make Interfaces Feel Better](#12-make-interfaces-feel-better) | Project-local | UI polish skill with focused reference files | `.agents/skills/make-interfaces-feel-better/` |
-| 13 | [User Interface Wiki](#13-user-interface-wiki) | Raphael Salaja | `v3.0.0` | `.agents/skills/userinterface-wiki/` |
-| 14 | [Tailwind CSS Patterns](#14-tailwind-css-patterns) | Project-local | Utility-first styling and responsive composition guide | `.agents/skills/tailwind-css-patterns/` |
-| 15 | [Tailwind CSS Advanced Layouts](#15-tailwind-css-advanced-layouts) | Project-local | Grid, flex, sticky, overflow, and fluid sizing patterns | `.agents/skills/tailwindcss-advanced-layouts/` |
+| #   | Skill                                                                   | Publisher                              | Version / Notes                                         | Path                                               |
+| --- | ----------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------- | -------------------------------------------------- |
+| 1   | [Vercel React Best Practices](#1-vercel-react-best-practices)           | Vercel                                 | `v1.0.0`                                                | `.agents/skills/vercel-react-best-practices/`      |
+| 2   | [Next.js Best Practices](#2-nextjs-best-practices)                      | Project-local                          | Topic index skill                                       | `.agents/skills/next-best-practices/`              |
+| 3   | [React Composition Patterns](#3-react-composition-patterns)             | Vercel                                 | `v1.0.0`                                                | `.agents/skills/vercel-composition-patterns/`      |
+| 4   | [Design Engineering](#4-design-engineering)                             | Project-local (Emil Kowalski-inspired) | Single-file skill                                       | `.agents/skills/emil-design-eng/`                  |
+| 5   | [Fixing Motion Performance](#5-fixing-motion-performance)               | Project-local                          | Single-file audit/fix skill                             | `.agents/skills/fixing-motion-performance/`        |
+| 6   | [Supabase Postgres Best Practices](#6-supabase-postgres-best-practices) | Supabase                               | `v1.1.0`                                                | `.agents/skills/supabase-postgres-best-practices/` |
+| 7   | [PostgreSQL Table Design](#7-postgresql-table-design)                   | Project-local                          | Single-file skill                                       | `.agents/skills/postgresql-table-design/`          |
+| 8   | [PostgreSQL Pro](#8-postgresql-pro)                                     | Jeff Allan                             | `v1.1.0`                                                | `.agents/skills/postgres-pro/`                     |
+| 9   | [TypeScript Advanced Types](#9-typescript-advanced-types)               | Project-local                          | Single-file skill                                       | `.agents/skills/typescript-advanced-types/`        |
+| 10  | [SEO Audit](#10-seo-audit)                                              | Project-local                          | `v1.1.0`                                                | `.agents/skills/seo-audit/`                        |
+| 11  | [React useEffect](#11-react-useeffect)                                  | Project-local                          | Official-docs-inspired guidance                         | `.agents/skills/react-useeffect/`                  |
+| 12  | [Make Interfaces Feel Better](#12-make-interfaces-feel-better)          | Project-local                          | UI polish skill with focused reference files            | `.agents/skills/make-interfaces-feel-better/`      |
+| 13  | [User Interface Wiki](#13-user-interface-wiki)                          | Raphael Salaja                         | `v3.0.0`                                                | `.agents/skills/userinterface-wiki/`               |
+| 14  | [Tailwind CSS Patterns](#14-tailwind-css-patterns)                      | Project-local                          | Utility-first styling and responsive composition guide  | `.agents/skills/tailwind-css-patterns/`            |
+| 15  | [Tailwind CSS Advanced Layouts](#15-tailwind-css-advanced-layouts)      | Project-local                          | Grid, flex, sticky, overflow, and fluid sizing patterns | `.agents/skills/tailwindcss-advanced-layouts/`     |
 
 ---
 
@@ -64,12 +64,12 @@ Comprehensive performance optimization guidance for React and Next.js applicatio
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with category table, quick reference, and usage notes |
-| `AGENTS.md` | Fully compiled guide for all 58 rules |
-| `README.md` | Contribution guide and rule structure |
-| `rules/` | 58 individual rule files with explanations and good/bad examples |
+| File        | Description                                                       |
+| ----------- | ----------------------------------------------------------------- |
+| `SKILL.md`  | Entry point with category table, quick reference, and usage notes |
+| `AGENTS.md` | Fully compiled guide for all 58 rules                             |
+| `README.md` | Contribution guide and rule structure                             |
+| `rules/`    | 58 individual rule files with explanations and good/bad examples  |
 
 ---
 
@@ -98,28 +98,28 @@ Topic-based guidance for modern Next.js applications. Unlike the React performan
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point linking to all topic guides |
-| `file-conventions.md` | Route segments, special files, and structural conventions |
-| `rsc-boundaries.md` | Invalid RSC patterns and serialization pitfalls |
-| `async-patterns.md` | Async params, search params, cookies, and headers |
-| `runtime-selection.md` | Node.js vs Edge runtime guidance |
-| `directives.md` | `'use client'`, `'use server'`, and `'use cache'` usage |
-| `functions.md` | Navigation hooks and server/runtime helper functions |
-| `error-handling.md` | Route-level errors, redirects, and auth errors |
-| `data-patterns.md` | Data fetching patterns, waterfalls, and server/client tradeoffs |
-| `route-handlers.md` | Route handler behavior and when to use it |
-| `metadata.md` | Static/dynamic metadata and OG image generation |
-| `image.md` | `next/image` usage and optimization |
-| `font.md` | `next/font` setup and preload guidance |
-| `bundling.md` | Package compatibility, CSS imports, and bundle analysis |
-| `scripts.md` | `next/script` usage and third-party script loading |
-| `hydration-error.md` | Common hydration mismatch causes and fixes |
-| `suspense-boundaries.md` | Hooks and patterns that require Suspense |
-| `parallel-routes.md` | Parallel and intercepting route patterns |
-| `self-hosting.md` | Docker standalone output and cache handlers |
-| `debug-tricks.md` | AI/debug tooling and targeted rebuild tips |
+| File                     | Description                                                     |
+| ------------------------ | --------------------------------------------------------------- |
+| `SKILL.md`               | Entry point linking to all topic guides                         |
+| `file-conventions.md`    | Route segments, special files, and structural conventions       |
+| `rsc-boundaries.md`      | Invalid RSC patterns and serialization pitfalls                 |
+| `async-patterns.md`      | Async params, search params, cookies, and headers               |
+| `runtime-selection.md`   | Node.js vs Edge runtime guidance                                |
+| `directives.md`          | `'use client'`, `'use server'`, and `'use cache'` usage         |
+| `functions.md`           | Navigation hooks and server/runtime helper functions            |
+| `error-handling.md`      | Route-level errors, redirects, and auth errors                  |
+| `data-patterns.md`       | Data fetching patterns, waterfalls, and server/client tradeoffs |
+| `route-handlers.md`      | Route handler behavior and when to use it                       |
+| `metadata.md`            | Static/dynamic metadata and OG image generation                 |
+| `image.md`               | `next/image` usage and optimization                             |
+| `font.md`                | `next/font` setup and preload guidance                          |
+| `bundling.md`            | Package compatibility, CSS imports, and bundle analysis         |
+| `scripts.md`             | `next/script` usage and third-party script loading              |
+| `hydration-error.md`     | Common hydration mismatch causes and fixes                      |
+| `suspense-boundaries.md` | Hooks and patterns that require Suspense                        |
+| `parallel-routes.md`     | Parallel and intercepting route patterns                        |
+| `self-hosting.md`        | Docker standalone output and cache handlers                     |
+| `debug-tricks.md`        | AI/debug tooling and targeted rebuild tips                      |
 
 ---
 
@@ -146,12 +146,12 @@ Composition-oriented guidance for building flexible React components without boo
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with priority categories and quick reference |
-| `AGENTS.md` | Fully compiled guide with expanded rule detail |
-| `README.md` | Structure and contribution guide |
-| `rules/` | 8 individual rule files with explanations and examples |
+| File        | Description                                              |
+| ----------- | -------------------------------------------------------- |
+| `SKILL.md`  | Entry point with priority categories and quick reference |
+| `AGENTS.md` | Fully compiled guide with expanded rule detail           |
+| `README.md` | Structure and contribution guide                         |
+| `rules/`    | 8 individual rule files with explanations and examples   |
 
 ---
 
@@ -180,8 +180,8 @@ This skill encodes a design-engineering mindset rather than a narrow API checkli
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------ |
 | `SKILL.md` | Full self-contained skill covering philosophy, reviews, animation, performance, accessibility, and debugging |
 
 ---
@@ -211,8 +211,8 @@ Focused performance-review guidance for animation systems. The skill defines a r
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                       |
+| ---------- | --------------------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained skill with rules, glossary, common fixes, and review guidance |
 
 ---
@@ -242,12 +242,12 @@ Comprehensive Postgres optimization guidance maintained by Supabase. The skill o
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with category table and usage guidance |
-| `AGENTS.md` | Fully compiled deep-context version of the skill |
-| `README.md` | Human-facing usage and structure notes |
-| `CLAUDE.md` | Publisher-specific companion guidance |
+| File          | Description                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------- |
+| `SKILL.md`    | Entry point with category table and usage guidance                                                      |
+| `AGENTS.md`   | Fully compiled deep-context version of the skill                                                        |
+| `README.md`   | Human-facing usage and structure notes                                                                  |
+| `CLAUDE.md`   | Publisher-specific companion guidance                                                                   |
 | `references/` | 31 topic files covering query, connection, security, schema, locking, monitoring, and advanced features |
 
 ---
@@ -277,8 +277,8 @@ Dense, PostgreSQL-specific schema design guidance collected into a single file. 
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained skill with schema rules, data-type guidance, examples, and migration advice |
 
 ---
@@ -308,14 +308,14 @@ Operational PostgreSQL guidance with a senior-DBA workflow. The skill focuses on
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with workflow, patterns, constraints, and output templates |
-| `references/performance.md` | EXPLAIN analysis, indexes, statistics, and tuning |
-| `references/jsonb.md` | JSONB operators, containment, and indexing |
-| `references/extensions.md` | PostGIS, pgvector, pg_trgm, and related extensions |
-| `references/replication.md` | Streaming replication, logical replication, and failover |
-| `references/maintenance.md` | VACUUM, ANALYZE, `pg_stat` views, and bloat monitoring |
+| File                        | Description                                                            |
+| --------------------------- | ---------------------------------------------------------------------- |
+| `SKILL.md`                  | Entry point with workflow, patterns, constraints, and output templates |
+| `references/performance.md` | EXPLAIN analysis, indexes, statistics, and tuning                      |
+| `references/jsonb.md`       | JSONB operators, containment, and indexing                             |
+| `references/extensions.md`  | PostGIS, pgvector, pg_trgm, and related extensions                     |
+| `references/replication.md` | Streaming replication, logical replication, and failover               |
+| `references/maintenance.md` | VACUUM, ANALYZE, `pg_stat` views, and bloat monitoring                 |
 
 ---
 
@@ -344,8 +344,8 @@ Comprehensive TypeScript type-system guidance in one file. The skill walks throu
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                      |
+| ---------- | -------------------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained skill with concepts, patterns, examples, tests, and pitfalls |
 
 ---
@@ -375,11 +375,11 @@ Structured SEO audit guidance for diagnosing why a site is underperforming in or
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Full audit workflow covering technical SEO, on-page SEO, content quality, outputs, and tooling |
-| `references/ai-writing-detection.md` | Reference on common AI-writing patterns to avoid during SEO/content review |
-| `evals/evals.json` | Evaluation fixture for validating the skill's behavior |
+| File                                 | Description                                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `SKILL.md`                           | Full audit workflow covering technical SEO, on-page SEO, content quality, outputs, and tooling |
+| `references/ai-writing-detection.md` | Reference on common AI-writing patterns to avoid during SEO/content review                     |
+| `evals/evals.json`                   | Evaluation fixture for validating the skill's behavior                                         |
 
 ---
 
@@ -408,12 +408,12 @@ Focused React guidance based on the principle that Effects are an escape hatch f
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with quick reference, decision tree, and links to deeper guidance |
-| `anti-patterns.md` | Common `useEffect` mistakes and how to fix them |
-| `alternatives.md` | Better patterns such as `useMemo`, `key`, lifted state, and `useSyncExternalStore` |
-| `README.md` | Human-facing documentation for the skill |
+| File               | Description                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| `SKILL.md`         | Entry point with quick reference, decision tree, and links to deeper guidance      |
+| `anti-patterns.md` | Common `useEffect` mistakes and how to fix them                                    |
+| `alternatives.md`  | Better patterns such as `useMemo`, `key`, lifted state, and `useSyncExternalStore` |
+| `README.md`        | Human-facing documentation for the skill                                           |
 
 ---
 
@@ -442,13 +442,13 @@ Practical design-engineering guidance focused on the small details that compound
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with core principles, checklist, and linked references |
-| `typography.md` | Text wrapping, font smoothing, tabular numbers, and typographic polish |
-| `surfaces.md` | Border radius, shadows, outlines, hit areas, and visual structure |
-| `animations.md` | Interruptible motion, icon transitions, enter/exit animation details |
-| `performance.md` | Transition specificity and careful use of `will-change` |
+| File             | Description                                                            |
+| ---------------- | ---------------------------------------------------------------------- |
+| `SKILL.md`       | Entry point with core principles, checklist, and linked references     |
+| `typography.md`  | Text wrapping, font smoothing, tabular numbers, and typographic polish |
+| `surfaces.md`    | Border radius, shadows, outlines, hit areas, and visual structure      |
+| `animations.md`  | Interruptible motion, icon transitions, enter/exit animation details   |
+| `performance.md` | Transition specificity and careful use of `will-change`                |
 
 ---
 
@@ -477,11 +477,11 @@ Comprehensive UI/UX best-practices reference for web interfaces. The skill conta
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
-| `SKILL.md` | Entry point with category overview, quick reference, and usage guidance |
-| `AGENTS.md` | Fully compiled guide covering all 152 rules |
-| `rules/` | Individual rule files grouped by animation, UX, typography, visual design, and related topics |
+| File        | Description                                                                                   |
+| ----------- | --------------------------------------------------------------------------------------------- |
+| `SKILL.md`  | Entry point with category overview, quick reference, and usage guidance                       |
+| `AGENTS.md` | Fully compiled guide covering all 152 rules                                                   |
+| `rules/`    | Individual rule files grouped by animation, UX, typography, visual design, and related topics |
 
 ---
 
@@ -510,8 +510,8 @@ Practical Tailwind guidance for day-to-day component work. The skill focuses on 
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `SKILL.md` | Full self-contained Tailwind patterns guide covering layout, spacing, typography, states, accessibility, and performance notes |
 
 ---
@@ -541,6 +541,6 @@ Focused layout guidance for more complex Tailwind work. The skill emphasizes rob
 
 ### Available Files
 
-| File | Description |
-| ---- | ----------- |
+| File       | Description                                                                                                                      |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained layout guide covering grid, flex, sticky/fixed positioning, scrolling, fluid sizing, and responsive patterns |

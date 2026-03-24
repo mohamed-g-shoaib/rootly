@@ -120,7 +120,9 @@ export async function seedNewUser(userId: string): Promise<void> {
       },
     ]
 
-    const { error: coursesError } = await supabase.from("courses").insert(courses)
+    const { error: coursesError } = await supabase
+      .from("courses")
+      .insert(courses)
     if (coursesError) {
       console.error("seedNewUser: failed to insert courses", coursesError)
       return

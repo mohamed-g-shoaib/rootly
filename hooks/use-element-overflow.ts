@@ -30,7 +30,8 @@ export function useElementOverflow<T extends HTMLElement>({
         const targetRect = target.getBoundingClientRect()
         const contentRect = content.getBoundingClientRect()
 
-        const verticalByScroll = target.scrollHeight - target.clientHeight > threshold
+        const verticalByScroll =
+          target.scrollHeight - target.clientHeight > threshold
         const horizontalByScroll =
           target.scrollWidth - target.clientWidth > threshold
 

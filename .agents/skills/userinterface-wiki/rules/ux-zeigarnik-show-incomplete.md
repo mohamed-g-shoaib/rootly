@@ -12,7 +12,7 @@ People remember incomplete tasks better than completed ones. Use this to drive e
 
 ```tsx
 function Dashboard() {
-  return <DashboardContent />;
+  return <DashboardContent />
 }
 ```
 
@@ -29,7 +29,7 @@ function Dashboard({ profile }) {
       )}
       <DashboardContent />
     </div>
-  );
+  )
 }
 ```
 

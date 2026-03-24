@@ -228,7 +228,7 @@ function HeroBlock({
             <div className="text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl">
               {formatMinutesLabel(todayStudyMinutes)}
             </div>
-            <div className="max-w-xl text-sm text-muted-foreground text-pretty">
+            <div className="max-w-xl text-sm text-pretty text-muted-foreground">
               A steady snapshot of your current learning rhythm, so you can see
               momentum instead of guessing at it.
             </div>
@@ -306,7 +306,7 @@ function ChartFrame({
       <div className="flex flex-col gap-4 p-5">
         <div className="flex flex-col gap-1">
           <div className="font-medium">{title}</div>
-          <div className="text-sm text-muted-foreground text-pretty">
+          <div className="text-sm text-pretty text-muted-foreground">
             {description}
           </div>
         </div>

@@ -139,7 +139,10 @@ function CourseEditorSheetBody({
     Record<string, boolean>
   >({})
 
-  const linkValues = React.useMemo(() => links.map((link) => link.value), [links])
+  const linkValues = React.useMemo(
+    () => links.map((link) => link.value),
+    [links]
+  )
 
   const side = breakpoint === "mobile" ? "bottom" : "right"
 
@@ -198,9 +201,7 @@ function CourseEditorSheetBody({
                     value={courseLink}
                     placeholder="https://..."
                     aria-invalid={courseLinkInvalid}
-                    onBlur={() =>
-                      setCourseLinkInvalid(!isValidUrl(courseLink))
-                    }
+                    onBlur={() => setCourseLinkInvalid(!isValidUrl(courseLink))}
                     onValueChange={(v) => {
                       setCourseLink(v)
                       if (courseLinkInvalid) setCourseLinkInvalid(false)
@@ -232,7 +233,9 @@ function CourseEditorSheetBody({
                           onValueChange={(v) => {
                             setLinks((prev) =>
                               prev.map((item) =>
-                                item.id === link.id ? { ...item, value: v } : item
+                                item.id === link.id
+                                  ? { ...item, value: v }
+                                  : item
                               )
                             )
                             if (linkInvalidById[link.id]) {
@@ -609,7 +612,9 @@ function TopicsOverflowBadge({
     return (
       <Popover>
         <PopoverTrigger
-          render={<Badge variant="outline" className="shrink-0 cursor-pointer" />}
+          render={
+            <Badge variant="outline" className="shrink-0 cursor-pointer" />
+          }
         >
           +{remainingTopics} more
         </PopoverTrigger>

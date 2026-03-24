@@ -11,21 +11,21 @@ Use a callback ref (not useRef) for measurement hooks so the observer attaches w
 **Incorrect (useRef may be null on first effect):**
 
 ```tsx
-const ref = useRef(null);
+const ref = useRef(null)
 useEffect(() => {
-  if (!ref.current) return;
-  observer.observe(ref.current);
-}, []);
+  if (!ref.current) return
+  observer.observe(ref.current)
+}, [])
 ```
 
 **Correct (callback ref guarantees node):**
 
 ```tsx
-const [element, setElement] = useState(null);
-const ref = useCallback((node) => setElement(node), []);
+const [element, setElement] = useState(null)
+const ref = useCallback((node) => setElement(node), [])
 useEffect(() => {
-  if (!element) return;
-  observer.observe(element);
-  return () => observer.disconnect();
-}, [element]);
+  if (!element) return
+  observer.observe(element)
+  return () => observer.disconnect()
+}, [element])
 ```

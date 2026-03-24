@@ -6,7 +6,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/overview", "/notes", "/courses", "/daily-entries", "/review"],
+      disallow: [
+        "/overview",
+        "/notes",
+        "/courses",
+        "/daily-entries",
+        "/review",
+      ],
     },
     host: siteConfig.url,
     sitemap: absoluteUrl("/sitemap.xml"),

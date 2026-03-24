@@ -12,8 +12,8 @@ When transitioning between icons NOT in the same group, rotation should jump ins
 
 ```tsx
 useEffect(() => {
-  rotation.set(definition.rotation ?? 0);
-}, [definition]);
+  rotation.set(definition.rotation ?? 0)
+}, [definition])
 ```
 
 **Correct (jumps when not grouped):**
@@ -21,9 +21,9 @@ useEffect(() => {
 ```tsx
 useEffect(() => {
   if (shouldRotate) {
-    rotation.set(definition.rotation ?? 0);
+    rotation.set(definition.rotation ?? 0)
   } else {
-    rotation.jump(definition.rotation ?? 0);
+    rotation.jump(definition.rotation ?? 0)
   }
-}, [definition, shouldRotate]);
+}, [definition, shouldRotate])
 ```

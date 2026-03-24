@@ -37,27 +37,27 @@ Expert guide for building modern, responsive user interfaces with Tailwind CSS u
 ```tsx
 function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden
-                    sm:flex sm:max-w-2xl">
+    <div
+      className="bg-white rounded-lg shadow-lg overflow-hidden
+                    sm:flex sm:max-w-2xl"
+    >
       <img
         className="h-48 w-full object-cover sm:h-auto sm:w-48"
         src={product.image}
         alt={product.name}
       />
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900">
-          {product.name}
-        </h3>
-        <p className="mt-2 text-gray-600">
-          {product.description}
-        </p>
-        <button className="mt-4 px-4 py-2 bg-indigo-600 text-white
-                          rounded-lg hover:bg-indigo-700 transition">
+        <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+        <p className="mt-2 text-gray-600">{product.description}</p>
+        <button
+          className="mt-4 px-4 py-2 bg-indigo-600 text-white
+                          rounded-lg hover:bg-indigo-700 transition"
+        >
           Add to Cart
         </button>
       </div>
     </div>
-  );
+  )
 }
 ```
 
@@ -78,7 +78,9 @@ function ProductCard({ product }: { product: Product }) {
 Apply styles directly in markup using utility classes:
 
 ```html
-<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+<button
+  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+>
   Click me
 </button>
 ```
@@ -94,6 +96,7 @@ Mobile-first breakpoints with prefixes:
 ```
 
 Breakpoint prefixes:
+
 - `sm:` - 640px and above
 - `md:` - 768px and above
 - `lg:` - 1024px and above
@@ -254,9 +257,7 @@ Space between children:
 Responsive typography:
 
 ```html
-<h1 class="text-2xl md:text-4xl lg:text-6xl font-bold">
-  Responsive Heading
-</h1>
+<h1 class="text-2xl md:text-4xl lg:text-6xl font-bold">Responsive Heading</h1>
 ```
 
 ### Line Height & Letter Spacing
@@ -298,9 +299,7 @@ Responsive typography:
 ### Opacity
 
 ```html
-<div class="bg-blue-500 bg-opacity-50">
-  Semi-transparent blue
-</div>
+<div class="bg-blue-500 bg-opacity-50">Semi-transparent blue</div>
 ```
 
 ## Interactive States
@@ -308,25 +307,25 @@ Responsive typography:
 ### Hover States
 
 ```html
-<button class="bg-blue-500 hover:bg-blue-700 transition">
-  Hover me
-</button>
+<button class="bg-blue-500 hover:bg-blue-700 transition">Hover me</button>
 
-<a class="text-blue-600 hover:text-blue-800 hover:underline">
-  Hover link
-</a>
+<a class="text-blue-600 hover:text-blue-800 hover:underline"> Hover link </a>
 ```
 
 ### Focus States
 
 ```html
-<input class="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+<input
+  class="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+/>
 ```
 
 ### Active & Disabled States
 
 ```html
-<button class="bg-blue-500 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed">
+<button
+  class="bg-blue-500 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+>
   Button
 </button>
 ```
@@ -350,7 +349,9 @@ Responsive typography:
   <div class="p-6">
     <h3 class="text-xl font-bold mb-2">Card Title</h3>
     <p class="text-gray-700 mb-4">Card description text goes here.</p>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
       Action
     </button>
   </div>
@@ -360,21 +361,25 @@ Responsive typography:
 ### Responsive User Card
 
 ```html
-<div class="max-w-sm mx-auto bg-white rounded-xl shadow-lg overflow-hidden sm:flex sm:max-w-2xl">
-  <img class="h-48 w-full object-cover sm:h-auto sm:w-48" 
-       src="profile.jpg" 
-       alt="Profile" />
+<div
+  class="max-w-sm mx-auto bg-white rounded-xl shadow-lg overflow-hidden sm:flex sm:max-w-2xl"
+>
+  <img
+    class="h-48 w-full object-cover sm:h-auto sm:w-48"
+    src="profile.jpg"
+    alt="Profile"
+  />
   <div class="p-8">
     <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
       Product Engineer
     </div>
-    <h2 class="mt-1 text-xl font-semibold text-gray-900">
-      John Doe
-    </h2>
+    <h2 class="mt-1 text-xl font-semibold text-gray-900">John Doe</h2>
     <p class="mt-2 text-gray-500">
       Building amazing products with modern technology.
     </p>
-    <button class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+    <button
+      class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+    >
       Contact
     </button>
   </div>
@@ -391,14 +396,32 @@ Responsive typography:
         <a href="#" class="text-xl font-bold text-gray-800">Logo</a>
       </div>
       <div class="hidden md:flex space-x-8">
-        <a href="#" class="text-gray-700 hover:text-blue-600 transition">Home</a>
-        <a href="#" class="text-gray-700 hover:text-blue-600 transition">About</a>
-        <a href="#" class="text-gray-700 hover:text-blue-600 transition">Services</a>
-        <a href="#" class="text-gray-700 hover:text-blue-600 transition">Contact</a>
+        <a href="#" class="text-gray-700 hover:text-blue-600 transition"
+          >Home</a
+        >
+        <a href="#" class="text-gray-700 hover:text-blue-600 transition"
+          >About</a
+        >
+        <a href="#" class="text-gray-700 hover:text-blue-600 transition"
+          >Services</a
+        >
+        <a href="#" class="text-gray-700 hover:text-blue-600 transition"
+          >Contact</a
+        >
       </div>
       <button class="md:hidden">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
         </svg>
       </button>
     </div>
@@ -411,32 +434,30 @@ Responsive typography:
 ```html
 <form class="space-y-6 max-w-md mx-auto">
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">
-      Email
-    </label>
-    <input 
-      type="email" 
+    <label class="block text-sm font-medium text-gray-700 mb-2"> Email </label>
+    <input
+      type="email"
       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       placeholder="you@example.com"
     />
   </div>
-  
+
   <div>
     <label class="block text-sm font-medium text-gray-700 mb-2">
       Password
     </label>
-    <input 
-      type="password" 
+    <input
+      type="password"
       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
     />
   </div>
-  
+
   <div class="flex items-center">
     <input type="checkbox" class="mr-2" />
     <label class="text-sm text-gray-600">Remember me</label>
   </div>
-  
-  <button 
+
+  <button
     type="submit"
     class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition"
   >
@@ -448,24 +469,36 @@ Responsive typography:
 ### Modal/Dialog
 
 ```html
-<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+>
   <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-xl font-bold">Modal Title</h3>
       <button class="text-gray-500 hover:text-gray-700">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
         </svg>
       </button>
     </div>
-    <p class="text-gray-700 mb-6">
-      Modal content goes here.
-    </p>
+    <p class="text-gray-700 mb-6">Modal content goes here.</p>
     <div class="flex justify-end space-x-4">
       <button class="px-4 py-2 text-gray-600 hover:text-gray-800">
         Cancel
       </button>
-      <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      <button
+        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
         Confirm
       </button>
     </div>
@@ -482,13 +515,13 @@ Responsive typography:
   <!-- Hero Section -->
   <div class="flex flex-col md:flex-row items-center gap-8 py-12">
     <div class="flex-1">
-      <h1 class="text-3xl md:text-5xl font-bold mb-4">
-        Welcome to Our Site
-      </h1>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">Welcome to Our Site</h1>
       <p class="text-lg text-gray-600 mb-6">
         Build amazing things with Tailwind CSS
       </p>
-      <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+      <button
+        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+      >
         Get Started
       </button>
     </div>
@@ -502,12 +535,20 @@ Responsive typography:
 ### Responsive Grid Gallery
 
 ```html
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4"
+>
   <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
-    <img src="image1.jpg" class="w-full h-full object-cover hover:scale-105 transition" />
+    <img
+      src="image1.jpg"
+      class="w-full h-full object-cover hover:scale-105 transition"
+    />
   </div>
   <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
-    <img src="image2.jpg" class="w-full h-full object-cover hover:scale-105 transition" />
+    <img
+      src="image2.jpg"
+      class="w-full h-full object-cover hover:scale-105 transition"
+    />
   </div>
   <!-- More items... -->
 </div>
@@ -528,7 +569,7 @@ Enable dark mode in tailwind.config.js:
 
 ```javascript
 module.exports = {
-  darkMode: 'class', // or 'media'
+  darkMode: "class", // or 'media'
   // ...
 }
 ```
@@ -589,7 +630,11 @@ export default {
 </div>
 
 <!-- Optimize images with aspect-ratio -->
-<img class="aspect-video w-full object-cover" src="video.jpg" alt="Video thumbnail" />
+<img
+  class="aspect-video w-full object-cover"
+  src="video.jpg"
+  alt="Video thumbnail"
+/>
 
 <!-- Use contain for paint optimization -->
 <div class="contain-layout">
@@ -623,12 +668,17 @@ export default {
 
 ```html
 <!-- Custom focus styles that meet WCAG AA -->
-<button class="focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2">
+<button
+  class="focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2"
+>
   Accessible Button
 </button>
 
 <!-- Skip links for keyboard navigation -->
-<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4">
+<a
+  href="#main-content"
+  class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
+>
   Skip to main content
 </a>
 ```
@@ -639,14 +689,17 @@ export default {
 <!-- Semantic buttons with ARIA labels -->
 <button aria-label="Close dialog" class="p-2">
   <svg class="w-5 h-5" fill="none" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M6 18L18 6M6 6l12 12"
+    />
   </svg>
 </button>
 
 <!-- Descriptive links -->
-<a href="/docs" aria-describedby="docs-description">
-  Documentation
-</a>
+<a href="/docs" aria-describedby="docs-description"> Documentation </a>
 <p id="docs-description" class="sr-only">
   Learn how to use our API and integration guides
 </p>
@@ -656,16 +709,16 @@ export default {
 
 ```html
 <!-- Ensure sufficient contrast ratios -->
-<div class="bg-gray-900 text-white">
-  High contrast text (WCAG AAA)
-</div>
+<div class="bg-gray-900 text-white">High contrast text (WCAG AAA)</div>
 
 <div class="bg-blue-500 text-blue-100">
   Good contrast on colored backgrounds
 </div>
 
 <!-- Use contrast utilities for testing -->
-<div class="bg-red-500 text-white contrast-more:bg-red-600 contrast-more:text-red-100">
+<div
+  class="bg-red-500 text-white contrast-more:bg-red-600 contrast-more:text-red-100"
+>
   Adjusts for high contrast mode
 </div>
 ```
@@ -729,8 +782,12 @@ Use the `@theme` directive for CSS-based configuration:
 
 /* Define custom animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Custom utilities */
@@ -744,24 +801,21 @@ Use the `@theme` directive for CSS-based configuration:
 ```javascript
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx,vue,svelte}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx,vue,svelte}"],
   theme: {
     extend: {
       colors: {
         primary: {
-          50: '#f0f9ff',
-          500: '#3b82f6',
-          900: '#1e3a8a',
+          50: "#f0f9ff",
+          500: "#3b82f6",
+          900: "#1e3a8a",
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ["Inter", "system-ui", "sans-serif"],
       },
       spacing: {
-        '128': '32rem',
+        128: "32rem",
       },
     },
   },
@@ -773,13 +827,11 @@ export default {
 
 ```javascript
 // vite.config.ts
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite"
+import tailwindcss from "@tailwindcss/vite"
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-  ],
+  plugins: [tailwindcss()],
 })
 ```
 
@@ -821,37 +873,37 @@ export default defineConfig({
 ## Common Patterns with React/JSX
 
 ```tsx
-import { useState } from 'react';
+import { useState } from "react"
 
-function Button({ 
-  variant = 'primary', 
-  size = 'md', 
-  children 
+function Button({
+  variant = "primary",
+  size = "md",
+  children,
 }: {
-  variant?: 'primary' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
+  variant?: "primary" | "secondary"
+  size?: "sm" | "md" | "lg"
+  children: React.ReactNode
 }) {
-  const baseClasses = 'font-semibold rounded transition';
-  
+  const baseClasses = "font-semibold rounded transition"
+
   const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-  };
-  
+    primary: "bg-blue-600 text-white hover:bg-blue-700",
+    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
+  }
+
   const sizeClasses = {
-    sm: 'px-3 py-1 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
-  };
-  
+    sm: "px-3 py-1 text-sm",
+    md: "px-4 py-2 text-base",
+    lg: "px-6 py-3 text-lg",
+  }
+
   return (
-    <button 
+    <button
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]}`}
     >
       {children}
     </button>
-  );
+  )
 }
 ```
 

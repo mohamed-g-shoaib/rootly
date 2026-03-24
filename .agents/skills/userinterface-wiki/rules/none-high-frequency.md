@@ -16,7 +16,7 @@ function SearchInput() {
     <motion.div animate={{ scale: [1, 1.02, 1] }}>
       <input onChange={handleSearch} />
     </motion.div>
-  );
+  )
 }
 ```
 
@@ -24,6 +24,6 @@ function SearchInput() {
 
 ```tsx
 function SearchInput() {
-  return <input onChange={handleSearch} />;
+  return <input onChange={handleSearch} />
 }
 ```

@@ -72,7 +72,7 @@ function LoginPageContent() {
           <h1 className="mt-4 text-xl font-semibold tracking-tight text-balance">
             Continue with Rootly
           </h1>
-          <p className="max-w-xs text-sm text-muted-foreground text-pretty">
+          <p className="max-w-xs text-sm text-pretty text-muted-foreground">
             Sign in or create your learning notebook with one account.
           </p>
         </div>
@@ -136,9 +136,12 @@ function LoginPageContent() {
           </div>
         )}
 
-        <p className="max-w-xs text-center text-xs text-muted-foreground text-pretty">
+        <p className="max-w-xs text-center text-xs text-pretty text-muted-foreground">
           By signing in, you agree to our{" "}
-          <Link href="/terms" className="font-medium underline underline-offset-4">
+          <Link
+            href="/terms"
+            className="font-medium underline underline-offset-4"
+          >
             Terms of Service
           </Link>{" "}
           and{" "}
@@ -183,29 +186,44 @@ function LoginPageContentFallback() {
           <h1 className="mt-4 text-xl font-semibold tracking-tight text-balance">
             Continue with Rootly
           </h1>
-          <p className="max-w-xs text-sm text-muted-foreground text-pretty">
+          <p className="max-w-xs text-sm text-pretty text-muted-foreground">
             Sign in or create your learning notebook with one account.
           </p>
         </div>
 
         <div className="flex w-full flex-col gap-3">
-          <Button variant="outline" className="w-full justify-start gap-3" disabled>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3"
+            disabled
+          >
             <HugeiconsIcon icon={GoogleIcon} size={20} />
             Continue with Google
           </Button>
-          <Button variant="outline" className="w-full justify-start gap-3" disabled>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3"
+            disabled
+          >
             <HugeiconsIcon icon={GithubIcon} size={20} />
             Continue with GitHub
           </Button>
-          <Button variant="outline" className="w-full justify-start gap-3" disabled>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3"
+            disabled
+          >
             <HugeiconsIcon icon={LinkedinIcon} size={20} />
             Continue with LinkedIn
           </Button>
         </div>
 
-        <p className="max-w-xs text-center text-xs text-muted-foreground text-pretty">
+        <p className="max-w-xs text-center text-xs text-pretty text-muted-foreground">
           By signing in, you agree to our{" "}
-          <Link href="/terms" className="font-medium underline underline-offset-4">
+          <Link
+            href="/terms"
+            className="font-medium underline underline-offset-4"
+          >
             Terms of Service
           </Link>{" "}
           and{" "}

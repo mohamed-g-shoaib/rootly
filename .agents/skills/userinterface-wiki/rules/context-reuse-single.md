@@ -12,19 +12,19 @@ Reuse a single AudioContext instance; do not create new ones per sound.
 
 ```ts
 function playSound() {
-  const ctx = new AudioContext();
+  const ctx = new AudioContext()
 }
 ```
 
 **Correct (singleton):**
 
 ```ts
-let audioContext: AudioContext | null = null;
+let audioContext: AudioContext | null = null
 
 function getAudioContext(): AudioContext {
   if (!audioContext) {
-    audioContext = new AudioContext();
+    audioContext = new AudioContext()
   }
-  return audioContext;
+  return audioContext
 }
 ```

@@ -176,12 +176,15 @@ export default function CourseDetailPage({
 
   const qaNoteIds = React.useMemo(
     () =>
-      filtered.items.filter((note) => note.type === "qa").map((note) => note.id),
+      filtered.items
+        .filter((note) => note.type === "qa")
+        .map((note) => note.id),
     [filtered.items]
   )
 
   const globalShowAnswers =
-    qaNoteIds.length > 0 && qaNoteIds.every((id) => answerVisibility.isShown(id))
+    qaNoteIds.length > 0 &&
+    qaNoteIds.every((id) => answerVisibility.isShown(id))
 
   const sortLabel = React.useMemo(() => {
     switch (sortKey) {
@@ -646,7 +649,9 @@ export default function CourseDetailPage({
               {filtered.hasQa ? (
                 <Button
                   variant={globalShowAnswers ? "secondary" : "outline"}
-                  onClick={() => answerVisibility.setAllShown(!globalShowAnswers)}
+                  onClick={() =>
+                    answerVisibility.setAllShown(!globalShowAnswers)
+                  }
                 >
                   {globalShowAnswers ? "Hide All Answers" : "Show All Answers"}
                 </Button>

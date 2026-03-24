@@ -11,11 +11,11 @@ Exponential ramps cannot target 0; use 0.001 or similar small value.
 **Incorrect (targets zero):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0, t + 0.05)
 ```
 
 **Correct (targets near-zero):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
 ```

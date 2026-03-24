@@ -14,7 +14,7 @@ Expand the invisible prediction area around elements with hitSlop to start loadi
 const { elementRef } = useForesight({
   callback: () => prefetch(),
   hitSlop: 0,
-});
+})
 ```
 
 **Correct (expanded prediction area):**
@@ -23,5 +23,5 @@ const { elementRef } = useForesight({
 const { elementRef } = useForesight({
   callback: () => prefetch(),
   hitSlop: 20,
-});
+})
 ```

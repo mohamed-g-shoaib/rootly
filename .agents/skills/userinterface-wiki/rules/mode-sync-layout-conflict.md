@@ -12,7 +12,7 @@ Mode "sync" causes layout conflicts; position exiting elements absolutely.
 
 ```tsx
 <AnimatePresence mode="sync">
-  {items.map(item => (
+  {items.map((item) => (
     <motion.div exit={{ opacity: 0 }}>{item}</motion.div>
   ))}
 </AnimatePresence>
@@ -22,7 +22,7 @@ Mode "sync" causes layout conflicts; position exiting elements absolutely.
 
 ```tsx
 <AnimatePresence mode="popLayout">
-  {items.map(item => (
+  {items.map((item) => (
     <motion.div exit={{ opacity: 0 }}>{item}</motion.div>
   ))}
 </AnimatePresence>

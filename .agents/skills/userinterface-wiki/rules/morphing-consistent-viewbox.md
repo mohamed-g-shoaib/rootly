@@ -18,6 +18,6 @@ const icon2 = { lines: [{ x1: 4, y1: 14, x2: 24, y2: 14 }, ...] }; // 28x28
 **Correct (consistent scale):**
 
 ```ts
-const VIEWBOX_SIZE = 14;
-const CENTER = 7;
+const VIEWBOX_SIZE = 14
+const CENTER = 7
 ```

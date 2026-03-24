@@ -53,7 +53,9 @@ export const metadata: Metadata = {
 export default function MarketingHomepage() {
   return (
     <div>
-      <script type="application/ld+json">{JSON.stringify(homepageJsonLd)}</script>
+      <script type="application/ld+json">
+        {JSON.stringify(homepageJsonLd)}
+      </script>
       <HomepageNav />
       <main>
         <HomepageHero />

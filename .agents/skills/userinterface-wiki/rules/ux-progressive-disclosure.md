@@ -19,7 +19,7 @@ function Editor() {
       <ExpertTools />
       <DebugTools />
     </div>
-  );
+  )
 }
 ```
 
@@ -27,15 +27,13 @@ function Editor() {
 
 ```tsx
 function Editor() {
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false)
   return (
     <div>
       <BasicTools />
       {showAdvanced && <AdvancedTools />}
-      <button onClick={() => setShowAdvanced(!showAdvanced)}>
-        Toggle
-      </button>
+      <button onClick={() => setShowAdvanced(!showAdvanced)}>Toggle</button>
     </div>
-  );
+  )
 }
 ```

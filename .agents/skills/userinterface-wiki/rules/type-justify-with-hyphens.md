@@ -11,7 +11,9 @@ Justified text without hyphens creates rivers of whitespace. Always pair with hy
 **Incorrect (rivers of whitespace):**
 
 ```css
-.article { text-align: justify; }
+.article {
+  text-align: justify;
+}
 ```
 
 **Correct (hyphenation prevents rivers):**

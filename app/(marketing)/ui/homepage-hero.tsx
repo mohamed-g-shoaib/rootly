@@ -33,7 +33,7 @@ export default function HomepageHero() {
                 as="p"
                 mode="mount"
                 delay={0.1}
-                className="max-w-2xl text-base text-muted-foreground text-pretty sm:text-lg"
+                className="max-w-2xl text-base text-pretty text-muted-foreground sm:text-lg"
               >
                 Rootly turns scattered learning fragments into one deliberate
                 place to think, remember, and continue with context.

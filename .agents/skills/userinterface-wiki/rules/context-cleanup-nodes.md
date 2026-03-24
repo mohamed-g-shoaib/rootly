@@ -11,15 +11,15 @@ Disconnect and clean up audio nodes after playback.
 **Incorrect (nodes remain connected):**
 
 ```ts
-source.start();
+source.start()
 ```
 
 **Correct (cleaned up on end):**
 
 ```ts
-source.start();
+source.start()
 source.onended = () => {
-  source.disconnect();
-  gain.disconnect();
-};
+  source.disconnect()
+  gain.disconnect()
+}
 ```

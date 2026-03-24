@@ -196,7 +196,9 @@ export function DashboardShell({
               className="hidden min-w-72 justify-between md:inline-flex"
               onClick={() => setCommandOpen(true)}
             >
-              <span className="text-muted-foreground">Search or jump to...</span>
+              <span className="text-muted-foreground">
+                Search or jump to...
+              </span>
               <KbdGroup>
                 <Kbd>Ctrl</Kbd>
                 <Kbd>K</Kbd>

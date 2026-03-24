@@ -17,11 +17,7 @@ import { toastManager } from "@/components/ui/toast"
 import { Spinner } from "@/components/ui/spinner"
 
 import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
-import {
-  createNote,
-  deleteNote,
-  updateNote,
-} from "./notes-actions"
+import { createNote, deleteNote, updateNote } from "./notes-actions"
 import { NotesHeader } from "./notes-header"
 import {
   EmptyState,
@@ -145,12 +141,16 @@ export default function NotesPage({
     sortKey !== "last_updated"
 
   const qaNoteIds = React.useMemo(
-    () => filtered.items.filter((note) => note.type === "qa").map((note) => note.id),
+    () =>
+      filtered.items
+        .filter((note) => note.type === "qa")
+        .map((note) => note.id),
     [filtered.items]
   )
 
   const globalShowAnswers =
-    qaNoteIds.length > 0 && qaNoteIds.every((id) => answerVisibility.isShown(id))
+    qaNoteIds.length > 0 &&
+    qaNoteIds.every((id) => answerVisibility.isShown(id))
 
   function clearFilters() {
     setTypeFilter("all")

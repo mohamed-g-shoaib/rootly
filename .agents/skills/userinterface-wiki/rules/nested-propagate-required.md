@@ -15,7 +15,7 @@ Nested AnimatePresence must use propagate prop for coordinated exits.
   {isOpen && (
     <motion.div exit={{ opacity: 0 }}>
       <AnimatePresence>
-        {items.map(item => (
+        {items.map((item) => (
           <motion.div key={item.id} exit={{ scale: 0 }} />
         ))}
       </AnimatePresence>
@@ -31,7 +31,7 @@ Nested AnimatePresence must use propagate prop for coordinated exits.
   {isOpen && (
     <motion.div exit={{ opacity: 0 }}>
       <AnimatePresence propagate>
-        {items.map(item => (
+        {items.map((item) => (
           <motion.div key={item.id} exit={{ scale: 0 }} />
         ))}
       </AnimatePresence>

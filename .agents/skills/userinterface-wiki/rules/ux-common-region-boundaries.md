@@ -19,7 +19,7 @@ function Settings() {
       <Input label="Email" />
       <Input label="Password" />
     </div>
-  );
+  )
 }
 ```
 
@@ -43,7 +43,7 @@ function Settings() {
         <Input label="Password" />
       </section>
     </div>
-  );
+  )
 }
 ```
 

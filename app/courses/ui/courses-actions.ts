@@ -52,7 +52,9 @@ export async function createCourse({
 }: {
   course: Course
   userId: string
-}): Promise<{ success: true; data: Course } | { success: false; error: string }> {
+}): Promise<
+  { success: true; data: Course } | { success: false; error: string }
+> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -64,7 +66,10 @@ export async function createCourse({
     .single()
 
   if (error || !data) {
-    return { success: false, error: error?.message ?? "Failed to create course" }
+    return {
+      success: false,
+      error: error?.message ?? "Failed to create course",
+    }
   }
 
   return { success: true, data: fromDb(data as DbCourseRow) }
@@ -78,7 +83,9 @@ export async function updateCourse({
   courseId: string
   patch: Partial<Course>
   userId: string
-}): Promise<{ success: true; data: Course } | { success: false; error: string }> {
+}): Promise<
+  { success: true; data: Course } | { success: false; error: string }
+> {
   const supabase = await createClient()
 
   const updatedAt = new Date().toISOString()
@@ -104,7 +111,10 @@ export async function updateCourse({
     .single()
 
   if (error || !data) {
-    return { success: false, error: error?.message ?? "Failed to update course" }
+    return {
+      success: false,
+      error: error?.message ?? "Failed to update course",
+    }
   }
 
   return { success: true, data: fromDb(data as DbCourseRow) }
@@ -116,7 +126,9 @@ export async function deleteCourse({
 }: {
   courseId: string
   userId: string
-}): Promise<{ success: true; data: Course } | { success: false; error: string }> {
+}): Promise<
+  { success: true; data: Course } | { success: false; error: string }
+> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -130,7 +142,10 @@ export async function deleteCourse({
     .single()
 
   if (error || !data) {
-    return { success: false, error: error?.message ?? "Failed to delete course" }
+    return {
+      success: false,
+      error: error?.message ?? "Failed to delete course",
+    }
   }
 
   return { success: true, data: fromDb(data as DbCourseRow) }

@@ -168,138 +168,139 @@ export function NoteCard({
       >
         <Card className="h-full p-4">
           <div className="flex h-full flex-col gap-3">
-          <div className="shrink-0">
-            <div className="flex flex-col gap-1">
-              {note.courseTitle ? (
-                <div className="truncate text-xs text-muted-foreground">
-                  {note.courseTitle}
-                </div>
-              ) : null}
+            <div className="shrink-0">
+              <div className="flex flex-col gap-1">
+                {note.courseTitle ? (
+                  <div className="truncate text-xs text-muted-foreground">
+                    {note.courseTitle}
+                  </div>
+                ) : null}
 
-              {isQa ? (
-                <div className="line-clamp-2 font-medium">{note.question}</div>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-hidden">
-            {isQa ? (
-              <div className="flex min-h-0 flex-1 items-start overflow-hidden">
-                {showAnswer ? (
-                  <NoteCardExcerpt
-                    text={note.answer ?? ""}
-                    isMobile={isMobile}
-                    onOpen={onViewFull}
-                    previewTitle={note.question ?? ""}
-                  />
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onShowAnswerChange(true)}
-                  >
-                    Show Answer
-                  </Button>
-                )}
+                {isQa ? (
+                  <div className="line-clamp-2 font-medium">
+                    {note.question}
+                  </div>
+                ) : null}
               </div>
-            ) : (
-              <NoteCardExcerpt
-                text={note.body ?? ""}
-                isMobile={isMobile}
-                onOpen={onViewFull}
-              />
-            )}
-          </div>
-
-          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
-            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
-              {!readOnly && note.codeSnippet ? (
-                <Badge
-                  variant="outline"
-                  className="shrink-0 cursor-pointer"
-                  onClick={onViewCode}
-                >
-                  <span className="inline-flex items-center gap-2">
-                    <HugeiconsIcon icon={CodeIcon} size={14} />
-                    {toCodeBadgeLabel(note.codeLanguage)}
-                  </span>
-                </Badge>
-              ) : null}
-
-              {note.type === "qa" && note.understandingLevel ? (
-                <Badge variant="outline" className="shrink-0">
-                  <HugeiconsIcon
-                    icon={understandingIcon(note.understandingLevel)}
-                    size={14}
-                    color={understandingColor(note.understandingLevel)}
-                  />
-                  {understandingLabel(note.understandingLevel)}
-                </Badge>
-              ) : null}
-
             </div>
 
-            <div className="-mr-2 flex shrink-0 items-center gap-1">
-              {isQa && showAnswer ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Hide answer"
-                  onClick={() => onShowAnswerChange(false)}
-                >
-                  <HugeiconsIcon
-                    icon={ViewOffIcon}
-                    size={18}
-                    color="var(--info)"
-                  />
-                </Button>
-              ) : null}
-              {note.flag ? (
-                <div
-                  aria-label="Flagged for review"
-                  className="flex size-8 items-center justify-center text-destructive"
-                  title="Flagged for review"
-                >
-                  <HugeiconsIcon icon={Flag01Icon} size={18} />
+            <div className="min-h-0 flex-1 overflow-hidden">
+              {isQa ? (
+                <div className="flex min-h-0 flex-1 items-start overflow-hidden">
+                  {showAnswer ? (
+                    <NoteCardExcerpt
+                      text={note.answer ?? ""}
+                      isMobile={isMobile}
+                      onOpen={onViewFull}
+                      previewTitle={note.question ?? ""}
+                    />
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onShowAnswerChange(true)}
+                    >
+                      Show Answer
+                    </Button>
+                  )}
                 </div>
-              ) : null}
-
-              {!readOnly ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={
-                      <Button variant="ghost" size="icon" aria-label="More" />
-                    }
-                  >
-                    <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={onEdit}>
-                      <HugeiconsIcon icon={Edit01Icon} size={18} />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onViewFull}>
-                      <HugeiconsIcon icon={Note01Icon} size={18} />
-                      View full note
-                    </DropdownMenuItem>
-                    {note.codeSnippet ? (
-                      <DropdownMenuItem onClick={onViewCode}>
-                        <HugeiconsIcon icon={CodeIcon} size={18} />
-                        View code
-                      </DropdownMenuItem>
-                    ) : null}
-                    <DropdownMenuSeparator />
-                    <DeleteDialog onDelete={onDelete}>
-                      <DropdownMenuItem variant="destructive">
-                        <HugeiconsIcon icon={Delete01Icon} size={18} />
-                        Delete
-                      </DropdownMenuItem>
-                    </DeleteDialog>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : null}
+              ) : (
+                <NoteCardExcerpt
+                  text={note.body ?? ""}
+                  isMobile={isMobile}
+                  onOpen={onViewFull}
+                />
+              )}
             </div>
-          </div>
+
+            <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
+              <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+                {!readOnly && note.codeSnippet ? (
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 cursor-pointer"
+                    onClick={onViewCode}
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <HugeiconsIcon icon={CodeIcon} size={14} />
+                      {toCodeBadgeLabel(note.codeLanguage)}
+                    </span>
+                  </Badge>
+                ) : null}
+
+                {note.type === "qa" && note.understandingLevel ? (
+                  <Badge variant="outline" className="shrink-0">
+                    <HugeiconsIcon
+                      icon={understandingIcon(note.understandingLevel)}
+                      size={14}
+                      color={understandingColor(note.understandingLevel)}
+                    />
+                    {understandingLabel(note.understandingLevel)}
+                  </Badge>
+                ) : null}
+              </div>
+
+              <div className="-mr-2 flex shrink-0 items-center gap-1">
+                {isQa && showAnswer ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Hide answer"
+                    onClick={() => onShowAnswerChange(false)}
+                  >
+                    <HugeiconsIcon
+                      icon={ViewOffIcon}
+                      size={18}
+                      color="var(--info)"
+                    />
+                  </Button>
+                ) : null}
+                {note.flag ? (
+                  <div
+                    aria-label="Flagged for review"
+                    className="flex size-8 items-center justify-center text-destructive"
+                    title="Flagged for review"
+                  >
+                    <HugeiconsIcon icon={Flag01Icon} size={18} />
+                  </div>
+                ) : null}
+
+                {!readOnly ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button variant="ghost" size="icon" aria-label="More" />
+                      }
+                    >
+                      <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={onEdit}>
+                        <HugeiconsIcon icon={Edit01Icon} size={18} />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={onViewFull}>
+                        <HugeiconsIcon icon={Note01Icon} size={18} />
+                        View full note
+                      </DropdownMenuItem>
+                      {note.codeSnippet ? (
+                        <DropdownMenuItem onClick={onViewCode}>
+                          <HugeiconsIcon icon={CodeIcon} size={18} />
+                          View code
+                        </DropdownMenuItem>
+                      ) : null}
+                      <DropdownMenuSeparator />
+                      <DeleteDialog onDelete={onDelete}>
+                        <DropdownMenuItem variant="destructive">
+                          <HugeiconsIcon icon={Delete01Icon} size={18} />
+                          Delete
+                        </DropdownMenuItem>
+                      </DeleteDialog>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : null}
+              </div>
+            </div>
           </div>
         </Card>
       </m.div>
@@ -384,7 +385,7 @@ function NoteCardExcerpt({
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <p
           ref={targetRef}
-          className="line-clamp-3 break-words text-sm text-muted-foreground"
+          className="line-clamp-3 text-sm break-words text-muted-foreground"
         >
           {text}
         </p>
@@ -395,7 +396,7 @@ function NoteCardExcerpt({
         >
           <div
             ref={contentRef}
-            className="break-words whitespace-pre-wrap text-sm text-muted-foreground"
+            className="text-sm break-words whitespace-pre-wrap text-muted-foreground"
           >
             {text}
           </div>
@@ -421,11 +422,11 @@ function NoteCardExcerpt({
               <PreviewCardPopup className="w-[min(18rem,calc(100vw-2rem))]">
                 <div className="flex flex-col gap-3">
                   {previewTitle ? (
-                    <div className="text-sm font-medium whitespace-pre-wrap break-words">
+                    <div className="text-sm font-medium break-words whitespace-pre-wrap">
                       {previewTitle}
                     </div>
                   ) : null}
-                  <div className="line-clamp-8 text-sm whitespace-pre-wrap break-words text-muted-foreground">
+                  <div className="line-clamp-8 text-sm break-words whitespace-pre-wrap text-muted-foreground">
                     {text}
                   </div>
                 </div>

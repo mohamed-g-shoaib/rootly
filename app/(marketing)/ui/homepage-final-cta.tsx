@@ -15,7 +15,7 @@ export default function HomepageFinalCta() {
               <div className="text-3xl font-semibold text-balance">
                 Start learning with intention.
               </div>
-              <div className="max-w-2xl text-sm text-muted-foreground text-pretty">
+              <div className="max-w-2xl text-sm text-pretty text-muted-foreground">
                 Rootly gives your study sessions a place to build on each other
                 instead of starting from scratch every time.
               </div>

@@ -24,7 +24,9 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 <!-- Responsive Holy Grail -->
 <div class="grid min-h-screen grid-rows-[auto_1fr_auto]">
   <header>Header</header>
-  <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr_300px]">
+  <div
+    class="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr_300px]"
+  >
     <aside class="order-2 md:order-1">Sidebar</aside>
     <main class="order-1 md:order-2">Main</main>
     <aside class="order-3 hidden lg:block">Right</aside>
@@ -43,15 +45,27 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
     "nav footer footer";
 }
 
-@utility area-header { grid-area: header; }
-@utility area-nav { grid-area: nav; }
-@utility area-main { grid-area: main; }
-@utility area-aside { grid-area: aside; }
-@utility area-footer { grid-area: footer; }
+@utility area-header {
+  grid-area: header;
+}
+@utility area-nav {
+  grid-area: nav;
+}
+@utility area-main {
+  grid-area: main;
+}
+@utility area-aside {
+  grid-area: aside;
+}
+@utility area-footer {
+  grid-area: footer;
+}
 ```
 
 ```html
-<div class="grid grid-areas-dashboard grid-cols-[200px_1fr_250px] grid-rows-[60px_1fr_40px] min-h-screen">
+<div
+  class="grid grid-areas-dashboard grid-cols-[200px_1fr_250px] grid-rows-[60px_1fr_40px] min-h-screen"
+>
   <header class="area-header bg-white shadow">Header</header>
   <nav class="area-nav bg-gray-100">Navigation</nav>
   <main class="area-main p-6">Main Content</main>
@@ -76,7 +90,9 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 </div>
 
 <!-- With arbitrary values -->
-<div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-4">
+<div
+  class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-4"
+>
   <!-- Handles edge case where container is smaller than minmax min -->
 </div>
 ```
@@ -244,7 +260,9 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
         <th>Column 2</th>
       </tr>
     </thead>
-    <tbody>...</tbody>
+    <tbody>
+      ...
+    </tbody>
   </table>
 </div>
 ```
@@ -262,7 +280,9 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 </nav>
 
 <!-- Fixed action button -->
-<button class="fixed bottom-6 right-6 z-40 rounded-full bg-brand-500 p-4 shadow-lg">
+<button
+  class="fixed bottom-6 right-6 z-40 rounded-full bg-brand-500 p-4 shadow-lg"
+>
   <PlusIcon />
 </button>
 ```
@@ -281,14 +301,30 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
   --z-toast: 800;
 }
 
-@utility z-dropdown { z-index: var(--z-dropdown); }
-@utility z-sticky { z-index: var(--z-sticky); }
-@utility z-fixed { z-index: var(--z-fixed); }
-@utility z-modal-backdrop { z-index: var(--z-modal-backdrop); }
-@utility z-modal { z-index: var(--z-modal); }
-@utility z-popover { z-index: var(--z-popover); }
-@utility z-tooltip { z-index: var(--z-tooltip); }
-@utility z-toast { z-index: var(--z-toast); }
+@utility z-dropdown {
+  z-index: var(--z-dropdown);
+}
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-fixed {
+  z-index: var(--z-fixed);
+}
+@utility z-modal-backdrop {
+  z-index: var(--z-modal-backdrop);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+@utility z-popover {
+  z-index: var(--z-popover);
+}
+@utility z-tooltip {
+  z-index: var(--z-tooltip);
+}
+@utility z-toast {
+  z-index: var(--z-toast);
+}
 ```
 
 ## Overflow and Scrolling
@@ -390,10 +426,7 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 ```html
 <!-- Focus on specific part of image -->
 <div class="h-64 overflow-hidden">
-  <img
-    src="portrait.jpg"
-    class="h-full w-full object-cover object-top"
-  />
+  <img src="portrait.jpg" class="h-full w-full object-cover object-top" />
 </div>
 
 <!-- Arbitrary object position -->
@@ -411,9 +444,7 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 </div>
 
 <!-- Block direction (vertical in horizontal writing modes) -->
-<div class="pbs-4 pbe-6 mbs-auto">
-  Block-direction spacing
-</div>
+<div class="pbs-4 pbe-6 mbs-auto">Block-direction spacing</div>
 ```
 
 ### Space Between with Dividers
@@ -470,9 +501,7 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 
 <!-- Prevent breaks inside elements -->
 <div class="columns-2">
-  <div class="break-inside-avoid mb-4">
-    Card that stays together
-  </div>
+  <div class="break-inside-avoid mb-4">Card that stays together</div>
 </div>
 ```
 
@@ -482,13 +511,15 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 
 ```html
 <div class="@container">
-  <div class="
+  <div
+    class="
     /* Container query for component-level responsiveness */
     @md:flex @md:gap-4
 
     /* Media query for page-level responsiveness */
     lg:grid lg:grid-cols-2
-  ">
+  "
+  >
     Content
   </div>
 </div>
@@ -548,9 +579,7 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 </div>
 
 <!-- Force page break -->
-<div class="print:break-before-page">
-  Start on new page
-</div>
+<div class="print:break-before-page">Start on new page</div>
 ```
 
 ## Best Practices
@@ -560,9 +589,9 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 ```html
 <!-- Prefer Grid for 2D layouts -->
 <div class="grid grid-cols-3 gap-4">
-
-<!-- Prefer Flexbox for 1D layouts -->
-<div class="flex items-center gap-2">
+  <!-- Prefer Flexbox for 1D layouts -->
+  <div class="flex items-center gap-2"></div>
+</div>
 ```
 
 ### 2. Handle Edge Cases
@@ -584,9 +613,9 @@ description: Tailwind CSS advanced layout techniques including CSS Grid and Flex
 ```html
 <!-- Prefer max-w-prose for reading content -->
 <article class="max-w-prose mx-auto">
-
-<!-- Use container for page sections -->
-<div class="container mx-auto px-4">
+  <!-- Use container for page sections -->
+  <div class="container mx-auto px-4"></div>
+</article>
 ```
 
 ### 4. Test All Breakpoints

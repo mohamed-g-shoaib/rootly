@@ -20,5 +20,5 @@ Each view-transition-name must be unique on the page during transition.
 **Correct (unique per element):**
 
 ```ts
-element.style.viewTransitionName = `card-${id}`;
+element.style.viewTransitionName = `card-${id}`
 ```

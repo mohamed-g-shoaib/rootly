@@ -11,11 +11,11 @@ Bandpass filter for clicks should be 3000-6000Hz.
 **Incorrect (too low):**
 
 ```ts
-filter.frequency.value = 500;
+filter.frequency.value = 500
 ```
 
 **Correct (crisp range):**
 
 ```ts
-filter.frequency.value = 4000;
+filter.frequency.value = 4000
 ```

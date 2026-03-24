@@ -39,6 +39,7 @@ access the full content via a `PreviewCard` hover (desktop) or a sheet (mobile
 / tap).
 
 This creates:
+
 - No layout shifts when data varies
 - A consistent grid where all cards in a row are always the same height
 - Muscle memory: users always know where to look for each piece of information
@@ -92,17 +93,20 @@ documented with a comment and must be the exception, not the rule.
 ### Zone CSS rules
 
 **Header** (`shrink-0`):
+
 - Max 2 lines via `line-clamp-2` on the title element
 - Actions (buttons) in header right must never wrap — use `flex-shrink-0` on
   the action cluster
 
 **Body** (`flex-1 min-h-0 overflow-hidden`):
+
 - Content never expands this zone — the zone takes whatever space remains
   between header and footer
 - All text inside uses `line-clamp-3` (or `line-clamp-2` for secondary text)
 - No scrollbars — content that does not fit is simply clipped
 
 **Footer** (`shrink-0 flex items-center justify-between gap-2 pt-2`):
+
 - Left side: badges / chips — `flex items-center gap-1.5 overflow-hidden flex-nowrap`
   Badges must never wrap to a second line. If they overflow, hide with
   `overflow-hidden`. The full list is accessible via PreviewCard or sheet.
@@ -128,14 +132,14 @@ This signals interactivity without being visually noisy at rest.
 
 ```tsx
 <PreviewCard>
-  <PreviewCardTrigger render={<div className="flex-1 min-h-0 overflow-hidden cursor-pointer" />}>
+  <PreviewCardTrigger
+    render={<div className="flex-1 min-h-0 overflow-hidden cursor-pointer" />}
+  >
     <p className="line-clamp-3 text-sm text-muted-foreground hover:underline decoration-dotted decoration-muted-foreground/50 underline-offset-2">
       {content}
     </p>
   </PreviewCardTrigger>
-  <PreviewCardPopup>
-    {/* full content */}
-  </PreviewCardPopup>
+  <PreviewCardPopup>{/* full content */}</PreviewCardPopup>
 </PreviewCard>
 ```
 
@@ -201,6 +205,7 @@ Wrap in the interactive `PreviewCard` pattern.
 (used in footer — see below).
 
 **What gets removed from the body:**
+
 - The inline "View full note" `Button variant="link"` — full note is now
   accessed via the interactive body zone
 - The "Show Answer" button that previously pushed content down (replaced by
@@ -272,12 +277,18 @@ already navigates to the detail page.
   Wrap the `+{remainingTopics} more` in a `PreviewCard` trigger:
   ```tsx
   <PreviewCard>
-    <PreviewCardTrigger render={<Badge variant="outline" className="shrink-0 cursor-pointer" />}>
+    <PreviewCardTrigger
+      render={<Badge variant="outline" className="shrink-0 cursor-pointer" />}
+    >
       +{remainingTopics} more
     </PreviewCardTrigger>
     <PreviewCardPopup>
       <div className="flex flex-wrap gap-1.5">
-        {course.topics.map(t => <Badge key={t} variant="outline">{t}</Badge>)}
+        {course.topics.map((t) => (
+          <Badge key={t} variant="outline">
+            {t}
+          </Badge>
+        ))}
       </div>
     </PreviewCardPopup>
   </PreviewCard>
@@ -291,6 +302,7 @@ already navigates to the detail page.
 - Menu button: existing `DropdownMenu` unchanged
 
 **What gets removed:**
+
 - The free-wrapping `<div className="flex flex-wrap gap-2 pt-4">` topics
   section (replaced by footer left)
 - The dangling `<div className="pt-4" />` spacer at the bottom
@@ -336,6 +348,7 @@ These are fixed, non-overflowing data points. No PreviewCard needed here.
 - Menu button only: existing `DropdownMenu` unchanged
 
 **What gets removed:**
+
 - The inline `{entry.notes}` from the flex-wrap stats row in the body
   (moves to footer left as truncated text)
 - The "Today" badge from inside the title flex row (moves to header right)
@@ -409,6 +422,7 @@ detail view accessed by clicking the session name.
 - Menu button only: existing `DropdownMenu` unchanged
 
 **What gets removed:**
+
 - The `flex flex-wrap items-center gap-3` stats row that currently sits in the
   card body (moves to footer as badges)
 - The separate `<div className="pt-4">` wrapping the weakest/strongest section

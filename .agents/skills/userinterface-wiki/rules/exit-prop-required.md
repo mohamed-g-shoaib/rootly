@@ -12,9 +12,7 @@ Elements inside AnimatePresence should have exit prop defined.
 
 ```tsx
 <AnimatePresence>
-  {isOpen && (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} />
-  )}
+  {isOpen && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} />}
 </AnimatePresence>
 ```
 

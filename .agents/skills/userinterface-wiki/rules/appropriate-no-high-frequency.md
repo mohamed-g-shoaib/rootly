@@ -13,9 +13,9 @@ Do not add sound to high-frequency interactions (typing, keyboard navigation).
 ```tsx
 function Input({ onChange }) {
   const handleChange = (e) => {
-    playSound("keystroke");
-    onChange(e);
-  };
+    playSound("keystroke")
+    onChange(e)
+  }
 }
 ```
 
@@ -23,6 +23,6 @@ function Input({ onChange }) {
 
 ```tsx
 function Input({ onChange }) {
-  return <input onChange={onChange} />;
+  return <input onChange={onChange} />
 }
 ```

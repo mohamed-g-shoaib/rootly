@@ -40,7 +40,9 @@ export default function HomepageFooter() {
                   <div className="text-lg font-semibold">Rootly</div>
                 </div>
               </Link>
-              <div>Capture notes, track progress, and review what you learn.</div>
+              <div>
+                Capture notes, track progress, and review what you learn.
+              </div>
               <div>© 2026 Rootly. All rights reserved.</div>
               <ThemeSwitcherMultiButton className="w-fit" />
             </div>

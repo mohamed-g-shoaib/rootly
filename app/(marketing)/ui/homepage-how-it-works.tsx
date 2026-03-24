@@ -1,33 +1,33 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 
 import {
   ArrowLeft02Icon,
   ArrowRight02Icon,
   CheckmarkCircle01Icon,
   InformationCircleIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
-import { PageContainer } from "@/components/ui/page-container";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/ui/page-container"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Progress,
   ProgressIndicator,
   ProgressLabel,
   ProgressTrack,
   ProgressValue,
-} from "@/components/ui/progress";
+} from "@/components/ui/progress"
 
 import {
   EmojioneV1GrinningFaceWithSmilingEyes,
   EmojioneV1SlightlySmilingFace,
   EmojioneV1WearyFace,
-} from "@/app/daily-entries/ui/daily-entries-emojis";
-import { Reveal } from "./reveal";
+} from "@/app/daily-entries/ui/daily-entries-emojis"
+import { Reveal } from "./reveal"
 
 const TRACK_DATA = [
   { day: "Mon", minutes: "42m", value: 74 },
@@ -35,18 +35,18 @@ const TRACK_DATA = [
   { day: "Wed", minutes: "55m", value: 100 },
   { day: "Thu", minutes: "20m", value: 36 },
   { day: "Fri", minutes: "48m", value: 86 },
-] as const;
+] as const
 
 const HOW_IT_WORKS_CARD_CLASS =
-  "w-[min(20rem,calc(100vw-2rem))] shrink-0 snap-start sm:w-96";
-const HOW_IT_WORKS_VISUAL_CLASS = "h-60 p-4";
+  "w-[min(20rem,calc(100vw-2rem))] shrink-0 snap-start sm:w-96"
+const HOW_IT_WORKS_VISUAL_CLASS = "h-60 p-4"
 
 function SurfaceLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+    <div className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
       {children}
     </div>
-  );
+  )
 }
 
 function SurfaceFooter({ children }: { children: React.ReactNode }) {
@@ -54,7 +54,7 @@ function SurfaceFooter({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-12 shrink-0 flex-wrap items-start gap-2 border-t pt-3">
       {children}
     </div>
-  );
+  )
 }
 
 function HowItWorksSurface({
@@ -63,10 +63,10 @@ function HowItWorksSurface({
   label,
   meta,
 }: {
-  body: React.ReactNode;
-  footer: React.ReactNode;
-  label: string;
-  meta: React.ReactNode;
+  body: React.ReactNode
+  footer: React.ReactNode
+  label: string
+  meta: React.ReactNode
 }) {
   return (
     <Card className={HOW_IT_WORKS_VISUAL_CLASS}>
@@ -79,7 +79,7 @@ function HowItWorksSurface({
         <SurfaceFooter>{footer}</SurfaceFooter>
       </div>
     </Card>
-  );
+  )
 }
 
 function HowItWorksStep({
@@ -87,21 +87,21 @@ function HowItWorksStep({
   title,
   description,
 }: {
-  visual: React.ReactNode;
-  title: string;
-  description: string;
+  visual: React.ReactNode
+  title: string
+  description: string
 }) {
   return (
     <div className="flex flex-col gap-2">
       {visual}
       <div className="flex flex-col gap-1">
         <div className="text-lg font-semibold text-balance">{title}</div>
-        <div className="text-sm text-muted-foreground text-pretty">
+        <div className="text-sm text-pretty text-muted-foreground">
           {description}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function CreateCourseVisual() {
@@ -112,7 +112,7 @@ function CreateCourseVisual() {
       body={
         <div className="flex h-full min-h-0 flex-col gap-2 overflow-hidden">
           <div className="flex flex-col gap-1">
-            <div className="font-medium leading-5">
+            <div className="leading-5 font-medium">
               Machine Learning Fundamentals
             </div>
             <div className="text-sm text-muted-foreground">Andrew Ng</div>
@@ -135,15 +135,15 @@ function CreateCourseVisual() {
         </>
       }
     />
-  );
+  )
 }
 
 function SurfaceCaption({ children }: { children: React.ReactNode }) {
   return (
-    <div className="line-clamp-4 rounded-xl border bg-muted/35 px-3 py-2 text-sm text-muted-foreground text-pretty">
+    <div className="line-clamp-4 rounded-xl border bg-muted/35 px-3 py-2 text-sm text-pretty text-muted-foreground">
       {children}
     </div>
-  );
+  )
 }
 
 function CaptureVisual() {
@@ -169,7 +169,7 @@ function CaptureVisual() {
         </>
       }
     />
-  );
+  )
 }
 
 function DailyLogVisual() {
@@ -211,7 +211,7 @@ function DailyLogVisual() {
         </>
       }
     />
-  );
+  )
 }
 
 function ReviewVisual() {
@@ -243,7 +243,7 @@ function ReviewVisual() {
         </>
       }
     />
-  );
+  )
 }
 
 function TrackVisual() {
@@ -264,7 +264,7 @@ function TrackVisual() {
                   <ProgressIndicator />
                 </ProgressTrack>
               </Progress>
-              <div className="text-sm tabular-nums text-muted-foreground">
+              <div className="text-sm text-muted-foreground tabular-nums">
                 {item.minutes}
               </div>
             </div>
@@ -278,42 +278,42 @@ function TrackVisual() {
         </>
       }
     />
-  );
+  )
 }
 
 function useCarouselControls() {
-  const scrollerRef = React.useRef<HTMLDivElement | null>(null);
-  const [canScrollPrev, setCanScrollPrev] = React.useState(false);
-  const [canScrollNext, setCanScrollNext] = React.useState(true);
+  const scrollerRef = React.useRef<HTMLDivElement | null>(null)
+  const [canScrollPrev, setCanScrollPrev] = React.useState(false)
+  const [canScrollNext, setCanScrollNext] = React.useState(true)
 
   const updateButtons = React.useCallback(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const max = el.scrollWidth - el.clientWidth;
-    setCanScrollPrev(el.scrollLeft > 0);
-    setCanScrollNext(el.scrollLeft < max - 1);
-  }, []);
+    const el = scrollerRef.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    setCanScrollPrev(el.scrollLeft > 0)
+    setCanScrollNext(el.scrollLeft < max - 1)
+  }, [])
 
   React.useEffect(() => {
-    updateButtons();
-    const el = scrollerRef.current;
-    if (!el) return;
+    updateButtons()
+    const el = scrollerRef.current
+    if (!el) return
 
-    const onScroll = () => updateButtons();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", updateButtons);
+    const onScroll = () => updateButtons()
+    el.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", updateButtons)
     return () => {
-      el.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", updateButtons);
-    };
-  }, [updateButtons]);
+      el.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", updateButtons)
+    }
+  }, [updateButtons])
 
   const scrollByCard = React.useCallback((direction: -1 | 1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const amount = Math.max(280, Math.floor(el.clientWidth * 0.9));
-    el.scrollBy({ left: direction * amount, behavior: "smooth" });
-  }, []);
+    const el = scrollerRef.current
+    if (!el) return
+    const amount = Math.max(280, Math.floor(el.clientWidth * 0.9))
+    el.scrollBy({ left: direction * amount, behavior: "smooth" })
+  }, [])
 
   return {
     scrollerRef,
@@ -321,15 +321,15 @@ function useCarouselControls() {
     canScrollNext,
     scrollPrev: () => scrollByCard(-1),
     scrollNext: () => scrollByCard(1),
-  };
+  }
 }
 
 function HowItWorksCarousel({
   scrollerRef,
   children,
 }: {
-  scrollerRef: React.RefObject<HTMLDivElement | null>;
-  children: React.ReactNode;
+  scrollerRef: React.RefObject<HTMLDivElement | null>
+  children: React.ReactNode
 }) {
   return (
     <div
@@ -339,12 +339,12 @@ function HowItWorksCarousel({
     >
       {children}
     </div>
-  );
+  )
 }
 
 export default function HomepageHowItWorks() {
   const { scrollerRef, canScrollPrev, canScrollNext, scrollPrev, scrollNext } =
-    useCarouselControls();
+    useCarouselControls()
 
   return (
     <section id="how-it-works" className="pt-14">
@@ -446,5 +446,5 @@ export default function HomepageHowItWorks() {
         </div>
       </PageContainer>
     </section>
-  );
+  )
 }

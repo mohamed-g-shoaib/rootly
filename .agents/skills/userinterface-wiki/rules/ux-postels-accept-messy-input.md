@@ -19,7 +19,7 @@ function DateInput({ onChange }) {
       pattern="\d{4}-\d{2}-\d{2}"
       onChange={onChange}
     />
-  );
+  )
 }
 ```
 
@@ -28,17 +28,13 @@ function DateInput({ onChange }) {
 ```tsx
 function DateInput({ onChange }) {
   function handleChange(e) {
-    const parsed = parseFlexibleDate(e.target.value);
-    if (parsed) onChange(parsed);
+    const parsed = parseFlexibleDate(e.target.value)
+    if (parsed) onChange(parsed)
   }
 
   return (
-    <input
-      type="text"
-      placeholder="Any date format"
-      onChange={handleChange}
-    />
-  );
+    <input type="text" placeholder="Any date format" onChange={handleChange} />
+  )
 }
 ```
 

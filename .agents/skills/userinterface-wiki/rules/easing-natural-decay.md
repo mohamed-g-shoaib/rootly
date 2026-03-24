@@ -12,11 +12,11 @@ Use exponential ramps, not linear, for natural decay.
 **Incorrect (linear ramp):**
 
 ```ts
-gain.gain.linearRampToValueAtTime(0, t + 0.05);
+gain.gain.linearRampToValueAtTime(0, t + 0.05)
 ```
 
 **Correct (exponential ramp):**
 
 ```ts
-gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
 ```

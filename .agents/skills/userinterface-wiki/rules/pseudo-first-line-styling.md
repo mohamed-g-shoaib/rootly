@@ -12,7 +12,9 @@ Use ::first-line for drop-cap-adjacent styling without JavaScript or hardcoded s
 
 ```tsx
 <p>
-  <span className={styles["first-line"]}>The opening line of this paragraph</span>
+  <span className={styles["first-line"]}>
+    The opening line of this paragraph
+  </span>
   is styled differently from the rest.
 </p>
 ```

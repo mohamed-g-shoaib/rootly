@@ -25,7 +25,7 @@ function DeleteDialog() {
         <button>Learn More</button>
       </div>
     </dialog>
-  );
+  )
 }
 ```
 
@@ -42,7 +42,7 @@ function DeleteDialog() {
         <button>Delete</button>
       </div>
     </dialog>
-  );
+  )
 }
 ```
 

@@ -18,7 +18,7 @@ function Steps({ current }) {
       <span>Step 2</span>
       <span>Step 3</span>
     </div>
-  );
+  )
 }
 ```
 
@@ -36,7 +36,7 @@ function Steps({ current }) {
         </div>
       ))}
     </div>
-  );
+  )
 }
 ```
 

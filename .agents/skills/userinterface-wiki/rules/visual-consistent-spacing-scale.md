@@ -11,9 +11,15 @@ Don't use arbitrary pixel values for spacing. Define a scale and stick to it thr
 **Incorrect (arbitrary values):**
 
 ```css
-.header { padding: 17px; }
-.card { margin-bottom: 13px; }
-.section { gap: 22px; }
+.header {
+  padding: 17px;
+}
+.card {
+  margin-bottom: 13px;
+}
+.section {
+  gap: 22px;
+}
 ```
 
 **Correct (consistent scale):**
@@ -29,7 +35,13 @@ Don't use arbitrary pixel values for spacing. Define a scale and stick to it thr
   --space-7: 48px;
 }
 
-.header { padding: var(--space-4); }
-.card { margin-bottom: var(--space-3); }
-.section { gap: var(--space-5); }
+.header {
+  padding: var(--space-4);
+}
+.card {
+  margin-bottom: var(--space-3);
+}
+.section {
+  gap: var(--space-5);
+}
 ```

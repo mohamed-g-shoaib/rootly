@@ -407,7 +407,9 @@ export function EntryEditorSheet({
   onSave: (entry: DailyEntry) => void
 }) {
   const editorKey =
-    mode === "edit" ? `edit-${entry?.id ?? "missing"}` : `create-${lockedDateValue}`
+    mode === "edit"
+      ? `edit-${entry?.id ?? "missing"}`
+      : `create-${lockedDateValue}`
 
   if (!open) {
     return <Sheet open={open} onOpenChange={onOpenChange} />

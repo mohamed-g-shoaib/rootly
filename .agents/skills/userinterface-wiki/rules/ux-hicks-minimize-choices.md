@@ -14,11 +14,11 @@ Decision time increases logarithmically with the number of choices. Use progress
 function Settings() {
   return (
     <div>
-      {allSettings.map(setting => (
+      {allSettings.map((setting) => (
         <SettingRow key={setting.id} {...setting} />
       ))}
     </div>
-  );
+  )
 }
 ```
 
@@ -28,17 +28,17 @@ function Settings() {
 function Settings() {
   return (
     <div>
-      {commonSettings.map(setting => (
+      {commonSettings.map((setting) => (
         <SettingRow key={setting.id} {...setting} />
       ))}
       <details>
         <summary>Advanced</summary>
-        {advancedSettings.map(setting => (
+        {advancedSettings.map((setting) => (
           <SettingRow key={setting.id} {...setting} />
         ))}
       </details>
     </div>
-  );
+  )
 }
 ```
 

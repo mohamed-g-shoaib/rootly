@@ -11,11 +11,11 @@ Gain values should not exceed 1.0 to prevent clipping.
 **Incorrect (clipping):**
 
 ```ts
-gain.gain.setValueAtTime(1.5, t);
+gain.gain.setValueAtTime(1.5, t)
 ```
 
 **Correct (safe gain):**
 
 ```ts
-gain.gain.setValueAtTime(0.3, t);
+gain.gain.setValueAtTime(0.3, t)
 ```

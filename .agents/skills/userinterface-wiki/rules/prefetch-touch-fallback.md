@@ -13,13 +13,10 @@ Touch devices have no cursor. Fall back to viewport or touch-start strategies au
 ```tsx
 function PrefetchLink({ href, children }) {
   return (
-    <Link
-      href={href}
-      onMouseMove={() => prefetch(href)}
-    >
+    <Link href={href} onMouseMove={() => prefetch(href)}>
       {children}
     </Link>
-  );
+  )
 }
 ```
 
@@ -29,6 +26,6 @@ function PrefetchLink({ href, children }) {
 const { elementRef } = useForesight({
   callback: () => router.prefetch(href),
   hitSlop: 20,
-});
+})
 // Automatically falls back to touch-start on mobile
 ```

@@ -177,4 +177,3 @@ export async function deleteNote({
 
   return { success: true, data: fromDb(data as DbNoteRow) }
 }
-

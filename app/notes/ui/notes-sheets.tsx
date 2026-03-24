@@ -4,11 +4,7 @@ import * as React from "react"
 
 import dynamic from "next/dynamic"
 
-import {
-  CodeIcon,
-  Flag01Icon,
-  Search02Icon,
-} from "@hugeicons/core-free-icons"
+import { CodeIcon, Flag01Icon, Search02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Button } from "@/components/ui/button"
@@ -209,8 +205,7 @@ export function NoteEditorSheet({
   lockedCourse,
   onSave,
 }: NoteEditorSheetProps) {
-  const editorKey =
-    mode === "edit" ? `edit-${note?.id ?? "missing"}` : "create"
+  const editorKey = mode === "edit" ? `edit-${note?.id ?? "missing"}` : "create"
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -270,7 +265,9 @@ function NoteEditorSheetBody({
   const [answer, setAnswer] = React.useState(
     mode === "edit" ? (note?.answer ?? "") : ""
   )
-  const [body, setBody] = React.useState(mode === "edit" ? (note?.body ?? "") : "")
+  const [body, setBody] = React.useState(
+    mode === "edit" ? (note?.body ?? "") : ""
+  )
 
   const courseItems = React.useMemo<{ value: string; label: string }[]>(
     () => [
@@ -339,265 +336,265 @@ function NoteEditorSheetBody({
   }
 
   return (
-      <SheetPopup side={isMobile ? "bottom" : "right"} variant="inset">
-        <Form className="h-full gap-0">
-          <SheetHeader>
-            <SheetTitle>
-              {mode === "create" ? "New Note" : "Edit Note"}
-            </SheetTitle>
-          </SheetHeader>
-          <SheetPanel className="px-4 pb-5">
-            <div className="flex flex-col gap-5">
-              {mode === "create" ? (
+    <SheetPopup side={isMobile ? "bottom" : "right"} variant="inset">
+      <Form className="h-full gap-0">
+        <SheetHeader>
+          <SheetTitle>
+            {mode === "create" ? "New Note" : "Edit Note"}
+          </SheetTitle>
+        </SheetHeader>
+        <SheetPanel className="px-4 pb-5">
+          <div className="flex flex-col gap-5">
+            {mode === "create" ? (
+              <FormSection>
+                <FormSectionTitle>Note type</FormSectionTitle>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant={type === "qa" ? "secondary" : "outline"}
+                    type="button"
+                    onClick={() => setType("qa")}
+                  >
+                    Q&A
+                  </Button>
+                  <Button
+                    variant={type === "freeform" ? "secondary" : "outline"}
+                    type="button"
+                    onClick={() => setType("freeform")}
+                  >
+                    Freeform
+                  </Button>
+                </div>
+              </FormSection>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                Type: {note?.type === "qa" ? "Q&A" : "Freeform"}
+              </div>
+            )}
+
+            {type ? (
+              <>
                 <FormSection>
-                  <FormSectionTitle>Note type</FormSectionTitle>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      variant={type === "qa" ? "secondary" : "outline"}
-                      type="button"
-                      onClick={() => setType("qa")}
+                  <Label>Course (optional)</Label>
+                  {lockedCourse ? (
+                    <div className="pt-1 text-sm">{lockedCourse.title}</div>
+                  ) : (
+                    <Combobox
+                      items={courseItems}
+                      value={selectedCourse}
+                      onValueChange={(value) =>
+                        setCourseId(value?.value ?? "none")
+                      }
                     >
-                      Q&A
+                      <ComboboxInput
+                        placeholder="Course"
+                        aria-label="Course"
+                        showClear={courseId !== "none"}
+                      />
+                      <ComboboxPopup>
+                        <ComboboxEmpty>No results found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(item) => (
+                            <ComboboxItem key={item.value} value={item}>
+                              <span className="truncate">{item.label}</span>
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxPopup>
+                    </Combobox>
+                  )}
+                </FormSection>
+
+                {type === "qa" ? (
+                  <>
+                    <FormSection>
+                      <Label>Question</Label>
+                      <Textarea
+                        placeholder="What is the question?"
+                        value={question}
+                        onChange={(e) => setQuestion(e.target.value)}
+                      />
+                    </FormSection>
+                    <FormSection>
+                      <Label>Answer</Label>
+                      <Textarea
+                        placeholder="Write the answer..."
+                        value={answer}
+                        onChange={(e) => setAnswer(e.target.value)}
+                      />
+                    </FormSection>
+                    <FormSection>
+                      <Label>Understanding level</Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Button
+                          type="button"
+                          variant={
+                            understandingLevel === 1 ? "secondary" : "outline"
+                          }
+                          className="gap-2"
+                          onClick={() => setUnderstandingLevel(1)}
+                        >
+                          <HugeiconsIcon
+                            icon={understandingIcon(1)}
+                            size={18}
+                            color={
+                              understandingLevel === 1
+                                ? understandingColor(1)
+                                : "currentColor"
+                            }
+                          />
+                          Confused
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={
+                            understandingLevel === 2 ? "secondary" : "outline"
+                          }
+                          className="gap-2"
+                          onClick={() => setUnderstandingLevel(2)}
+                        >
+                          <HugeiconsIcon
+                            icon={understandingIcon(2)}
+                            size={18}
+                            color={
+                              understandingLevel === 2
+                                ? understandingColor(2)
+                                : "currentColor"
+                            }
+                          />
+                          Getting It
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={
+                            understandingLevel === 3 ? "secondary" : "outline"
+                          }
+                          className="gap-2"
+                          onClick={() => setUnderstandingLevel(3)}
+                        >
+                          <HugeiconsIcon
+                            icon={understandingIcon(3)}
+                            size={18}
+                            color={
+                              understandingLevel === 3
+                                ? understandingColor(3)
+                                : "currentColor"
+                            }
+                          />
+                          Clear
+                        </Button>
+                      </div>
+                    </FormSection>
+                  </>
+                ) : (
+                  <FormSection>
+                    <Label>Note</Label>
+                    <Textarea
+                      placeholder="Write your note..."
+                      value={body}
+                      onChange={(e) => setBody(e.target.value)}
+                      className="min-h-40"
+                    />
+                  </FormSection>
+                )}
+
+                <FormSection>
+                  <FormSectionTitle>Options</FormSectionTitle>
+                  <FormSectionDescription>
+                    Mark notes for future review or attach a code example when
+                    it helps explain the idea.
+                  </FormSectionDescription>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <Button
+                      type="button"
+                      variant={flagged ? "secondary" : "outline"}
+                      className="w-full justify-start gap-2"
+                      onClick={() => setFlagged((v) => !v)}
+                    >
+                      <HugeiconsIcon
+                        icon={Flag01Icon}
+                        size={18}
+                        color={flagged ? "var(--destructive)" : "currentColor"}
+                      />
+                      Flag for review
                     </Button>
+
                     <Button
-                      variant={type === "freeform" ? "secondary" : "outline"}
                       type="button"
-                      onClick={() => setType("freeform")}
+                      variant={codeEnabled ? "secondary" : "outline"}
+                      className="w-full justify-start gap-2"
+                      onClick={() => setCodeEnabled((v) => !v)}
                     >
-                      Freeform
+                      <HugeiconsIcon
+                        icon={CodeIcon}
+                        size={18}
+                        color={codeEnabled ? "var(--info)" : "currentColor"}
+                      />
+                      Add code snippet
                     </Button>
                   </div>
                 </FormSection>
-              ) : (
-                <div className="text-sm text-muted-foreground">
-                  Type: {note?.type === "qa" ? "Q&A" : "Freeform"}
-                </div>
-              )}
 
-              {type ? (
-                <>
+                {codeEnabled ? (
                   <FormSection>
-                    <Label>Course (optional)</Label>
-                    {lockedCourse ? (
-                      <div className="pt-1 text-sm">{lockedCourse.title}</div>
-                    ) : (
-                      <Combobox
-                        items={courseItems}
-                        value={selectedCourse}
-                        onValueChange={(value) =>
-                          setCourseId(value?.value ?? "none")
-                        }
+                    <Label>Code snippet</Label>
+                    <Combobox
+                      items={[...CODE_LANGUAGE_OPTIONS]}
+                      value={
+                        CODE_LANGUAGE_OPTIONS.find(
+                          (x) => x.value === codeLanguage
+                        ) ?? CODE_LANGUAGE_OPTIONS[0]
+                      }
+                      onValueChange={(item) =>
+                        setCodeLanguage(item?.value ?? "tsx")
+                      }
+                    >
+                      <ComboboxTrigger
+                        render={<SelectButton />}
+                        aria-label="Code language"
                       >
-                        <ComboboxInput
-                          placeholder="Course"
-                          aria-label="Course"
-                          showClear={courseId !== "none"}
-                        />
-                        <ComboboxPopup>
-                          <ComboboxEmpty>No results found.</ComboboxEmpty>
-                          <ComboboxList>
-                            {(item) => (
-                              <ComboboxItem key={item.value} value={item}>
-                                <span className="truncate">{item.label}</span>
-                              </ComboboxItem>
-                            )}
-                          </ComboboxList>
-                        </ComboboxPopup>
-                        </Combobox>
-                      )}
-                  </FormSection>
-
-                  {type === "qa" ? (
-                    <>
-                      <FormSection>
-                        <Label>Question</Label>
-                        <Textarea
-                          placeholder="What is the question?"
-                          value={question}
-                          onChange={(e) => setQuestion(e.target.value)}
-                        />
-                      </FormSection>
-                      <FormSection>
-                        <Label>Answer</Label>
-                        <Textarea
-                          placeholder="Write the answer..."
-                          value={answer}
-                          onChange={(e) => setAnswer(e.target.value)}
-                        />
-                      </FormSection>
-                      <FormSection>
-                        <Label>Understanding level</Label>
-                        <div className="grid grid-cols-3 gap-2">
-                          <Button
-                            type="button"
-                            variant={
-                              understandingLevel === 1 ? "secondary" : "outline"
+                        <ComboboxValue placeholder="Language" />
+                      </ComboboxTrigger>
+                      <ComboboxPopup aria-label="Select language">
+                        <div className="border-b p-2">
+                          <ComboboxInput
+                            className="rounded-md before:rounded-[calc(var(--radius-md)-1px)]"
+                            placeholder="Search languages..."
+                            showTrigger={false}
+                            startAddon={
+                              <HugeiconsIcon icon={Search02Icon} size={18} />
                             }
-                            className="gap-2"
-                            onClick={() => setUnderstandingLevel(1)}
-                          >
-                            <HugeiconsIcon
-                              icon={understandingIcon(1)}
-                              size={18}
-                              color={
-                                understandingLevel === 1
-                                  ? understandingColor(1)
-                                  : "currentColor"
-                              }
-                            />
-                            Confused
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={
-                              understandingLevel === 2 ? "secondary" : "outline"
-                            }
-                            className="gap-2"
-                            onClick={() => setUnderstandingLevel(2)}
-                          >
-                            <HugeiconsIcon
-                              icon={understandingIcon(2)}
-                              size={18}
-                              color={
-                                understandingLevel === 2
-                                  ? understandingColor(2)
-                                  : "currentColor"
-                              }
-                            />
-                            Getting It
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={
-                              understandingLevel === 3 ? "secondary" : "outline"
-                            }
-                            className="gap-2"
-                            onClick={() => setUnderstandingLevel(3)}
-                          >
-                            <HugeiconsIcon
-                              icon={understandingIcon(3)}
-                              size={18}
-                              color={
-                                understandingLevel === 3
-                                  ? understandingColor(3)
-                                  : "currentColor"
-                              }
-                            />
-                            Clear
-                          </Button>
+                          />
                         </div>
-                      </FormSection>
-                    </>
-                  ) : (
-                    <FormSection>
-                      <Label>Note</Label>
-                      <Textarea
-                        placeholder="Write your note..."
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        className="min-h-40"
-                      />
-                    </FormSection>
-                  )}
+                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(opt) => (
+                            <ComboboxItem key={opt.value} value={opt}>
+                              {opt.label}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxPopup>
+                    </Combobox>
 
-                  <FormSection>
-                    <FormSectionTitle>Options</FormSectionTitle>
-                    <FormSectionDescription>
-                      Mark notes for future review or attach a code example when
-                      it helps explain the idea.
-                    </FormSectionDescription>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                      <Button
-                        type="button"
-                        variant={flagged ? "secondary" : "outline"}
-                        className="w-full justify-start gap-2"
-                        onClick={() => setFlagged((v) => !v)}
-                      >
-                        <HugeiconsIcon
-                          icon={Flag01Icon}
-                          size={18}
-                          color={flagged ? "var(--destructive)" : "currentColor"}
-                        />
-                        Flag for review
-                      </Button>
-
-                      <Button
-                        type="button"
-                        variant={codeEnabled ? "secondary" : "outline"}
-                        className="w-full justify-start gap-2"
-                        onClick={() => setCodeEnabled((v) => !v)}
-                      >
-                        <HugeiconsIcon
-                          icon={CodeIcon}
-                          size={18}
-                          color={codeEnabled ? "var(--info)" : "currentColor"}
-                        />
-                        Add code snippet
-                      </Button>
-                    </div>
+                    <CodeEditor
+                      language={codeLanguage}
+                      value={codeValue}
+                      onChange={setCodeValue}
+                      className="min-h-40"
+                    />
                   </FormSection>
-
-                  {codeEnabled ? (
-                    <FormSection>
-                      <Label>Code snippet</Label>
-                      <Combobox
-                        items={[...CODE_LANGUAGE_OPTIONS]}
-                        value={
-                          CODE_LANGUAGE_OPTIONS.find(
-                            (x) => x.value === codeLanguage
-                          ) ?? CODE_LANGUAGE_OPTIONS[0]
-                        }
-                        onValueChange={(item) =>
-                          setCodeLanguage(item?.value ?? "tsx")
-                        }
-                      >
-                        <ComboboxTrigger
-                          render={<SelectButton />}
-                          aria-label="Code language"
-                        >
-                          <ComboboxValue placeholder="Language" />
-                        </ComboboxTrigger>
-                        <ComboboxPopup aria-label="Select language">
-                          <div className="border-b p-2">
-                            <ComboboxInput
-                              className="rounded-md before:rounded-[calc(var(--radius-md)-1px)]"
-                              placeholder="Search languages..."
-                              showTrigger={false}
-                              startAddon={
-                                <HugeiconsIcon icon={Search02Icon} size={18} />
-                              }
-                            />
-                          </div>
-                          <ComboboxEmpty>No items found.</ComboboxEmpty>
-                          <ComboboxList>
-                            {(opt) => (
-                              <ComboboxItem key={opt.value} value={opt}>
-                                {opt.label}
-                              </ComboboxItem>
-                            )}
-                          </ComboboxList>
-                        </ComboboxPopup>
-                      </Combobox>
-
-                      <CodeEditor
-                        language={codeLanguage}
-                        value={codeValue}
-                        onChange={setCodeValue}
-                        className="min-h-40"
-                      />
-                    </FormSection>
-                  ) : null}
-                </>
-              ) : null}
-            </div>
-          </SheetPanel>
-          <SheetFooter>
-            <SheetClose render={<Button variant="ghost" />}>Cancel</SheetClose>
-            <Button type="button" disabled={!canSave} onClick={submit}>
-              Save Note
-            </Button>
-          </SheetFooter>
-        </Form>
-      </SheetPopup>
+                ) : null}
+              </>
+            ) : null}
+          </div>
+        </SheetPanel>
+        <SheetFooter>
+          <SheetClose render={<Button variant="ghost" />}>Cancel</SheetClose>
+          <Button type="button" disabled={!canSave} onClick={submit}>
+            Save Note
+          </Button>
+        </SheetFooter>
+      </Form>
+    </SheetPopup>
   )
 }
