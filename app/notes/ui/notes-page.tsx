@@ -6,7 +6,6 @@ import * as React from "react"
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
-import { useCanAnimate } from "@/hooks/use-can-animate"
 import { useAnswerVisibility } from "@/hooks/use-answer-visibility"
 import { useIsMobile } from "@/hooks/use-media-query"
 
@@ -43,7 +42,6 @@ export default function NotesPage({
   initialCourses: { id: string; title: string }[]
 }) {
   const isMobile = useIsMobile()
-  const canAnimate = useCanAnimate()
 
   const [courses] = React.useState(() => initialCourses)
   const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
@@ -339,7 +337,6 @@ export default function NotesPage({
                   note={note}
                   now={now}
                   isMobile={isMobile}
-                  canAnimate={canAnimate}
                   showAnswer={answerVisibility.isShown(note.id)}
                   onShowAnswerChange={(value) =>
                     answerVisibility.setShown(note.id, value)

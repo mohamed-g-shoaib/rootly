@@ -2,9 +2,7 @@
 
 import * as React from "react"
 
-import { domAnimation, LazyMotion, m } from "motion/react"
-
-import { useCanAnimate } from "@/hooks/use-can-animate"
+import { cn } from "@/lib/utils"
 
 type RevealTag = "div" | "h1" | "h2" | "p"
 type RevealMode = "mount" | "in-view"
@@ -19,7 +17,21 @@ type RevealProps = {
   amount?: number
 }
 
-const easeOut = [0.32, 0.72, 0, 1] as const
+const REVEAL_DELAY_CLASS = {
+  0: "motion-safe:delay-0",
+  0.05: "motion-safe:delay-75",
+  0.1: "motion-safe:delay-100",
+  0.15: "motion-safe:delay-150",
+  0.2: "motion-safe:delay-200",
+} as const
+
+const REVEAL_OFFSET_CLASS = {
+  12: "motion-safe:translate-y-3",
+  16: "motion-safe:translate-y-4",
+} as const
+
+const REVEAL_BASE_CLASS =
+  "motion-safe:transition-[opacity,transform] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.32,0.72,0,1)]"
 
 export function Reveal({
   as = "div",
@@ -30,63 +42,60 @@ export function Reveal({
   delay = 0,
   amount = 0.25,
 }: RevealProps) {
-  const canAnimate = useCanAnimate()
+  const [isShown, setIsShown] = React.useState(false)
+  const [node, setNode] = React.useState<HTMLElement | null>(null)
 
-  if (!canAnimate) {
-    return React.createElement(as, { className }, children)
-  }
+  React.useEffect(() => {
+    if (mode !== "mount") return
 
-  const motionProps =
-    mode === "mount"
-      ? {
-          initial: { opacity: 0, y },
-          animate: { opacity: 1, y: 0 },
-        }
-      : {
-          initial: { opacity: 0, y },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount },
-        }
+    const frame = window.requestAnimationFrame(() => {
+      setIsShown(true)
+    })
 
-  const transition = delay
-    ? { duration: 0.3, ease: easeOut, delay }
-    : { duration: 0.3, ease: easeOut }
+    return () => {
+      window.cancelAnimationFrame(frame)
+    }
+  }, [mode])
 
-  switch (as) {
-    case "h1":
-      return (
-        <LazyMotion features={domAnimation}>
-          <m.h1 className={className} transition={transition} {...motionProps}>
-            {children}
-          </m.h1>
-        </LazyMotion>
-      )
+  React.useEffect(() => {
+    if (mode !== "in-view") return
+    if (!node || isShown) return
 
-    case "h2":
-      return (
-        <LazyMotion features={domAnimation}>
-          <m.h2 className={className} transition={transition} {...motionProps}>
-            {children}
-          </m.h2>
-        </LazyMotion>
-      )
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries
+        if (!entry?.isIntersecting) return
+        setIsShown(true)
+      },
+      { threshold: amount }
+    )
 
-    case "p":
-      return (
-        <LazyMotion features={domAnimation}>
-          <m.p className={className} transition={transition} {...motionProps}>
-            {children}
-          </m.p>
-        </LazyMotion>
-      )
+    observer.observe(node)
 
-    default:
-      return (
-        <LazyMotion features={domAnimation}>
-          <m.div className={className} transition={transition} {...motionProps}>
-            {children}
-          </m.div>
-        </LazyMotion>
-      )
-  }
+    return () => {
+      observer.disconnect()
+    }
+  }, [amount, isShown, mode, node])
+
+  return React.createElement(
+    as,
+    {
+      ref: setNode,
+      className: cn(
+        className,
+        REVEAL_BASE_CLASS,
+        REVEAL_DELAY_CLASS[delay as keyof typeof REVEAL_DELAY_CLASS] ??
+          "motion-safe:delay-0",
+        isShown
+          ? "motion-safe:opacity-100 motion-safe:translate-y-0"
+          : cn(
+              "motion-safe:opacity-0",
+              REVEAL_OFFSET_CLASS[y as keyof typeof REVEAL_OFFSET_CLASS] ??
+                "motion-safe:translate-y-3"
+            )
+      ),
+      "data-reveal-state": isShown ? "shown" : "hidden",
+    },
+    children
+  )
 }
