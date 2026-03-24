@@ -3,16 +3,16 @@
 import * as React from "react"
 
 import {
+  AiBrain01Icon,
   AiSearchIcon,
   ArrowDown01Icon,
   ArrowUp01Icon,
-  Book01Icon,
   Calendar01Icon,
-  DatabaseLightningIcon,
   Home01Icon,
+  LibraryIcon,
   Loading01Icon,
   Moon02Icon,
-  NoteIcon,
+  Note05Icon,
   Logout01Icon,
   Sun01Icon,
 } from "@hugeicons/core-free-icons"
@@ -131,14 +131,14 @@ export function DashboardShell({
         icon: <HugeiconsIcon icon={Home01Icon} size={18} />,
       },
       {
-        label: "Courses",
-        link: "/courses",
-        icon: <HugeiconsIcon icon={Book01Icon} size={18} />,
-      },
-      {
         label: "Notes",
         link: "/notes",
-        icon: <HugeiconsIcon icon={NoteIcon} size={18} />,
+        icon: <HugeiconsIcon icon={Note05Icon} size={18} />,
+      },
+      {
+        label: "Courses",
+        link: "/courses",
+        icon: <HugeiconsIcon icon={LibraryIcon} size={18} />,
       },
       {
         label: "Daily",
@@ -148,7 +148,7 @@ export function DashboardShell({
       {
         label: "Review",
         link: "/review",
-        icon: <HugeiconsIcon icon={DatabaseLightningIcon} size={18} />,
+        icon: <HugeiconsIcon icon={AiBrain01Icon} size={18} />,
       },
     ],
     []
