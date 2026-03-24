@@ -691,12 +691,9 @@ const ALL_THEMES: Theme[] = [
   },
 ]
 
-export const DEFAULT_THEME_ID = "claude"
+export const DEFAULT_THEME_ID = "amethyst-haze"
 
-export const THEMES: Theme[] = [
-  ...ALL_THEMES.filter((theme) => theme.id === DEFAULT_THEME_ID),
-  ...ALL_THEMES.filter((theme) => theme.id !== DEFAULT_THEME_ID),
-]
+export const THEMES: Theme[] = ALL_THEMES
 
 export const THEME_IDS = THEMES.map((t) => t.id)
 
