@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 import {
   AiBrain01Icon,
-  AiSearchIcon,
+  Search02Icon,
   ArrowDown01Icon,
   ArrowUp01Icon,
   Calendar01Icon,
@@ -15,26 +15,26 @@ import {
   Note05Icon,
   Logout01Icon,
   Sun01Icon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useTheme } from "next-themes"
-import type { User } from "@supabase/supabase-js"
-import { signOut } from "@/app/auth/actions"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import type { User } from "@supabase/supabase-js";
+import { signOut } from "@/app/auth/actions";
 
-import RootlyLogo from "@/components/rootly-logo"
-import { ColorThemeApplicator } from "@/components/color-theme-applicator"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
+import RootlyLogo from "@/components/rootly-logo";
+import { ColorThemeApplicator } from "@/components/color-theme-applicator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu"
+} from "@/components/ui/menu";
 import {
   Sheet,
   SheetClose,
@@ -43,10 +43,10 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-} from "@/components/ui/sheet"
-import { Switch } from "@/components/ui/switch"
+} from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 
-import { FloatingDock } from "@/components/ui/floating-dock"
+import { FloatingDock } from "@/components/ui/floating-dock";
 
 import {
   Command,
@@ -63,23 +63,23 @@ import {
   CommandPanel,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 
-import { ThemeSwitcher } from "@/components/theme-switcher"
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 type ShellFab = {
-  ariaLabel: string
-  icon: React.ReactNode
-  onClick: () => void
-}
+  ariaLabel: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+};
 
 function ThemeToggle({
   checked,
   onCheckedChange,
 }: {
-  checked: boolean
-  onCheckedChange: (checked: boolean) => void
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
 }) {
   return (
     <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ function ThemeToggle({
       />
       <HugeiconsIcon icon={Moon02Icon} size={18} />
     </div>
-  )
+  );
 }
 
 export function DashboardShell({
@@ -99,30 +99,30 @@ export function DashboardShell({
   fab,
   user,
 }: {
-  children: React.ReactNode
-  fab?: ShellFab
-  user: User | null
+  children: React.ReactNode;
+  fab?: ShellFab;
+  user: User | null;
 }) {
-  const isMobile = useMediaQuery("(max-width: 768px)")
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const [commandOpen, setCommandOpen] = React.useState(false)
-  const [avatarOpen, setAvatarOpen] = React.useState(false)
+  const [commandOpen, setCommandOpen] = React.useState(false);
+  const [avatarOpen, setAvatarOpen] = React.useState(false);
 
   const displayName =
     user?.user_metadata?.full_name ??
     user?.user_metadata?.name ??
     user?.email?.split("@")[0] ??
-    "You"
+    "You";
 
   const avatarUrl =
-    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? "";
 
   const initials = displayName
     .split(" ")
     .map((n: string) => n[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
 
   const navigationItems = React.useMemo(
     () => [
@@ -152,20 +152,20 @@ export function DashboardShell({
         icon: <HugeiconsIcon icon={AiBrain01Icon} size={18} />,
       },
     ],
-    []
-  )
+    [],
+  );
 
   React.useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (!e.ctrlKey && !e.metaKey) return
-      if (e.key.toLowerCase() !== "k") return
-      e.preventDefault()
-      setCommandOpen(true)
+      if (!e.ctrlKey && !e.metaKey) return;
+      if (e.key.toLowerCase() !== "k") return;
+      e.preventDefault();
+      setCommandOpen(true);
     }
 
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
-  }, [])
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="min-h-svh">
@@ -187,7 +187,7 @@ export function DashboardShell({
               onClick={() => setCommandOpen(true)}
               className="md:hidden"
             >
-              <HugeiconsIcon icon={AiSearchIcon} size={18} />
+              <HugeiconsIcon icon={Search02Icon} size={18} />
             </Button>
 
             <Button
@@ -254,31 +254,31 @@ export function DashboardShell({
         user={user}
       />
     </div>
-  )
+  );
 }
 
 function UserAvatarPopover({ user }: { user: User | null }) {
-  const { resolvedTheme, setTheme } = useTheme()
-  const router = useRouter()
-  const [loggingOut, setLoggingOut] = React.useState(false)
+  const { resolvedTheme, setTheme } = useTheme();
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = React.useState(false);
 
   const displayName =
     user?.user_metadata?.full_name ??
     user?.user_metadata?.name ??
     user?.email?.split("@")[0] ??
-    "You"
+    "You";
 
-  const displayEmail = user?.email ?? ""
+  const displayEmail = user?.email ?? "";
 
   const avatarUrl =
-    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? "";
 
   const initials = displayName
     .split(" ")
     .map((n: string) => n[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
 
   return (
     <DropdownMenu>
@@ -324,13 +324,13 @@ function UserAvatarPopover({ user }: { user: User | null }) {
             disabled={loggingOut}
             className="text-destructive data-highlighted:bg-destructive/10 data-highlighted:text-destructive"
             onClick={async () => {
-              if (loggingOut) return
-              setLoggingOut(true)
+              if (loggingOut) return;
+              setLoggingOut(true);
               try {
-                await signOut()
-                router.push("/login")
+                await signOut();
+                router.push("/login");
               } finally {
-                setLoggingOut(false)
+                setLoggingOut(false);
               }
             }}
           >
@@ -344,7 +344,7 @@ function UserAvatarPopover({ user }: { user: User | null }) {
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
 function MobileAvatarSheet({
@@ -352,26 +352,26 @@ function MobileAvatarSheet({
   onOpenChange,
   user,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  user: User | null
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  user: User | null;
 }) {
-  const { resolvedTheme, setTheme } = useTheme()
-  const router = useRouter()
-  const [loggingOut, setLoggingOut] = React.useState(false)
+  const { resolvedTheme, setTheme } = useTheme();
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = React.useState(false);
 
   const displayName =
     user?.user_metadata?.full_name ??
     user?.user_metadata?.name ??
     user?.email?.split("@")[0] ??
-    "You"
+    "You";
 
-  const displayEmail = user?.email ?? ""
+  const displayEmail = user?.email ?? "";
 
   const avatarUrl =
-    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? ""
+    user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture ?? "";
 
-  void avatarUrl
+  void avatarUrl;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -406,13 +406,13 @@ function MobileAvatarSheet({
               type="button"
               disabled={loggingOut}
               onClick={async () => {
-                if (loggingOut) return
-                setLoggingOut(true)
+                if (loggingOut) return;
+                setLoggingOut(true);
                 try {
-                  await signOut()
-                  router.push("/login")
+                  await signOut();
+                  router.push("/login");
                 } finally {
-                  setLoggingOut(false)
+                  setLoggingOut(false);
                 }
               }}
             >
@@ -430,7 +430,7 @@ function MobileAvatarSheet({
         </SheetFooter>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
 
 function CommandPalette({
@@ -438,20 +438,20 @@ function CommandPalette({
   open,
   onOpenChange,
 }: {
-  isMobile: boolean
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  isMobile: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
   type Item = {
-    value: string
-    label: string
-    shortcut?: string
-  }
+    value: string;
+    label: string;
+    shortcut?: string;
+  };
 
   type Group = {
-    value: string
-    items: Item[]
-  }
+    value: string;
+    items: Item[];
+  };
 
   const groupedItems: Group[] = [
     {
@@ -487,7 +487,7 @@ function CommandPalette({
         { value: "go-notes", label: "Go to Notes" },
       ],
     },
-  ]
+  ];
 
   const content = (
     <Command items={groupedItems}>
@@ -541,7 +541,7 @@ function CommandPalette({
         </div>
       </CommandFooter>
     </Command>
-  )
+  );
 
   if (isMobile) {
     return (
@@ -556,12 +556,12 @@ function CommandPalette({
           </SheetFooter>
         </SheetPopup>
       </Sheet>
-    )
+    );
   }
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <CommandDialogPopup>{content}</CommandDialogPopup>
     </CommandDialog>
-  )
+  );
 }
