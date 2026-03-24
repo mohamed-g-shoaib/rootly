@@ -334,7 +334,7 @@ function HowItWorksCarousel({
   return (
     <div
       ref={scrollerRef}
-      className="flex items-start gap-4 overflow-x-auto overflow-y-hidden snap-x snap-mandatory pe-16 pb-2 overscroll-x-contain [scrollbar-width:none] sm:pe-24 [&::-webkit-scrollbar]:hidden"
+      className="flex snap-x snap-mandatory items-start gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain pe-16 pb-2 [scrollbar-width:none] sm:pe-24 [&::-webkit-scrollbar]:hidden"
       aria-label="How it works steps"
     >
       {children}

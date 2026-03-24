@@ -87,7 +87,7 @@ export function Reveal({
         REVEAL_DELAY_CLASS[delay as keyof typeof REVEAL_DELAY_CLASS] ??
           "motion-safe:delay-0",
         isShown
-          ? "motion-safe:opacity-100 motion-safe:translate-y-0"
+          ? "motion-safe:translate-y-0 motion-safe:opacity-100"
           : cn(
               "motion-safe:opacity-0",
               REVEAL_OFFSET_CLASS[y as keyof typeof REVEAL_OFFSET_CLASS] ??
