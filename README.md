@@ -1,5 +1,7 @@
 # Rootly
 
+![Rootly banner](public/marketing-image.jpg)
+
 Rootly is a developer-focused learning notebook for self-taught developers. It helps you capture notes, organize courses, track study sessions, and review what you learn in one structured system.
 
 This repository is the active v2 app: a cloud-first Next.js application built with Supabase, Coss UI, and App Router.
@@ -65,7 +67,7 @@ The repo currently includes:
 - generated `robots.txt` via [`app/robots.ts`](/D:/Developer/rootly/app/robots.ts)
 - generated `sitemap.xml` via [`app/sitemap.ts`](/D:/Developer/rootly/app/sitemap.ts)
 - dynamic Open Graph and Twitter images via [`app/opengraph-image.tsx`](/D:/Developer/rootly/app/opengraph-image.tsx) and [`app/twitter-image.tsx`](/D:/Developer/rootly/app/twitter-image.tsx)
-- homepage JSON-LD in [`app/(marketing)/page.tsx`](/D:/Developer/rootly/app/(marketing)/page.tsx)
+- homepage JSON-LD in [`app/(marketing)/page.tsx`](</D:/Developer/rootly/app/(marketing)/page.tsx>)
 - noindex metadata on private dashboard route trees
 
 Existing app icons:
