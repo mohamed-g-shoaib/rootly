@@ -166,7 +166,7 @@ export function createRootlySocialImage() {
                   fontSize: 20,
                   fontWeight: 600,
                   padding: "10px 16px",
-                  width: "fit-content",
+                  alignSelf: "flex-start",
                 }}
               >
                 Built for self-taught developers
