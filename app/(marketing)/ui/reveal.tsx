@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { motion } from "motion/react"
+import { domAnimation, LazyMotion, m } from "motion/react"
 
 import { useCanAnimate } from "@/hooks/use-can-animate"
 
@@ -55,34 +55,38 @@ export function Reveal({
   switch (as) {
     case "h1":
       return (
-        <motion.h1 className={className} transition={transition} {...motionProps}>
-          {children}
-        </motion.h1>
+        <LazyMotion features={domAnimation}>
+          <m.h1 className={className} transition={transition} {...motionProps}>
+            {children}
+          </m.h1>
+        </LazyMotion>
       )
 
     case "h2":
       return (
-        <motion.h2 className={className} transition={transition} {...motionProps}>
-          {children}
-        </motion.h2>
+        <LazyMotion features={domAnimation}>
+          <m.h2 className={className} transition={transition} {...motionProps}>
+            {children}
+          </m.h2>
+        </LazyMotion>
       )
 
     case "p":
       return (
-        <motion.p className={className} transition={transition} {...motionProps}>
-          {children}
-        </motion.p>
+        <LazyMotion features={domAnimation}>
+          <m.p className={className} transition={transition} {...motionProps}>
+            {children}
+          </m.p>
+        </LazyMotion>
       )
 
     default:
       return (
-        <motion.div
-          className={className}
-          transition={transition}
-          {...motionProps}
-        >
-          {children}
-        </motion.div>
+        <LazyMotion features={domAnimation}>
+          <m.div className={className} transition={transition} {...motionProps}>
+            {children}
+          </m.div>
+        </LazyMotion>
       )
   }
 }

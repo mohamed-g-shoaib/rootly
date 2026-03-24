@@ -2,15 +2,6 @@
 
 import * as React from "react"
 
-import {
-  Document,
-  Page,
-  StyleSheet,
-  Text,
-  View,
-  pdf,
-} from "@react-pdf/renderer"
-
 import type { Note } from "./notes-model"
 
 function formatDateForFilename(d: Date) {
@@ -25,60 +16,58 @@ function formatDisplayDate(d: Date) {
   }).format(d)
 }
 
-const styles = StyleSheet.create({
-  page: {
-    padding: 36,
-    fontSize: 11,
-    fontFamily: "Helvetica",
-    color: "#111827",
-    lineHeight: 1.35,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 700,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 11,
-    color: "#6B7280",
-    marginBottom: 20,
-  },
-  noteBlock: {
-    marginTop: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
-  },
-  label: {
-    fontSize: 10,
-    color: "#6B7280",
-    marginBottom: 4,
-  },
-  body: {
-    marginBottom: 10,
-  },
-  codeLabel: {
-    marginTop: 6,
-    fontSize: 10,
-    color: "#6B7280",
-    marginBottom: 4,
-  },
-  codeBlock: {
-    fontFamily: "Courier",
-    fontSize: 9,
-    backgroundColor: "#F3F4F6",
-    padding: 8,
-    borderRadius: 4,
-  },
-})
+async function createPdfDocument(notes: Note[], exportDate: Date) {
+  const { Document, Page, StyleSheet, Text, View } = await import(
+    "@react-pdf/renderer"
+  )
 
-function NotesPdfDocument({
-  notes,
-  exportDate,
-}: {
-  notes: Note[]
-  exportDate: Date
-}) {
+  const styles = StyleSheet.create({
+    page: {
+      padding: 36,
+      fontSize: 11,
+      fontFamily: "Helvetica",
+      color: "#111827",
+      lineHeight: 1.35,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 700,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 11,
+      color: "#6B7280",
+      marginBottom: 20,
+    },
+    noteBlock: {
+      marginTop: 16,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: "#E5E7EB",
+    },
+    label: {
+      fontSize: 10,
+      color: "#6B7280",
+      marginBottom: 4,
+    },
+    body: {
+      marginBottom: 10,
+    },
+    codeLabel: {
+      marginTop: 6,
+      fontSize: 10,
+      color: "#6B7280",
+      marginBottom: 4,
+    },
+    codeBlock: {
+      fontFamily: "Courier",
+      fontSize: 9,
+      backgroundColor: "#F3F4F6",
+      padding: 8,
+      borderRadius: 4,
+    },
+  })
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -130,9 +119,11 @@ export function useExportPdf(notes: Note[]): {
 
     try {
       const exportDate = new Date()
-      const instance = pdf(
-        <NotesPdfDocument notes={notes} exportDate={exportDate} />
-      )
+      const [{ pdf }, pdfDocument] = await Promise.all([
+        import("@react-pdf/renderer"),
+        createPdfDocument(notes, exportDate),
+      ])
+      const instance = pdf(pdfDocument)
 
       const blob = await instance.toBlob()
       const url = URL.createObjectURL(blob)

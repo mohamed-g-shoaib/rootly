@@ -47,11 +47,33 @@ function InputGroupAddon({
   align = "inline-start",
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>) {
+  function focusAssociatedInput(element: HTMLDivElement) {
+    const parent = element.parentElement;
+    const input = parent?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+      "input, textarea",
+    );
+    if (input && !parent?.querySelector("input:focus, textarea:focus")) {
+      input.focus();
+    }
+  }
+
   return (
     <div
       className={cn(inputGroupAddonVariants({ align }), className)}
       data-align={align}
       data-slot="input-group-addon"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const target = e.target as HTMLElement;
+        const isInteractive = target.closest(
+          "button, a, input, select, textarea, [role='button'], [role='combobox'], [role='listbox'], [data-slot='select-trigger']",
+        );
+        if (isInteractive && target !== e.currentTarget) return;
+        e.preventDefault();
+        focusAssociatedInput(e.currentTarget);
+      }}
       onMouseDown={(e) => {
         const target = e.target as HTMLElement;
         const isInteractive = target.closest(
@@ -59,13 +81,7 @@ function InputGroupAddon({
         );
         if (isInteractive) return;
         e.preventDefault();
-        const parent = e.currentTarget.parentElement;
-        const input = parent?.querySelector<
-          HTMLInputElement | HTMLTextAreaElement
-        >("input, textarea");
-        if (input && !parent?.querySelector("input:focus, textarea:focus")) {
-          input.focus();
-        }
+        focusAssociatedInput(e.currentTarget);
       }}
       {...props}
     />

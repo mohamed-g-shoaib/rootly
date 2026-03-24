@@ -34,22 +34,3 @@ export function isValidUrl(value: string) {
 export function totalLinkCount(course: Course) {
   return (course.courseLink ? 1 : 0) + course.links.length
 }
-
-export function formatUpdatedLabel(now: Date, updatedAtIso: string) {
-  const updated = new Date(updatedAtIso)
-  const diffMs = now.getTime() - updated.getTime()
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-
-  if (diffHours < 1) return "Updated just now"
-  if (diffHours < 24)
-    return `Updated ${diffHours} hour${diffHours === 1 ? "" : "s"} ago`
-  if (diffDays <= 7)
-    return `Updated ${diffDays} day${diffDays === 1 ? "" : "s"} ago`
-
-  const short = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-  }).format(updated)
-  return `Updated ${short}`
-}

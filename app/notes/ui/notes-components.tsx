@@ -16,7 +16,7 @@ import {
   TextSquareIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { motion } from "motion/react"
+import { domAnimation, LazyMotion, m } from "motion/react"
 import * as React from "react"
 
 import { useElementOverflow } from "@/hooks/use-element-overflow"
@@ -159,14 +159,15 @@ export function NoteCard({
   const _animate = canAnimate ? { opacity: 1, y: 0 } : undefined
 
   return (
-    <motion.div
-      initial={_initial}
-      animate={_animate}
-      transition={{ duration: 0.3 }}
-      className="h-[220px]"
-    >
-      <Card className="h-full p-4">
-        <div className="flex h-full flex-col gap-3">
+    <LazyMotion features={domAnimation}>
+      <m.div
+        initial={_initial}
+        animate={_animate}
+        transition={{ duration: 0.3 }}
+        className="h-[220px]"
+      >
+        <Card className="h-full p-4">
+          <div className="flex h-full flex-col gap-3">
           <div className="shrink-0">
             <div className="flex flex-col gap-1">
               {note.courseTitle ? (
@@ -299,9 +300,10 @@ export function NoteCard({
               ) : null}
             </div>
           </div>
-        </div>
-      </Card>
-    </motion.div>
+          </div>
+        </Card>
+      </m.div>
+    </LazyMotion>
   )
 }
 

@@ -5,8 +5,10 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   AnimatePresence,
+  domAnimation,
+  LazyMotion,
+  m,
   type MotionValue,
-  motion,
   useMotionValue,
   useSpring,
   useTransform,
@@ -35,7 +37,7 @@ export function FloatingDock({
   mobileClassName?: string
 }) {
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <FloatingDockDesktop
         navigationItems={navigationItems}
         className={desktopClassName}
@@ -44,7 +46,7 @@ export function FloatingDock({
         navigationItems={navigationItems}
         className={mobileClassName}
       />
-    </>
+    </LazyMotion>
   )
 }
 
@@ -107,7 +109,7 @@ function FloatingDockDesktop({
       )}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <motion.nav
+      <m.nav
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className={cn(
@@ -124,7 +126,7 @@ function FloatingDockDesktop({
             active={isDockItemActive(pathname, item.link)}
           />
         ))}
-      </motion.nav>
+      </m.nav>
     </div>
   )
 }
@@ -175,7 +177,7 @@ function DesktopIconContainer({
 
   return (
     <Link href={link} aria-label={label}>
-      <motion.div
+      <m.div
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
@@ -189,23 +191,23 @@ function DesktopIconContainer({
       >
         <AnimatePresence>
           {hovered && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
               className="absolute -top-8 left-1/2 w-fit whitespace-pre rounded-md border bg-background px-2 py-0.5 text-xs text-foreground shadow-sm"
             >
               {label}
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
-        <motion.div
+        <m.div
           style={{ scale: iconScale }}
           className="flex items-center justify-center"
         >
           {icon}
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
     </Link>
   )
 }

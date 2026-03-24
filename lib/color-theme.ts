@@ -7,7 +7,7 @@ export const DASHBOARD_COLOR_THEME_STYLE_ID = "dashboard-color-theme-ssr"
 export type StoredColorThemeId = (typeof THEME_IDS)[number]
 export type ColorThemeId = StoredColorThemeId | typeof COSS_UI_THEME_ID
 
-export function isStoredColorThemeId(
+function isStoredColorThemeId(
   value: string | null | undefined
 ): value is StoredColorThemeId {
   if (!value) return false

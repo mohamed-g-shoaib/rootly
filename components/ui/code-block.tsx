@@ -99,5 +99,3 @@ export function CodeBlock({
     />
   )
 }
-
-export const CODE_BLOCK_LANGUAGES = SUPPORTED_LANGUAGES

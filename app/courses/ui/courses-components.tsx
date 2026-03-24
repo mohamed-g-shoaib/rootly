@@ -72,6 +72,18 @@ type CourseEditorSheetProps = {
   onSave: (course: Course) => void
 }
 
+type EditableLink = {
+  id: string
+  value: string
+}
+
+function toEditableLinks(links: string[]): EditableLink[] {
+  return links.map((value) => ({
+    id: crypto.randomUUID(),
+    value,
+  }))
+}
+
 export function CourseEditorSheet({
   mode,
   course,
@@ -113,7 +125,9 @@ function CourseEditorSheetBody({
   const [title, setTitle] = React.useState(course?.title ?? "")
   const [instructor, setInstructor] = React.useState(course?.instructor ?? "")
   const [courseLink, setCourseLink] = React.useState(course?.courseLink ?? "")
-  const [links, setLinks] = React.useState<string[]>(() => course?.links ?? [])
+  const [links, setLinks] = React.useState<EditableLink[]>(() =>
+    toEditableLinks(course?.links ?? [])
+  )
   const [topics, setTopics] = React.useState<string[]>(
     () => course?.topics ?? []
   )
@@ -121,9 +135,11 @@ function CourseEditorSheetBody({
   const [progress, setProgress] = React.useState(course?.progress ?? 0)
 
   const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false)
-  const [linkInvalidByIndex, setLinkInvalidByIndex] = React.useState<
-    Record<number, boolean>
+  const [linkInvalidById, setLinkInvalidById] = React.useState<
+    Record<string, boolean>
   >({})
+
+  const linkValues = React.useMemo(() => links.map((link) => link.value), [links])
 
   const side = breakpoint === "mobile" ? "bottom" : "right"
 
@@ -137,7 +153,8 @@ function CourseEditorSheetBody({
             (title !== (course?.title ?? "") ||
               instructor !== (course?.instructor ?? "") ||
               courseLink !== (course?.courseLink ?? "") ||
-              JSON.stringify(links) !== JSON.stringify(course?.links ?? []) ||
+              JSON.stringify(linkValues) !==
+                JSON.stringify(course?.links ?? []) ||
               JSON.stringify(topics) !== JSON.stringify(course?.topics ?? []) ||
               progress !== (course?.progress ?? 0))
           ) {
@@ -199,30 +216,29 @@ function CourseEditorSheetBody({
                 <FormSection>
                   <Label>Additional Links</Label>
                   <div className="flex flex-col gap-2">
-                    {links.map((value, index) => (
-                      <div
-                        key={`link_${index}`}
-                        className="flex items-center gap-2"
-                      >
+                    {links.map((link, index) => (
+                      <div key={link.id} className="flex items-center gap-2">
                         <Input
                           id={`link_${index}`}
-                          value={value}
+                          value={link.value}
                           placeholder="https://..."
-                          aria-invalid={linkInvalidByIndex[index] ?? false}
+                          aria-invalid={linkInvalidById[link.id] ?? false}
                           onBlur={() =>
-                            setLinkInvalidByIndex((prev) => ({
+                            setLinkInvalidById((prev) => ({
                               ...prev,
-                              [index]: !isValidUrl(value),
+                              [link.id]: !isValidUrl(link.value),
                             }))
                           }
                           onValueChange={(v) => {
                             setLinks((prev) =>
-                              prev.map((x, i) => (i === index ? v : x))
+                              prev.map((item) =>
+                                item.id === link.id ? { ...item, value: v } : item
+                              )
                             )
-                            if (linkInvalidByIndex[index]) {
-                              setLinkInvalidByIndex((prev) => ({
+                            if (linkInvalidById[link.id]) {
+                              setLinkInvalidById((prev) => ({
                                 ...prev,
-                                [index]: false,
+                                [link.id]: false,
                               }))
                             }
                           }}
@@ -233,8 +249,13 @@ function CourseEditorSheetBody({
                           aria-label="Remove link"
                           onClick={() => {
                             setLinks((prev) =>
-                              prev.filter((_, i) => i !== index)
+                              prev.filter((item) => item.id !== link.id)
                             )
+                            setLinkInvalidById((prev) => {
+                              const next = { ...prev }
+                              delete next[link.id]
+                              return next
+                            })
                           }}
                         >
                           <HugeiconsIcon icon={Cancel01Icon} size={18} />
@@ -246,7 +267,10 @@ function CourseEditorSheetBody({
                     variant="ghost"
                     className="gap-2 self-start"
                     onClick={() => {
-                      setLinks((prev) => [...prev, ""])
+                      setLinks((prev) => [
+                        ...prev,
+                        { id: crypto.randomUUID(), value: "" },
+                      ])
                     }}
                   >
                     <HugeiconsIcon icon={AddCircleIcon} size={18} />
@@ -324,7 +348,7 @@ function CourseEditorSheetBody({
                     title: title.trim(),
                     instructor: instructor.trim(),
                     courseLink: courseLink.trim(),
-                    links,
+                    links: linkValues,
                     topics,
                     progress,
                     createdAt: course?.createdAt ?? new Date().toISOString(),
@@ -333,12 +357,12 @@ function CourseEditorSheetBody({
                 }}
                 disabled={
                   !title.trim() ||
-                  Object.values(linkInvalidByIndex).some(Boolean) ||
+                  Object.values(linkInvalidById).some(Boolean) ||
                   (mode === "edit" &&
                     title === course?.title &&
                     instructor === (course?.instructor ?? "") &&
                     courseLink === (course?.courseLink ?? "") &&
-                    JSON.stringify(links) ===
+                    JSON.stringify(linkValues) ===
                       JSON.stringify(course?.links ?? []) &&
                     JSON.stringify(topics) ===
                       JSON.stringify(course?.topics ?? []) &&

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
@@ -16,7 +17,7 @@ import { Card } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import RootlyLogo from "@/components/rootly-logo"
 
-export default function LoginPageUI() {
+function LoginPageContent() {
   const searchParams = useSearchParams()
   const errorParam = searchParams.get("error")
   const callbackErrorMessage =
@@ -134,6 +135,73 @@ export default function LoginPageUI() {
             {errorMessage}
           </div>
         )}
+
+        <p className="max-w-xs text-center text-xs text-muted-foreground text-pretty">
+          By signing in, you agree to our{" "}
+          <Link href="/terms" className="font-medium underline underline-offset-4">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            className="font-medium underline underline-offset-4"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
+      </Card>
+    </div>
+  )
+}
+
+export default function LoginPageUI() {
+  return (
+    <Suspense fallback={<LoginPageContentFallback />}>
+      <LoginPageContent />
+    </Suspense>
+  )
+}
+
+function LoginPageContentFallback() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Link
+        href="/"
+        className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+        Back to homepage
+      </Link>
+
+      <Card className="flex flex-col items-center gap-6 p-8 shadow-lg">
+        <div className="flex flex-col items-center gap-2 text-center">
+          <div className="flex items-center gap-2">
+            <RootlyLogo className="size-8 text-primary" aria-hidden="true" />
+            <span className="text-2xl font-bold tracking-tight">Rootly</span>
+          </div>
+          <h1 className="mt-4 text-xl font-semibold tracking-tight text-balance">
+            Continue with Rootly
+          </h1>
+          <p className="max-w-xs text-sm text-muted-foreground text-pretty">
+            Sign in or create your learning notebook with one account.
+          </p>
+        </div>
+
+        <div className="flex w-full flex-col gap-3">
+          <Button variant="outline" className="w-full justify-start gap-3" disabled>
+            <HugeiconsIcon icon={GoogleIcon} size={20} />
+            Continue with Google
+          </Button>
+          <Button variant="outline" className="w-full justify-start gap-3" disabled>
+            <HugeiconsIcon icon={GithubIcon} size={20} />
+            Continue with GitHub
+          </Button>
+          <Button variant="outline" className="w-full justify-start gap-3" disabled>
+            <HugeiconsIcon icon={LinkedinIcon} size={20} />
+            Continue with LinkedIn
+          </Button>
+        </div>
 
         <p className="max-w-xs text-center text-xs text-muted-foreground text-pretty">
           By signing in, you agree to our{" "}

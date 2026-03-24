@@ -33,7 +33,7 @@ export type ThemeColors = {
   "sidebar-ring": string
 }
 
-export type Theme = {
+type Theme = {
   id: string
   label: string
   light: ThemeColors
@@ -690,8 +690,6 @@ const ALL_THEMES: Theme[] = [
     },
   },
 ]
-
-export const DEFAULT_THEME_ID = "amethyst-haze"
 
 export const THEMES: Theme[] = ALL_THEMES
 
