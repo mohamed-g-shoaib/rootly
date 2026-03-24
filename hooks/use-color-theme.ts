@@ -125,5 +125,12 @@ export function useColorTheme(): {
     syncDashboardThemeStyle(themeId)
   }, [resolvedTheme, themeId])
 
+  React.useEffect(() => {
+    return () => {
+      clearThemeColors()
+      syncDashboardThemeStyle(COSS_UI_THEME_ID)
+    }
+  }, [])
+
   return { themeId, setThemeId }
 }
