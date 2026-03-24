@@ -10,6 +10,7 @@ import {
   m,
   type MotionValue,
   useMotionValue,
+  useReducedMotion,
   useSpring,
   useTransform,
 } from "motion/react"
@@ -100,6 +101,7 @@ function FloatingDockDesktop({
 }) {
   const pathname = usePathname()
   const mouseX = useMotionValue(Infinity)
+  const shouldReduceMotion = Boolean(useReducedMotion())
 
   return (
     <div
@@ -110,11 +112,13 @@ function FloatingDockDesktop({
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <m.nav
-        onMouseMove={(e) => mouseX.set(e.pageX)}
-        onMouseLeave={() => mouseX.set(Infinity)}
-        className={cn(
-          "mx-auto mb-6 flex h-16 items-end gap-4 rounded-2xl border bg-background px-4 pb-3 shadow-sm"
-        )}
+        onMouseMove={
+          shouldReduceMotion ? undefined : (e) => mouseX.set(e.pageX)
+        }
+        onMouseLeave={
+          shouldReduceMotion ? undefined : () => mouseX.set(Infinity)
+        }
+        className="mx-auto mb-6 flex h-16 items-end gap-4 rounded-2xl border bg-background px-4 pb-3 shadow-sm"
       >
         {navigationItems.map((item) => (
           <DesktopIconContainer
@@ -124,6 +128,7 @@ function FloatingDockDesktop({
             icon={item.icon}
             link={item.link}
             active={isDockItemActive(pathname, item.link)}
+            shouldReduceMotion={shouldReduceMotion}
           />
         ))}
       </m.nav>
@@ -137,12 +142,14 @@ function DesktopIconContainer({
   icon,
   link,
   active,
+  shouldReduceMotion,
 }: {
   mouseX: MotionValue<number>
   label: string
   icon: React.ReactNode
   link: string
   active: boolean
+  shouldReduceMotion: boolean
 }) {
   const ref = React.useRef<HTMLDivElement>(null)
 
@@ -174,23 +181,27 @@ function DesktopIconContainer({
   });
 
   const [hovered, setHovered] = React.useState(false)
+  const style = shouldReduceMotion
+    ? undefined
+    : { width, height }
+  const iconStyle = shouldReduceMotion ? undefined : { scale: iconScale }
 
   return (
     <Link href={link} aria-label={label}>
       <m.div
         ref={ref}
-        style={{ width, height }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        style={style}
+        onMouseEnter={shouldReduceMotion ? undefined : () => setHovered(true)}
+        onMouseLeave={shouldReduceMotion ? undefined : () => setHovered(false)}
         className={cn(
-          "relative flex aspect-square items-center justify-center rounded-full border transition-colors",
+          "relative flex size-10 items-center justify-center rounded-full border transition-colors motion-reduce:transition-none",
           active
             ? "border-primary bg-primary text-primary-foreground"
             : "border-border bg-muted text-foreground hover:bg-muted"
         )}
       >
         <AnimatePresence>
-          {hovered && (
+          {!shouldReduceMotion && hovered && (
             <m.div
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
@@ -202,7 +213,7 @@ function DesktopIconContainer({
           )}
         </AnimatePresence>
         <m.div
-          style={{ scale: iconScale }}
+          style={iconStyle}
           className="flex items-center justify-center"
         >
           {icon}

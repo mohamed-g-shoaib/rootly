@@ -1,5 +1,3 @@
-export type ReviewRecallRating = "nailed" | "sort_of" | "forgot"
-
 export type ReviewNote = {
   id: string
   type: "qa"

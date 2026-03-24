@@ -20,7 +20,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Form, FormSection } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   AlertDialog,
@@ -734,47 +733,6 @@ function EntryEditorSheetBody({
   )
 }
 
-export function ExportSheet({
-  open,
-  onOpenChange,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetPopup side="bottom" variant="inset">
-        <Form className="h-full gap-0">
-          <SheetHeader>
-            <SheetTitle>Export</SheetTitle>
-          </SheetHeader>
-          <SheetPanel className="px-4 pb-5">
-            <div className="flex flex-col gap-2">
-              <Button
-                variant="ghost"
-                className="justify-start"
-                onClick={() => onOpenChange(false)}
-              >
-                Export as PDF
-              </Button>
-              <Button
-                variant="ghost"
-                className="justify-start"
-                onClick={() => onOpenChange(false)}
-              >
-                Export as Markdown
-              </Button>
-            </div>
-          </SheetPanel>
-          <SheetFooter>
-            <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
-          </SheetFooter>
-        </Form>
-      </SheetPopup>
-    </Sheet>
-  )
-}
-
 export function MoodFilterSheet({
   open,
   onOpenChange,
@@ -808,55 +766,5 @@ export function MoodFilterSheet({
         else onValueChange(Number(v) as MoodValue)
       }}
     />
-  )
-}
-
-export function DateFilterSheet({
-  title,
-  open,
-  onOpenChange,
-  value,
-  onValueChange,
-}: {
-  title: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  value: string
-  onValueChange: (value: string) => void
-}) {
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetPopup side="bottom" variant="inset">
-        <Form className="h-full gap-0">
-          <SheetHeader>
-            <SheetTitle>{title}</SheetTitle>
-          </SheetHeader>
-          <SheetPanel className="px-4 pb-5">
-            <div className="flex flex-col gap-2">
-              <Label>{title}</Label>
-              <Input
-                nativeInput
-                type="date"
-                value={value}
-                onChange={(e) => onValueChange(e.target.value)}
-              />
-              <Button
-                variant={value === "" ? "secondary" : "ghost"}
-                className="justify-start"
-                onClick={() => {
-                  onValueChange("")
-                  onOpenChange(false)
-                }}
-              >
-                Any time
-              </Button>
-            </div>
-          </SheetPanel>
-          <SheetFooter>
-            <SheetClose render={<Button variant="ghost" />}>Close</SheetClose>
-          </SheetFooter>
-        </Form>
-      </SheetPopup>
-    </Sheet>
   )
 }
