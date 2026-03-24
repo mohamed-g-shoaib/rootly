@@ -1,7 +1,6 @@
 import Link from "next/link"
 
 import RootlyLogo from "@/components/rootly-logo"
-import RootlyWord from "@/components/rootly-word"
 import { PageContainer } from "@/components/ui/page-container"
 import { Separator } from "@/components/ui/separator"
 import { ThemeSwitcherMultiButton } from "./theme-switcher-multi-button"
@@ -85,8 +84,8 @@ export default function HomepageFooter() {
           </div>
 
           <div className="pb-12">
-            <div className="-mx-4 lg:-mx-6">
-              <RootlyWord className="h-14 w-full rounded-lg text-muted-foreground/25 select-none sm:h-20 lg:h-32" />
+            <div className="w-full overflow-hidden text-center text-[clamp(4.5rem,18vw,12rem)] leading-[0.82] font-black tracking-tight text-muted-foreground/25 uppercase select-none">
+              Rootly
             </div>
           </div>
         </PageContainer>
