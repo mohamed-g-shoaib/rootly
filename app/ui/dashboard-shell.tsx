@@ -180,14 +180,15 @@ export function DashboardShell({
 
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="icon"
+              variant="outline"
+              size="sm"
               type="button"
-              aria-label="Search"
+              aria-label="Open search"
               onClick={() => setCommandOpen(true)}
-              className="md:hidden"
+              className="gap-2 md:hidden"
             >
               <HugeiconsIcon icon={Search02Icon} size={18} />
+              Search
             </Button>
 
             <Button
@@ -517,29 +518,31 @@ function CommandPalette({
         </CommandList>
       </CommandPanel>
 
-      <CommandFooter>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <KbdGroup>
-              <Kbd>
-                <HugeiconsIcon icon={ArrowUp01Icon} size={14} />
-              </Kbd>
-              <Kbd>
-                <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
-              </Kbd>
-            </KbdGroup>
-            <span>Navigate</span>
+      {!isMobile ? (
+        <CommandFooter>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <KbdGroup>
+                <Kbd>
+                  <HugeiconsIcon icon={ArrowUp01Icon} size={14} />
+                </Kbd>
+                <Kbd>
+                  <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
+                </Kbd>
+              </KbdGroup>
+              <span>Navigate</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Kbd>↵</Kbd>
+              <span>Open</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <Kbd>↵</Kbd>
-            <span>Open</span>
+            <Kbd>Esc</Kbd>
+            <span>Close</span>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Kbd>Esc</Kbd>
-          <span>Close</span>
-        </div>
-      </CommandFooter>
+        </CommandFooter>
+      ) : null}
     </Command>
   );
 
