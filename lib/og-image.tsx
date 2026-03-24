@@ -15,28 +15,10 @@ const brandMark = (
       border: "1px solid rgba(15, 23, 42, 0.08)",
       borderRadius: 22,
       display: "flex",
-      gap: 18,
+      gap: 10,
       padding: "16px 20px",
     }}
   >
-    <div
-      style={{
-        alignItems: "center",
-        background:
-          "linear-gradient(135deg, rgba(15,23,42,1), rgba(15,23,42,0.82))",
-        borderRadius: 18,
-        color: "#ffffff",
-        display: "flex",
-        fontSize: 24,
-        fontWeight: 700,
-        height: 54,
-        justifyContent: "center",
-        letterSpacing: "-0.05em",
-        width: 54,
-      }}
-    >
-      R
-    </div>
     <div
       style={{
         color: "#0f172a",
@@ -50,44 +32,6 @@ const brandMark = (
     </div>
   </div>
 )
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div
-      style={{
-        background: "#ffffff",
-        border: "1px solid rgba(15, 23, 42, 0.08)",
-        borderRadius: 24,
-        display: "flex",
-        flex: 1,
-        flexDirection: "column",
-        gap: 10,
-        padding: "22px 24px",
-      }}
-    >
-      <div
-        style={{
-          color: "rgba(15, 23, 42, 0.58)",
-          display: "flex",
-          fontSize: 22,
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{
-          color: "#0f172a",
-          display: "flex",
-          fontSize: 30,
-          fontWeight: 700,
-          letterSpacing: "-0.04em",
-        }}
-      >
-        {value}
-      </div>
-    </div>
-  )
-}
 
 function Tag({ children }: { children: string }) {
   return (
@@ -192,15 +136,15 @@ export function createRootlySocialImage() {
                 </div>
                 <div
                   style={{
-                    color: "#475569",
-                    display: "flex",
-                    fontSize: 28,
-                    lineHeight: 1.35,
-                    maxWidth: 560,
-                  }}
-                >
+                  color: "#475569",
+                  display: "flex",
+                  fontSize: 26,
+                  lineHeight: 1.35,
+                  maxWidth: 520,
+                }}
+              >
                   Capture notes, track progress, and review what you learn in
-                  one deliberate place that keeps your next study session warm.
+                  one place built for deliberate study.
                 </div>
               </div>
             </div>
@@ -245,7 +189,10 @@ export function createRootlySocialImage() {
                 borderRadius: 28,
                 display: "flex",
                 flexDirection: "column",
-                gap: 18,
+                gap: 16,
+                justifyContent: "space-between",
+                minHeight: 0,
+                flex: 1,
                 padding: 24,
               }}
             >
@@ -274,7 +221,7 @@ export function createRootlySocialImage() {
                   style={{
                     color: "#64748b",
                     display: "flex",
-                    fontSize: 20,
+                    fontSize: 18,
                   }}
                 >
                   Advanced React Patterns
@@ -285,7 +232,7 @@ export function createRootlySocialImage() {
                 style={{
                   color: "#0f172a",
                   display: "flex",
-                  fontSize: 30,
+                  fontSize: 28,
                   fontWeight: 700,
                   letterSpacing: "-0.04em",
                   lineHeight: 1.2,
@@ -298,51 +245,21 @@ export function createRootlySocialImage() {
                 style={{
                   color: "#475569",
                   display: "flex",
-                  fontSize: 22,
-                  lineHeight: 1.35,
-                }}
-              >
-                It gives expensive work and unstable references a deliberate
-                home, so rerenders stay predictable and easier to reason about.
-              </div>
-            </div>
-
-            <div style={{ display: "flex", gap: 18 }}>
-              <StatCard label="Today" value="2h 25m" />
-              <StatCard label="Review" value="82%" />
-            </div>
-
-            <div
-              style={{
-                background: "rgba(15, 23, 42, 0.04)",
-                border: "1px solid rgba(15, 23, 42, 0.08)",
-                borderRadius: 28,
-                display: "flex",
-                flexDirection: "column",
-                gap: 14,
-                padding: 24,
-              }}
-            >
-              <div
-                style={{
-                  color: "#334155",
-                  display: "flex",
-                  fontSize: 20,
-                  fontWeight: 700,
-                }}
-              >
-                One calm system for learning on purpose
-              </div>
-              <div
-                style={{
-                  color: "#64748b",
-                  display: "flex",
                   fontSize: 20,
                   lineHeight: 1.35,
                 }}
               >
-                Notes, progress, and review context stay connected, so you can
-                continue with context instead of starting cold.
+                It gives expensive work a stable home, so rerenders stay easier
+                to reason about.
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 14,
+                }}
+              >
+                <Tag>Today 2h 25m</Tag>
+                <Tag>Review 82%</Tag>
               </div>
             </div>
           </div>
