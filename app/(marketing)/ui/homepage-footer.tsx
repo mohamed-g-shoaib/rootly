@@ -8,7 +8,7 @@ import { ThemeSwitcherMultiButton } from "./theme-switcher-multi-button"
 
 const FOOTER_LINKS = [
   {
-    title: "Connect",
+    title: "Source Code",
     links: [
       {
         label: "GitHub",
@@ -40,29 +40,15 @@ export default function HomepageFooter() {
                   <div className="text-lg font-semibold">Rootly</div>
                 </div>
               </Link>
-              <div>Built with ♥ for self-taught developers.</div>
+              <div>Capture notes, track progress, and review what you learn.</div>
               <div>© 2026 Rootly. All rights reserved.</div>
               <ThemeSwitcherMultiButton className="w-fit" />
             </div>
 
             <nav
               aria-label="Footer"
-              className="grid grid-cols-2 gap-10 sm:mt-0 lg:grid-cols-3"
+              className="grid grid-cols-2 gap-10 sm:mt-0"
             >
-              <div className="flex flex-col gap-4">
-                <h3 className="font-semibold text-foreground">Account</h3>
-                <ul className="flex flex-col gap-3">
-                  <li>
-                    <Link
-                      href="/login"
-                      className="transition-colors hover:text-foreground"
-                    >
-                      Login
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
               {FOOTER_LINKS.map((group) => (
                 <div key={group.title} className="flex flex-col gap-4">
                   <h3 className="font-semibold text-foreground">
