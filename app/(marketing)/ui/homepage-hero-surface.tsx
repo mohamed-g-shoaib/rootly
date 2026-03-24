@@ -46,11 +46,13 @@ function StatCard({ label, value }: { label: string; value: string }) {
 
 function MobileSurfaceSection({
   badge,
+  badgeVariant,
   body,
   children,
   title,
 }: {
   badge: string
+  badgeVariant: "info" | "success" | "warning"
   body: string
   children?: React.ReactNode
   title: string
@@ -58,7 +60,7 @@ function MobileSurfaceSection({
   return (
     <div className="rounded-xl border bg-muted/35 p-3">
       <div className="flex flex-col gap-2">
-        <Badge variant="outline" className="w-fit">
+        <Badge variant={badgeVariant} className="w-fit">
           {badge}
         </Badge>
         <div className="text-sm font-medium text-balance">{title}</div>
@@ -76,6 +78,7 @@ export function HomepageHeroSurface() {
         <CardPanel className="flex flex-col gap-3 p-3">
           <MobileSurfaceSection
             badge="Before Rootly"
+            badgeVariant="warning"
             title="Learning happens in fragments."
             body="Tabs, tutorials, and loose notes split the context you need."
           >
@@ -97,6 +100,7 @@ export function HomepageHeroSurface() {
 
           <MobileSurfaceSection
             badge="With Rootly"
+            badgeVariant="success"
             title="One calm system for learning on purpose."
             body="Notes, progress, and review stay connected, so your next session starts warm."
           >
@@ -126,7 +130,7 @@ export function HomepageHeroSurface() {
         <CardPanel className="grid gap-4 p-4 lg:grid-cols-2">
           <Card className="bg-muted/35">
             <CardHeader className="gap-2 border-b bg-muted/40 p-4">
-              <Badge variant="outline" className="w-fit">
+              <Badge variant="warning" className="w-fit">
                 Before Rootly
               </Badge>
               <CardTitle className="text-base text-balance">
@@ -162,7 +166,7 @@ export function HomepageHeroSurface() {
 
           <Card className="bg-muted/35">
             <CardHeader className="gap-2 border-b bg-muted/40 p-4">
-              <Badge variant="outline" className="w-fit">
+              <Badge variant="success" className="w-fit">
                 With Rootly
               </Badge>
               <CardTitle className="text-base text-balance">
