@@ -22,6 +22,7 @@ const IS_PRODUCTION = process.env.NODE_ENV === "production"
 const listeners = new Set<() => void>()
 let currentThemeId: ColorThemeId = COSS_UI_THEME_ID
 let hasLoadedThemePreference = false
+let activeColorThemeConsumers = 0
 
 function readPreferenceCookie(): string | null {
   if (typeof document === "undefined") return null
@@ -92,6 +93,21 @@ export function useColorTheme(): {
   )
 
   React.useEffect(() => {
+    activeColorThemeConsumers += 1
+
+    return () => {
+      activeColorThemeConsumers -= 1
+
+      if (activeColorThemeConsumers > 0) {
+        return
+      }
+
+      clearThemeColors()
+      syncDashboardThemeStyle(COSS_UI_THEME_ID)
+    }
+  }, [])
+
+  React.useEffect(() => {
     loadThemePreferenceFromCookie()
   }, [])
 
@@ -124,13 +140,6 @@ export function useColorTheme(): {
     applyThemeColors(variant)
     syncDashboardThemeStyle(themeId)
   }, [resolvedTheme, themeId])
-
-  React.useEffect(() => {
-    return () => {
-      clearThemeColors()
-      syncDashboardThemeStyle(COSS_UI_THEME_ID)
-    }
-  }, [])
 
   return { themeId, setThemeId }
 }
