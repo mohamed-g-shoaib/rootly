@@ -1,6 +1,5 @@
 "use client"
 
-import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
@@ -10,7 +9,7 @@ import { PageContainer } from "@/components/ui/page-container"
 
 import { useIsMobile } from "@/hooks/use-media-query"
 
-import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import { toastManager } from "@/components/ui/toast"
 
 import {
@@ -30,10 +29,10 @@ import {
 } from "./daily-entries-model"
 
 export default function DailyEntriesPage({
-  user,
+  userId,
   initialEntries,
 }: {
-  user: User | null
+  userId: string | null
   initialEntries: DailyEntry[]
 }) {
   const isMobile = useIsMobile()
@@ -80,14 +79,7 @@ export default function DailyEntriesPage({
   }, [entries, fromDate, moodFilter, toDate])
 
   const filtersActive = Boolean(fromDate || toDate || moodFilter !== "all")
-
-  function clearFilters() {
-    setFromDate("")
-    setToDate("")
-    setMoodFilter("all")
-  }
-
-  function openPrimaryAction() {
+  const openPrimaryAction = React.useCallback(() => {
     if (todayEntry) {
       setActiveEntryId(todayEntry.id)
       setEditOpen(true)
@@ -96,10 +88,26 @@ export default function DailyEntriesPage({
 
     setActiveEntryId(null)
     setCreateOpen(true)
+  }, [todayEntry])
+
+  const shellFab = React.useMemo(
+    () => ({
+      ariaLabel: todayHasEntry ? "Edit today's entry" : "Log today",
+      icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
+      onClick: openPrimaryAction,
+    }),
+    [openPrimaryAction, todayHasEntry]
+  )
+  useDashboardShellFab(shellFab)
+
+  function clearFilters() {
+    setFromDate("")
+    setToDate("")
+    setMoodFilter("all")
   }
 
   async function onCreateEntry(draft: DailyEntry) {
-    if (!user) return
+    if (!userId) return
 
     if (entries.some((e) => e.date === draft.date)) {
       toastManager.add({
@@ -122,7 +130,7 @@ export default function DailyEntriesPage({
     setEntries((items) => [optimistic, ...items])
     setCreateOpen(false)
 
-    const res = await createEntry({ entry: optimistic, userId: user.id })
+    const res = await createEntry({ entry: optimistic, userId })
     if (!res.success) {
       setEntries(prev)
       toastManager.add({
@@ -139,7 +147,7 @@ export default function DailyEntriesPage({
   }
 
   async function onUpdateEntry(next: DailyEntry) {
-    if (!user) return
+    if (!userId) return
 
     const prev = entries
 
@@ -149,7 +157,7 @@ export default function DailyEntriesPage({
     const res = await updateEntry({
       entryId: next.id,
       patch: next,
-      userId: user.id,
+      userId,
     })
     if (!res.success) {
       setEntries(prev)
@@ -165,14 +173,14 @@ export default function DailyEntriesPage({
   }
 
   async function onDeleteEntry(id: string) {
-    if (!user) return
+    if (!userId) return
 
     const prev = entries
 
     setEntries((items) => items.filter((e) => e.id !== id))
     if (activeEntryId === id) setActiveEntryId(null)
 
-    const res = await deleteEntry({ entryId: id, userId: user.id })
+    const res = await deleteEntry({ entryId: id, userId })
     if (!res.success) {
       setEntries(prev)
       toastManager.add({
@@ -184,14 +192,7 @@ export default function DailyEntriesPage({
   }
 
   return (
-    <DashboardShell
-      user={user}
-      fab={{
-        ariaLabel: todayHasEntry ? "Edit today's entry" : "Log today",
-        icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
-        onClick: openPrimaryAction,
-      }}
-    >
+    <>
       <DailyEntriesHeader
         isMobile={isMobile}
         fromDate={fromDate}
@@ -279,6 +280,6 @@ export default function DailyEntriesPage({
           void onUpdateEntry(next)
         }}
       />
-    </DashboardShell>
+    </>
   )
 }

@@ -1,6 +1,5 @@
 "use client"
 
-import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
@@ -8,7 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 
 import { useIsMobile } from "@/hooks/use-media-query"
 
-import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import { PageContainer } from "@/components/ui/page-container"
 import { toastManager } from "@/components/ui/toast"
 
@@ -24,13 +23,25 @@ import {
 } from "./courses-components"
 
 export default function CoursesPage({
-  user,
+  userId,
   initialCourses,
 }: {
-  user: User | null
+  userId: string | null
   initialCourses: Course[]
 }) {
   const isMobile = useIsMobile()
+  const shellFab = React.useMemo(
+    () =>
+      isMobile
+        ? {
+            ariaLabel: "New course",
+            icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
+            onClick: () => setCreateOpen(true),
+          }
+        : undefined,
+    [isMobile]
+  )
+  useDashboardShellFab(shellFab)
 
   const [courses, setCourses] = React.useState<Course[]>(() => initialCourses)
 
@@ -105,14 +116,14 @@ export default function CoursesPage({
   }
 
   async function onDeleteCourse(courseId: string) {
-    if (!user) return
+    if (!userId) return
 
     const prev = courses
 
     setCourses((items) => items.filter((c) => c.id !== courseId))
     if (activeCourseId === courseId) setActiveCourseId(null)
 
-    const res = await deleteCourse({ courseId, userId: user.id })
+    const res = await deleteCourse({ courseId, userId })
     if (!res.success) {
       setCourses(prev)
       toastManager.add({
@@ -124,7 +135,7 @@ export default function CoursesPage({
   }
 
   async function onCreateCourse(draft: Course) {
-    if (!user) return
+    if (!userId) return
 
     const optimistic: Course = {
       ...draft,
@@ -138,7 +149,7 @@ export default function CoursesPage({
     setCourses((items) => [optimistic, ...items])
     setCreateOpen(false)
 
-    const res = await createCourse({ course: optimistic, userId: user.id })
+    const res = await createCourse({ course: optimistic, userId })
     if (!res.success) {
       setCourses(prev)
       toastManager.add({
@@ -155,7 +166,7 @@ export default function CoursesPage({
   }
 
   async function onUpdateCourse(next: Course) {
-    if (!user) return
+    if (!userId) return
 
     const prev = courses
 
@@ -165,7 +176,7 @@ export default function CoursesPage({
     const res = await updateCourse({
       courseId: next.id,
       patch: next,
-      userId: user.id,
+      userId,
     })
     if (!res.success) {
       setCourses(prev)
@@ -197,18 +208,7 @@ export default function CoursesPage({
   )
 
   return (
-    <DashboardShell
-      user={user}
-      fab={
-        isMobile
-          ? {
-              ariaLabel: "New course",
-              icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
-              onClick: () => setCreateOpen(true),
-            }
-          : undefined
-      }
-    >
+    <>
       {header}
 
       <PageContainer>
@@ -296,6 +296,6 @@ export default function CoursesPage({
           void onUpdateCourse(next)
         }}
       />
-    </DashboardShell>
+    </>
   )
 }

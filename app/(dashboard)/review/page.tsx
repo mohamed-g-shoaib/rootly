@@ -1,46 +1,68 @@
 import type { Metadata } from "next"
-import { createClient } from "@/lib/supabase/server"
-import ReviewPageUI from "./ui/review-page"
-import type { ReviewCourse, ReviewNote, ReviewSession } from "./ui/review-model"
+
+import ReviewPageUI from "@/app/review/ui/review-page"
+import type {
+  ReviewCourse,
+  ReviewNote,
+  ReviewSession,
+} from "@/app/review/ui/review-model"
+import {
+  getDashboardSupabase,
+  getDashboardUserId,
+} from "@/lib/dashboard-session"
+import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf"
 
 export const metadata: Metadata = {
   title: "Review",
 }
 
 export default async function ReviewPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const perf = createDashboardRoutePerf("/review")
+  const [supabase, userId] = await perf.measure(
+    "session",
+    () => Promise.all([getDashboardSupabase(), getDashboardUserId()]),
+    ([, currentUserId]) => ({
+      authenticated: Boolean(currentUserId),
+    })
+  )
 
   const initialSessions: ReviewSession[] = []
   const courses: ReviewCourse[] = []
   const initialNotesPool: ReviewNote[] = []
 
-  if (user) {
+  if (userId) {
     const [{ data: sessionsData }, { data: coursesData }, { data: notesData }] =
-      await Promise.all([
-        supabase
-          .from("review_sessions")
-          .select(
-            "id,name,accuracy,time_spent_minutes,question_count,shuffled,flagged_only,course_scores,created_at"
-          )
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("courses")
-          .select("id,title")
-          .eq("user_id", user.id)
-          .order("updated_at", { ascending: false }),
-        supabase
-          .from("notes")
-          .select(
-            "id,type,course_id,question,answer,understanding_level,flag,courses(title)"
-          )
-          .eq("user_id", user.id)
-          .eq("type", "qa")
-          .order("updated_at", { ascending: false }),
-      ])
+      await perf.measure(
+        "review-data",
+        () =>
+          Promise.all([
+            supabase
+              .from("review_sessions")
+              .select(
+                "id,name,accuracy,time_spent_minutes,question_count,shuffled,flagged_only,course_scores,created_at"
+              )
+              .eq("user_id", userId)
+              .order("created_at", { ascending: false }),
+            supabase
+              .from("courses")
+              .select("id,title")
+              .eq("user_id", userId)
+              .order("updated_at", { ascending: false }),
+            supabase
+              .from("notes")
+              .select(
+                "id,type,course_id,question,answer,understanding_level,flag,courses(title)"
+              )
+              .eq("user_id", userId)
+              .eq("type", "qa")
+              .order("updated_at", { ascending: false }),
+          ]),
+        ([sessionsResult, coursesResult, notesResult]) => ({
+          sessions: sessionsResult.data?.length ?? 0,
+          courses: coursesResult.data?.length ?? 0,
+          notes: notesResult.data?.length ?? 0,
+        })
+      )
 
     if (coursesData) {
       for (const row of coursesData as Array<{ id: string; title: string }>) {
@@ -81,7 +103,7 @@ export default async function ReviewPage() {
 
         initialSessions.push({
           id: row.id,
-          userId: user.id,
+          userId,
           name: row.name,
           date: row.created_at.slice(0, 10),
           questionCount: row.question_count,
@@ -120,18 +142,25 @@ export default async function ReviewPage() {
           type: "qa",
           courseId: row.course_id,
           courseTitle,
-          question: row.question,
-          answer: row.answer,
+          question: null,
+          answer: null,
           understandingLevel: row.understanding_level,
           flag: row.flag,
+          detailsLoaded: false,
         })
       }
     }
   }
 
+  perf.finish({
+    sessions: initialSessions.length,
+    courses: courses.length,
+    notes: initialNotesPool.length,
+  })
+
   return (
     <ReviewPageUI
-      user={user}
+      userId={userId}
       initialSessions={initialSessions}
       courses={courses}
       initialNotesPool={initialNotesPool}

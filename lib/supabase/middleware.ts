@@ -35,13 +35,10 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake can make it very hard to debug
-  // issues with deep-linking.
+  // Trigger session initialization/refresh before any response is returned.
+  // We only need verified authentication claims here, not a fresh user record.
+  const { data, error } = await supabase.auth.getClaims()
+  const claims = data?.claims ?? null
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  return { supabaseResponse, user }
+  return { supabaseResponse, claims, error }
 }

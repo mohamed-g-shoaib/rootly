@@ -14,8 +14,8 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // 1. Refresh session and get the updated response
-  const { supabaseResponse, user } = await updateSession(request)
-  const isAuthenticated = !!user
+  const { supabaseResponse, claims } = await updateSession(request)
+  const isAuthenticated = Boolean(claims?.sub)
 
   // 2. Redirect authenticated users away from public home and login
   if (pathname === "/login" && isAuthenticated) {

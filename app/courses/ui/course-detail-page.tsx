@@ -1,6 +1,5 @@
 "use client"
 
-import type { User } from "@supabase/supabase-js"
 import Link from "next/link"
 import * as React from "react"
 
@@ -19,7 +18,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { useAnswerVisibility } from "@/hooks/use-answer-visibility"
 import { useIsMobile } from "@/hooks/use-media-query"
 
-import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
 import { PageContainer } from "@/components/ui/page-container"
 import { Badge } from "@/components/ui/badge"
@@ -80,16 +79,28 @@ import {
 
 export default function CourseDetailPage({
   courseId: _courseId,
-  user,
+  userId,
   course,
   initialNotes,
 }: {
   courseId: string
-  user: User | null
+  userId: string | null
   course: Course | null
   initialNotes: Note[]
 }) {
   const isMobile = useIsMobile()
+  const shellFab = React.useMemo(
+    () =>
+      isMobile && course
+        ? {
+            ariaLabel: "New note",
+            icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
+            onClick: () => setCreateOpen(true),
+          }
+        : undefined,
+    [course, isMobile]
+  )
+  useDashboardShellFab(shellFab)
 
   const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
 
@@ -219,12 +230,12 @@ export default function CourseDetailPage({
   }
 
   async function onUpdateCourse(next: Course) {
-    if (!user) return
+    if (!userId) return
 
     const res = await updateCourse({
       courseId: next.id,
       patch: next,
-      userId: user.id,
+      userId,
     })
     if (!res.success) {
       toastManager.add({
@@ -239,9 +250,9 @@ export default function CourseDetailPage({
   }
 
   async function onDeleteCourse() {
-    if (!user) return
+    if (!userId) return
     if (!course) return
-    const res = await deleteCourse({ courseId: course.id, userId: user.id })
+    const res = await deleteCourse({ courseId: course.id, userId })
     if (!res.success) {
       toastManager.add({
         type: "error",
@@ -270,13 +281,13 @@ export default function CourseDetailPage({
   }
 
   async function onDeleteNote(noteId: string) {
-    if (!user) return
+    if (!userId) return
 
     const prev = allNotes
     setAllNotes((items) => items.filter((n) => n.id !== noteId))
     answerVisibility.clearForId(noteId)
 
-    const res = await deleteNote({ noteId, userId: user.id })
+    const res = await deleteNote({ noteId, userId })
     if (!res.success) {
       setAllNotes(prev)
       toastManager.add({
@@ -288,7 +299,7 @@ export default function CourseDetailPage({
   }
 
   async function onSaveNote(next: Note, mode: "create" | "edit") {
-    if (!user) return
+    if (!userId) return
 
     if (mode === "create") {
       const optimistic: Note = {
@@ -304,7 +315,7 @@ export default function CourseDetailPage({
       setAllNotes((items) => [optimistic, ...items])
       setCreateOpen(false)
 
-      const res = await createNote({ note: optimistic, userId: user.id })
+      const res = await createNote({ note: optimistic, userId })
       if (!res.success) {
         setAllNotes(prev)
         toastManager.add({
@@ -328,7 +339,7 @@ export default function CourseDetailPage({
     const res = await updateNote({
       noteId: next.id,
       patch: next,
-      userId: user.id,
+      userId,
     })
     if (!res.success) {
       setAllNotes(prev)
@@ -369,16 +380,14 @@ export default function CourseDetailPage({
 
   if (!course) {
     return (
-      <DashboardShell user={user}>
-        <PageContainer>
-          <div className="pt-6">
-            <div className="text-lg font-medium">Course not found</div>
-            <div className="pt-3">
-              <Button render={<Link href="/courses" />}>Back to Courses</Button>
-            </div>
+      <PageContainer>
+        <div className="pt-6">
+          <div className="text-lg font-medium">Course not found</div>
+          <div className="pt-3">
+            <Button render={<Link href="/courses" />}>Back to Courses</Button>
           </div>
-        </PageContainer>
-      </DashboardShell>
+        </div>
+      </PageContainer>
     )
   }
 
@@ -474,18 +483,7 @@ export default function CourseDetailPage({
   )
 
   return (
-    <DashboardShell
-      user={user}
-      fab={
-        isMobile
-          ? {
-              ariaLabel: "New note",
-              icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
-              onClick: () => setCreateOpen(true),
-            }
-          : undefined
-      }
-    >
+    <>
       <DashboardStickyHeader>
         <PageContainer>
           <div className="py-4">
@@ -742,6 +740,7 @@ export default function CourseDetailPage({
         open={viewOpen}
         onOpenChange={setViewOpen}
         isMobile={isMobile}
+        loading={false}
         onEdit={() => {
           setViewOpen(false)
           if (activeNoteId) setEditOpen(true)
@@ -753,6 +752,7 @@ export default function CourseDetailPage({
         open={codeOpen}
         onOpenChange={setCodeOpen}
         isMobile={isMobile}
+        loading={false}
         onEdit={() => {
           setCodeOpen(false)
           if (activeNoteId) setEditOpen(true)
@@ -798,6 +798,6 @@ export default function CourseDetailPage({
           void onUpdateCourse(next)
         }}
       />
-    </DashboardShell>
+    </>
   )
 }

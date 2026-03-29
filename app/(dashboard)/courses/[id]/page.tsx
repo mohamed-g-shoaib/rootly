@@ -1,8 +1,13 @@
 import type { Metadata } from "next"
-import { createClient } from "@/lib/supabase/server"
-import CourseDetailPageUI from "../ui/course-detail-page"
-import type { Course } from "../ui/courses-model"
-import type { Note } from "@/app/notes/ui/notes-model"
+
+import CourseDetailPageUI from "@/app/courses/ui/course-detail-page"
+import type { Course } from "@/app/courses/ui/courses-model"
+import { buildNotePreview, type Note } from "@/app/notes/ui/notes-model"
+import {
+  getDashboardSupabase,
+  getDashboardUserId,
+} from "@/lib/dashboard-session"
+import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf"
 
 type NoteRow = {
   id: string
@@ -26,12 +31,12 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const [supabase, userId] = await Promise.all([
+    getDashboardSupabase(),
+    getDashboardUserId(),
+  ])
 
-  if (!user) {
+  if (!userId) {
     return {
       title: "Course",
     }
@@ -41,7 +46,7 @@ export async function generateMetadata({
     .from("courses")
     .select("title")
     .eq("id", id)
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .maybeSingle()
 
   return {
@@ -54,24 +59,35 @@ export default async function CourseDetailPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+  const perf = createDashboardRoutePerf("/courses/[id]")
   const { id } = await params
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const [supabase, userId] = await perf.measure(
+    "session",
+    () => Promise.all([getDashboardSupabase(), getDashboardUserId()]),
+    ([, currentUserId]) => ({
+      authenticated: Boolean(currentUserId),
+    })
+  )
 
   let course: Course | null = null
   let initialNotes: Note[] = []
 
-  if (user) {
-    const { data: courseRow } = await supabase
-      .from("courses")
-      .select(
-        "id,title,instructor,course_link,links,topics,progress,created_at,updated_at"
-      )
-      .eq("id", id)
-      .eq("user_id", user.id)
-      .maybeSingle()
+  if (userId) {
+    const { data: courseRow } = await perf.measure(
+      "course-query",
+      () =>
+        supabase
+          .from("courses")
+          .select(
+            "id,title,instructor,course_link,links,topics,progress,created_at,updated_at"
+          )
+          .eq("id", id)
+          .eq("user_id", userId)
+          .maybeSingle(),
+      (result) => ({
+        found: Boolean(result.data),
+      })
+    )
 
     if (courseRow) {
       course = {
@@ -87,14 +103,21 @@ export default async function CourseDetailPage({
       }
     }
 
-    const { data: notesRows } = await supabase
-      .from("notes")
-      .select(
-        "id,type,course_id,question,answer,body,understanding_level,flag,code_snippet,code_language,created_at,updated_at,courses(title)"
-      )
-      .eq("user_id", user.id)
-      .eq("course_id", id)
-      .order("updated_at", { ascending: false })
+    const { data: notesRows } = await perf.measure(
+      "course-notes-query",
+      () =>
+        supabase
+          .from("notes")
+          .select(
+            "id,type,course_id,question,answer,body,understanding_level,flag,code_snippet,code_language,created_at,updated_at,courses(title)"
+          )
+          .eq("user_id", userId)
+          .eq("course_id", id)
+          .order("updated_at", { ascending: false }),
+      (result) => ({
+        rows: result.data?.length ?? 0,
+      })
+    )
 
     if (notesRows) {
       initialNotes = (notesRows as NoteRow[]).map((row) => ({
@@ -105,22 +128,34 @@ export default async function CourseDetailPage({
           ? (row.courses[0]?.title ?? null)
           : (row.courses?.title ?? null),
         question: row.question,
+        previewText: buildNotePreview({
+          type: row.type,
+          answer: row.answer,
+          body: row.body,
+        }),
         answer: row.answer,
         body: row.body,
         understandingLevel: row.understanding_level,
         flag: row.flag,
+        hasCodeSnippet: Boolean(row.code_snippet),
         codeSnippet: row.code_snippet,
         codeLanguage: row.code_language,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
+        detailsLoaded: true,
       }))
     }
   }
 
+  perf.finish({
+    foundCourse: Boolean(course),
+    notes: initialNotes.length,
+  })
+
   return (
     <CourseDetailPageUI
       courseId={id}
-      user={user}
+      userId={userId}
       course={course}
       initialNotes={initialNotes}
     />

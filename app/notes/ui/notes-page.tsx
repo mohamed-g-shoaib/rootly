@@ -1,6 +1,5 @@
 "use client"
 
-import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { AddCircleIcon } from "@hugeicons/core-free-icons"
@@ -9,14 +8,20 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { useAnswerVisibility } from "@/hooks/use-answer-visibility"
 import { useIsMobile } from "@/hooks/use-media-query"
 
-import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import { PageContainer } from "@/components/ui/page-container"
 import { toastManager } from "@/components/ui/toast"
 
 import { Spinner } from "@/components/ui/spinner"
 
 import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
-import { createNote, deleteNote, updateNote } from "./notes-actions"
+import {
+  createNote,
+  deleteNote,
+  getNote,
+  getNotes,
+  updateNote,
+} from "./notes-actions"
 import { NotesHeader } from "./notes-header"
 import {
   EmptyState,
@@ -33,15 +38,27 @@ import { exportNotesAsMarkdown } from "./notes-export"
 import { useExportPdf } from "./notes-pdf"
 
 export default function NotesPage({
-  user,
+  userId,
   initialNotes,
   initialCourses,
 }: {
-  user: User | null
+  userId: string | null
   initialNotes: Note[]
   initialCourses: { id: string; title: string }[]
 }) {
   const isMobile = useIsMobile()
+  const shellFab = React.useMemo(
+    () =>
+      isMobile
+        ? {
+            ariaLabel: "New note",
+            icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
+            onClick: () => setCreateOpen(true),
+          }
+        : undefined,
+    [isMobile]
+  )
+  useDashboardShellFab(shellFab)
 
   const [courses] = React.useState(() => initialCourses)
   const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
@@ -57,6 +74,8 @@ export default function NotesPage({
   const [viewOpen, setViewOpen] = React.useState(false)
   const [codeOpen, setCodeOpen] = React.useState(false)
   const [activeNoteId, setActiveNoteId] = React.useState<string | null>(null)
+  const [loadingNoteId, setLoadingNoteId] = React.useState<string | null>(null)
+  const [exportingFullNotes, setExportingFullNotes] = React.useState(false)
 
   const [mobileTypeSheetOpen, setMobileTypeSheetOpen] = React.useState(false)
   const [mobileCourseSheetOpen, setMobileCourseSheetOpen] =
@@ -131,6 +150,8 @@ export default function NotesPage({
         : null,
     [activeNoteId, allNotes]
   )
+  const activeNoteLoading =
+    loadingNoteId != null && activeNoteId === loadingNoteId
 
   const filtersActive =
     typeFilter !== "all" ||
@@ -157,30 +178,92 @@ export default function NotesPage({
     setSortKey("last_updated")
   }
 
-  function openView(noteId: string) {
+  async function ensureNoteDetails(noteId: string) {
+    const existing = allNotes.find((note) => note.id === noteId)
+    if (!userId || !existing || existing.detailsLoaded) {
+      return existing ?? null
+    }
+
+    setLoadingNoteId(noteId)
+    const res = await getNote({ noteId, userId })
+    setLoadingNoteId((current) => (current === noteId ? null : current))
+
+    if (!res.success) {
+      toastManager.add({
+        type: "error",
+        title: "Could not load note",
+        description: res.error,
+      })
+      return null
+    }
+
+    setAllNotes((items) =>
+      items.map((note) => (note.id === noteId ? res.data : note))
+    )
+
+    return res.data
+  }
+
+  async function ensureNotesDetails(noteIds: string[]) {
+    if (!userId) return []
+
+    const missingNoteIds = noteIds.filter((noteId) => {
+      const note = allNotes.find((candidate) => candidate.id === noteId)
+      return note != null && !note.detailsLoaded
+    })
+
+    if (missingNoteIds.length === 0) {
+      return allNotes.filter((note) => noteIds.includes(note.id))
+    }
+
+    const res = await getNotes({ noteIds: missingNoteIds, userId })
+    if (!res.success) {
+      toastManager.add({
+        type: "error",
+        title: "Could not load notes",
+        description: res.error,
+      })
+      return []
+    }
+
+    const fetchedById = new Map(res.data.map((note) => [note.id, note] as const))
+
+    setAllNotes((items) =>
+      items.map((note) => fetchedById.get(note.id) ?? note)
+    )
+
+    return noteIds
+      .map((noteId) => fetchedById.get(noteId) ?? allNotes.find((note) => note.id === noteId))
+      .filter((note): note is Note => note != null)
+  }
+
+  async function openView(noteId: string) {
     setActiveNoteId(noteId)
     setViewOpen(true)
+    await ensureNoteDetails(noteId)
   }
 
-  function openCode(noteId: string) {
+  async function openCode(noteId: string) {
     setActiveNoteId(noteId)
     setCodeOpen(true)
+    await ensureNoteDetails(noteId)
   }
 
-  function openEdit(noteId: string) {
+  async function openEdit(noteId: string) {
     setActiveNoteId(noteId)
     setEditOpen(true)
+    await ensureNoteDetails(noteId)
   }
 
   async function onDeleteNote(noteId: string) {
-    if (!user) return
+    if (!userId) return
 
     const prev = allNotes
 
     setAllNotes((items) => items.filter((n) => n.id !== noteId))
     answerVisibility.clearForId(noteId)
 
-    const res = await deleteNote({ noteId, userId: user.id })
+    const res = await deleteNote({ noteId, userId })
     if (!res.success) {
       setAllNotes(prev)
       toastManager.add({
@@ -192,7 +275,7 @@ export default function NotesPage({
   }
 
   async function onCreateNote(draft: Note) {
-    if (!user) return
+    if (!userId) return
 
     const optimistic: Note = {
       ...draft,
@@ -206,7 +289,7 @@ export default function NotesPage({
     setAllNotes((items) => [optimistic, ...items])
     setCreateOpen(false)
 
-    const res = await createNote({ note: optimistic, userId: user.id })
+    const res = await createNote({ note: optimistic, userId })
     if (!res.success) {
       setAllNotes(prev)
       toastManager.add({
@@ -223,7 +306,7 @@ export default function NotesPage({
   }
 
   async function onUpdateNote(next: Note) {
-    if (!user) return
+    if (!userId) return
 
     const prev = allNotes
 
@@ -233,7 +316,7 @@ export default function NotesPage({
     const res = await updateNote({
       noteId: next.id,
       patch: next,
-      userId: user.id,
+      userId,
     })
     if (!res.success) {
       setAllNotes(prev)
@@ -297,25 +380,42 @@ export default function NotesPage({
       onOpenMobileCourse={() => setMobileCourseSheetOpen(true)}
       onOpenMobileSort={() => setMobileSortSheetOpen(true)}
       onOpenMobileExport={() => setMobileExportSheetOpen(true)}
-      onExportPdf={() => void exportPdf()}
-      onExportMarkdown={() => exportNotesAsMarkdown(filtered.items)}
-      exporting={exporting}
+      onExportPdf={() => {
+        void (async () => {
+          setExportingFullNotes(true)
+          try {
+            const notes = await ensureNotesDetails(
+              filtered.items.map((note) => note.id)
+            )
+            if (notes.length > 0) {
+              await exportPdf(notes)
+            }
+          } finally {
+            setExportingFullNotes(false)
+          }
+        })()
+      }}
+      onExportMarkdown={() => {
+        void (async () => {
+          setExportingFullNotes(true)
+          try {
+            const notes = await ensureNotesDetails(
+              filtered.items.map((note) => note.id)
+            )
+            if (notes.length > 0) {
+              exportNotesAsMarkdown(notes)
+            }
+          } finally {
+            setExportingFullNotes(false)
+          }
+        })()
+      }}
+      exporting={exporting || exportingFullNotes}
     />
   )
 
   return (
-    <DashboardShell
-      user={user}
-      fab={
-        isMobile
-          ? {
-              ariaLabel: "New note",
-              icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
-              onClick: () => setCreateOpen(true),
-            }
-          : undefined
-      }
-    >
+    <>
       {header}
 
       <PageContainer>
@@ -341,9 +441,9 @@ export default function NotesPage({
                   onShowAnswerChange={(value) =>
                     answerVisibility.setShown(note.id, value)
                   }
-                  onEdit={() => openEdit(note.id)}
-                  onViewFull={() => openView(note.id)}
-                  onViewCode={() => openCode(note.id)}
+                  onEdit={() => void openEdit(note.id)}
+                  onViewFull={() => void openView(note.id)}
+                  onViewCode={() => void openCode(note.id)}
                   onDelete={() => void onDeleteNote(note.id)}
                 />
               ))
@@ -406,13 +506,35 @@ export default function NotesPage({
       <ExportSheet
         open={mobileExportSheetOpen}
         onOpenChange={setMobileExportSheetOpen}
-        exporting={exporting}
+        exporting={exporting || exportingFullNotes}
         onExportPdf={async () => {
-          await exportPdf()
+          setExportingFullNotes(true)
+          try {
+            const notes = await ensureNotesDetails(
+              filtered.items.map((note) => note.id)
+            )
+            if (notes.length > 0) {
+              await exportPdf(notes)
+            }
+          } finally {
+            setExportingFullNotes(false)
+          }
           setMobileExportSheetOpen(false)
         }}
         onExportMarkdown={() => {
-          exportNotesAsMarkdown(filtered.items)
+          void (async () => {
+            setExportingFullNotes(true)
+            try {
+              const notes = await ensureNotesDetails(
+                filtered.items.map((note) => note.id)
+              )
+              if (notes.length > 0) {
+                exportNotesAsMarkdown(notes)
+              }
+            } finally {
+              setExportingFullNotes(false)
+            }
+          })()
           setMobileExportSheetOpen(false)
         }}
       />
@@ -422,9 +544,10 @@ export default function NotesPage({
         open={viewOpen}
         onOpenChange={setViewOpen}
         isMobile={isMobile}
+        loading={activeNoteLoading}
         onEdit={() => {
           setViewOpen(false)
-          if (activeNoteId) setEditOpen(true)
+          if (activeNoteId) void openEdit(activeNoteId)
         }}
       />
 
@@ -433,9 +556,10 @@ export default function NotesPage({
         open={codeOpen}
         onOpenChange={setCodeOpen}
         isMobile={isMobile}
+        loading={activeNoteLoading}
         onEdit={() => {
           setCodeOpen(false)
-          if (activeNoteId) setEditOpen(true)
+          if (activeNoteId) void openEdit(activeNoteId)
         }}
       />
 
@@ -458,10 +582,11 @@ export default function NotesPage({
         open={editOpen}
         onOpenChange={setEditOpen}
         isMobile={isMobile}
+        loading={activeNoteLoading}
         onSave={(next) => {
           void onUpdateNote(next)
         }}
       />
-    </DashboardShell>
+    </>
   )
 }

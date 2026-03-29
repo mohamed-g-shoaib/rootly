@@ -18,9 +18,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import type { User } from "@supabase/supabase-js";
 import { signOut } from "@/app/auth/actions";
 
 import RootlyLogo from "@/components/rootly-logo";
@@ -67,12 +66,21 @@ import {
 
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import type { DashboardShellUser } from "@/lib/dashboard-session";
 
 type ShellFab = {
   ariaLabel: string;
   icon: React.ReactNode;
   onClick: () => void;
 };
+
+type DashboardShellContextValue = {
+  registerFab: (pathname: string, fab?: ShellFab) => void;
+  unregisterFab: (pathname: string) => void;
+};
+
+const DashboardShellContext =
+  React.createContext<DashboardShellContextValue | null>(null);
 
 function ThemeToggle({
   checked,
@@ -101,12 +109,16 @@ export function DashboardShell({
 }: {
   children: React.ReactNode;
   fab?: ShellFab;
-  user: User | null;
+  user: DashboardShellUser | null;
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const pathname = usePathname();
 
   const [commandOpen, setCommandOpen] = React.useState(false);
   const [avatarOpen, setAvatarOpen] = React.useState(false);
+  const [fabRegistry, setFabRegistry] = React.useState<Record<string, ShellFab>>(
+    {}
+  );
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -167,98 +179,155 @@ export function DashboardShell({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  const registerFab = React.useCallback((targetPathname: string, nextFab?: ShellFab) => {
+    setFabRegistry((current) => {
+      if (!nextFab) {
+        if (!(targetPathname in current)) {
+          return current;
+        }
+
+        const next = { ...current };
+        delete next[targetPathname];
+        return next;
+      }
+
+      return {
+        ...current,
+        [targetPathname]: nextFab,
+      };
+    });
+  }, []);
+
+  const unregisterFab = React.useCallback((targetPathname: string) => {
+    setFabRegistry((current) => {
+      if (!(targetPathname in current)) {
+        return current;
+      }
+
+      const next = { ...current };
+      delete next[targetPathname];
+      return next;
+    });
+  }, []);
+
+  const contextValue = React.useMemo(
+    () => ({ registerFab, unregisterFab }),
+    [registerFab, unregisterFab]
+  );
+
+  const activeFab = fabRegistry[pathname] ?? fab;
+
   return (
-    <div className="min-h-svh">
-      <ColorThemeApplicator />
-      <header className="fixed inset-x-0 top-0 z-20 border-b bg-background">
-        <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 lg:px-6">
-          <div className="flex items-center gap-2">
-            <Link href="/" aria-label="Home">
-              <RootlyLogo className="size-6" aria-hidden="true" />
-            </Link>
-          </div>
+    <DashboardShellContext.Provider value={contextValue}>
+      <div className="min-h-svh">
+        <ColorThemeApplicator />
+        <header className="fixed inset-x-0 top-0 z-20 border-b bg-background">
+          <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 lg:px-6">
+            <div className="flex items-center gap-2">
+              <Link href="/" aria-label="Home">
+                <RootlyLogo className="size-6" aria-hidden="true" />
+              </Link>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              type="button"
-              aria-label="Open search"
-              onClick={() => setCommandOpen(true)}
-              className="gap-2 md:hidden"
-            >
-              <HugeiconsIcon icon={Search02Icon} size={18} />
-              Search
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                type="button"
+                aria-label="Open search"
+                onClick={() => setCommandOpen(true)}
+                className="gap-2 md:hidden"
+              >
+                <HugeiconsIcon icon={Search02Icon} size={18} />
+                Search
+              </Button>
 
-            <Button
-              variant="outline"
-              type="button"
-              className="hidden min-w-72 justify-between md:inline-flex"
-              onClick={() => setCommandOpen(true)}
-            >
-              <span className="text-muted-foreground">
-                Search or jump to...
-              </span>
-              <KbdGroup>
-                <Kbd>Ctrl</Kbd>
-                <Kbd>K</Kbd>
-              </KbdGroup>
-            </Button>
+              <Button
+                variant="outline"
+                type="button"
+                className="hidden min-w-72 justify-between md:inline-flex"
+                onClick={() => setCommandOpen(true)}
+              >
+                <span className="text-muted-foreground">
+                  Search or jump to...
+                </span>
+                <KbdGroup>
+                  <Kbd>Ctrl</Kbd>
+                  <Kbd>K</Kbd>
+                </KbdGroup>
+              </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              type="button"
-              aria-label="User menu"
-              className="rounded-full md:hidden"
-              onClick={() => setAvatarOpen(true)}
-            >
-              <Avatar>
-                <AvatarImage src={avatarUrl} alt={displayName} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
+                aria-label="User menu"
+                className="rounded-full md:hidden"
+                onClick={() => setAvatarOpen(true)}
+              >
+                <Avatar>
+                  <AvatarImage src={avatarUrl} alt={displayName} />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+              </Button>
 
-            <div className="hidden md:block">
-              <UserAvatarPopover user={user} />
+              <div className="hidden md:block">
+                <UserAvatarPopover user={user} />
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="min-h-svh pt-14 pb-28">{children}</main>
+        <main className="min-h-svh pt-14 pb-28">{children}</main>
 
-      <FloatingDock navigationItems={navigationItems} />
+        <FloatingDock navigationItems={navigationItems} />
 
-      {fab ? (
-        <Button
-          size="icon-lg"
-          type="button"
-          className="fixed right-4 bottom-20 z-30 rounded-full md:hidden"
-          aria-label={fab.ariaLabel}
-          onClick={fab.onClick}
-        >
-          {fab.icon}
-        </Button>
-      ) : null}
+        {activeFab ? (
+          <Button
+            size="icon-lg"
+            type="button"
+            className="fixed right-4 bottom-20 z-30 rounded-full md:hidden"
+            aria-label={activeFab.ariaLabel}
+            onClick={activeFab.onClick}
+          >
+            {activeFab.icon}
+          </Button>
+        ) : null}
 
-      <CommandPalette
-        isMobile={isMobile}
-        open={commandOpen}
-        onOpenChange={setCommandOpen}
-      />
+        <CommandPalette
+          isMobile={isMobile}
+          open={commandOpen}
+          onOpenChange={setCommandOpen}
+        />
 
-      <MobileAvatarSheet
-        open={avatarOpen}
-        onOpenChange={setAvatarOpen}
-        user={user}
-      />
-    </div>
+        <MobileAvatarSheet
+          open={avatarOpen}
+          onOpenChange={setAvatarOpen}
+          user={user}
+        />
+      </div>
+    </DashboardShellContext.Provider>
   );
 }
 
-function UserAvatarPopover({ user }: { user: User | null }) {
+export function useDashboardShellFab(fab?: ShellFab) {
+  const pathname = usePathname();
+  const context = React.useContext(DashboardShellContext);
+
+  React.useEffect(() => {
+    if (!context) {
+      return;
+    }
+
+    context.registerFab(pathname, fab);
+
+    return () => {
+      context.unregisterFab(pathname);
+    };
+  }, [context, fab, pathname]);
+}
+
+function UserAvatarPopover({ user }: { user: DashboardShellUser | null }) {
   const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = React.useState(false);
@@ -355,7 +424,7 @@ function MobileAvatarSheet({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
+  user: DashboardShellUser | null;
 }) {
   const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();

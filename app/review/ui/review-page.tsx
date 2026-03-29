@@ -1,6 +1,5 @@
 "use client"
 
-import type { User } from "@supabase/supabase-js"
 import * as React from "react"
 
 import { PlayIcon, Target01Icon } from "@hugeicons/core-free-icons"
@@ -22,6 +21,7 @@ import { Form } from "@/components/ui/form"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { Switch } from "@/components/ui/switch"
 import { toastManager } from "@/components/ui/toast"
 import {
@@ -30,9 +30,13 @@ import {
   FormSectionTitle,
 } from "@/components/ui/form"
 
-import { DashboardShell } from "@/app/ui/dashboard-shell"
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
-import { deleteReviewSession, saveReviewSession } from "./review-actions"
+import {
+  deleteReviewSession,
+  getReviewNotes,
+  saveReviewSession,
+} from "./review-actions"
 import {
   ReviewEmptyState,
   SessionCard,
@@ -131,18 +135,27 @@ type ViewState =
   | { type: "summary"; data: ReviewSummaryData; config: ReviewSessionConfig }
 
 export default function ReviewPage({
-  user,
+  userId,
   initialSessions,
   courses,
   initialNotesPool,
 }: {
-  user: User | null
+  userId: string | null
   initialSessions: ReviewSessionModel[]
   courses: ReviewCourse[]
   initialNotesPool: ReviewNote[]
 }) {
   const isMobile = useIsMobile()
   const now = React.useMemo(() => new Date(), [])
+  const shellFab = React.useMemo(
+    () => ({
+      ariaLabel: "Start review",
+      icon: <HugeiconsIcon icon={PlayIcon} size={20} />,
+      onClick: () => setSetupOpen(true),
+    }),
+    []
+  )
+  useDashboardShellFab(shellFab)
 
   const [view, setView] = React.useState<ViewState>({ type: "list" })
 
@@ -158,8 +171,10 @@ export default function ReviewPage({
   const [selectedSessionId, setSelectedSessionId] = React.useState<
     string | null
   >(null)
+  const [detailLoading, setDetailLoading] = React.useState(false)
 
   const [setupOpen, setSetupOpen] = React.useState(false)
+  const [startingSession, setStartingSession] = React.useState(false)
 
   const [questionCountMode, setQuestionCountMode] =
     React.useState<ReviewSessionConfig["questionCountMode"]>("20")
@@ -172,6 +187,62 @@ export default function ReviewPage({
     [flaggedOnly, notesPool]
   )
 
+  async function ensureReviewNotesLoaded(noteIds: string[]) {
+    if (!userId) return []
+
+    const missingIds = noteIds.filter((noteId) => {
+      const note = notesPool.find((candidate) => candidate.id === noteId)
+      return note != null && !note.detailsLoaded
+    })
+
+    if (missingIds.length === 0) {
+      return noteIds
+        .map((noteId) => notesPool.find((note) => note.id === noteId))
+        .filter((note): note is ReviewNote => note != null)
+    }
+
+    const res = await getReviewNotes({ noteIds: missingIds, userId })
+    if (!res.success) {
+      toastManager.add({
+        type: "error",
+        title: "Could not load review notes",
+        description: res.error,
+      })
+      return []
+    }
+
+    const fetchedById = new Map(res.data.map((note) => [note.id, note] as const))
+
+    setNotesPool((prev) => prev.map((note) => fetchedById.get(note.id) ?? note))
+
+    return noteIds
+      .map(
+        (noteId) =>
+          fetchedById.get(noteId) ?? notesPool.find((note) => note.id === noteId)
+      )
+      .filter((note): note is ReviewNote => note != null)
+  }
+
+  async function openSessionDetail(sessionId: string) {
+    setSelectedSessionId(sessionId)
+    setDetailOpen(true)
+
+    const session = sessions.find((candidate) => candidate.id === sessionId)
+    if (!session) return
+
+    const noteIds = Array.from(
+      new Set([...session.notesLeveledUp, ...session.notesLeveledDown])
+    )
+    if (noteIds.length === 0) return
+
+    setDetailLoading(true)
+    try {
+      await ensureReviewNotesLoaded(noteIds)
+    } finally {
+      setDetailLoading(false)
+    }
+  }
+
   async function onSaveSession({
     sessionName,
     data,
@@ -181,7 +252,7 @@ export default function ReviewPage({
     data: ReviewSummaryData
     config: { shuffled: boolean; flaggedOnly: boolean }
   }) {
-    if (!user) return
+    if (!userId) return
 
     const createdAt = new Date().toISOString()
     const date = createdAt.slice(0, 10)
@@ -192,7 +263,7 @@ export default function ReviewPage({
       createdAt,
       date,
       name: sessionName,
-      userId: user.id,
+      userId,
       config,
     })
 
@@ -202,7 +273,7 @@ export default function ReviewPage({
 
     const res = await saveReviewSession({
       session: optimistic,
-      userId: user.id,
+      userId,
       courseScores: data.courseScores,
     })
 
@@ -222,12 +293,12 @@ export default function ReviewPage({
   }
 
   async function onDeleteSession(id: string) {
-    if (!user) return
+    if (!userId) return
 
     const prev = sessions
     setSessions((items) => items.filter((s) => s.id !== id))
 
-    const res = await deleteReviewSession({ sessionId: id, userId: user.id })
+    const res = await deleteReviewSession({ sessionId: id, userId })
     if (!res.success) {
       setSessions(prev)
       toastManager.add({
@@ -250,7 +321,7 @@ export default function ReviewPage({
     customCount > 0 &&
     customCount > availableNotes.length
 
-  function startSession() {
+  async function startSession() {
     if (questionCountMode === "custom" && (!customCount || customCount < 1)) {
       return
     }
@@ -274,25 +345,34 @@ export default function ReviewPage({
         ? base.length
         : Math.min(configuredCount, base.length)
 
-    const notes = base.slice(0, planned)
+    const targetIds = base.slice(0, planned).map((note) => note.id)
+    setStartingSession(true)
+    try {
+      const notes = await ensureReviewNotesLoaded(targetIds)
+      if (notes.length === 0) {
+        return
+      }
 
-    const state: ReviewSessionState = {
-      notes,
-      totalPlanned: planned,
-      currentIndex: 0,
-      revealed: false,
-      answeredCount: 0,
-      leveledUp: [],
-      leveledDown: [],
-      endedEarly: false,
-      startMs: Date.now(),
-      elapsedMs: 0,
-      finished: false,
+      const state: ReviewSessionState = {
+        notes,
+        totalPlanned: planned,
+        currentIndex: 0,
+        revealed: false,
+        answeredCount: 0,
+        leveledUp: [],
+        leveledDown: [],
+        endedEarly: false,
+        startMs: Date.now(),
+        elapsedMs: 0,
+        finished: false,
+      }
+
+      setSetupOpen(false)
+      setView({ type: "active" })
+      setActiveState(state)
+    } finally {
+      setStartingSession(false)
     }
-
-    setSetupOpen(false)
-    setView({ type: "active" })
-    setActiveState(state)
   }
 
   const [activeState, setActiveState] =
@@ -396,14 +476,7 @@ export default function ReviewPage({
   }
 
   return (
-    <DashboardShell
-      user={user}
-      fab={{
-        ariaLabel: "Start review",
-        icon: <HugeiconsIcon icon={PlayIcon} size={20} />,
-        onClick: () => setSetupOpen(true),
-      }}
-    >
+    <>
       <DashboardStickyHeader>
         <PageContainer>
           <div className="flex items-center justify-between py-4">
@@ -463,8 +536,7 @@ export default function ReviewPage({
                       weakestCourseTitle={weakestTitle}
                       strongestCourseTitle={strongestTitle}
                       onView={() => {
-                        setSelectedSessionId(s.id)
-                        setDetailOpen(true)
+                        void openSessionDetail(s.id)
                       }}
                       onDelete={() => void onDeleteSession(s.id)}
                     />
@@ -497,6 +569,7 @@ export default function ReviewPage({
           if (customCount > count) setCustomCount(count)
         }}
         onStart={startSession}
+        startingSession={startingSession}
       />
 
       <SessionDetailSheet
@@ -507,8 +580,9 @@ export default function ReviewPage({
         now={now}
         courses={courses}
         notesPool={notesPool}
+        loading={detailLoading}
       />
-    </DashboardShell>
+    </>
   )
 }
 
@@ -527,6 +601,7 @@ function SetupSheet({
   onShuffledChange,
   onFlaggedOnlyChange,
   onStart,
+  startingSession,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -541,7 +616,8 @@ function SetupSheet({
   onCustomCountChange: (value: number) => void
   onShuffledChange: (value: boolean) => void
   onFlaggedOnlyChange: (value: boolean) => void
-  onStart: () => void
+  onStart: () => void | Promise<void>
+  startingSession: boolean
 }) {
   const side = isMobile ? "bottom" : "right"
 
@@ -658,13 +734,20 @@ function SetupSheet({
             <Button
               type="button"
               onClick={() => {
-                onStart()
+                void onStart()
               }}
               className="gap-2"
-              disabled={questionCountMode === "custom" && customCountTooHigh}
+              disabled={
+                startingSession ||
+                (questionCountMode === "custom" && customCountTooHigh)
+              }
             >
-              <HugeiconsIcon icon={PlayIcon} size={18} />
-              Start Session
+              {startingSession ? (
+                <Spinner />
+              ) : (
+                <HugeiconsIcon icon={PlayIcon} size={18} />
+              )}
+              {startingSession ? "Loading Notes" : "Start Session"}
             </Button>
           </SheetFooter>
         </Form>
@@ -681,6 +764,7 @@ function SessionDetailSheet({
   now,
   courses,
   notesPool,
+  loading,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -689,6 +773,7 @@ function SessionDetailSheet({
   now: Date
   courses: ReviewCourse[]
   notesPool: ReviewNote[]
+  loading: boolean
 }) {
   const side = isMobile ? "bottom" : "right"
 
@@ -724,7 +809,11 @@ function SessionDetailSheet({
             <SheetTitle>{session?.name ?? "Session"}</SheetTitle>
           </SheetHeader>
           <SheetPanel className="px-4 pb-5">
-            {session ? (
+            {loading ? (
+              <div className="flex min-h-40 items-center justify-center">
+                <Spinner />
+              </div>
+            ) : session ? (
               <div className="flex flex-col gap-5">
                 <div className="grid grid-cols-2 gap-3 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
