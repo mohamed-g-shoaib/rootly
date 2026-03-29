@@ -31,6 +31,11 @@ const SUPPORTED_LANGUAGES = [
 ] as const
 
 type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
+type HighlightToken = {
+  content: string
+  color?: string
+  fontStyle?: number
+}
 
 export function CodeBlock({
   code,
@@ -42,7 +47,7 @@ export function CodeBlock({
   className?: string
 }) {
   const { resolvedTheme } = useTheme()
-  const [html, setHtml] = React.useState<string | null>(null)
+  const [tokens, setTokens] = React.useState<HighlightToken[][] | null>(null)
 
   React.useEffect(() => {
     let canceled = false
@@ -61,14 +66,16 @@ export function CodeBlock({
       })
 
       await highlighter.loadLanguage(shikiLang)
-
-      const nextHtml = highlighter.codeToHtml(code, { lang: shikiLang, theme })
+      const nextTokens = await highlighter.codeToTokensBase(code, {
+        lang: shikiLang,
+        theme,
+      })
 
       if (canceled) return
-      setHtml(nextHtml)
+      setTokens(nextTokens as HighlightToken[][])
     }
 
-    setHtml(null)
+    setTokens(null)
     void highlight()
 
     return () => {
@@ -76,7 +83,7 @@ export function CodeBlock({
     }
   }, [code, language, resolvedTheme])
 
-  if (!html) {
+  if (!tokens) {
     return (
       <pre
         className={cn(
@@ -90,12 +97,31 @@ export function CodeBlock({
   }
 
   return (
-    <div
+    <pre
       className={cn(
-        "overflow-hidden rounded-lg border text-xs [&_pre]:whitespace-pre-wrap [&_pre]:break-all [&_pre]:p-3",
+        "overflow-hidden whitespace-pre-wrap break-all rounded-lg border bg-code p-3 text-xs",
         className
       )}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    >
+      <code>
+        {tokens.map((line, lineIndex) => (
+          <React.Fragment key={lineIndex}>
+            {line.map((token, tokenIndex) => (
+              <span
+                key={`${lineIndex}-${tokenIndex}`}
+                style={{
+                  color: token.color,
+                  fontStyle: token.fontStyle === 1 ? "italic" : "normal",
+                  fontWeight: token.fontStyle === 2 ? "bold" : "normal",
+                }}
+              >
+                {token.content}
+              </span>
+            ))}
+            {lineIndex < tokens.length - 1 ? "\n" : null}
+          </React.Fragment>
+        ))}
+      </code>
+    </pre>
   )
 }

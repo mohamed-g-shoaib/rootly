@@ -454,98 +454,32 @@ export default function ReviewPage({
 
   if (view.type === "active" && activeState) {
     return (
-      <ReviewSessionView
-        state={activeState}
-        onReveal={() =>
-          setActiveState((prev) => (prev ? { ...prev, revealed: true } : prev))
-        }
+      <ActiveReviewSession
+        activeState={activeState}
         onRate={onRate}
-        onTick={(elapsedMs) =>
-          setActiveState((prev) => (prev ? { ...prev, elapsedMs } : prev))
-        }
-        onEndEarly={() => {
-          if (!activeState) return
-          if (activeState.answeredCount === 0) {
-            endWithoutSummary()
-            return
-          }
-          toSummary({ ...activeState, endedEarly: true })
-        }}
+        onUpdateState={setActiveState}
+        onEndWithoutSummary={endWithoutSummary}
+        onToSummary={toSummary}
       />
     )
   }
 
   return (
     <>
-      <DashboardStickyHeader>
-        <PageContainer>
-          <div className="flex items-center justify-between py-4">
-            <div className="text-lg font-medium">Review Sessions</div>
-            <Button
-              onClick={() => setSetupOpen(true)}
-              type="button"
-              className="gap-2"
-            >
-              <HugeiconsIcon icon={PlayIcon} size={18} />
-              <span className="hidden sm:inline">Start Review</span>
-            </Button>
-          </div>
-        </PageContainer>
-      </DashboardStickyHeader>
+      <ReviewPageHeader onStart={() => setSetupOpen(true)} />
 
-      <PageContainer>
-        <div className="py-6">
-          {view.type === "summary" ? (
-            <ReviewSummary
-              data={view.data}
-              courses={courses}
-              isMobile={isMobile}
-              onSave={(sessionName) => {
-                void onSaveSession({
-                  sessionName,
-                  data: view.data,
-                  config: {
-                    shuffled: view.config.shuffled,
-                    flaggedOnly: view.config.flaggedOnly,
-                  },
-                })
-              }}
-              onDiscard={() => setView({ type: "list" })}
-            />
-          ) : sessions.length === 0 ? (
-            <ReviewEmptyState onStart={() => setSetupOpen(true)} />
-          ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {sessions
-                .toSorted((a, b) => (a.date < b.date ? 1 : -1))
-                .map((s) => {
-                  const weakestTitle = s.weakestCourseId
-                    ? (courses.find((c) => c.id === s.weakestCourseId)?.title ??
-                      "—")
-                    : "—"
-                  const strongestTitle = s.strongestCourseId
-                    ? (courses.find((c) => c.id === s.strongestCourseId)
-                        ?.title ?? "—")
-                    : "—"
-
-                  return (
-                    <SessionCard
-                      key={s.id}
-                      session={s}
-                      formattedDate={sessionDateLabel(s.date, now)}
-                      weakestCourseTitle={weakestTitle}
-                      strongestCourseTitle={strongestTitle}
-                      onView={() => {
-                        void openSessionDetail(s.id)
-                      }}
-                      onDelete={() => void onDeleteSession(s.id)}
-                    />
-                  )
-                })}
-            </div>
-          )}
-        </div>
-      </PageContainer>
+      <ReviewPageContent
+        view={view}
+        courses={courses}
+        sessions={sessions}
+        isMobile={isMobile}
+        now={now}
+        onStart={() => setSetupOpen(true)}
+        onSaveSession={onSaveSession}
+        onDiscardSummary={() => setView({ type: "list" })}
+        onOpenSessionDetail={openSessionDetail}
+        onDeleteSession={onDeleteSession}
+      />
 
       <SetupSheet
         open={setupOpen}
@@ -583,6 +517,162 @@ export default function ReviewPage({
         loading={detailLoading}
       />
     </>
+  )
+}
+
+function ActiveReviewSession({
+  activeState,
+  onRate,
+  onUpdateState,
+  onEndWithoutSummary,
+  onToSummary,
+}: {
+  activeState: ReviewSessionState
+  onRate: (rating: "nailed" | "sort_of" | "forgot") => void
+  onUpdateState: React.Dispatch<React.SetStateAction<ReviewSessionState | null>>
+  onEndWithoutSummary: () => void
+  onToSummary: (nextState: ReviewSessionState) => void
+}) {
+  return (
+    <ReviewSessionView
+      state={activeState}
+      onReveal={() =>
+        onUpdateState((prev) => (prev ? { ...prev, revealed: true } : prev))
+      }
+      onRate={onRate}
+      onTick={(elapsedMs) =>
+        onUpdateState((prev) => (prev ? { ...prev, elapsedMs } : prev))
+      }
+      onEndEarly={() => {
+        if (activeState.answeredCount === 0) {
+          onEndWithoutSummary()
+          return
+        }
+        onToSummary({ ...activeState, endedEarly: true })
+      }}
+    />
+  )
+}
+
+function ReviewPageHeader({ onStart }: { onStart: () => void }) {
+  return (
+    <DashboardStickyHeader>
+      <PageContainer>
+        <div className="flex items-center justify-between py-4">
+          <div className="text-lg font-medium">Review Sessions</div>
+          <Button onClick={onStart} type="button" className="gap-2">
+            <HugeiconsIcon icon={PlayIcon} size={18} />
+            <span className="hidden sm:inline">Start Review</span>
+          </Button>
+        </div>
+      </PageContainer>
+    </DashboardStickyHeader>
+  )
+}
+
+function ReviewPageContent({
+  view,
+  courses,
+  sessions,
+  isMobile,
+  now,
+  onStart,
+  onSaveSession,
+  onDiscardSummary,
+  onOpenSessionDetail,
+  onDeleteSession,
+}: {
+  view: ViewState
+  courses: ReviewCourse[]
+  sessions: ReviewSessionModel[]
+  isMobile: boolean
+  now: Date
+  onStart: () => void
+  onSaveSession: (args: {
+    sessionName: string
+    data: ReviewSummaryData
+    config: { shuffled: boolean; flaggedOnly: boolean }
+  }) => Promise<void>
+  onDiscardSummary: () => void
+  onOpenSessionDetail: (sessionId: string) => Promise<void>
+  onDeleteSession: (sessionId: string) => Promise<void>
+}) {
+  return (
+    <PageContainer>
+      <div className="py-6">
+        {view.type === "summary" ? (
+          <ReviewSummary
+            data={view.data}
+            courses={courses}
+            isMobile={isMobile}
+            onSave={(sessionName) => {
+              void onSaveSession({
+                sessionName,
+                data: view.data,
+                config: {
+                  shuffled: view.config.shuffled,
+                  flaggedOnly: view.config.flaggedOnly,
+                },
+              })
+            }}
+            onDiscard={onDiscardSummary}
+          />
+        ) : sessions.length === 0 ? (
+          <ReviewEmptyState onStart={onStart} />
+        ) : (
+          <ReviewSessionGrid
+            courses={courses}
+            sessions={sessions}
+            now={now}
+            onOpenSessionDetail={onOpenSessionDetail}
+            onDeleteSession={onDeleteSession}
+          />
+        )}
+      </div>
+    </PageContainer>
+  )
+}
+
+function ReviewSessionGrid({
+  courses,
+  sessions,
+  now,
+  onOpenSessionDetail,
+  onDeleteSession,
+}: {
+  courses: ReviewCourse[]
+  sessions: ReviewSessionModel[]
+  now: Date
+  onOpenSessionDetail: (sessionId: string) => Promise<void>
+  onDeleteSession: (sessionId: string) => Promise<void>
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {sessions
+        .toSorted((a, b) => (a.date < b.date ? 1 : -1))
+        .map((s) => {
+          const weakestTitle = s.weakestCourseId
+            ? (courses.find((c) => c.id === s.weakestCourseId)?.title ?? "—")
+            : "—"
+          const strongestTitle = s.strongestCourseId
+            ? (courses.find((c) => c.id === s.strongestCourseId)?.title ?? "—")
+            : "—"
+
+          return (
+            <SessionCard
+              key={s.id}
+              session={s}
+              formattedDate={sessionDateLabel(s.date, now)}
+              weakestCourseTitle={weakestTitle}
+              strongestCourseTitle={strongestTitle}
+              onView={() => {
+                void onOpenSessionDetail(s.id)
+              }}
+              onDelete={() => void onDeleteSession(s.id)}
+            />
+          )
+        })}
+    </div>
   )
 }
 

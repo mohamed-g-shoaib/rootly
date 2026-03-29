@@ -391,311 +391,48 @@ export default function CourseDetailPage({
     )
   }
 
-  const headerActions = (
-    <div className="flex items-center gap-2">
-      {!isMobile ? (
-        <>
-          <Button
-            variant="ghost"
-            onClick={() => setEditCourseOpen(true)}
-            className="gap-2"
-          >
-            <HugeiconsIcon icon={Edit01Icon} size={18} />
-            Edit Course
-          </Button>
-          {hasLinks ? (
-            <Button
-              variant="ghost"
-              onClick={() => setLinksOpen(true)}
-              className="gap-2"
-            >
-              <HugeiconsIcon icon={Link01Icon} size={18} />
-              View Links
-            </Button>
-          ) : null}
-          <AlertDialog
-            open={deleteCourseOpen}
-            onOpenChange={setDeleteCourseOpen}
-          >
-            <AlertDialogTrigger
-              render={
-                <Button variant="ghost" className="gap-2" type="button" />
-              }
-            >
-              <HugeiconsIcon icon={Delete01Icon} size={18} />
-              Delete Course
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete course?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will permanently delete the course. Notes will not be
-                  deleted — they will be unlinked.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogClose
-                  render={<Button variant="ghost" type="button" />}
-                >
-                  Cancel
-                </AlertDialogClose>
-                <Button
-                  variant="destructive"
-                  type="button"
-                  onClick={() => void onDeleteCourse()}
-                >
-                  Delete Course
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={<Button variant="ghost" size="icon" aria-label="More" />}
-          >
-            <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setEditCourseOpen(true)}>
-              <HugeiconsIcon icon={Edit01Icon} size={18} />
-              Edit Course
-            </DropdownMenuItem>
-            {hasLinks ? (
-              <DropdownMenuItem onClick={() => setLinksOpen(true)}>
-                <HugeiconsIcon icon={Link01Icon} size={18} />
-                View Links
-              </DropdownMenuItem>
-            ) : null}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={() => setDeleteCourseOpen(true)}
-            >
-              <HugeiconsIcon icon={Delete01Icon} size={18} />
-              Delete Course
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-    </div>
-  )
-
   return (
     <>
-      <DashboardStickyHeader>
-        <PageContainer>
-          <div className="py-4">
-            <div className="flex items-center justify-between gap-3">
-              <Button
-                variant="ghost"
-                className="gap-2"
-                render={<Link href="/courses" />}
-              >
-                <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
-                Courses
-              </Button>
-              {headerActions}
-            </div>
+      <CourseDetailHeader
+        course={course}
+        hasLinks={hasLinks}
+        isMobile={isMobile}
+        deleteCourseOpen={deleteCourseOpen}
+        onDeleteCourseOpenChange={setDeleteCourseOpen}
+        onOpenEditCourse={() => setEditCourseOpen(true)}
+        onOpenLinks={() => setLinksOpen(true)}
+        onDeleteCourse={onDeleteCourse}
+      />
 
-            <div className="flex items-start justify-between gap-4 pt-3">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="text-xl font-semibold">{course.title}</div>
-                  {course.topics.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {course.topics.map((t) => (
-                        <Badge key={t} variant="outline">
-                          {t}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-                {course.instructor ? (
-                  <div className="pt-1 text-sm text-muted-foreground">
-                    {course.instructor}
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="w-56 shrink-0">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm text-muted-foreground">Progress</div>
-                  <div className="text-sm tabular-nums">{course.progress}%</div>
-                </div>
-                <div className="pt-2">
-                  <Progress value={course.progress}>
-                    <ProgressTrack>
-                      <ProgressIndicator />
-                    </ProgressTrack>
-                  </Progress>
-                </div>
-              </div>
-            </div>
-          </div>
-        </PageContainer>
-      </DashboardStickyHeader>
-
-      <PageContainer>
-        <div className="pt-4">
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                {!isMobile ? (
-                  <>
-                    <Select
-                      value={typeFilter}
-                      onValueChange={(v) => setTypeFilter(v as TypeFilter)}
-                    >
-                      <SelectTrigger className="w-40 **:data-[slot=select-icon]:hidden">
-                        <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                          <span className="min-w-0 truncate">{typeLabel}</span>
-                          <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
-                        </span>
-                      </SelectTrigger>
-                      <SelectPopup alignItemWithTrigger={false}>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="qa">Q&A</SelectItem>
-                        <SelectItem value="freeform">Freeform</SelectItem>
-                      </SelectPopup>
-                    </Select>
-
-                    <Select
-                      value={sortKey}
-                      onValueChange={(v) => setSortKey(v as SortKey)}
-                    >
-                      <SelectTrigger className="w-44 **:data-[slot=select-icon]:hidden">
-                        <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                          <span className="min-w-0 truncate">{sortLabel}</span>
-                          <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
-                        </span>
-                      </SelectTrigger>
-                      <SelectPopup alignItemWithTrigger={false}>
-                        <SelectItem value="last_updated">
-                          Last Updated
-                        </SelectItem>
-                        <SelectItem value="date_created">
-                          Date Created
-                        </SelectItem>
-                        <SelectItem value="understanding_low">
-                          Understanding (Low → High)
-                        </SelectItem>
-                        <SelectItem value="understanding_high">
-                          Understanding (High → Low)
-                        </SelectItem>
-                        <SelectItem value="course">Course</SelectItem>
-                      </SelectPopup>
-                    </Select>
-
-                    <Button
-                      variant={flaggedOnly ? "secondary" : "outline"}
-                      size="icon"
-                      aria-label={
-                        flaggedOnly ? "Show all notes" : "Show flagged notes"
-                      }
-                      onClick={() => setFlaggedOnly((v) => !v)}
-                    >
-                      <HugeiconsIcon
-                        icon={Flag01Icon}
-                        size={18}
-                        color={
-                          flaggedOnly ? "var(--destructive)" : "currentColor"
-                        }
-                      />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant={typeFilter !== "all" ? "secondary" : "outline"}
-                      onClick={() => setMobileTypeSheetOpen(true)}
-                    >
-                      Type
-                    </Button>
-
-                    <Button
-                      size="icon"
-                      aria-label={
-                        flaggedOnly ? "Show all notes" : "Show flagged notes"
-                      }
-                      variant={flaggedOnly ? "secondary" : "ghost"}
-                      onClick={() => setFlaggedOnly((v) => !v)}
-                    >
-                      <HugeiconsIcon
-                        icon={Flag01Icon}
-                        size={18}
-                        color={
-                          flaggedOnly ? "var(--destructive)" : "currentColor"
-                        }
-                      />
-                    </Button>
-
-                    <Button
-                      variant={
-                        sortKey !== "last_updated" ? "secondary" : "outline"
-                      }
-                      onClick={() => setMobileSortSheetOpen(true)}
-                    >
-                      Sort by
-                    </Button>
-                  </>
-                )}
-              </div>
-
-              {filtered.hasQa ? (
-                <Button
-                  variant={globalShowAnswers ? "secondary" : "outline"}
-                  onClick={() =>
-                    answerVisibility.setAllShown(!globalShowAnswers)
-                  }
-                >
-                  {globalShowAnswers ? "Hide All Answers" : "Show All Answers"}
-                </Button>
-              ) : null}
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.items.length === 0 ? (
-                <div className="col-span-full">
-                  <EmptyState
-                    hasAnyNotes={allNotes.length > 0}
-                    hasFilters={filtersActive}
-                    onNewNote={() => setCreateOpen(true)}
-                    onClearFilters={clearFilters}
-                  />
-                </div>
-              ) : (
-                visibleNotes.map((note) => (
-                  <NoteCard
-                    key={note.id}
-                    note={note}
-                    now={now}
-                    isMobile={isMobile}
-                    showAnswer={answerVisibility.isShown(note.id)}
-                    onShowAnswerChange={(value) =>
-                      answerVisibility.setShown(note.id, value)
-                    }
-                    onEdit={() => openEdit(note.id)}
-                    onViewFull={() => openView(note.id)}
-                    onViewCode={() => openCode(note.id)}
-                    onDelete={() => void onDeleteNote(note.id)}
-                  />
-                ))
-              )}
-
-              {loadingMore ? (
-                <div className="flex items-center justify-center py-6">
-                  <div className="text-sm text-muted-foreground">Loading…</div>
-                </div>
-              ) : null}
-
-              <div ref={loadMoreRef} />
-            </div>
-          </div>
-        </div>
-      </PageContainer>
+      <CourseNotesSection
+        allNotesCount={allNotes.length}
+        filtered={filtered}
+        visibleNotes={visibleNotes}
+        now={now}
+        isMobile={isMobile}
+        typeFilter={typeFilter}
+        sortKey={sortKey}
+        flaggedOnly={flaggedOnly}
+        globalShowAnswers={globalShowAnswers}
+        filtersActive={filtersActive}
+        typeLabel={typeLabel}
+        sortLabel={sortLabel}
+        answerVisibility={answerVisibility}
+        loadingMore={loadingMore}
+        loadMoreRef={loadMoreRef}
+        onTypeChange={setTypeFilter}
+        onSortChange={setSortKey}
+        onToggleFlaggedOnly={() => setFlaggedOnly((v) => !v)}
+        onToggleGlobalAnswers={() => answerVisibility.setAllShown(!globalShowAnswers)}
+        onOpenMobileType={() => setMobileTypeSheetOpen(true)}
+        onOpenMobileSort={() => setMobileSortSheetOpen(true)}
+        onNewNote={() => setCreateOpen(true)}
+        onClearFilters={clearFilters}
+        onEdit={openEdit}
+        onViewFull={openView}
+        onViewCode={openCode}
+        onDeleteNote={onDeleteNote}
+      />
 
       <LinksViewerSheet
         course={course}
@@ -799,5 +536,408 @@ export default function CourseDetailPage({
         }}
       />
     </>
+  )
+}
+
+function CourseDetailHeader({
+  course,
+  hasLinks,
+  isMobile,
+  deleteCourseOpen,
+  onDeleteCourseOpenChange,
+  onOpenEditCourse,
+  onOpenLinks,
+  onDeleteCourse,
+}: {
+  course: Course
+  hasLinks: boolean
+  isMobile: boolean
+  deleteCourseOpen: boolean
+  onDeleteCourseOpenChange: (open: boolean) => void
+  onOpenEditCourse: () => void
+  onOpenLinks: () => void
+  onDeleteCourse: () => Promise<void>
+}) {
+  return (
+    <DashboardStickyHeader>
+      <PageContainer>
+        <div className="py-4">
+          <div className="flex items-center justify-between gap-3">
+            <Button variant="ghost" className="gap-2" render={<Link href="/courses" />}>
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
+              Courses
+            </Button>
+            <CourseHeaderActions
+              hasLinks={hasLinks}
+              isMobile={isMobile}
+              deleteCourseOpen={deleteCourseOpen}
+              onDeleteCourseOpenChange={onDeleteCourseOpenChange}
+              onOpenEditCourse={onOpenEditCourse}
+              onOpenLinks={onOpenLinks}
+              onDeleteCourse={onDeleteCourse}
+            />
+          </div>
+
+          <div className="flex items-start justify-between gap-4 pt-3">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="text-xl font-semibold">{course.title}</div>
+                {course.topics.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {course.topics.map((t) => (
+                      <Badge key={t} variant="outline">
+                        {t}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              {course.instructor ? (
+                <div className="pt-1 text-sm text-muted-foreground">{course.instructor}</div>
+              ) : null}
+            </div>
+
+            <div className="w-56 shrink-0">
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-sm text-muted-foreground">Progress</div>
+                <div className="text-sm tabular-nums">{course.progress}%</div>
+              </div>
+              <div className="pt-2">
+                <Progress value={course.progress}>
+                  <ProgressTrack>
+                    <ProgressIndicator />
+                  </ProgressTrack>
+                </Progress>
+              </div>
+            </div>
+          </div>
+        </div>
+      </PageContainer>
+    </DashboardStickyHeader>
+  )
+}
+
+function CourseHeaderActions({
+  hasLinks,
+  isMobile,
+  deleteCourseOpen,
+  onDeleteCourseOpenChange,
+  onOpenEditCourse,
+  onOpenLinks,
+  onDeleteCourse,
+}: {
+  hasLinks: boolean
+  isMobile: boolean
+  deleteCourseOpen: boolean
+  onDeleteCourseOpenChange: (open: boolean) => void
+  onOpenEditCourse: () => void
+  onOpenLinks: () => void
+  onDeleteCourse: () => Promise<void>
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      {!isMobile ? (
+        <>
+          <Button variant="ghost" onClick={onOpenEditCourse} className="gap-2">
+            <HugeiconsIcon icon={Edit01Icon} size={18} />
+            Edit Course
+          </Button>
+          {hasLinks ? (
+            <Button variant="ghost" onClick={onOpenLinks} className="gap-2">
+              <HugeiconsIcon icon={Link01Icon} size={18} />
+              View Links
+            </Button>
+          ) : null}
+          <DeleteCourseDialog
+            open={deleteCourseOpen}
+            onOpenChange={onDeleteCourseOpenChange}
+            onDeleteCourse={onDeleteCourse}
+            trigger={
+              <Button variant="ghost" className="gap-2" type="button">
+                <HugeiconsIcon icon={Delete01Icon} size={18} />
+                Delete Course
+              </Button>
+            }
+          />
+        </>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" aria-label="More" />}>
+            <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onOpenEditCourse}>
+              <HugeiconsIcon icon={Edit01Icon} size={18} />
+              Edit Course
+            </DropdownMenuItem>
+            {hasLinks ? (
+              <DropdownMenuItem onClick={onOpenLinks}>
+                <HugeiconsIcon icon={Link01Icon} size={18} />
+                View Links
+              </DropdownMenuItem>
+            ) : null}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={() => onDeleteCourseOpenChange(true)}>
+              <HugeiconsIcon icon={Delete01Icon} size={18} />
+              Delete Course
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </div>
+  )
+}
+
+function DeleteCourseDialog({
+  open,
+  onOpenChange,
+  onDeleteCourse,
+  trigger,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onDeleteCourse: () => Promise<void>
+  trigger: React.ReactElement
+}) {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogTrigger render={trigger} />
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete course?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete the course. Notes will not be deleted — they will be unlinked.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogClose render={<Button variant="ghost" type="button" />}>Cancel</AlertDialogClose>
+          <Button variant="destructive" type="button" onClick={() => void onDeleteCourse()}>
+            Delete Course
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+function CourseNotesSection({
+  allNotesCount,
+  filtered,
+  visibleNotes,
+  now,
+  isMobile,
+  typeFilter,
+  sortKey,
+  flaggedOnly,
+  globalShowAnswers,
+  filtersActive,
+  typeLabel,
+  sortLabel,
+  answerVisibility,
+  loadingMore,
+  loadMoreRef,
+  onTypeChange,
+  onSortChange,
+  onToggleFlaggedOnly,
+  onToggleGlobalAnswers,
+  onOpenMobileType,
+  onOpenMobileSort,
+  onNewNote,
+  onClearFilters,
+  onEdit,
+  onViewFull,
+  onViewCode,
+  onDeleteNote,
+}: {
+  allNotesCount: number
+  filtered: { items: Note[]; hasQa: boolean }
+  visibleNotes: Note[]
+  now: Date
+  isMobile: boolean
+  typeFilter: TypeFilter
+  sortKey: SortKey
+  flaggedOnly: boolean
+  globalShowAnswers: boolean
+  filtersActive: boolean
+  typeLabel: string
+  sortLabel: string
+  answerVisibility: ReturnType<typeof useAnswerVisibility>
+  loadingMore: boolean
+  loadMoreRef: React.RefObject<HTMLDivElement | null>
+  onTypeChange: (value: TypeFilter) => void
+  onSortChange: (value: SortKey) => void
+  onToggleFlaggedOnly: () => void
+  onToggleGlobalAnswers: () => void
+  onOpenMobileType: () => void
+  onOpenMobileSort: () => void
+  onNewNote: () => void
+  onClearFilters: () => void
+  onEdit: (noteId: string) => void
+  onViewFull: (noteId: string) => void
+  onViewCode: (noteId: string) => void
+  onDeleteNote: (noteId: string) => Promise<void>
+}) {
+  return (
+    <PageContainer>
+      <div className="pt-4">
+        <div className="flex flex-col gap-3">
+          <CourseNotesToolbar
+            isMobile={isMobile}
+            typeFilter={typeFilter}
+            sortKey={sortKey}
+            flaggedOnly={flaggedOnly}
+            globalShowAnswers={globalShowAnswers}
+            hasQa={filtered.hasQa}
+            typeLabel={typeLabel}
+            sortLabel={sortLabel}
+            onTypeChange={onTypeChange}
+            onSortChange={onSortChange}
+            onToggleFlaggedOnly={onToggleFlaggedOnly}
+            onToggleGlobalAnswers={onToggleGlobalAnswers}
+            onOpenMobileType={onOpenMobileType}
+            onOpenMobileSort={onOpenMobileSort}
+          />
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.items.length === 0 ? (
+              <div className="col-span-full">
+                <EmptyState
+                  hasAnyNotes={allNotesCount > 0}
+                  hasFilters={filtersActive}
+                  onNewNote={onNewNote}
+                  onClearFilters={onClearFilters}
+                />
+              </div>
+            ) : (
+              visibleNotes.map((note) => (
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  now={now}
+                  isMobile={isMobile}
+                  showAnswer={answerVisibility.isShown(note.id)}
+                  onShowAnswerChange={(value) => answerVisibility.setShown(note.id, value)}
+                  onEdit={() => onEdit(note.id)}
+                  onViewFull={() => onViewFull(note.id)}
+                  onViewCode={() => onViewCode(note.id)}
+                  onDelete={() => void onDeleteNote(note.id)}
+                />
+              ))
+            )}
+
+            {loadingMore ? (
+              <div className="flex items-center justify-center py-6">
+                <div className="text-sm text-muted-foreground">Loading…</div>
+              </div>
+            ) : null}
+            <div ref={loadMoreRef} />
+          </div>
+        </div>
+      </div>
+    </PageContainer>
+  )
+}
+
+function CourseNotesToolbar({
+  isMobile,
+  typeFilter,
+  sortKey,
+  flaggedOnly,
+  globalShowAnswers,
+  hasQa,
+  typeLabel,
+  sortLabel,
+  onTypeChange,
+  onSortChange,
+  onToggleFlaggedOnly,
+  onToggleGlobalAnswers,
+  onOpenMobileType,
+  onOpenMobileSort,
+}: {
+  isMobile: boolean
+  typeFilter: TypeFilter
+  sortKey: SortKey
+  flaggedOnly: boolean
+  globalShowAnswers: boolean
+  hasQa: boolean
+  typeLabel: string
+  sortLabel: string
+  onTypeChange: (value: TypeFilter) => void
+  onSortChange: (value: SortKey) => void
+  onToggleFlaggedOnly: () => void
+  onToggleGlobalAnswers: () => void
+  onOpenMobileType: () => void
+  onOpenMobileSort: () => void
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        {!isMobile ? (
+          <>
+            <Select value={typeFilter} onValueChange={(v) => onTypeChange(v as TypeFilter)}>
+              <SelectTrigger className="w-40 **:data-[slot=select-icon]:hidden">
+                <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
+                  <span className="min-w-0 truncate">{typeLabel}</span>
+                  <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
+                </span>
+              </SelectTrigger>
+              <SelectPopup alignItemWithTrigger={false}>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="qa">Q&A</SelectItem>
+                <SelectItem value="freeform">Freeform</SelectItem>
+              </SelectPopup>
+            </Select>
+
+            <Select value={sortKey} onValueChange={(v) => onSortChange(v as SortKey)}>
+              <SelectTrigger className="w-44 **:data-[slot=select-icon]:hidden">
+                <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
+                  <span className="min-w-0 truncate">{sortLabel}</span>
+                  <HugeiconsIcon icon={UnfoldMoreIcon} size={18} />
+                </span>
+              </SelectTrigger>
+              <SelectPopup alignItemWithTrigger={false}>
+                <SelectItem value="last_updated">Last Updated</SelectItem>
+                <SelectItem value="date_created">Date Created</SelectItem>
+                <SelectItem value="understanding_low">Understanding (Low → High)</SelectItem>
+                <SelectItem value="understanding_high">Understanding (High → Low)</SelectItem>
+                <SelectItem value="course">Course</SelectItem>
+              </SelectPopup>
+            </Select>
+
+            <Button
+              variant={flaggedOnly ? "secondary" : "outline"}
+              size="icon"
+              aria-label={flaggedOnly ? "Show all notes" : "Show flagged notes"}
+              onClick={onToggleFlaggedOnly}
+            >
+              <HugeiconsIcon icon={Flag01Icon} size={18} color={flaggedOnly ? "var(--destructive)" : "currentColor"} />
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant={typeFilter !== "all" ? "secondary" : "outline"} onClick={onOpenMobileType}>
+              Type
+            </Button>
+            <Button
+              size="icon"
+              aria-label={flaggedOnly ? "Show all notes" : "Show flagged notes"}
+              variant={flaggedOnly ? "secondary" : "ghost"}
+              onClick={onToggleFlaggedOnly}
+            >
+              <HugeiconsIcon icon={Flag01Icon} size={18} color={flaggedOnly ? "var(--destructive)" : "currentColor"} />
+            </Button>
+            <Button variant={sortKey !== "last_updated" ? "secondary" : "outline"} onClick={onOpenMobileSort}>
+              Sort by
+            </Button>
+          </>
+        )}
+      </div>
+
+      {hasQa ? (
+        <Button variant={globalShowAnswers ? "secondary" : "outline"} onClick={onToggleGlobalAnswers}>
+          {globalShowAnswers ? "Hide All Answers" : "Show All Answers"}
+        </Button>
+      ) : null}
+    </div>
   )
 }

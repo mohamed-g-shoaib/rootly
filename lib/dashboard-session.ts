@@ -14,15 +14,6 @@ export type DashboardShellUser = {
   }
 }
 
-export const getDashboardUser = cache(async () => {
-  const supabase = await getDashboardSupabase()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  return user
-})
-
 export const getDashboardShellUser = cache(async (): Promise<DashboardShellUser | null> => {
   const supabase = await getDashboardSupabase()
   const { data, error } = await supabase.auth.getClaims()

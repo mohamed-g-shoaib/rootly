@@ -355,128 +355,254 @@ export default function NotesPage({
     return () => obs.disconnect()
   }, [filtered.items.length, loadingMore, visibleCount])
 
-  const header = (
-    <NotesHeader
-      isMobile={isMobile}
-      courses={courses}
-      filteredCount={filtered.items.length}
-      hasQa={filtered.hasQa}
-      filtersActive={filtersActive}
-      typeFilter={typeFilter}
-      courseFilter={courseFilter}
-      flaggedOnly={flaggedOnly}
-      sortKey={sortKey}
-      globalShowAnswers={globalShowAnswers}
-      onTypeChange={setTypeFilter}
-      onCourseChange={setCourseFilter}
-      onToggleFlaggedOnly={() => setFlaggedOnly((v) => !v)}
-      onSortChange={setSortKey}
-      onToggleGlobalAnswers={() =>
-        answerVisibility.setAllShown(!globalShowAnswers)
+  async function exportFilteredNotesAsPdf() {
+    setExportingFullNotes(true)
+    try {
+      const notes = await ensureNotesDetails(filtered.items.map((note) => note.id))
+      if (notes.length > 0) {
+        await exportPdf(notes)
       }
-      onNewNote={() => setCreateOpen(true)}
-      onClearFilters={clearFilters}
-      onOpenMobileType={() => setMobileTypeSheetOpen(true)}
-      onOpenMobileCourse={() => setMobileCourseSheetOpen(true)}
-      onOpenMobileSort={() => setMobileSortSheetOpen(true)}
-      onOpenMobileExport={() => setMobileExportSheetOpen(true)}
-      onExportPdf={() => {
-        void (async () => {
-          setExportingFullNotes(true)
-          try {
-            const notes = await ensureNotesDetails(
-              filtered.items.map((note) => note.id)
-            )
-            if (notes.length > 0) {
-              await exportPdf(notes)
-            }
-          } finally {
-            setExportingFullNotes(false)
-          }
-        })()
-      }}
-      onExportMarkdown={() => {
-        void (async () => {
-          setExportingFullNotes(true)
-          try {
-            const notes = await ensureNotesDetails(
-              filtered.items.map((note) => note.id)
-            )
-            if (notes.length > 0) {
-              exportNotesAsMarkdown(notes)
-            }
-          } finally {
-            setExportingFullNotes(false)
-          }
-        })()
-      }}
-      exporting={exporting || exportingFullNotes}
-    />
-  )
+    } finally {
+      setExportingFullNotes(false)
+    }
+  }
+
+  async function exportFilteredNotesAsMarkdown() {
+    setExportingFullNotes(true)
+    try {
+      const notes = await ensureNotesDetails(filtered.items.map((note) => note.id))
+      if (notes.length > 0) {
+        exportNotesAsMarkdown(notes)
+      }
+    } finally {
+      setExportingFullNotes(false)
+    }
+  }
 
   return (
     <>
-      {header}
+      <NotesHeader
+        isMobile={isMobile}
+        courses={courses}
+        filteredCount={filtered.items.length}
+        hasQa={filtered.hasQa}
+        filtersActive={filtersActive}
+        typeFilter={typeFilter}
+        courseFilter={courseFilter}
+        flaggedOnly={flaggedOnly}
+        sortKey={sortKey}
+        globalShowAnswers={globalShowAnswers}
+        onTypeChange={setTypeFilter}
+        onCourseChange={setCourseFilter}
+        onToggleFlaggedOnly={() => setFlaggedOnly((v) => !v)}
+        onSortChange={setSortKey}
+        onToggleGlobalAnswers={() => answerVisibility.setAllShown(!globalShowAnswers)}
+        onNewNote={() => setCreateOpen(true)}
+        onClearFilters={clearFilters}
+        onOpenMobileType={() => setMobileTypeSheetOpen(true)}
+        onOpenMobileCourse={() => setMobileCourseSheetOpen(true)}
+        onOpenMobileSort={() => setMobileSortSheetOpen(true)}
+        onOpenMobileExport={() => setMobileExportSheetOpen(true)}
+        onExportPdf={() => {
+          void exportFilteredNotesAsPdf()
+        }}
+        onExportMarkdown={() => {
+          void exportFilteredNotesAsMarkdown()
+        }}
+        exporting={exporting || exportingFullNotes}
+      />
 
-      <PageContainer>
-        <div className="pt-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.items.length === 0 ? (
-              <div className="col-span-full">
-                <EmptyState
-                  hasAnyNotes={allNotes.length > 0}
-                  hasFilters={filtersActive}
-                  onNewNote={() => setCreateOpen(true)}
-                  onClearFilters={clearFilters}
-                />
-              </div>
-            ) : (
-              visibleNotes.map((note) => (
-                <NoteCard
-                  key={note.id}
-                  note={note}
-                  now={now}
-                  isMobile={isMobile}
-                  showAnswer={answerVisibility.isShown(note.id)}
-                  onShowAnswerChange={(value) =>
-                    answerVisibility.setShown(note.id, value)
-                  }
-                  onEdit={() => void openEdit(note.id)}
-                  onViewFull={() => void openView(note.id)}
-                  onViewCode={() => void openCode(note.id)}
-                  onDelete={() => void onDeleteNote(note.id)}
-                />
-              ))
-            )}
+      <NotesGridSection
+        allNotesCount={allNotes.length}
+        filtersActive={filtersActive}
+        filteredItemsCount={filtered.items.length}
+        visibleNotes={visibleNotes}
+        now={now}
+        isMobile={isMobile}
+        answerVisibility={answerVisibility}
+        loadingMore={loadingMore}
+        loadMoreRef={loadMoreRef}
+        onNewNote={() => setCreateOpen(true)}
+        onClearFilters={clearFilters}
+        onEdit={openEdit}
+        onViewFull={openView}
+        onViewCode={openCode}
+        onDelete={onDeleteNote}
+      />
 
-            {loadingMore ? (
-              <div className="flex items-center justify-center py-6">
-                <Spinner />
-              </div>
-            ) : null}
+      <NotesFilterSheets
+        courses={courses}
+        typeFilter={typeFilter}
+        courseFilter={courseFilter}
+        sortKey={sortKey}
+        mobileTypeSheetOpen={mobileTypeSheetOpen}
+        mobileCourseSheetOpen={mobileCourseSheetOpen}
+        mobileSortSheetOpen={mobileSortSheetOpen}
+        onTypeOpenChange={setMobileTypeSheetOpen}
+        onCourseOpenChange={setMobileCourseSheetOpen}
+        onSortOpenChange={setMobileSortSheetOpen}
+        onTypeChange={setTypeFilter}
+        onCourseChange={setCourseFilter}
+        onSortChange={setSortKey}
+      />
 
-            <div ref={loadMoreRef} />
-          </div>
+      <NotesOverlaySheets
+        activeNote={activeNote}
+        activeNoteId={activeNoteId}
+        activeNoteLoading={activeNoteLoading}
+        courses={courses}
+        isMobile={isMobile}
+        createOpen={createOpen}
+        editOpen={editOpen}
+        viewOpen={viewOpen}
+        codeOpen={codeOpen}
+        mobileExportSheetOpen={mobileExportSheetOpen}
+        exporting={exporting || exportingFullNotes}
+        onCreateOpenChange={setCreateOpen}
+        onEditOpenChange={setEditOpen}
+        onViewOpenChange={setViewOpen}
+        onCodeOpenChange={setCodeOpen}
+        onMobileExportOpenChange={setMobileExportSheetOpen}
+        onOpenEdit={openEdit}
+        onCreateNote={onCreateNote}
+        onUpdateNote={onUpdateNote}
+        onExportPdf={async () => {
+          await exportFilteredNotesAsPdf()
+          setMobileExportSheetOpen(false)
+        }}
+        onExportMarkdown={async () => {
+          await exportFilteredNotesAsMarkdown()
+          setMobileExportSheetOpen(false)
+        }}
+      />
+    </>
+  )
+}
+
+function NotesGridSection({
+  allNotesCount,
+  filtersActive,
+  filteredItemsCount,
+  visibleNotes,
+  now,
+  isMobile,
+  answerVisibility,
+  loadingMore,
+  loadMoreRef,
+  onNewNote,
+  onClearFilters,
+  onEdit,
+  onViewFull,
+  onViewCode,
+  onDelete,
+}: {
+  allNotesCount: number
+  filtersActive: boolean
+  filteredItemsCount: number
+  visibleNotes: Note[]
+  now: Date
+  isMobile: boolean
+  answerVisibility: ReturnType<typeof useAnswerVisibility>
+  loadingMore: boolean
+  loadMoreRef: React.RefObject<HTMLDivElement | null>
+  onNewNote: () => void
+  onClearFilters: () => void
+  onEdit: (noteId: string) => Promise<void>
+  onViewFull: (noteId: string) => Promise<void>
+  onViewCode: (noteId: string) => Promise<void>
+  onDelete: (noteId: string) => Promise<void>
+}) {
+  return (
+    <PageContainer>
+      <div className="pt-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredItemsCount === 0 ? (
+            <div className="col-span-full">
+              <EmptyState
+                hasAnyNotes={allNotesCount > 0}
+                hasFilters={filtersActive}
+                onNewNote={onNewNote}
+                onClearFilters={onClearFilters}
+              />
+            </div>
+          ) : (
+            visibleNotes.map((note) => (
+              <NoteCard
+                key={note.id}
+                note={note}
+                now={now}
+                isMobile={isMobile}
+                showAnswer={answerVisibility.isShown(note.id)}
+                onShowAnswerChange={(value) => answerVisibility.setShown(note.id, value)}
+                onEdit={() => void onEdit(note.id)}
+                onViewFull={() => void onViewFull(note.id)}
+                onViewCode={() => void onViewCode(note.id)}
+                onDelete={() => void onDelete(note.id)}
+              />
+            ))
+          )}
+
+          {loadingMore ? (
+            <div className="flex items-center justify-center py-6">
+              <Spinner />
+            </div>
+          ) : null}
+
+          <div ref={loadMoreRef} />
         </div>
-      </PageContainer>
+      </div>
+    </PageContainer>
+  )
+}
 
+function NotesFilterSheets({
+  courses,
+  typeFilter,
+  courseFilter,
+  sortKey,
+  mobileTypeSheetOpen,
+  mobileCourseSheetOpen,
+  mobileSortSheetOpen,
+  onTypeOpenChange,
+  onCourseOpenChange,
+  onSortOpenChange,
+  onTypeChange,
+  onCourseChange,
+  onSortChange,
+}: {
+  courses: { id: string; title: string }[]
+  typeFilter: TypeFilter
+  courseFilter: CourseFilter
+  sortKey: SortKey
+  mobileTypeSheetOpen: boolean
+  mobileCourseSheetOpen: boolean
+  mobileSortSheetOpen: boolean
+  onTypeOpenChange: (open: boolean) => void
+  onCourseOpenChange: (open: boolean) => void
+  onSortOpenChange: (open: boolean) => void
+  onTypeChange: (value: TypeFilter) => void
+  onCourseChange: (value: CourseFilter) => void
+  onSortChange: (value: SortKey) => void
+}) {
+  return (
+    <>
       <FilterSheet
         title="Type"
         open={mobileTypeSheetOpen}
-        onOpenChange={setMobileTypeSheetOpen}
+        onOpenChange={onTypeOpenChange}
         value={typeFilter}
         options={[
           { label: "All Types", value: "all" },
           { label: "Q&A", value: "qa" },
           { label: "Freeform", value: "freeform" },
         ]}
-        onValueChange={(v) => setTypeFilter(v as TypeFilter)}
+        onValueChange={(v) => onTypeChange(v as TypeFilter)}
       />
 
       <FilterSheet
         title="Course"
         open={mobileCourseSheetOpen}
-        onOpenChange={setMobileCourseSheetOpen}
+        onOpenChange={onCourseOpenChange}
         value={courseFilter}
         options={[
           { label: "All Courses", value: "all" },
@@ -485,13 +611,13 @@ export default function NotesPage({
             .toSorted((a, b) => a.title.localeCompare(b.title))
             .map((c) => ({ label: c.title, value: c.id })),
         ]}
-        onValueChange={(v) => setCourseFilter(v as CourseFilter)}
+        onValueChange={(v) => onCourseChange(v as CourseFilter)}
       />
 
       <FilterSheet
         title="Sort by"
         open={mobileSortSheetOpen}
-        onOpenChange={setMobileSortSheetOpen}
+        onOpenChange={onSortOpenChange}
         value={sortKey}
         options={[
           { label: "Last Updated", value: "last_updated" },
@@ -500,66 +626,92 @@ export default function NotesPage({
           { label: "Understanding (High → Low)", value: "understanding_high" },
           { label: "Course", value: "course" },
         ]}
-        onValueChange={(v) => setSortKey(v as SortKey)}
+        onValueChange={(v) => onSortChange(v as SortKey)}
       />
+    </>
+  )
+}
 
+function NotesOverlaySheets({
+  activeNote,
+  activeNoteId,
+  activeNoteLoading,
+  courses,
+  isMobile,
+  createOpen,
+  editOpen,
+  viewOpen,
+  codeOpen,
+  mobileExportSheetOpen,
+  exporting,
+  onCreateOpenChange,
+  onEditOpenChange,
+  onViewOpenChange,
+  onCodeOpenChange,
+  onMobileExportOpenChange,
+  onOpenEdit,
+  onCreateNote,
+  onUpdateNote,
+  onExportPdf,
+  onExportMarkdown,
+}: {
+  activeNote: Note | null
+  activeNoteId: string | null
+  activeNoteLoading: boolean
+  courses: { id: string; title: string }[]
+  isMobile: boolean
+  createOpen: boolean
+  editOpen: boolean
+  viewOpen: boolean
+  codeOpen: boolean
+  mobileExportSheetOpen: boolean
+  exporting: boolean
+  onCreateOpenChange: (open: boolean) => void
+  onEditOpenChange: (open: boolean) => void
+  onViewOpenChange: (open: boolean) => void
+  onCodeOpenChange: (open: boolean) => void
+  onMobileExportOpenChange: (open: boolean) => void
+  onOpenEdit: (noteId: string) => Promise<void>
+  onCreateNote: (note: Note) => Promise<void>
+  onUpdateNote: (note: Note) => Promise<void>
+  onExportPdf: () => Promise<void>
+  onExportMarkdown: () => Promise<void>
+}) {
+  return (
+    <>
       <ExportSheet
         open={mobileExportSheetOpen}
-        onOpenChange={setMobileExportSheetOpen}
-        exporting={exporting || exportingFullNotes}
-        onExportPdf={async () => {
-          setExportingFullNotes(true)
-          try {
-            const notes = await ensureNotesDetails(
-              filtered.items.map((note) => note.id)
-            )
-            if (notes.length > 0) {
-              await exportPdf(notes)
-            }
-          } finally {
-            setExportingFullNotes(false)
-          }
-          setMobileExportSheetOpen(false)
+        onOpenChange={onMobileExportOpenChange}
+        exporting={exporting}
+        onExportPdf={() => {
+          void onExportPdf()
         }}
         onExportMarkdown={() => {
-          void (async () => {
-            setExportingFullNotes(true)
-            try {
-              const notes = await ensureNotesDetails(
-                filtered.items.map((note) => note.id)
-              )
-              if (notes.length > 0) {
-                exportNotesAsMarkdown(notes)
-              }
-            } finally {
-              setExportingFullNotes(false)
-            }
-          })()
-          setMobileExportSheetOpen(false)
+          void onExportMarkdown()
         }}
       />
 
       <NoteViewerSheet
         note={activeNote}
         open={viewOpen}
-        onOpenChange={setViewOpen}
+        onOpenChange={onViewOpenChange}
         isMobile={isMobile}
         loading={activeNoteLoading}
         onEdit={() => {
-          setViewOpen(false)
-          if (activeNoteId) void openEdit(activeNoteId)
+          onViewOpenChange(false)
+          if (activeNoteId) void onOpenEdit(activeNoteId)
         }}
       />
 
       <CodeViewerSheet
         note={activeNote}
         open={codeOpen}
-        onOpenChange={setCodeOpen}
+        onOpenChange={onCodeOpenChange}
         isMobile={isMobile}
         loading={activeNoteLoading}
         onEdit={() => {
-          setCodeOpen(false)
-          if (activeNoteId) void openEdit(activeNoteId)
+          onCodeOpenChange(false)
+          if (activeNoteId) void onOpenEdit(activeNoteId)
         }}
       />
 
@@ -568,7 +720,7 @@ export default function NotesPage({
         note={null}
         courses={courses}
         open={createOpen}
-        onOpenChange={setCreateOpen}
+        onOpenChange={onCreateOpenChange}
         isMobile={isMobile}
         onSave={(next) => {
           void onCreateNote(next)
@@ -580,7 +732,7 @@ export default function NotesPage({
         note={activeNote}
         courses={courses}
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={onEditOpenChange}
         isMobile={isMobile}
         loading={activeNoteLoading}
         onSave={(next) => {
