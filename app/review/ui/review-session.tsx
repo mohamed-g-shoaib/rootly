@@ -111,7 +111,7 @@ export function ReviewSession({
       <div className="mx-auto flex w-full max-w-3xl flex-col justify-center px-4 py-8 lg:px-6">
         <Card className="p-5">
           <div className="flex flex-col gap-4">
-            <div className="text-lg font-medium">{current.question}</div>
+            <div className="text-lg font-medium">{current.question ?? ""}</div>
 
             {current.courseTitle ? (
               <div className="text-sm text-muted-foreground">
@@ -126,7 +126,7 @@ export function ReviewSession({
             ) : (
               <>
                 <div className="border-t pt-4 text-sm whitespace-pre-wrap text-muted-foreground">
-                  {current.answer}
+                  {current.answer ?? ""}
                 </div>
 
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">

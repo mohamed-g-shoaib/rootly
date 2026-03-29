@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 
-import type { Note } from "./notes-model"
+import { buildNotePreview, type Note } from "./notes-model"
 
 type DbNoteRow = {
   id: string
@@ -34,14 +34,21 @@ function fromDb(row: DbNoteRow): Note {
     courseId: row.course_id,
     courseTitle: getCourseTitle(row.courses),
     question: row.question,
+    previewText: buildNotePreview({
+      type: row.type,
+      answer: row.answer,
+      body: row.body,
+    }),
     answer: row.answer,
     body: row.body,
     understandingLevel: row.understanding_level,
     flag: row.flag,
+    hasCodeSnippet: Boolean(row.code_snippet),
     codeSnippet: row.code_snippet,
     codeLanguage: row.code_language,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    detailsLoaded: true,
   }
 }
 
@@ -176,4 +183,69 @@ export async function deleteNote({
   }
 
   return { success: true, data: fromDb(data as DbNoteRow) }
+}
+
+export async function getNote({
+  noteId,
+  userId,
+}: {
+  noteId: string
+  userId: string
+}): Promise<{ success: true; data: Note } | { success: false; error: string }> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from("notes")
+    .select(
+      "id,user_id,type,course_id,question,answer,body,understanding_level,flag,code_snippet,code_language,created_at,updated_at,courses(title)"
+    )
+    .eq("id", noteId)
+    .eq("user_id", userId)
+    .single()
+
+  if (error || !data) {
+    return { success: false, error: error?.message ?? "Failed to load note" }
+  }
+
+  return { success: true, data: fromDb(data as DbNoteRow) }
+}
+
+export async function getNotes({
+  noteIds,
+  userId,
+}: {
+  noteIds: string[]
+  userId: string
+}): Promise<{ success: true; data: Note[] } | { success: false; error: string }> {
+  if (noteIds.length === 0) {
+    return { success: true, data: [] }
+  }
+
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from("notes")
+    .select(
+      "id,user_id,type,course_id,question,answer,body,understanding_level,flag,code_snippet,code_language,created_at,updated_at,courses(title)"
+    )
+    .eq("user_id", userId)
+    .in("id", noteIds)
+
+  if (error || !data) {
+    return { success: false, error: error?.message ?? "Failed to load notes" }
+  }
+
+  const notesById = new Map(
+    (data as DbNoteRow[]).map((row) => {
+      const note = fromDb(row)
+      return [note.id, note] as const
+    })
+  )
+
+  return {
+    success: true,
+    data: noteIds
+      .map((noteId) => notesById.get(noteId))
+      .filter((note): note is Note => note != null),
+  }
 }

@@ -175,7 +175,7 @@ export function NoteCard({
               <div className="flex min-h-0 flex-1 items-start overflow-hidden">
                 {showAnswer ? (
                   <NoteCardExcerpt
-                    text={note.answer ?? ""}
+                    text={note.previewText}
                     isMobile={isMobile}
                     onOpen={onViewFull}
                     previewTitle={note.question ?? ""}
@@ -192,7 +192,7 @@ export function NoteCard({
               </div>
             ) : (
               <NoteCardExcerpt
-                text={note.body ?? ""}
+                text={note.previewText}
                 isMobile={isMobile}
                 onOpen={onViewFull}
               />
@@ -201,7 +201,7 @@ export function NoteCard({
 
           <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
             <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
-              {!readOnly && note.codeSnippet ? (
+              {!readOnly && note.hasCodeSnippet ? (
                 <Badge
                   variant="outline"
                   className="shrink-0 cursor-pointer"
@@ -269,7 +269,7 @@ export function NoteCard({
                       <HugeiconsIcon icon={Note01Icon} size={18} />
                       View full note
                     </DropdownMenuItem>
-                    {note.codeSnippet ? (
+                    {note.hasCodeSnippet ? (
                       <DropdownMenuItem onClick={onViewCode}>
                         <HugeiconsIcon icon={CodeIcon} size={18} />
                         View code

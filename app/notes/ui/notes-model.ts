@@ -14,14 +14,17 @@ export type Note = {
   courseId: string | null
   courseTitle: string | null
   question: string | null
+  previewText: string
   answer: string | null
   body: string | null
   understandingLevel: UnderstandingLevel | null
   flag: boolean
+  hasCodeSnippet: boolean
   codeSnippet: string | null
   codeLanguage: string
   createdAt: string
   updatedAt: string
+  detailsLoaded: boolean
 }
 
 export type SortKey =
@@ -57,4 +60,17 @@ export function toCodeBadgeLabel(language: string) {
   const trimmed = language.trim()
   if (!trimmed || trimmed.toLowerCase() === "text") return "Code"
   return trimmed
+}
+
+export function buildNotePreview({
+  type,
+  answer,
+  body,
+}: {
+  type: NoteType
+  answer: string | null
+  body: string | null
+}) {
+  const source = type === "qa" ? answer : body
+  return (source ?? "").trim().slice(0, 280)
 }

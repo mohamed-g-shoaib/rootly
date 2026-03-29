@@ -3,10 +3,11 @@ export type ReviewNote = {
   type: "qa"
   courseId: string | null
   courseTitle: string | null
-  question: string
-  answer: string
+  question: string | null
+  answer: string | null
   understandingLevel: 1 | 2 | 3
   flag: boolean
+  detailsLoaded: boolean
 }
 
 export type ReviewSession = {

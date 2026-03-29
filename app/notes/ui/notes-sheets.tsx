@@ -37,6 +37,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { SelectButton } from "@/components/ui/select"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
 
 import { CodeBlock } from "@/components/ui/code-block"
 
@@ -62,6 +63,7 @@ type NoteEditorSheetProps = {
   onOpenChange: (open: boolean) => void
   isMobile: boolean
   lockedCourse?: { id: string; title: string }
+  loading?: boolean
   onSave?: (note: Note) => void
 }
 
@@ -93,18 +95,20 @@ export function NoteViewerSheet({
   open,
   onOpenChange,
   isMobile,
+  loading,
   onEdit,
 }: {
   note: Note | null
   open: boolean
   onOpenChange: (open: boolean) => void
   isMobile: boolean
+  loading: boolean
   onEdit: () => void
 }) {
   const title = note?.body
     ? note.body.split(" ").slice(0, 6).join(" ") +
       (note.body.split(" ").length > 6 ? "..." : "")
-    : "Note"
+    : note?.question ?? "Note"
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -114,7 +118,11 @@ export function NoteViewerSheet({
             <SheetTitle>{title}</SheetTitle>
           </SheetHeader>
           <SheetPanel className="px-4 pb-5">
-            {note ? (
+            {loading ? (
+              <div className="flex min-h-40 items-center justify-center">
+                <Spinner />
+              </div>
+            ) : note ? (
               <div className="flex flex-col gap-4">
                 <div className="text-sm whitespace-pre-wrap text-muted-foreground">
                   {note.body ?? note.answer ?? ""}
@@ -147,12 +155,14 @@ export function CodeViewerSheet({
   open,
   onOpenChange,
   isMobile,
+  loading,
   onEdit,
 }: {
   note: Note | null
   open: boolean
   onOpenChange: (open: boolean) => void
   isMobile: boolean
+  loading: boolean
   onEdit: () => void
 }) {
   const title = note ? toCodeBadgeLabel(note.codeLanguage) : "Code Snippet"
@@ -165,7 +175,11 @@ export function CodeViewerSheet({
             <SheetTitle>{title}</SheetTitle>
           </SheetHeader>
           <SheetPanel className="min-h-0 flex-1 px-4 pb-5">
-            {note?.codeSnippet ? (
+            {loading ? (
+              <div className="flex min-h-40 items-center justify-center">
+                <Spinner />
+              </div>
+            ) : note?.codeSnippet ? (
               <div className="flex min-h-0 flex-col gap-4">
                 <ScrollArea
                   className="max-h-[calc(100svh-14rem)]"
@@ -203,6 +217,7 @@ export function NoteEditorSheet({
   onOpenChange,
   isMobile,
   lockedCourse,
+  loading = false,
   onSave,
 }: NoteEditorSheetProps) {
   const editorKey = mode === "edit" ? `edit-${note?.id ?? "missing"}` : "create"
@@ -210,16 +225,36 @@ export function NoteEditorSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       {open ? (
-        <NoteEditorSheetBody
-          key={`${editorKey}-${lockedCourse?.id ?? "unlocked"}`}
-          mode={mode}
-          note={note}
-          courses={courses}
-          onOpenChange={onOpenChange}
-          isMobile={isMobile}
-          lockedCourse={lockedCourse}
-          onSave={onSave}
-        />
+        loading ? (
+          <SheetPopup side={isMobile ? "bottom" : "right"} variant="inset">
+            <Form className="h-full gap-0">
+              <SheetHeader>
+                <SheetTitle>
+                  {mode === "create" ? "New Note" : "Edit Note"}
+                </SheetTitle>
+              </SheetHeader>
+              <SheetPanel className="flex min-h-40 items-center justify-center px-4 pb-5">
+                <Spinner />
+              </SheetPanel>
+              <SheetFooter>
+                <SheetClose render={<Button variant="ghost" />}>
+                  Cancel
+                </SheetClose>
+              </SheetFooter>
+            </Form>
+          </SheetPopup>
+        ) : (
+          <NoteEditorSheetBody
+            key={`${editorKey}-${lockedCourse?.id ?? "unlocked"}`}
+            mode={mode}
+            note={note}
+            courses={courses}
+            onOpenChange={onOpenChange}
+            isMobile={isMobile}
+            lockedCourse={lockedCourse}
+            onSave={onSave}
+          />
+        )
       ) : null}
     </Sheet>
   )
@@ -322,14 +357,17 @@ function NoteEditorSheetBody({
       courseId: effectiveCourseId,
       courseTitle: effectiveCourseTitle,
       question: q ? q : null,
+      previewText: type === "qa" ? a : b,
       answer: a ? a : null,
       body: b ? b : null,
       understandingLevel: type === "qa" ? understandingLevel : null,
       flag: flagged,
+      hasCodeSnippet: codeEnabled ? Boolean(codeValue.trim()) : false,
       codeSnippet: codeEnabled ? (codeValue.trim() ? codeValue : null) : null,
       codeLanguage: codeEnabled ? codeLanguage : "text",
       createdAt,
       updatedAt: now,
+      detailsLoaded: true,
     }
 
     onSave(next)

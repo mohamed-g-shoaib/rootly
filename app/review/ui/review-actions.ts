@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 
-import type { ReviewSession } from "./review-model"
+import type { ReviewNote, ReviewSession } from "./review-model"
 
 type DbReviewSessionRow = {
   id: string
@@ -146,4 +146,83 @@ export async function deleteReviewSession({
   }
 
   return { success: true, data: fromDb(data as DbReviewSessionRow) }
+}
+
+type DbReviewNoteRow = {
+  id: string
+  type: "qa"
+  course_id: string | null
+  question: string | null
+  answer: string | null
+  understanding_level: 1 | 2 | 3 | null
+  flag: boolean
+  courses: Array<{ title: string }> | { title: string } | null
+}
+
+function reviewNoteFromDb(row: DbReviewNoteRow): ReviewNote | null {
+  if (!row.question || !row.answer || row.understanding_level == null) {
+    return null
+  }
+
+  const courseTitle = Array.isArray(row.courses)
+    ? (row.courses[0]?.title ?? null)
+    : (row.courses?.title ?? null)
+
+  return {
+    id: row.id,
+    type: "qa",
+    courseId: row.course_id,
+    courseTitle,
+    question: row.question,
+    answer: row.answer,
+    understandingLevel: row.understanding_level,
+    flag: row.flag,
+    detailsLoaded: true,
+  }
+}
+
+export async function getReviewNotes({
+  noteIds,
+  userId,
+}: {
+  noteIds: string[]
+  userId: string
+}): Promise<
+  { success: true; data: ReviewNote[] } | { success: false; error: string }
+> {
+  if (noteIds.length === 0) {
+    return { success: true, data: [] }
+  }
+
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from("notes")
+    .select(
+      "id,type,course_id,question,answer,understanding_level,flag,courses(title)"
+    )
+    .eq("user_id", userId)
+    .eq("type", "qa")
+    .in("id", noteIds)
+
+  if (error || !data) {
+    return {
+      success: false,
+      error: error?.message ?? "Failed to load review notes",
+    }
+  }
+
+  const byId = new Map(
+    (data as DbReviewNoteRow[])
+      .map((row) => reviewNoteFromDb(row))
+      .filter((note): note is ReviewNote => note != null)
+      .map((note) => [note.id, note] as const)
+  )
+
+  return {
+    success: true,
+    data: noteIds
+      .map((noteId) => byId.get(noteId))
+      .filter((note): note is ReviewNote => note != null),
+  }
 }

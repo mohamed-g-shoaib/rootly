@@ -107,20 +107,21 @@ async function createPdfDocument(notes: Note[], exportDate: Date) {
 }
 
 export function useExportPdf(notes: Note[]): {
-  exportPdf: () => Promise<void>
+  exportPdf: (overrideNotes?: Note[]) => Promise<void>
   exporting: boolean
 } {
   const [exporting, setExporting] = React.useState(false)
 
-  const exportPdf = React.useCallback(async () => {
+  const exportPdf = React.useCallback(async (overrideNotes?: Note[]) => {
     if (exporting) return
     setExporting(true)
 
     try {
+      const notesToExport = overrideNotes ?? notes
       const exportDate = new Date()
       const [{ pdf }, pdfDocument] = await Promise.all([
         import("@react-pdf/renderer"),
-        createPdfDocument(notes, exportDate),
+        createPdfDocument(notesToExport, exportDate),
       ])
       const instance = pdf(pdfDocument)
 
