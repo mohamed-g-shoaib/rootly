@@ -3,13 +3,14 @@
 import * as React from "react"
 import Link from "next/link"
 
-import { ArrowRight02Icon, Github01Icon } from "@hugeicons/core-free-icons"
+import { Github01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import RootlyLogo from "@/components/rootly-logo"
 import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
 import { cn } from "@/lib/utils"
+import { MarketingPrimaryCta } from "./marketing-primary-cta"
 
 export default function HomepageNav() {
   const [scrolled, setScrolled] = React.useState(false)
@@ -62,16 +63,7 @@ export default function HomepageNav() {
               Star on GitHub
             </Button>
 
-            <Button render={<Link href="/login" />} className="group">
-              <span className="inline-flex items-center gap-2">
-                Get started
-                <HugeiconsIcon
-                  icon={ArrowRight02Icon}
-                  size={18}
-                  className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
-                />
-              </span>
-            </Button>
+            <MarketingPrimaryCta />
           </div>
         </div>
       </PageContainer>
