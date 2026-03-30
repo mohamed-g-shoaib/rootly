@@ -11,9 +11,10 @@ export const contentType = socialImageContentType
 
 export default function TwitterImage() {
   return createRootlySocialImage({
-    eyebrow: "Developer learning notebook",
-    title: "Your tutorial tabs are not a learning system.",
+    eyebrow: "Privacy Policy",
+    title: "How Rootly handles your data.",
     description:
-      "Capture notes, track progress, and review what you learn in one deliberate system built for self-taught developers.",
+      "Read how account data, product content, and your basic information choices are handled in Rootly.",
+    url: "rootly.vercel.app/privacy",
   })
 }

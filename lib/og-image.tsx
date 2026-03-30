@@ -1,5 +1,9 @@
+import * as React from "react"
+
 import { ImageResponse } from "next/og"
-import { absoluteUrl, siteConfig } from "./site-config"
+
+import RootlyLogo from "@/components/rootly-logo"
+import { absoluteUrl, siteConfig } from "@/lib/site-config"
 
 export const socialImageAlt = siteConfig.ogAlt
 export const socialImageSize = {
@@ -8,42 +12,64 @@ export const socialImageSize = {
 } as const
 export const socialImageContentType = "image/png"
 
-const brandMark = (
-  <div
-    style={{
-      alignItems: "center",
-      border: "1px solid rgba(15, 23, 42, 0.08)",
-      borderRadius: 22,
-      display: "flex",
-      gap: 10,
-      padding: "16px 20px",
-    }}
-  >
-    <div
-      style={{
-        color: "#0f172a",
-        display: "flex",
-        fontSize: 30,
-        fontWeight: 700,
-        letterSpacing: "-0.04em",
-      }}
-    >
-      Rootly
-    </div>
-  </div>
-)
+type RootlySocialImageOptions = {
+  description: string
+  eyebrow?: string
+  title: string
+  url?: string
+}
 
-function Tag({ children }: { children: string }) {
+function LogoLockup() {
   return (
     <div
       style={{
         alignItems: "center",
-        background: "#ffffff",
-        border: "1px solid rgba(15, 23, 42, 0.08)",
-        borderRadius: 999,
-        color: "#334155",
         display: "flex",
-        fontSize: 18,
+        gap: 18,
+      }}
+    >
+      <div
+        style={{
+          alignItems: "center",
+          background: "#f2dfd5",
+          border: "1px solid rgba(110, 68, 42, 0.14)",
+          borderRadius: 28,
+          color: "#7a4230",
+          display: "flex",
+          height: 72,
+          justifyContent: "center",
+          width: 72,
+        }}
+      >
+        <RootlyLogo width={38} height={38} />
+      </div>
+      <div
+        style={{
+          color: "#6c3527",
+          display: "flex",
+          fontSize: 38,
+          fontWeight: 700,
+          letterSpacing: "-0.05em",
+        }}
+      >
+        Rootly
+      </div>
+    </div>
+  )
+}
+
+function Eyebrow({ children }: { children: string }) {
+  return (
+    <div
+      style={{
+        alignItems: "center",
+        alignSelf: "flex-start",
+        background: "#f5ebe5",
+        border: "1px solid rgba(110, 68, 42, 0.12)",
+        borderRadius: 999,
+        color: "#8b4d39",
+        display: "flex",
+        fontSize: 20,
         fontWeight: 600,
         padding: "10px 16px",
       }}
@@ -53,214 +79,92 @@ function Tag({ children }: { children: string }) {
   )
 }
 
-export function createRootlySocialImage() {
+export function createRootlySocialImage({
+  description,
+  eyebrow = "Developer learning notebook",
+  title,
+  url = absoluteUrl("/"),
+}: RootlySocialImageOptions) {
   return new ImageResponse(
     <div
       style={{
-        background: "linear-gradient(180deg, #fcfcfb 0%, #f2f4f7 100%)",
-        color: "#0f172a",
+        background:
+          "linear-gradient(180deg, #f8f1eb 0%, #efe2d8 100%)",
+        color: "#3c241b",
         display: "flex",
-        flexDirection: "column",
         fontFamily:
           'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         height: "100%",
-        padding: 42,
+        padding: 34,
         width: "100%",
       }}
     >
       <div
         style={{
-          background: "rgba(255, 255, 255, 0.9)",
-          border: "1px solid rgba(15, 23, 42, 0.08)",
-          borderRadius: 36,
-          boxShadow: "0 18px 60px rgba(15, 23, 42, 0.08)",
+          background: "rgba(255, 251, 247, 0.9)",
+          border: "1px solid rgba(110, 68, 42, 0.12)",
+          borderRadius: 40,
+          boxShadow: "0 24px 60px rgba(110, 68, 42, 0.08)",
           display: "flex",
           flex: 1,
+          flexDirection: "column",
+          justifyContent: "space-between",
           overflow: "hidden",
-          padding: 28,
+          padding: 46,
+          position: "relative",
         }}
       >
         <div
           style={{
-            borderRight: "1px solid rgba(15, 23, 42, 0.08)",
             display: "flex",
-            flex: 1.12,
             flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "8px 30px 8px 4px",
+            gap: 28,
+            position: "relative",
           }}
         >
+          <LogoLockup />
+          <Eyebrow>{eyebrow}</Eyebrow>
           <div
             style={{
+              color: "#5a2d21",
               display: "flex",
-              flexDirection: "column",
-              gap: 26,
+              fontSize: 72,
+              fontWeight: 800,
+              letterSpacing: "-0.07em",
+              lineHeight: 1.02,
+              maxWidth: 920,
+              textWrap: "balance",
             }}
           >
-            {brandMark}
-
-            <div
-              style={{
-                alignItems: "center",
-                background: "rgba(15, 23, 42, 0.06)",
-                borderRadius: 999,
-                color: "#334155",
-                display: "flex",
-                fontSize: 20,
-                fontWeight: 600,
-                padding: "10px 16px",
-                alignSelf: "flex-start",
-              }}
-            >
-              Built for self-taught developers
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 16,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  fontSize: 64,
-                  fontWeight: 800,
-                  letterSpacing: "-0.06em",
-                  lineHeight: 1.04,
-                }}
-              >
-                Your tutorial tabs are not a learning system.
-              </div>
-              <div
-                style={{
-                  color: "#475569",
-                  display: "flex",
-                  fontSize: 26,
-                  lineHeight: 1.35,
-                  maxWidth: 520,
-                }}
-              >
-                Capture notes, track progress, and review what you learn in one
-                place built for deliberate study.
-              </div>
-            </div>
+            {title}
           </div>
-
           <div
             style={{
+              color: "#7b5b4c",
               display: "flex",
-              flexDirection: "column",
-              gap: 18,
+              fontSize: 28,
+              lineHeight: 1.35,
+              maxWidth: 860,
+              textWrap: "balance",
             }}
           >
-            <div style={{ display: "flex", gap: 12 }}>
-              <Tag>Capture</Tag>
-              <Tag>Track</Tag>
-              <Tag>Review</Tag>
-            </div>
-            <div
-              style={{
-                color: "#64748b",
-                display: "flex",
-                fontSize: 20,
-              }}
-            >
-              {absoluteUrl("/")}
-            </div>
+            {description}
           </div>
         </div>
 
         <div
           style={{
+            alignItems: "center",
+            color: "#956f58",
             display: "flex",
-            flex: 0.88,
-            flexDirection: "column",
-            gap: 18,
-            padding: "8px 0 8px 30px",
+            fontSize: 22,
+            fontWeight: 500,
+            justifyContent: "space-between",
+            position: "relative",
           }}
         >
-          <div
-            style={{
-              background: "#ffffff",
-              border: "1px solid rgba(15, 23, 42, 0.08)",
-              borderRadius: 28,
-              display: "flex",
-              flexDirection: "column",
-              gap: 16,
-              justifyContent: "space-between",
-              minHeight: 0,
-              flex: 1,
-              padding: 24,
-            }}
-          >
-            <div
-              style={{
-                alignItems: "center",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <div
-                style={{
-                  alignItems: "center",
-                  background: "rgba(59, 130, 246, 0.08)",
-                  borderRadius: 999,
-                  color: "#1d4ed8",
-                  display: "flex",
-                  fontSize: 20,
-                  fontWeight: 700,
-                  padding: "8px 14px",
-                }}
-              >
-                Getting It
-              </div>
-              <div
-                style={{
-                  color: "#64748b",
-                  display: "flex",
-                  fontSize: 18,
-                }}
-              >
-                Advanced React Patterns
-              </div>
-            </div>
-
-            <div
-              style={{
-                color: "#0f172a",
-                display: "flex",
-                fontSize: 28,
-                fontWeight: 700,
-                letterSpacing: "-0.04em",
-                lineHeight: 1.2,
-              }}
-            >
-              What problem does useMemo actually solve?
-            </div>
-
-            <div
-              style={{
-                color: "#475569",
-                display: "flex",
-                fontSize: 20,
-                lineHeight: 1.35,
-              }}
-            >
-              It gives expensive work a stable home, so rerenders stay easier to
-              reason about.
-            </div>
-            <div
-              style={{
-                display: "flex",
-                gap: 14,
-              }}
-            >
-              <Tag>Today 2h 25m</Tag>
-              <Tag>Review 82%</Tag>
-            </div>
-          </div>
+          <div style={{ display: "flex" }}>Capture. Track. Review.</div>
+          <div style={{ display: "flex" }}>{url}</div>
         </div>
       </div>
     </div>,

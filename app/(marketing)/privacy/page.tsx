@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { siteConfig } from "@/lib/site-config"
 import { LegalPageShell } from "../ui/legal-page-shell"
 
 export const metadata: Metadata = {
@@ -14,21 +13,12 @@ export const metadata: Metadata = {
     description:
       "Read how Rootly handles account data, product content, and the basic choices you have around your information.",
     url: "/privacy",
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: siteConfig.ogAlt,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Privacy Policy | Rootly",
     description:
       "Read how Rootly handles account data, product content, and the basic choices you have around your information.",
-    images: ["/twitter-image"],
   },
 }
 
