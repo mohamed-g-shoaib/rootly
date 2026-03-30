@@ -82,7 +82,7 @@ export function ThemeSwitcherMultiButton({
               "relative m-auto transition duration-200 ease-out",
               theme === value
                 ? "text-foreground"
-                : "text-secondary-foreground group-hover:text-foreground group-focus-visible:text-foreground"
+                : "text-muted-foreground group-hover:text-foreground group-focus-visible:text-foreground"
             )}
             aria-hidden="true"
           />

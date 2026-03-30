@@ -13,9 +13,11 @@ import { cn } from "@/lib/utils"
 export function MarketingPrimaryCta({
   className,
   label = "Get started",
+  loadingLabel = "Loading",
 }: {
   className?: string
   label?: string
+  loadingLabel?: string
 }) {
   const router = useRouter()
   const [isPending, startTransition] = React.useTransition()
@@ -33,7 +35,7 @@ export function MarketingPrimaryCta({
     >
       <span className="inline-flex items-center gap-2">
         {isPending ? <Spinner className="size-4.5 sm:size-4" /> : null}
-        <span>{label}</span>
+        <span>{isPending ? loadingLabel : label}</span>
         {!isPending ? (
           <HugeiconsIcon
             icon={ArrowRight02Icon}

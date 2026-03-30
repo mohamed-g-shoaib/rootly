@@ -7,6 +7,7 @@ import { useTheme } from "next-themes"
 import {
   COLOR_THEME_COOKIE_NAME,
   COSS_UI_THEME_ID,
+  DASHBOARD_DEFAULT_CUSTOM_THEME_ID,
   normalizeColorThemeId,
   type ColorThemeId,
 } from "@/lib/color-theme"
@@ -20,7 +21,7 @@ import { getThemeById } from "@/lib/themes"
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60
 const IS_PRODUCTION = process.env.NODE_ENV === "production"
 const listeners = new Set<() => void>()
-let currentThemeId: ColorThemeId = COSS_UI_THEME_ID
+let currentThemeId: ColorThemeId = DASHBOARD_DEFAULT_CUSTOM_THEME_ID
 let hasLoadedThemePreference = false
 let activeColorThemeConsumers = 0
 
@@ -59,7 +60,7 @@ function getSnapshot() {
 }
 
 function getServerSnapshot() {
-  return COSS_UI_THEME_ID
+  return DASHBOARD_DEFAULT_CUSTOM_THEME_ID
 }
 
 function updateSnapshot(nextThemeId: ColorThemeId) {
@@ -75,6 +76,13 @@ function loadThemePreferenceFromCookie() {
   const nextThemeId = normalizeColorThemeId(rawThemeId)
 
   if (rawThemeId && nextThemeId === COSS_UI_THEME_ID) {
+    clearPreferenceCookie()
+  }
+  if (
+    rawThemeId &&
+    nextThemeId === DASHBOARD_DEFAULT_CUSTOM_THEME_ID &&
+    rawThemeId !== DASHBOARD_DEFAULT_CUSTOM_THEME_ID
+  ) {
     clearPreferenceCookie()
   }
 
@@ -103,7 +111,7 @@ export function useColorTheme(): {
       }
 
       clearThemeColors()
-      syncDashboardThemeStyle(COSS_UI_THEME_ID)
+      syncDashboardThemeStyle(DASHBOARD_DEFAULT_CUSTOM_THEME_ID)
     }
   }, [])
 
@@ -132,7 +140,7 @@ export function useColorTheme(): {
     const theme = getThemeById(themeId)
     if (!theme) {
       clearThemeColors()
-      syncDashboardThemeStyle(COSS_UI_THEME_ID)
+      syncDashboardThemeStyle(DASHBOARD_DEFAULT_CUSTOM_THEME_ID)
       return
     }
 

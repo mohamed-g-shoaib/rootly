@@ -1,6 +1,6 @@
 ## Theme 1: Milka
 
-```json
+```css
 :root {
   --background: oklch(0.9777 0.0041 301.4256);
   --foreground: oklch(0.3651 0.0325 287.0807);
@@ -165,7 +165,7 @@
 
 ## Theme 2: Claude
 
-```json
+```css
 :root {
   --background: oklch(0.9818 0.0054 95.0986);
   --foreground: oklch(0.3438 0.0269 95.7226);
@@ -330,7 +330,7 @@
 
 ## Theme 3: Twitter
 
-```json
+```css
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -508,7 +508,7 @@
 
 ## Theme 4: Supabase
 
-```json
+```css
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -694,7 +694,7 @@
 
 ## Theme 5: Sakura
 
-```json
+```css
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -880,7 +880,7 @@
 
 ## Theme 6: Perplexity
 
-```json
+```css
 :root {
   --background: oklch(0.9902 0.0039 106.4715);
   --foreground: oklch(0.3043 0.0394 214.0798);

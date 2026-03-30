@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next"
 import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
+import { ColorThemeApplicator } from "@/components/color-theme-applicator"
+import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
@@ -81,7 +83,9 @@ export default async function RootLayout({
       )}
     >
       <body suppressHydrationWarning>
+        <DashboardColorThemeStyle />
         <ThemeProvider>
+          <ColorThemeApplicator />
           <ToastProvider>
             <AnchoredToastProvider>{children}</AnchoredToastProvider>
           </ToastProvider>

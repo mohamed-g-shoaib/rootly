@@ -23,7 +23,6 @@ import { useTheme } from "next-themes";
 import { signOut } from "@/app/auth/actions";
 
 import RootlyLogo from "@/components/rootly-logo";
-import { ColorThemeApplicator } from "@/components/color-theme-applicator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
@@ -220,7 +219,6 @@ export function DashboardShell({
   return (
     <DashboardShellContext.Provider value={contextValue}>
       <div className="min-h-svh">
-        <ColorThemeApplicator />
         <header className="fixed inset-x-0 top-0 z-20 border-b bg-background">
           <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 lg:px-6">
             <div className="flex items-center gap-2">
@@ -409,7 +407,7 @@ function UserAvatarPopover({ user }: { user: DashboardShellUser | null }) {
               size={18}
               className={loggingOut ? "animate-spin" : undefined}
             />
-            Logout
+            {loggingOut ? "Logging out..." : "Logout"}
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>
@@ -491,7 +489,7 @@ function MobileAvatarSheet({
                 size={18}
                 className={loggingOut ? "animate-spin" : undefined}
               />
-              Logout
+              {loggingOut ? "Logging out..." : "Logout"}
             </Button>
           </div>
         </SheetPanel>

@@ -7,13 +7,17 @@ import { HugeiconsIcon } from "@hugeicons/react"
 
 import Calcom from "@/components/theme-icons/calcom-coss-ui"
 import { ClaudeAI } from "@/components/theme-icons/claude"
-import LouisVuitton from "@/components/theme-icons/louis-vuitton"
+import { Discord } from "@/components/theme-icons/discord"
+import { IBM } from "@/components/theme-icons/ibm"
 import Milka from "@/components/theme-icons/milka"
+import { Snapchat } from "@/components/theme-icons/snapchat"
 import { PerplexityAI } from "@/components/theme-icons/perplexity"
 import Sakura from "@/components/theme-icons/sakura"
 import { Supabase } from "@/components/theme-icons/supabase"
 import { Twitter } from "@/components/theme-icons/twitter"
 import { Vercel } from "@/components/theme-icons/vercel"
+import { Twitch } from "@/components/theme-icons/twitch"
+import { Zed } from "@/components/theme-icons/zed"
 import { ZenBrowser } from "@/components/theme-icons/zen"
 import {
   Combobox,
@@ -38,8 +42,12 @@ type ThemeOption = {
 type ThemeIconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>
 
 const THEME_ITEMS: ThemeOption[] = [
-  { label: "Coss UI (Default)", value: "default" },
-  ...THEMES.map((theme) => ({ label: theme.label, value: theme.id })),
+  { label: "Zen (Default)", value: "zen" },
+  { label: "Coss UI", value: "default" },
+  ...THEMES.filter((theme) => theme.id !== "zen").map((theme) => ({
+    label: theme.label,
+    value: theme.id,
+  })),
 ]
 
 const THEME_ITEMS_BY_ID = new Map(THEME_ITEMS.map((item) => [item.value, item]))
@@ -48,13 +56,17 @@ const THEME_ICONS: Record<string, ThemeIconComponent> = {
   default: Calcom,
   "amethyst-haze": Milka,
   claude: ClaudeAI,
+  discord: Discord,
+  ibm: IBM,
   twitter: Twitter,
+  snapchat: Snapchat,
   supabase: Supabase,
   sakura: Sakura,
   perplexity: PerplexityAI,
   vercel: Vercel,
-  "vintage-paper": LouisVuitton,
+  twitch: Twitch,
   zen: ZenBrowser,
+  zed: Zed,
 }
 
 function ThemeIcon({ value }: { value: string }) {

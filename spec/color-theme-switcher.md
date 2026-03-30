@@ -2,9 +2,10 @@
 
 ## Overview
 
-The dashboard supports a color theme selector with **9 curated color themes** plus **Coss UI (Default)** as the first selectable option.
+The dashboard supports a color theme selector with **13 curated color themes** plus **Coss UI** as the first selectable option.
 
-- `Coss UI (Default)` means "use the base coss/ui tokens exactly as shipped"
+- `Coss UI` means "use the base coss/ui tokens exactly as shipped"
+- `Zen` is the default custom dashboard theme for fresh users and invalid/stale cookies
 - Custom color themes override only dashboard color tokens
 - The active custom theme is applied live to `document.documentElement` via inline CSS custom properties
 - The selected custom theme is stored in a cookie so dashboard pages can render the correct colors on first paint without a flash
@@ -54,7 +55,7 @@ Only the color variables from `:root {}` and `.dark {}` belong in `lib/themes.ts
 
 ### `lib/themes.ts`
 
-Typed registry of the 9 custom dashboard themes. Each entry contains color tokens only.
+Typed registry of the 13 custom dashboard themes. Each entry contains color tokens only.
 
 ```ts
 export type ThemeColors = {
@@ -113,8 +114,12 @@ The custom theme IDs in order:
 5. `sakura`
 6. `perplexity`
 7. `vercel`
-8. `vintage-paper`
-9. `zen`
+8. `zen`
+9. `zed`
+10. `ibm`
+11. `snapchat`
+12. `twitch`
+13. `discord`
 
 ---
 
@@ -130,8 +135,8 @@ export const DASHBOARD_COLOR_THEME_STYLE_ID = "dashboard-color-theme-ssr"
 
 Responsibilities:
 
-1. Normalize any stored theme ID to either a valid custom theme ID or `default`
-2. Treat invalid or stale cookie values as `default`
+1. Normalize any stored theme ID to either a valid custom theme ID or `default` (`Coss UI`)
+2. Treat invalid or stale cookie values as the default custom theme (`zen`)
 3. Build the server-rendered first-paint CSS for valid custom themes only
 
 ---
@@ -184,10 +189,11 @@ Dashboard theme picker UI.
 
 Current behavior:
 
-- `Coss UI (Default)` is the first selectable option
+- `Coss UI` is the first selectable option
 - Custom themes are listed after it in the order defined by `THEMES`
 - The picker uses the coss/ui `Combobox` with `SelectButton` styling so theme search remains available
 - Each option renders a branded icon from `components/theme-icons/` plus the theme label
+- The `zen` option is labeled `Zen (Default)` in the picker because it is the default custom theme
 - The active option shows a single right-side `CheckmarkCircle02Icon`
 - The shared left combobox item indicator is intentionally disabled for this picker so the icon remains the leading visual
 - Selected theme names must truncate cleanly inside the avatar dropdown without causing horizontal scroll
@@ -217,10 +223,10 @@ Render `<DashboardColorThemeStyle />` from each dashboard page that needs first-
 
 ## Hard Rules — Do Not Violate
 
-- `Coss UI (Default)` must remain the first selectable option
+- `Coss UI` must remain the first selectable option
 - Selecting `default` must remove custom dashboard token overrides immediately, not only after reload
 - Persist dashboard color theme in the cookie `reway.dashboard.paletteTheme`, not `localStorage`
-- Invalid or stale cookie values must normalize to `default`
+- Invalid or stale cookie values must normalize to the default custom theme (`zen`)
 - SSR first-paint theme CSS must only be rendered for valid custom themes
 - No CSS theme blocks in `app/globals.css`
 - Never set `--radius`, `--font-*`, `--shadow-*`, `--tracking-normal`, or `--spacing`
