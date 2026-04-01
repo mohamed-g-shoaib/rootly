@@ -17,6 +17,24 @@ Skills in this repository live under the `.agents/skills/` directory. Depending 
 
 ---
 
+## Working With Extension Skills
+
+Use the three extension-focused skills as complementary guides rather than independent alternatives:
+
+1. Start with `browser-extension-builder` when creating or extending extension structure, MV3 scaffolding, manifest shape, runtime boundaries, storage flow, or messaging patterns.
+2. Bring in `chrome-extension-ui` when deciding between popup, side panel, content-script UI, options surfaces, accessibility behavior, loading states, or other extension-specific UX details.
+3. Use `chrome-extension-development` as the engineering quality bar across the whole task, especially for TypeScript structure, permissions, security, performance, testing, and publishing readiness.
+
+Recommended sequencing:
+
+1. New extension feature: `browser-extension-builder` -> `chrome-extension-ui` if user-facing -> `chrome-extension-development` for final implementation review
+2. Pure UI/UX choice: let `chrome-extension-ui` lead, then sanity-check with `chrome-extension-development`
+3. Security, API, or architecture-heavy work: let `chrome-extension-development` lead, using `browser-extension-builder` for runtime patterns as needed
+
+If the skills disagree, prefer the stricter engineering and security guidance from `chrome-extension-development`, then the architectural constraints from `browser-extension-builder`, and treat `chrome-extension-ui` as UI-specific guidance within those boundaries.
+
+---
+
 ## Skills Index
 
 | #   | Skill                                                                   | Publisher                              | Version / Notes                                         | Path                                               |
@@ -36,6 +54,9 @@ Skills in this repository live under the `.agents/skills/` directory. Depending 
 | 13  | [User Interface Wiki](#13-user-interface-wiki)                          | Raphael Salaja                         | `v3.0.0`                                                | `.agents/skills/userinterface-wiki/`               |
 | 14  | [Tailwind CSS Patterns](#14-tailwind-css-patterns)                      | Project-local                          | Utility-first styling and responsive composition guide  | `.agents/skills/tailwind-css-patterns/`            |
 | 15  | [Tailwind CSS Advanced Layouts](#15-tailwind-css-advanced-layouts)      | Project-local                          | Grid, flex, sticky, overflow, and fluid sizing patterns | `.agents/skills/tailwindcss-advanced-layouts/`     |
+| 16  | [Browser Extension Builder](#16-browser-extension-builder)              | vibeship-spawner-skills                | Imported single-file skill; source metadata notes Apache 2.0 | `.agents/skills/browser-extension-builder/`    |
+| 17  | [Chrome Extension Development](#17-chrome-extension-development)        | Project-local                          | Single-file Chrome extension engineering guide          | `.agents/skills/chrome-extension-development/`     |
+| 18  | [Chrome Extension UI](#18-chrome-extension-ui)                          | Chrome Extensions Community            | `0.1.0`                                                 | `.agents/skills/chrome-extension-ui/`              |
 
 ---
 
@@ -544,3 +565,99 @@ Focused layout guidance for more complex Tailwind work. The skill emphasizes rob
 | File       | Description                                                                                                                      |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained layout guide covering grid, flex, sticky/fixed positioning, scrolling, fluid sizing, and responsive patterns |
+
+---
+
+## 16. Browser Extension Builder
+
+**Publisher:** vibeship-spawner-skills
+**Version / Notes:** Imported single-file skill; source metadata lists Apache 2.0 and `date_added: 2026-02-27`
+**When to load:** Starting or shaping a browser extension project, especially around MV3 architecture, content scripts, background workers, popup UI, storage, permissions, Chrome Web Store publishing, or cross-browser support
+
+### Purpose
+
+High-level browser extension architecture guidance focused on building practical extensions that respect real-world platform constraints. The skill covers Manifest V3 structure, popup/background/content-script separation, storage patterns, UI injection, and common product and permission mistakes that make extensions feel untrustworthy or fragile.
+
+### Top 10 Rules by Priority
+
+1. **Start with modern extension structure** - Separate manifest, popup, content, background, options, and icons from the beginning
+2. **Build for Manifest V3** - Use a service worker background model and MV3-compatible project layout
+3. **Use content scripts only when page context is required** - Read or modify site content inside targeted content scripts
+4. **Keep communication paths explicit** - Route popup, background, and content-script messages through clear runtime messaging patterns
+5. **Persist settings with Chrome storage** - Use `chrome.storage.local` or `chrome.storage.sync` intentionally for user data and preferences
+6. **Request the minimum permissions possible** - Avoid broad permissions and prefer narrow, time-of-use access
+7. **Keep background work lightweight** - MV3 service workers are transient, so avoid long-running heavy logic
+8. **Inject page UI carefully** - Mount isolated extension UI deliberately and handle interaction wiring cleanly
+9. **Design for site breakage and updates** - Assume selectors and host pages will change, and add resilient error handling
+10. **Optimize for trust and daily usefulness** - Build tool-like extensions that justify installation, updates, and store listing friction
+
+### Available Files
+
+| File       | Description                                                                      |
+| ---------- | -------------------------------------------------------------------------------- |
+| `SKILL.md` | Full self-contained skill covering MV3 architecture, storage, messaging, and anti-patterns |
+
+---
+
+## 17. Chrome Extension Development
+
+**Publisher:** Project-local
+**Version / Notes:** Single-file engineering guide
+**When to load:** Writing or reviewing Chrome extension code involving Manifest V3, `chrome.*` APIs, service workers, content scripts, extension security, testing, publishing, or cross-browser compatibility
+
+### Purpose
+
+Practical implementation guidance for Chrome extension engineering. The skill emphasizes modular TypeScript, least-privilege permissions, MV3-compliant architecture, secure messaging, CSP-aware implementation, performance hygiene, accessibility, internationalization, and release readiness.
+
+### Top 10 Rules by Priority
+
+1. **Follow Manifest V3 strictly** - Use current MV3 patterns and service-worker-based background logic
+2. **Keep code modular and typed** - Prefer clear TypeScript modules, logical file separation, and descriptive naming
+3. **Split responsibilities by runtime boundary** - Keep popup, background, content scripts, and utilities focused on their own jobs
+4. **Use Chrome APIs correctly** - Handle `storage`, `tabs`, `runtime`, `action`, and related APIs through proper async flows
+5. **Apply least-privilege permissions** - Request only the permissions the extension truly needs
+6. **Treat security and privacy as first-class** - Honor CSP, secure messaging, safe cross-origin behavior, and careful data handling
+7. **Optimize for low resource usage** - Avoid leaks, reduce background overhead, and cache strategically
+8. **Design polished extension UX** - Support responsive popups, loading states, keyboard navigation, and accessible feedback
+9. **Internationalize when needed** - Use `chrome.i18n`, `_locales`, and locale-aware formatting correctly
+10. **Prepare for maintenance and publishing** - Include testing, documentation, store assets, privacy disclosures, and update discipline
+
+### Available Files
+
+| File       | Description                                                                 |
+| ---------- | --------------------------------------------------------------------------- |
+| `SKILL.md` | Full self-contained guide for MV3 code structure, APIs, security, UX, and publishing |
+
+---
+
+## 18. Chrome Extension UI
+
+**Publisher:** Chrome Extensions Community
+**Version:** `0.1.0`
+**When to load:** Building or reviewing Chrome extension UI for popups, side panels, content-script surfaces, options pages, extension feedback states, accessibility, or extension-specific visual design decisions
+
+### Purpose
+
+Comprehensive UX and UI guidance for Chrome extensions, organized around the surfaces and constraints unique to browser extensions. The skill prioritizes choosing the right surface first, then accessibility, popup behavior, side panel ergonomics, injected UI isolation, user feedback, settings persistence, and store-facing branding details.
+
+### Top 10 Rules by Priority
+
+1. **Choose the right extension surface first** - Decide between popup, side panel, or in-page content-script UI before implementation
+2. **Keep extension UI single-purpose** - Make each surface focused and easy to understand quickly
+3. **Request minimal permissions** - UI and trust are tightly linked to permission prompts and install confidence
+4. **Guarantee keyboard accessibility** - Support keyboard navigation, visible focus, semantic HTML, and no focus traps
+5. **Respect popup constraints** - Design within popup size limits and render primary actions instantly
+6. **Handle popup lifecycle explicitly** - Plan for auto-close behavior and state-based popup switching
+7. **Design side panels to stay useful without distracting** - Support resizing, lazy sections, and live page context
+8. **Isolate injected UI from host pages** - Use Shadow DOM, unique IDs, correct timing, cleanup, and safe overlay layering
+9. **Give users clear feedback** - Provide loading, progress, success, badge status, and actionable error messaging
+10. **Carry polish through settings and branding** - Auto-save settings, sync where appropriate, and ship complete icon/store assets
+
+### Available Files
+
+| File              | Description                                                                 |
+| ----------------- | --------------------------------------------------------------------------- |
+| `SKILL.md`        | Entry point with category overview, quick reference, and rule links         |
+| `AGENTS.md`       | Expanded compiled guide with all categories, rule summaries, and references |
+| `references/`     | 42 rule documents covering component choice, accessibility, feedback, and branding |
+| `assets/templates/` | Template file for adding new UI rules                                     |

@@ -36,6 +36,8 @@ For dashboard navigation performance work, also read:
 - Do not modify `components/ui/*` styling internals unless explicitly needed and approved.
 - Prefer existing project patterns over inventing new ones.
 - Use local skills when the task matches them.
+- Extension-related tasks now have dedicated local skills: `browser-extension-builder`, `chrome-extension-development`, and `chrome-extension-ui`.
+- For extension work, use `browser-extension-builder` for scaffolding/patterns, `chrome-extension-ui` for user-facing surface decisions, and `chrome-extension-development` as the final engineering/security/performance quality bar.
 - Prefer `rg` for search.
 - Use `apply_patch` for file edits.
 - Do not revert unrelated user changes.
