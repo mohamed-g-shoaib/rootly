@@ -1,23 +1,39 @@
-import * as React from "react"
+import * as React from "react";
 
-import { ImageResponse } from "next/og"
+import { ImageResponse } from "next/og";
 
-import RootlyLogo from "@/components/rootly-logo"
-import { absoluteUrl, siteConfig } from "@/lib/site-config"
+import RootlyLogo from "@/components/rootly-logo";
+import { absoluteUrl, siteConfig } from "@/lib/site-config";
 
-export const socialImageAlt = siteConfig.ogAlt
+export const socialImageAlt = siteConfig.ogAlt;
 export const socialImageSize = {
   width: 1200,
   height: 630,
-} as const
-export const socialImageContentType = "image/png"
+} as const;
+export const socialImageContentType = "image/png";
+
+const defaultOgColors = {
+  background: "#f2f5fa",
+  foreground: "#2f4561",
+  card: "#f8fbff",
+  "card-foreground": "#1e3048",
+  primary: "#4f77c8",
+  "primary-foreground": "#ffffff",
+  secondary: "#e6edf8",
+  "secondary-foreground": "#485f80",
+  muted: "#dfe7f4",
+  "muted-foreground": "#667b98",
+  accent: "#e6edf8",
+  "accent-foreground": "#2f4561",
+  border: "#d1dced",
+};
 
 type RootlySocialImageOptions = {
-  description: string
-  eyebrow?: string
-  title: string
-  url?: string
-}
+  description: string;
+  eyebrow?: string;
+  title: string;
+  url?: string;
+};
 
 function LogoLockup() {
   return (
@@ -31,10 +47,10 @@ function LogoLockup() {
       <div
         style={{
           alignItems: "center",
-          background: "#f2dfd5",
-          border: "1px solid rgba(110, 68, 42, 0.14)",
+          background: defaultOgColors.accent,
+          border: `1px solid ${defaultOgColors.border}`,
           borderRadius: 28,
-          color: "#7a4230",
+          color: defaultOgColors["accent-foreground"],
           display: "flex",
           height: 72,
           justifyContent: "center",
@@ -45,7 +61,7 @@ function LogoLockup() {
       </div>
       <div
         style={{
-          color: "#6c3527",
+          color: defaultOgColors.foreground,
           display: "flex",
           fontSize: 38,
           fontWeight: 700,
@@ -55,7 +71,7 @@ function LogoLockup() {
         Rootly
       </div>
     </div>
-  )
+  );
 }
 
 function Eyebrow({ children }: { children: string }) {
@@ -64,10 +80,10 @@ function Eyebrow({ children }: { children: string }) {
       style={{
         alignItems: "center",
         alignSelf: "flex-start",
-        background: "#f5ebe5",
-        border: "1px solid rgba(110, 68, 42, 0.12)",
+        background: defaultOgColors.secondary,
+        border: `1px solid ${defaultOgColors.border}`,
         borderRadius: 999,
-        color: "#8b4d39",
+        color: defaultOgColors["secondary-foreground"],
         display: "flex",
         fontSize: 20,
         fontWeight: 600,
@@ -76,7 +92,7 @@ function Eyebrow({ children }: { children: string }) {
     >
       {children}
     </div>
-  )
+  );
 }
 
 export function createRootlySocialImage({
@@ -88,9 +104,8 @@ export function createRootlySocialImage({
   return new ImageResponse(
     <div
       style={{
-        background:
-          "linear-gradient(180deg, #f8f1eb 0%, #efe2d8 100%)",
-        color: "#3c241b",
+        background: `linear-gradient(180deg, ${defaultOgColors.background} 0%, ${defaultOgColors.secondary} 100%)`,
+        color: defaultOgColors.foreground,
         display: "flex",
         fontFamily:
           'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -101,10 +116,10 @@ export function createRootlySocialImage({
     >
       <div
         style={{
-          background: "rgba(255, 251, 247, 0.9)",
-          border: "1px solid rgba(110, 68, 42, 0.12)",
+          background: defaultOgColors.card,
+          border: `1px solid ${defaultOgColors.border}`,
           borderRadius: 40,
-          boxShadow: "0 24px 60px rgba(110, 68, 42, 0.08)",
+          boxShadow: "0 24px 60px rgba(60, 88, 148, 0.10)",
           display: "flex",
           flex: 1,
           flexDirection: "column",
@@ -126,7 +141,7 @@ export function createRootlySocialImage({
           <Eyebrow>{eyebrow}</Eyebrow>
           <div
             style={{
-              color: "#5a2d21",
+              color: defaultOgColors["card-foreground"],
               display: "flex",
               fontSize: 72,
               fontWeight: 800,
@@ -140,7 +155,7 @@ export function createRootlySocialImage({
           </div>
           <div
             style={{
-              color: "#7b5b4c",
+              color: defaultOgColors["muted-foreground"],
               display: "flex",
               fontSize: 28,
               lineHeight: 1.35,
@@ -155,7 +170,7 @@ export function createRootlySocialImage({
         <div
           style={{
             alignItems: "center",
-            color: "#956f58",
+            color: defaultOgColors["muted-foreground"],
             display: "flex",
             fontSize: 22,
             fontWeight: 500,
@@ -170,6 +185,6 @@ export function createRootlySocialImage({
     </div>,
     {
       ...socialImageSize,
-    }
-  )
+    },
+  );
 }
