@@ -28,6 +28,10 @@ For dashboard navigation performance work, also read:
 
 - `spec/dashboard-navigation-performance.md`
 
+For browser extension work, also read:
+
+- `spec/browser-extension-side-panel.md`
+
 ---
 
 ## Important Project Rules
@@ -81,6 +85,74 @@ Shared dashboard pieces live under:
 ---
 
 ## Current Task Status
+
+### Browser extension exploration
+
+We have started planning a Rootly browser extension.
+
+Current product direction:
+
+- The extension is not a standalone product; it is a bridge to the Rootly website for quick actions.
+- Product preference: avoid shipping both popup and side panel as parallel primary surfaces because that would create user confusion.
+- General extension mindset: the extension must not invent a second Rootly product logic.
+- The extension should reuse the website's existing models, behaviors, and mental model wherever possible.
+- The extension may simplify presentation and speed up capture, but it should not introduce contradictory extension-only rules.
+- When deciding between convenience and fidelity, choose the version that helps the user while remaining faithful to Rootly's existing product behavior.
+- Authentication should follow website auth state as closely as practical:
+  - if the user is already authenticated with Rootly on the website, the extension should open into the signed-in experience
+  - if not authenticated, the extension should gently prompt for login and send the user to the website login flow
+- Website auth is currently Supabase-based and server-cookie-backed:
+  - the website login UI uses Supabase OAuth providers from `app/(auth)/login/ui/login-page.tsx`
+  - `app/auth/callback/route.ts` exchanges the OAuth code for a session and redirects into the app
+  - `lib/supabase/middleware.ts` refreshes and reads verified auth claims from request cookies
+  - extension auth should therefore be designed as a website-session bridge, not as a separate account system
+  - preferred extension auth direction: cookie-session-based auth via credentialed requests to Rootly website endpoints
+  - extension should treat `401` from Rootly extension endpoints as signed-out state
+  - signed-out recovery path should open the website login page, let website OAuth complete normally, then retry the extension bootstrap/session check
+  - the extension should not own a separate bearer-token auth system if website-cookie auth can serve as the single source of truth
+- The extension design should match Rootly's current default custom theme:
+  - `claude-blue`
+  - coss-style roundness and surface treatment
+  - overall coss UI philosophy, even if the extension UI is implemented separately
+- The default website custom theme is explicitly `claude-blue` in `lib/color-theme.ts`, with the actual token values defined in `lib/themes.ts`.
+- The main extension use case is compact, fast study capture while the user is already browsing or watching a tutorial.
+- If Rootly uses a side panel, it should likely be the sole primary user-facing surface opened from the toolbar action rather than pairing it with a separate popup.
+- The current direction is now firm: v1 extension should be side-panel-first, with the side panel as the only primary extension surface.
+
+Planned quick actions:
+
+- create a note
+  - note types: Q&A or freeform
+  - attach the note to an existing course
+- create a course
+- log daily study time
+- run a study timer in the background
+  - display format: `HH:MM:SS`
+  - allow start, pause, stop
+  - when pausing or stopping, allow saving the session with a mood and quick note
+  - timer saves should write directly into `daily_entries`
+  - timer saves must follow the same daily aggregation logic as the website:
+    - same-day study time adds into the existing daily total rather than creating separate session records
+    - today's logged time should remain visible during the day
+    - today's mood is editable during the day and later saves may replace the current day's mood
+    - today's daily note is also visible and editable during the day, with later saves updating the current day's note
+
+Example workflow:
+
+- a user is reading React docs or watching a Next.js tutorial
+- they open the extension
+- they quickly choose a note type, select the related course, and save a compact study note
+- they can also start a timer and later save the study session without needing the full website flow
+
+Current implementation implication:
+
+- the extension should likely call dedicated website API endpoints for quick actions
+- existing website mutations currently live as server actions under:
+  - `app/notes/ui/notes-actions.ts`
+  - `app/courses/ui/courses-actions.ts`
+  - `app/daily-entries/ui/daily-entries-actions.ts`
+- those are useful references for payload shape and validation, but they are not yet an extension-facing API surface
+- the canonical extension product/architecture spec now lives at `spec/browser-extension-side-panel.md`
 
 ### Theme bug
 
