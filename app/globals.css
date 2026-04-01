@@ -121,6 +121,11 @@
   --code-highlight: --alpha(var(--color-white) / 4%);
 }
 
+:root {
+  --selection-background: var(--primary);
+  --selection-foreground: var(--primary-foreground);
+}
+
 @theme inline {
   --font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -195,9 +200,13 @@
     scrollbar-width: thin;
     scrollbar-color: var(--ring) transparent;
   }
+  ::-moz-selection {
+    background: var(--selection-background);
+    color: var(--selection-foreground);
+  }
   ::selection {
-    background: var(--foreground);
-    color: var(--background);
+    background: var(--selection-background);
+    color: var(--selection-foreground);
   }
   *::-webkit-scrollbar {
     width: 10px;
