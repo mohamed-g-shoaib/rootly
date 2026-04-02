@@ -41,6 +41,7 @@ For browser extension work, also read:
 - Prefer existing project patterns over inventing new ones.
 - Use local skills when the task matches them.
 - Extension-related tasks now have dedicated local skills: `browser-extension-builder`, `chrome-extension-development`, and `chrome-extension-ui`.
+- Extension-only review/refinement skills now also include `html-css-best-practices` for handcrafted extension HTML/CSS and `modern-javascript-patterns` for handcrafted extension JavaScript modules.
 - For extension work, use `browser-extension-builder` for scaffolding/patterns, `chrome-extension-ui` for user-facing surface decisions, and `chrome-extension-development` as the final engineering/security/performance quality bar.
 - Prefer `rg` for search.
 - Use `apply_patch` for file edits.
@@ -153,6 +154,95 @@ Current implementation implication:
   - `app/daily-entries/ui/daily-entries-actions.ts`
 - those are useful references for payload shape and validation, but they are not yet an extension-facing API surface
 - the canonical extension product/architecture spec now lives at `spec/browser-extension-side-panel.md`
+
+### Extension implementation progress
+
+We have started implementation of the browser extension foundation.
+
+Current files:
+
+- `extension/manifest.json`
+- `extension/background/service-worker.js`
+- `extension/sidepanel/index.html`
+- `extension/sidepanel/sidepanel.css`
+- `extension/sidepanel/sidepanel.js`
+- `extension/sidepanel/dom.js`
+- `extension/sidepanel/render.js`
+- `extension/sidepanel/selects.js`
+- `extension/sidepanel/state.js`
+- `extension/lib/config.js`
+- `extension/lib/api.js`
+- `extension/lib/time.js`
+
+Current behavior:
+
+- toolbar action opens the side panel via MV3 side panel behavior
+- side panel has a real signed-out and signed-in shell
+- side panel bootstraps against a website endpoint rather than inventing local auth
+- side panel now renders signed-in content from per-environment cached bootstrap data when available, then revalidates against Rootly in the background
+- extension drafts for note, course, daily log, and timer fields now persist across side-panel close/reopen via `chrome.storage.local`
+- signed-in UI no longer shows decorative app chrome like the old `Study companion` header, refresh action, or passive `Connected` badge
+- the summary card now shows the actual date instead of a vague `Today` label
+- the main action area now uses tabs (`Capture`, `Timer`, `Log`) instead of one long vertically stacked surface
+- the quick-course flow now stays minimized behind a disclosure until the user explicitly opens it
+- discrete side-panel choices such as course, understanding, and mood now use custom Rootly-styled select menus instead of native browser `<select>` controls
+- floating select menus should be able to escape card bounds cleanly rather than being clipped by their parent card
+- side-panel motion should stay subtle and purposeful, without decorative hover-lift effects
+- the footer now includes a quiet `Dashboard` link plus a minimal `Settings` door for environment switching during development, instead of guessing from open tabs
+- extension environment selection is now explicit and stored locally rather than inferred from browser tab state
+- timer state now has a first background-worker foundation using `chrome.storage.local`
+- timer currently supports start, pause, resume, stop, and reset inside the extension foundation
+- the side panel now updates the running timer display locally instead of message-polling the background worker every second
+- side panel now supports quick note capture in website-faithful `Q&A` and `Freeform` modes
+- side panel now supports quick course creation with the same Rootly course meaning as the website
+- paused timer time can now be saved directly into `daily_entries`
+- manifest now wires the extension and toolbar icons from `extension/icons/*` for real browser chrome/store asset usage
+
+Current website extension API:
+
+- `app/api/extension/bootstrap/route.ts`
+- `app/api/extension/daily-entries/route.ts`
+- `app/api/extension/notes/route.ts`
+- `app/api/extension/courses/route.ts`
+- `lib/extension-api.ts`
+
+Current bootstrap behavior:
+
+- uses website Supabase cookie session via `supabase.auth.getClaims()`
+- returns `401` when signed out
+- returns minimal user identity, recent courses, and today's `daily_entries` state when signed in
+- accepts a client-provided `today=YYYY-MM-DD` query value so extension daily-entry state follows the user's local date instead of server timezone assumptions
+- side-panel bootstrap now treats cached bootstrap data as a lightweight immediate shell and no longer lets timer-state sync failures take down the whole panel
+
+Current write behavior:
+
+- side panel now supports an inline quick daily-log form
+- `POST /api/extension/daily-entries` now applies Rootly daily aggregation rules:
+  - creates today's entry if missing
+  - adds minutes into today's existing total if present
+  - lets same-day mood and daily note update to the current values provided by the user
+- side panel timer can now save paused timer time into today's `daily_entries`
+- timer save copy now makes the integer-minute save behavior explicit by telling the user exactly how much time will be added to today before they save
+- daily-log and timer drafts now treat today's current daily entry as the baseline so saved mood/note values do not linger as fake unsaved drafts
+- current implementation only allows timer save once at least 1 minute has elapsed, avoiding hidden sub-minute rounding behavior
+- timer now supports an explicit `stop` action in addition to start, pause, resume, and reset
+- the timer save panel now includes its own mood and quick-note inputs so ending a study session does not depend on the separate daily-log card
+- timer saves still write into the same daily-entry model and update today's visible mood, note, and accumulated time
+- `POST /api/extension/notes` now supports quick note capture with the same Rootly note meaning as the website:
+  - `Q&A` notes require `question`, `answer`, and `understandingLevel`
+  - `Freeform` notes require `body`
+  - `courseId` remains optional and maps directly to the website note model
+- the side panel quick-note form now loads recent courses from bootstrap and preserves the user's current note mode and course while clearing the note fields after save
+- the quick-note course picker now uses the same compact custom-select pattern as the mood and understanding controls
+- custom select options are now rendered with DOM nodes and text content rather than injected HTML
+- course selection now comes from the bootstrapped course list without a separate extension search flow
+- the old passive `Current page`, `Recent courses`, and full-card website handoff sections have been removed to keep the extension focused on direct actions
+- `POST /api/extension/courses` now supports quick course creation with the same Rootly course meaning as the website:
+  - `title` is required
+  - `instructor` and `courseLink` remain optional
+  - `links`, `topics`, and `progress` default to the same website-compatible values used for a brand new course
+- the side panel quick-course form now inserts the created course into local extension state immediately and selects it for note capture without requiring a full refresh
+- side-panel logic is now split into focused modules for DOM refs, state, rendering, and custom select behavior instead of concentrating everything in one oversized file
 
 ### Theme bug
 
@@ -369,3 +459,13 @@ Recent findings:
 - The current next step is continuing Phase 3 and Phase 5 work on route data, with Overview as the primary target and Review variability as the next thing to inspect.
 - Dashboard route timing logs are available via `ROOTLY_DASHBOARD_PERF=1`.
 - Do not reintroduce per-page `DashboardShell` wrappers.
+
+
+
+
+
+
+
+
+
+
