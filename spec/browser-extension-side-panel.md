@@ -108,9 +108,27 @@ The user should be able to:
 - attach the note to an existing course
 - create the note quickly with minimal required fields
 
+Quick note must preserve the website note model:
+
+- `Q&A` notes require `question`, `answer`, and `understandingLevel`
+- `Freeform` notes require `body`
+- `courseId` remains optional rather than required
+- course selection should use the same compact custom select pattern as other discrete extension choices
+- v1 course selection should come from the bootstrapped course list rather than a special searchable combobox
+- the extension may simplify the form, but it must not invent a third note type or different note meaning
+
 ### 2. Quick course creation
 
 If the relevant course does not exist yet, the user should be able to create it from the extension without leaving the panel.
+
+Quick course must preserve the website course model:
+
+- title is required
+- instructor remains optional
+- main course URL remains optional
+- the extension should default `links` to empty, `topics` to empty, and `progress` to `0` rather than inventing extension-only course states
+- after creation, the new course should be immediately usable in the note flow without requiring a full panel refresh
+- the quick-course form should stay minimized by default and expand only when the user chooses to create a course
 
 ### 3. Quick daily study logging
 
@@ -136,6 +154,12 @@ On pause or stop, the user should be able to save the session with:
 - quick note
 
 Timer saves should write directly into `daily_entries`.
+
+Timer flow should stay faithful to the website's daily-entry logic:
+
+- timer save is a compact way to update today's single daily entry, not a separate session-recording system
+- the timer save panel may collect mood and note locally inside the timer flow for convenience
+- saving from the timer should still update today's visible mood, note, and accumulated time just like the website's daily-entry behavior
 
 ---
 
@@ -168,6 +192,8 @@ Do not create a separate extension-owned authentication system.
 Rootly website auth is currently Supabase-based and server-cookie-backed.
 
 The extension should authenticate by calling Rootly website endpoints with credentialed requests.
+
+For development, the extension may expose a minimal settings control to switch between production and localhost explicitly. It should not guess the target environment from unrelated open tabs.
 
 The extension should:
 
@@ -239,8 +265,12 @@ That means:
 - stay calm and non-distracting beside the page
 - use clear primary actions
 - keep motion minimal and purposeful
+- floating menus and overlays should escape card bounds cleanly instead of being clipped by surface containers
+- do not use decorative hover-lift behavior
 - preserve keyboard accessibility and visible focus
 - avoid flashy badges, banners, or attention-grabbing effects
+- avoid passive status UI that does not help the user take action
+- prefer compact action grouping over stacked mini-dashboard sections
 
 ---
 
@@ -254,17 +284,13 @@ The side panel should support page-adjacent studying without fighting the page.
 - feel responsive across narrow and wide panel widths
 - avoid layouts that break when resized
 - avoid competing visually with the website content
+- prefer a compact tabbed structure for distinct quick actions when stacking everything vertically starts to feel like a cramped dashboard
 
 ## Context awareness
 
-The side panel should be capable of showing lightweight page context when useful, such as:
+Page context should only appear when it directly helps capture.
 
-- current tab title
-- current URL
-
-This should help the panel feel connected to the current study page.
-
-However, page context should support the capture workflow, not dominate it.
+Do not keep passive current-page UI in the main panel just to prove the extension knows what page the user is on.
 
 v1 should avoid aggressive page-specific behavior or heavy content-script UI.
 
@@ -326,6 +352,7 @@ v1 quick course creation should stay minimal:
 - title
 - optional instructor
 - optional course link seeded from current page when relevant
+- collapsed by default so it does not compete with the main capture flow
 
 ## Daily log flow
 
@@ -368,16 +395,17 @@ extension/
   manifest.json
   sidepanel/
     index.html
-    main.tsx
+    sidepanel.js
+    dom.js
+    render.js
+    selects.js
+    state.js
   background/
-    service-worker.ts
+    service-worker.js
   lib/
-    api.ts
-    auth.ts
-    timer.ts
-    storage.ts
-    theme.ts
-    types.ts
+    api.js
+    config.js
+    time.js
   icons/
 ```
 
@@ -451,12 +479,6 @@ Create or update daily study logging entries for:
 
 - quick manual log
 - timer save
-
-### Optional support endpoint
-
-If needed later:
-
-- `GET /api/extension/courses` for search or hydration beyond bootstrap
 
 ## Endpoint principles
 
@@ -587,8 +609,9 @@ Likely v1 needs:
 
 - storage
 - side panel
-- the minimum tab access required for current-page context
 - host permissions only for Rootly website origins needed for extension API calls
+
+v1 should not depend on broad `tabs` access just to guess which Rootly environment to use.
 
 Avoid broad catch-all site permissions unless a later feature truly requires them.
 
@@ -624,6 +647,7 @@ The extension should feel instant.
 - avoid unnecessary long-running work
 - persist only small amounts of timer and draft state
 - avoid noisy polling
+- prefer local side-panel display ticking for visible timers over per-second background message polling
 
 ---
 
@@ -753,3 +777,6 @@ The Rootly extension should feel like this:
 "I can keep studying, and Rootly stays beside me just enough to capture what matters."
 
 If the extension starts feeling like a cramped duplicate of the website, the spec is being violated.
+
+
+
