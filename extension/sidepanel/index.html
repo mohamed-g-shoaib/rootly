@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rootly</title>
+    <link rel="stylesheet" href="./sidepanel.css" />
+  </head>
+  <body>
+    <main class="panel-shell">
+      <section id="loading-section" class="card stack">
+        <p class="card-label">Loading</p>
+        <p class="muted">
+          Opening your Rootly side panel and checking website session state.
+        </p>
+      </section>
+
+      <section id="auth-section" class="card stack hidden">
+        <p class="card-label">Sign in required</p>
+        <h1>Continue with your Rootly account</h1>
+        <p class="muted">
+          Rootly extension access follows your website session. Sign in on the
+          website, then come back here.
+        </p>
+        <button id="login-button" class="primary-button" type="button">
+          Open Rootly login
+        </button>
+      </section>
+
+      <section id="app-section" class="stack hidden">
+        <section class="card stack">
+          <p id="today-label" class="card-label">Apr 2</p>
+          <h1 id="greeting">Welcome back</h1>
+          <p id="sync-status" class="sync-status" data-tone="neutral">
+            Checking your Rootly session.
+          </p>
+          <div class="daily-grid">
+            <div class="metric">
+              <span class="metric-label">Study time</span>
+              <strong id="today-time">0m</strong>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Mood</span>
+              <strong id="today-mood">Not set</strong>
+            </div>
+          </div>
+          <div class="note-block">
+            <span class="metric-label">Daily note</span>
+            <p id="today-note" class="muted">No note logged yet for today.</p>
+          </div>
+        </section>
+
+        <div class="tab-row" role="tablist" aria-label="Rootly quick actions">
+          <button
+            id="tab-capture"
+            class="tab-button active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-capture"
+            tabindex="0"
+          >
+            Capture
+          </button>
+          <button
+            id="tab-timer"
+            class="tab-button"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-timer"
+            tabindex="-1"
+          >
+            Timer
+          </button>
+          <button
+            id="tab-log"
+            class="tab-button"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-log"
+            tabindex="-1"
+          >
+            Log
+          </button>
+        </div>
+
+        <section
+          id="panel-capture"
+          class="tab-panel stack"
+          role="tabpanel"
+          aria-labelledby="tab-capture"
+        >
+          <section class="card stack">
+            <div class="split-row">
+              <div>
+                <p class="card-label">Quick note</p>
+                <h2>Capture what matters</h2>
+              </div>
+              <p id="note-save-status" class="status-pill subtle">Ready</p>
+            </div>
+            <div class="type-row" role="group" aria-label="Note type">
+              <button
+                id="note-type-qa"
+                class="secondary-button type-toggle active"
+                type="button"
+                aria-pressed="true"
+              >
+                Q&amp;A
+              </button>
+              <button
+                id="note-type-freeform"
+                class="ghost-button type-toggle"
+                type="button"
+                aria-pressed="false"
+              >
+                Freeform
+              </button>
+            </div>
+
+            <div class="field-stack">
+              <span class="metric-label">Course</span>
+              <div id="select-note-course" class="select-root">
+                <button
+                  id="select-note-course-trigger"
+                  class="select-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-controls="select-note-course-list"
+                >
+                  <span id="select-note-course-label">No course</span>
+                  <span class="select-chevron" aria-hidden="true">▾</span>
+                </button>
+                <div id="select-note-course-panel" class="select-panel hidden">
+                  <div
+                    id="select-note-course-list"
+                    class="select-list"
+                    role="listbox"
+                    aria-label="Course"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="qa-fields" class="stack">
+              <label class="field-stack" for="note-question-input">
+                <span class="metric-label">Question</span>
+                <textarea
+                  id="note-question-input"
+                  class="text-area compact"
+                  rows="3"
+                  placeholder="What are you trying to understand?"
+                ></textarea>
+              </label>
+              <label class="field-stack" for="note-answer-input">
+                <span class="metric-label">Answer</span>
+                <textarea
+                  id="note-answer-input"
+                  class="text-area"
+                  rows="4"
+                  placeholder="Write the answer you just learned."
+                ></textarea>
+              </label>
+              <div class="field-stack">
+                <span class="metric-label">Understanding</span>
+                <div id="select-note-understanding" class="select-root">
+                  <button
+                    id="select-note-understanding-trigger"
+                    class="select-trigger"
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-controls="select-note-understanding-list"
+                  >
+                    <span id="select-note-understanding-label">Getting It</span>
+                    <span class="select-chevron" aria-hidden="true">▾</span>
+                  </button>
+                  <div
+                    id="select-note-understanding-panel"
+                    class="select-panel hidden"
+                  >
+                    <div
+                      id="select-note-understanding-list"
+                      class="select-list"
+                      role="listbox"
+                      aria-label="Understanding"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <label
+              id="freeform-fields"
+              class="field-stack hidden"
+              for="note-body-input"
+            >
+              <span class="metric-label">Note</span>
+              <textarea
+                id="note-body-input"
+                class="text-area"
+                rows="6"
+                placeholder="Write a quick freeform note."
+              ></textarea>
+            </label>
+
+            <button id="note-save" class="primary-button" type="button">
+              Save note
+            </button>
+          </section>
+
+          <section class="card stack">
+            <button
+              id="course-disclosure"
+              class="disclosure-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="course-panel"
+            >
+              <span class="disclosure-copy">
+                <span class="card-label">Quick course</span>
+                <strong>Create a course fast</strong>
+              </span>
+              <span id="course-disclosure-icon" class="disclosure-icon">+</span>
+            </button>
+            <div id="course-panel" class="stack hidden">
+              <div class="split-row">
+                <h2>New course</h2>
+                <p id="course-save-status" class="status-pill subtle">Ready</p>
+              </div>
+              <label class="field-stack" for="course-title-input">
+                <span class="metric-label">Title</span>
+                <input
+                  id="course-title-input"
+                  class="text-input"
+                  type="text"
+                  placeholder="e.g. Epic React"
+                />
+              </label>
+              <label class="field-stack" for="course-instructor-input">
+                <span class="metric-label">Instructor</span>
+                <input
+                  id="course-instructor-input"
+                  class="text-input"
+                  type="text"
+                  placeholder="Optional"
+                />
+              </label>
+              <label class="field-stack" for="course-link-input">
+                <span class="metric-label">Main course URL</span>
+                <input
+                  id="course-link-input"
+                  class="text-input"
+                  type="url"
+                  placeholder="https://..."
+                />
+              </label>
+              <button id="course-save" class="primary-button" type="button">
+                Create course
+              </button>
+            </div>
+          </section>
+        </section>
+
+        <section
+          id="panel-timer"
+          class="tab-panel stack hidden"
+          role="tabpanel"
+          aria-labelledby="tab-timer"
+        >
+          <section class="card stack">
+            <div class="split-row">
+              <div>
+                <p class="card-label">Timer</p>
+                <h2 id="timer-value" class="timer-value">00:00:00</h2>
+              </div>
+              <p id="timer-status" class="status-pill subtle">Idle</p>
+            </div>
+            <div class="button-row">
+              <button id="timer-start" class="primary-button" type="button">
+                Start
+              </button>
+              <button
+                id="timer-pause"
+                class="secondary-button hidden"
+                type="button"
+              >
+                Pause
+              </button>
+              <button
+                id="timer-resume"
+                class="secondary-button hidden"
+                type="button"
+              >
+                Resume
+              </button>
+              <button
+                id="timer-stop"
+                class="secondary-button hidden"
+                type="button"
+              >
+                Stop
+              </button>
+              <button id="timer-reset" class="ghost-button" type="button">
+                Reset
+              </button>
+            </div>
+            <div id="timer-save-panel" class="stack hidden">
+              <div class="field-stack">
+                <span class="metric-label">Mood</span>
+                <div id="select-timer-mood" class="select-root">
+                  <button
+                    id="select-timer-mood-trigger"
+                    class="select-trigger"
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-controls="select-timer-mood-list"
+                  >
+                    <span id="select-timer-mood-label">Neutral</span>
+                    <span class="select-chevron" aria-hidden="true">▾</span>
+                  </button>
+                  <div id="select-timer-mood-panel" class="select-panel hidden">
+                    <div
+                      id="select-timer-mood-list"
+                      class="select-list"
+                      role="listbox"
+                      aria-label="Timer mood"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <label class="field-stack" for="timer-note-input">
+                <span class="metric-label">Quick note</span>
+                <textarea
+                  id="timer-note-input"
+                  class="text-area"
+                  rows="3"
+                  placeholder="How did this session feel?"
+                ></textarea>
+              </label>
+              <button id="timer-save" class="primary-button" type="button">
+                Save timer to today
+              </button>
+              <p id="timer-save-hint" class="muted">
+                Pause or stop the timer, then save it into today's total.
+              </p>
+            </div>
+          </section>
+        </section>
+
+        <section
+          id="panel-log"
+          class="tab-panel stack hidden"
+          role="tabpanel"
+          aria-labelledby="tab-log"
+        >
+          <section class="card stack">
+            <div class="split-row">
+              <div>
+                <p class="card-label">Quick daily log</p>
+                <h2>Add time to today</h2>
+              </div>
+              <p id="daily-log-status" class="status-pill subtle">Ready</p>
+            </div>
+            <div class="inline-grid">
+              <label class="field-stack" for="log-hours">
+                <span class="metric-label">Hours</span>
+                <input
+                  id="log-hours"
+                  class="text-input"
+                  type="number"
+                  min="0"
+                  max="23"
+                  step="1"
+                  value="0"
+                />
+              </label>
+              <label class="field-stack" for="log-minutes">
+                <span class="metric-label">Minutes</span>
+                <input
+                  id="log-minutes"
+                  class="text-input"
+                  type="number"
+                  min="0"
+                  max="59"
+                  step="1"
+                  value="0"
+                />
+              </label>
+            </div>
+            <div class="field-stack">
+              <span class="metric-label">Mood</span>
+              <div id="select-daily-mood" class="select-root">
+                <button
+                  id="select-daily-mood-trigger"
+                  class="select-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-controls="select-daily-mood-list"
+                >
+                  <span id="select-daily-mood-label">Neutral</span>
+                  <span class="select-chevron" aria-hidden="true">▾</span>
+                </button>
+                <div id="select-daily-mood-panel" class="select-panel hidden">
+                  <div
+                    id="select-daily-mood-list"
+                    class="select-list"
+                    role="listbox"
+                    aria-label="Daily mood"
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <label class="field-stack" for="daily-note-input">
+              <span class="metric-label">Daily note</span>
+              <textarea
+                id="daily-note-input"
+                class="text-area"
+                rows="3"
+                placeholder="How did your study day go?"
+              ></textarea>
+            </label>
+            <button id="daily-log-save" class="primary-button" type="button">
+              Add to today
+            </button>
+          </section>
+        </section>
+      </section>
+
+      <section id="error-section" class="card stack hidden" role="alert">
+        <p class="card-label">Something went wrong</p>
+        <p id="error-message" class="muted">
+          Rootly extension could not load right now.
+        </p>
+      </section>
+
+      <footer class="panel-footer">
+        <div class="footer-actions">
+          <button id="dashboard-link" class="footer-link-button" type="button">
+            Dashboard
+          </button>
+          <button
+            id="settings-toggle"
+            class="footer-link-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="settings-panel"
+          >
+            Settings
+          </button>
+        </div>
+        <section id="settings-panel" class="card stack footer-panel hidden">
+          <div class="split-row">
+            <div>
+              <p class="card-label">Environment</p>
+              <h2>Connection</h2>
+            </div>
+            <p id="settings-status" class="status-pill subtle">Production</p>
+          </div>
+          <p id="settings-hint" class="muted">
+            Choose which Rootly site this extension talks to.
+          </p>
+          <div class="environment-row" role="group" aria-label="Rootly environment">
+            <button
+              class="environment-button"
+              type="button"
+              data-site-base-url="https://rootly.app"
+            >
+              Production
+            </button>
+            <button
+              class="environment-button"
+              type="button"
+              data-site-base-url="http://localhost:3000"
+            >
+              Localhost
+            </button>
+          </div>
+        </section>
+      </footer>
+    </main>
+
+    <script type="module" src="./sidepanel.js"></script>
+  </body>
+</html>
