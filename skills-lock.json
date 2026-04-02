@@ -41,6 +41,11 @@
       "sourceType": "github",
       "computedHash": "5f6e56c5c21945b635e1078243e38be5315730fd0980ce402f37dd6e5fe04ced"
     },
+    "modern-javascript-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "35ec9acf08dabb77ca240330d10dd1a562ca869fe75e67ae12c4e472eb7fe498"
+    },
     "next-best-practices": {
       "source": "vercel-labs/next-skills",
       "sourceType": "github",

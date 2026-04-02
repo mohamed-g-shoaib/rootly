@@ -33,6 +33,11 @@ Recommended sequencing:
 
 If the skills disagree, prefer the stricter engineering and security guidance from `chrome-extension-development`, then the architectural constraints from `browser-extension-builder`, and treat `chrome-extension-ui` as UI-specific guidance within those boundaries.
 
+For Rootly extension work only, also load:
+
+- `html-css-best-practices` when reviewing or refining the extension's HTML structure, CSS architecture, responsive behavior, and accessibility
+- `modern-javascript-patterns` when reviewing or refactoring the extension's plain JavaScript modules, async flows, DOM wiring, and module boundaries
+
 ---
 
 ## Skills Index
@@ -57,6 +62,8 @@ If the skills disagree, prefer the stricter engineering and security guidance fr
 | 16  | [Browser Extension Builder](#16-browser-extension-builder)              | vibeship-spawner-skills                | Imported single-file skill; source metadata notes Apache 2.0 | `.agents/skills/browser-extension-builder/`    |
 | 17  | [Chrome Extension Development](#17-chrome-extension-development)        | Project-local                          | Single-file Chrome extension engineering guide          | `.agents/skills/chrome-extension-development/`     |
 | 18  | [Chrome Extension UI](#18-chrome-extension-ui)                          | Chrome Extensions Community            | `0.1.0`                                                 | `.agents/skills/chrome-extension-ui/`              |
+| 19  | [HTML/CSS Best Practices](#19-htmlcss-best-practices)                   | Project-local                          | Extension-only HTML/CSS review and implementation guide | `.agents/skills/html-css-best-practices/`          |
+| 20  | [Modern JavaScript Patterns](#20-modern-javascript-patterns)            | Project-local                          | Extension-only JavaScript review and refactoring guide  | `.agents/skills/modern-javascript-patterns/`       |
 
 ---
 
@@ -661,3 +668,65 @@ Comprehensive UX and UI guidance for Chrome extensions, organized around the sur
 | `AGENTS.md`       | Expanded compiled guide with all categories, rule summaries, and references |
 | `references/`     | 42 rule documents covering component choice, accessibility, feedback, and branding |
 | `assets/templates/` | Template file for adding new UI rules                                     |
+
+---
+
+## 19. HTML/CSS Best Practices
+
+**Publisher:** Project-local
+**Version / Notes:** Single-file HTML/CSS guidance; use for the Rootly extension only
+**When to load:** Reviewing or refining Rootly extension HTML and CSS for semantic structure, accessibility, responsive layout, CSS organization, custom properties, and maintainability
+
+### Purpose
+
+Practical HTML/CSS guidance for the extension's side-panel UI. This skill is especially useful when auditing semantic markup, floating UI behavior, CSS variable usage, layout resilience, and accessibility details in the extension's handcrafted HTML and CSS.
+
+### Top 10 Rules by Priority
+
+1. **Use semantic elements first** - Prefer meaningful HTML structure over generic wrappers when a semantic element exists
+2. **Keep heading structure coherent** - Use headings in order and avoid misleading document structure
+3. **Use buttons for actions and links for navigation** - Preserve correct semantics for interaction
+4. **Keep CSS organized and token-driven** - Start with custom properties, then base styles, layout, components, utilities, and media queries
+5. **Design mobile-first and responsive by default** - Ensure layouts hold up across narrow and wide side-panel widths
+6. **Prefer relative sizing where possible** - Avoid over-reliance on fixed pixel assumptions for resilient layout
+7. **Preserve accessible focus and touch targets** - Interactive controls need clear focus and usable target size
+8. **Avoid overflow bugs** - Floating UI, layouts, and content should not clip or force accidental horizontal scrolling
+9. **Keep selectors efficient and maintainable** - Avoid brittle specificity and unnecessary complexity
+10. **Optimize for maintainability and performance** - Favor clear structure, light CSS, and reusable patterns over one-off styling hacks
+
+### Available Files
+
+| File       | Description                                                           |
+| ---------- | --------------------------------------------------------------------- |
+| `SKILL.md` | Full self-contained HTML/CSS guide for semantic structure and styling |
+
+---
+
+## 20. Modern JavaScript Patterns
+
+**Publisher:** Project-local
+**Version / Notes:** Single-file JavaScript guidance; use for the Rootly extension only
+**When to load:** Reviewing or refactoring Rootly extension JavaScript for module boundaries, async flows, DOM logic, state updates, and maintainable ES modules
+
+### Purpose
+
+Modern JavaScript guidance for the extension's plain-JS runtime. This skill is especially useful when auditing async message flows, DOM rendering code, event wiring, shared helpers, immutable updates, and the general maintainability of extension-side modules.
+
+### Top 10 Rules by Priority
+
+1. **Prefer clear ES module boundaries** - Split unrelated concerns into focused modules with descriptive exports
+2. **Use modern syntax where it improves clarity** - Favor `const`, `let`, destructuring, template literals, and concise object handling intentionally
+3. **Keep async flows explicit** - Use `async` and `await` clearly, and keep error handling close to the failing work
+4. **Avoid duplicated imperative code** - Extract repeated logic into shared helpers instead of repeating event or state code
+5. **Use immutable state updates deliberately** - Replace nested mutation with clear derived objects where possible
+6. **Keep DOM updates safe** - Prefer DOM APIs and `textContent` over `innerHTML` for untrusted data
+7. **Separate rendering from state and effects** - Keep data shaping, DOM rendering, and side effects from collapsing into one file
+8. **Keep event wiring maintainable** - Group listeners by concern and avoid sprawling setup blocks
+9. **Avoid unnecessary runtime work** - Reduce polling, repeated DOM rebuilds, and avoidable async churn
+10. **Write for long-term readability** - Prefer small, explicit functions that make extension behavior easy to trace
+
+### Available Files
+
+| File       | Description                                                             |
+| ---------- | ----------------------------------------------------------------------- |
+| `SKILL.md` | Full self-contained guide for modern ES modules and JavaScript patterns |
