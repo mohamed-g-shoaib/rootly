@@ -65,6 +65,9 @@ For Rootly extension work only, also load:
 | 19  | [HTML/CSS Best Practices](#19-htmlcss-best-practices)                   | Project-local                          | Extension-only HTML/CSS review and implementation guide      | `.agents/skills/html-css-best-practices/`          |
 | 20  | [Modern JavaScript Patterns](#20-modern-javascript-patterns)            | Project-local                          | Extension-only JavaScript review and refactoring guide       | `.agents/skills/modern-javascript-patterns/`       |
 | 21  | [Vercel React View Transitions](#21-vercel-react-view-transitions)      | Vercel                                 | `1.0.0`                                                      | `.agents/skills/vercel-react-view-transitions/`    |
+| 22  | [Next Cache Components](#22-next-cache-components)                      | Project-local                          | Next.js 16+ Cache Components and PPR patterns                | `.agents/skills/next-cache-components/`            |
+| 23  | [TanStack Query Best Practices](#23-tanstack-query-best-practices)      | Project-local                          | Server-state caching, mutation, and hydration guidance       | `.agents/skills/tanstack-query-best-practices/`    |
+| 24  | [Redis Development](#24-redis-development)                              | Redis                                  | `1.0.0`                                                      | `.agents/skills/redis-development/`                |
 
 ---
 
@@ -767,3 +770,99 @@ Guidance for implementing browser-native view transitions using React's `<ViewTr
 | `references/nextjs.md`         | Next.js-specific setup (`experimental.viewTransition`, `transitionTypes`, routing) |
 | `references/css-recipes.md`    | Ready-to-use CSS animation and reduced-motion recipes                              |
 | `references/patterns.md`       | Common implementation patterns and troubleshooting                                 |
+
+---
+
+## 22. Next Cache Components
+
+**Publisher:** Project-local
+**Version / Notes:** Next.js 16+ Cache Components guide focused on `cacheComponents`, `'use cache'`, `cacheLife`, `cacheTag`, and invalidation flows
+**When to load:** Designing mixed static/cached/dynamic App Router pages, reducing repeated server fetches on navigation, or planning cache invalidation for mutation-heavy routes
+
+### Purpose
+
+Practical guidance for adopting Next.js Cache Components so routes can mix prerendered content, cacheable async reads, and dynamic request-time sections. The skill explains how to enable `cacheComponents`, where to apply `'use cache'`, how to tune cache lifetimes with `cacheLife`, how to tag and invalidate cached reads, and how to avoid runtime API pitfalls.
+
+### Top 10 Rules by Priority
+
+1. **Enable Cache Components first** - Use `cacheComponents: true` in Next config before applying `'use cache'`
+2. **Classify content by freshness needs** - Split route content into static, cached, and dynamic sections intentionally
+3. **Use `'use cache'` at the smallest practical scope** - Prefer function/component-level caching to control blast radius
+4. **Wrap dynamic sections in Suspense** - Stream fresh request-time content without blocking cached/static shells
+5. **Set explicit cache lifetimes** - Use `cacheLife()` profiles or inline stale/revalidate/expire values
+6. **Tag cache entries** - Use `cacheTag()` for targeted invalidation paths
+7. **Invalidate by write path** - Use `updateTag()` or `revalidateTag()` from mutations/server actions
+8. **Avoid runtime APIs inside `'use cache'`** - Read `cookies`, `headers`, and `searchParams` outside cached scopes and pass as args
+9. **Use `'use cache: private'` only when necessary** - Reserve for compliance/runtime constraints where refactoring is impractical
+10. **Treat cache keys as data contracts** - Ensure arguments/closures are serializable and stable
+
+### Available Files
+
+| File       | Description                                                                     |
+| ---------- | ------------------------------------------------------------------------------- |
+| `SKILL.md` | Cache Components overview with enablement, lifetimes, invalidation, and caveats |
+
+---
+
+## 23. TanStack Query Best Practices
+
+**Publisher:** Project-local
+**Version / Notes:** Rule-based skill for client-side server-state caching (React Query / TanStack Query)
+**When to load:** Building responsive client data flows, optimistic mutations, route prefetching, cache invalidation, or SSR hydration for high-interaction UI surfaces
+
+### Purpose
+
+Comprehensive best-practices guide for TanStack Query covering query key design, stale and garbage collection tuning, mutation integrity, prefetching, error handling, infinite queries, and SSR hydration boundaries. This skill is especially useful when dashboard interactions should feel instant after initial data load.
+
+### Top 10 Rules by Priority
+
+1. **Use array query keys consistently** - Prevent cache collisions and key-shape drift
+2. **Include all query dependencies in keys** - Ensure cache entries map to true data inputs
+3. **Adopt hierarchical key factories** - Standardize key composition across feature modules
+4. **Tune staleTime by volatility** - Avoid unnecessary refetch churn on stable lists
+5. **Set sensible QueryClient defaults** - Centralize baseline retry/stale/gc behavior
+6. **Invalidate related queries after mutations** - Keep read models coherent with writes
+7. **Use optimistic updates with rollback context** - Improve perceived speed safely
+8. **Prefetch on user intent and route transitions** - Make upcoming screens feel instant
+9. **Hydrate SSR data correctly** - Use dehydrate/hydration boundaries for App Router integration
+10. **Use `select` and render-optimization options** - Reduce avoidable rerenders and payload churn
+
+### Available Files
+
+| File       | Description                                                   |
+| ---------- | ------------------------------------------------------------- |
+| `SKILL.md` | Rule index, priorities, and quick-reference guidance          |
+| `rules/`   | Detailed rule files with examples and implementation patterns |
+
+---
+
+## 24. Redis Development
+
+**Publisher:** Redis
+**Version:** `1.0.0`
+**When to load:** Designing distributed cache layers, low-latency data access for high-traffic reads, semantic caching, or advanced Redis query/vector patterns
+
+### Purpose
+
+Redis-focused operational and modeling guidance for high-performance data access. The skill covers key design, memory and TTL policy, query/index optimization, connection behavior, observability, security, and scaling patterns. In this project, it is most relevant when Next in-memory/runtime cache no longer meets performance or multi-instance consistency needs.
+
+### Top 10 Rules by Priority
+
+1. **Choose the right data structure** - Match workload to strings/hashes/JSON/sets/zsets/streams
+2. **Use consistent key naming conventions** - Keep prefixes and domain boundaries predictable
+3. **Set memory limits and eviction policies intentionally** - Avoid uncontrolled memory pressure
+4. **Set TTL on cache keys** - Prevent stale buildup and support freshness contracts
+5. **Avoid slow commands in production paths** - Keep request latency stable under load
+6. **Use pipelining for bulk operations** - Reduce round-trip overhead
+7. **Use pooling or multiplexing for connections** - Prevent connection thrash
+8. **Apply ACL/auth/network controls** - Treat Redis security as production critical
+9. **Monitor key metrics and command behavior** - Detect regressions early
+10. **Design clustering/replication with key locality in mind** - Preserve multi-key efficiency at scale
+
+### Available Files
+
+| File        | Description                                                                      |
+| ----------- | -------------------------------------------------------------------------------- |
+| `SKILL.md`  | Overview and quick reference across Redis optimization domains                   |
+| `rules/`    | Category-based rules for data modeling, performance, security, and observability |
+| `AGENTS.md` | Fully expanded compiled document                                                 |

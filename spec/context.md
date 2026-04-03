@@ -782,3 +782,296 @@ Recent findings:
 - Validation:
   - `pnpm lint` passes
   - `pnpm run build` passes
+
+### Caching skills + dashboard instant plan spec (2026-04-03)
+
+- Skill registry update in `spec/agent-skills.md` now includes:
+  - `next-cache-components`
+  - `tanstack-query-best-practices`
+  - `redis-development`
+- Added architecture/rollout spec for making dashboard navigation feel instant:
+  - `spec/dashboard-instant-navigation-plan-2026-04-03.md`
+- Plan direction in brief:
+  - recommended stack is Next Cache Components + TanStack Query (with Redis only at a later decision gate if shared cache requirements justify it)
+  - phased rollout starts with `/courses` cache components + tag invalidation, then expands route-by-route
+
+### Dashboard instant plan start (2026-04-03)
+
+- Began Phase 1 execution on courses routes and validated behavior under production build.
+- Implemented safe groundwork that remains active:
+  - extracted initial courses read logic into helper in `app/(dashboard)/courses/page.tsx`
+  - extracted initial course-detail read logic into helper in `app/(dashboard)/courses/[id]/page.tsx`
+  - added cache-tag invalidation hooks on course mutations in `app/courses/ui/courses-actions.ts` via `updateTag(...)` for:
+    - `courses:user:{userId}`
+    - `course:{courseId}`
+    - `course-notes:{courseId}`
+  - wrapped root route children in `app/layout.tsx` with a Suspense boundary (fallback `null`) to support later streaming/caching rollout shape
+- Cache Components flag trial result:
+  - enabling `cacheComponents: true` currently triggers blocking-route build errors on dynamic dashboard routes (notably `/courses/[id]`) due uncached data outside Suspense boundaries
+  - flag was intentionally reverted to keep production build stable while we prepare full Suspense/runtime-access migration for Cache Components adoption
+- Validation after stabilization:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard instant plan continuation (2026-04-03)
+
+- Started TanStack Query warmth layer rollout on Courses.
+- Added app-wide QueryClient provider:
+  - `components/query-provider.tsx`
+  - wired in `app/layout.tsx` so client routes share a persistent query cache
+- Migrated courses list client fetching to TanStack Query in:
+  - `app/courses/ui/courses-page.tsx`
+- Behavior changes in Courses page:
+  - page/filter data now uses query keys (`courses-page`, user, page, pageSize, sort, topic)
+  - `keepPreviousData` is used to avoid abrupt empty/skeleton-like transitions while fetching next state
+  - next-page prefetching is enabled to improve pagination responsiveness
+  - create/update/delete flows now invalidate course-page queries via QueryClient instead of directly re-running ad-hoc loaders
+- Existing course mutation `updateTag(...)` invalidation in server actions remains in place for server-side cache consistency foundations.
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard instant plan tracking update (2026-04-03)
+
+- Expanded `spec/dashboard-instant-navigation-plan-2026-04-03.md` with execution tracking and rollout governance details:
+  - added explicit `Phase 0 Baseline Snapshot` tables (route latency/skeleton/query baselines + mutation freshness matrix)
+  - added `Cache Components Readiness Checklist` with route-by-route and build-verification gates
+  - updated status sections to reflect active in-progress streams (Cache Components unblock work and upcoming Notes TanStack migration)
+
+### Dashboard instant plan continuation: Notes TanStack slice (2026-04-03)
+
+- Migrated Notes route client data layer to TanStack Query:
+  - `app/notes/ui/notes-page.tsx`
+  - replaced local list/course state hydration with query-backed sources (`notes-list`, `note-courses`)
+  - kept existing UI filtering/sorting/pagination behavior unchanged while moving cache ownership to QueryClient
+  - wired live note upserts and create/update/delete flows to update query cache and invalidate Notes list queries
+- Added Notes list/query server actions for Query usage:
+  - `app/notes/ui/notes-actions.ts`
+  - `getNotesList({ userId })` for lightweight list payload
+  - `getNoteCourses({ userId })` for note course filter options
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard instant plan continuation: Review TanStack sessions slice (2026-04-03)
+
+- Migrated Review sessions pagination from manual loading state to TanStack Query in `app/review/ui/review-page.tsx`.
+- Behavior updates:
+  - sessions page data now uses query keys (`review-sessions-page`, user, page, pageSize)
+  - `keepPreviousData` preserves prior page content during page transitions
+  - next-page prefetching added for faster pagination advances
+  - save/delete session flows now invalidate Review sessions queries through QueryClient
+- Existing review session setup/detail logic and lazy note-detail hydration were preserved.
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard instant plan continuation: Daily Entries TanStack slice (2026-04-03)
+
+- Migrated Daily Entries pagination/filter loading from manual async state to TanStack Query in `app/daily-entries/ui/daily-entries-page.tsx`.
+- Behavior updates:
+  - query-keyed entries data by user/page/pageSize/date range/mood filter
+  - `keepPreviousData` enabled for smoother page/filter transitions
+  - next-page prefetching added for pagination responsiveness
+  - create/update/delete flows now invalidate daily entries queries via QueryClient
+  - live entry upserts now update query cache directly
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard instant plan continuation: Overview TanStack fit + cache readiness audit (2026-04-03)
+
+- Reviewed Overview route/client tree for practical TanStack migration surface.
+- Finding: current Overview data path is server-streamed (`app/(dashboard)/overview/page.tsx` + `app/overview/overview-data.ts`) with client chart components receiving preloaded props; no low-risk client fetch/mutation surface identified for TanStack without broader architecture changes.
+- Advanced cache-components readiness checklist by enumerating request-time API usage for dashboard scope:
+  - no direct `cookies()`/`headers()`/`searchParams` usage in `app/(dashboard)/**`
+  - runtime request API access for dashboard auth remains centralized in `lib/dashboard-session.ts` via `lib/supabase/server.ts` (`cookies()`)
+
+### Dashboard navigation flash reduction (2026-04-03)
+
+- User-reported issue: skeleton still visible while moving page-to-page in dashboard.
+- Implemented non-visual segment fallbacks (return `null`) for dashboard loading boundaries to keep transitions from flashing placeholder UIs:
+  - `app/(dashboard)/notes/loading.tsx`
+  - `app/(dashboard)/courses/loading.tsx`
+  - `app/(dashboard)/courses/[id]/loading.tsx`
+  - `app/(dashboard)/daily-entries/loading.tsx`
+  - `app/(dashboard)/review/loading.tsx`
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard seamless transition follow-up (2026-04-03)
+
+- User goal: no skeleton and no blank page between dashboard routes; transitions should feel like the same surface.
+- Implemented:
+  - removed dashboard segment loading boundaries entirely (`app/(dashboard)/**/loading.tsx` files for notes/courses/course-detail/daily-entries/review)
+  - added proactive route warming in dock navigation (`components/ui/floating-dock.tsx`):
+    - eager prefetch of dashboard routes after mount
+    - prefetch on hover/focus/touch before click
+- Outcome intent:
+  - avoid fallback swaps (skeleton or blank) during route transitions
+  - increase chance target route data/flight payload is ready before click
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard transition consistency + dock isolation (2026-04-03)
+
+- User feedback: transition behavior was mostly visible on Overview; floating dock was also being affected by transitions.
+- Implemented:
+  - page-level `ViewTransition` wrappers added in dashboard route pages:
+    - `app/(dashboard)/notes/page.tsx`
+    - `app/(dashboard)/courses/page.tsx`
+    - `app/(dashboard)/courses/[id]/page.tsx`
+    - `app/(dashboard)/daily-entries/page.tsx`
+    - `app/(dashboard)/review/page.tsx`
+  - floating dock explicitly excluded from view-transition snapshots using `viewTransitionName: "none"` on dock containers in `components/ui/floating-dock.tsx`
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Overview transition tuning from design-skill audit (2026-04-03)
+
+- User-reported issue: on Overview, floating dock briefly disappeared/reappeared during transitions.
+- Skill-driven adjustment rationale:
+  - `vercel-react-view-transitions`: avoid unnecessary nested transitions; each transition should communicate clear continuity
+  - `make-interfaces-feel-better` and `emil-design-eng`: reduce high-frequency motion noise and prevent UI chrome from feeling unstable
+- Implemented:
+  - removed nested `ViewTransition` wrappers from `app/overview/ui/overview-insights-client.tsx` suspense/chart regions
+  - added a single route-level `ViewTransition` wrapper to `app/(dashboard)/overview/page.tsx` for parity with other dashboard routes
+  - hardened dock isolation by using named transition snapshots (`dashboard-dock`) in `components/ui/floating-dock.tsx` and disabling their animation in `app/globals.css`
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Overview boundary transition hardening (2026-04-03)
+
+- Follow-up from user testing: dock flicker still occurred when navigating to/from Overview.
+- Applied targeted guardrails:
+  - `components/ui/floating-dock.tsx`: transition types are now disabled on dock links when the current route is `/overview` or target route is `/overview`
+  - `app/(dashboard)/overview/page.tsx`: removed page-level `ViewTransition` wrapper for `/overview` boundary
+- Design-skill rationale:
+  - for high-frequency dashboard tab navigation, stable continuity is preferred over motion on problematic boundaries
+  - if an animation undermines perceived reliability, remove it for that path
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### Dashboard instant plan memory refresh (2026-04-03)
+
+- Refreshed `spec/dashboard-instant-navigation-plan-2026-04-03.md` status/next-slice sections to match current execution state.
+- Key refresh points:
+  - marked TanStack rollout as effectively complete for interactive list routes (`/courses`, `/notes`, `/review`, `/daily-entries`)
+  - kept Overview as an intentionally deferred TanStack target due server-streamed architecture
+  - removed stale next-step item about migrating Notes (already completed)
+  - updated immediate next steps to focus on mutation freshness QA + true pre/post metric delta capture
+
+### Dashboard baseline timing capture (2026-04-03)
+
+- Captured local route timing snapshot for dashboard routes with dev server running on localhost (`n=12` requests per route via `Invoke-WebRequest`).
+- Updated `spec/dashboard-instant-navigation-plan-2026-04-03.md` route baseline table with measured `p50`/`p95` values and current route-level skeleton status.
+- Current state notes:
+  - route-level loading skeleton exposure is now `N` across dashboard routes after loading-boundary removal
+  - `/overview` may still show streamed insights fallback (non route-level)
+  - true baseline-vs-trial delta remains pending because pre-rollout timing capture was not recorded before rollout changes
+
+### Dashboard metrics validity + telemetry follow-up (2026-04-03)
+
+- Added opt-in route telemetry in `lib/dashboard-route-perf.ts`:
+  - enabled by `ROOTLY_DASHBOARD_PERF_LOG=1`
+  - emits `[dashboard-perf]` JSON with `route`, `totalMs`, `stepCount`, and per-step timings/metadata
+- Validation finding for CLI baseline runs:
+  - terminal `Invoke-WebRequest` probes to protected dashboard routes resolve to login content in the current CLI session, so those timings are not valid authenticated dashboard baselines
+  - plan updated to mark those rows as auth-pending and exclude redirect-biased values
+- Authenticated telemetry evidence captured:
+  - `/courses` emitted `[dashboard-perf]` sample: `totalMs=1039.75`, `stepCount=2` (`session`, `courses-query`)
+- Cache-hit header finding:
+  - `x-nextjs-cache` was not present in current dev-mode CLI probes, so cache behavior should be evaluated through dashboard-perf logs + authenticated browser sampling
+- Mutation freshness matrix update:
+  - note create/update/delete rows were moved from `TBD` to implementation-verified (`Yes/No/Low`) based on optimistic client cache updates plus server `updateTag` invalidation wiring
+
+### Authenticated telemetry aggregation update (2026-04-03)
+
+- Ingested user-provided authenticated `[dashboard-perf]` run logs into `spec/dashboard-instant-navigation-plan-2026-04-03.md` as `baseline-004`.
+- Filled authenticated p50/p95 route baselines for:
+  - `/overview` (`n=9`) -> p50 `314.78`, p95 `329.33`
+  - `/notes` (`n=10`) -> p50 `299.65`, p95 `311.94`
+  - `/courses` (`n=10`) -> p50 `196.35`, p95 `217.46`
+  - `/daily-entries` (`n=10`) -> p50 `189.87`, p95 `206.03`
+  - `/review` (`n=10`) -> p50 `211.25`, p95 `423.39` (heavy-tail spikes)
+- Remaining route gap:
+  - `/courses/[id]` authenticated sample set still missing (`n>=10` target)
+- Added known issue note from telemetry run:
+  - repeated Recharts container warnings on `/overview` (`width(-1)`, `height(-1)`) are now tracked as a separate follow-up item
+
+### Overview Recharts sizing hardening (2026-04-03)
+
+- Implemented a targeted sizing fix to reduce Recharts container warnings on `/overview`:
+  - `app/overview/ui/overview-insights-client.tsx`
+    - added `min-w-0` constraints to `ChartFrame` wrappers
+  - `app/overview/ui/charts/chart-responsive-shell.tsx`
+    - added shared measured-size shell (ResizeObserver) so charts only render after valid container width is available
+  - `app/overview/ui/charts/daily-study-time-chart.tsx`
+  - `app/overview/ui/charts/daily-mood-chart.tsx`
+  - `app/overview/ui/charts/understanding-progress-chart.tsx`
+    - switched from `ResponsiveContainer` to explicit numeric `width`/`height` passed into Recharts primitives via measured shell
+    - retained wrapper `min-w-0` constraints
+- Validation:
+  - `pnpm lint` passes
+- Follow-up still needed:
+  - rerun authenticated overview navigation loop to confirm warnings are fully eliminated in runtime logs
+
+### Cache Components blocker resolution milestone (2026-04-03)
+
+- Loaded and applied `next-cache-components` guidance, then executed a debug-prerender trial with `cacheComponents: true`.
+- Captured blocker traces and resolved primary failures:
+  - `DashboardColorThemeStyle` cookie access in root layout caused blocking-route errors under Cache Components; fixed by wrapping it in `Suspense` in `app/layout.tsx`.
+  - `/overview` used `new Date()` before request/uncached data access; fixed by moving current-time reads after session resolution in `app/(dashboard)/overview/page.tsx`.
+- Validation:
+  - `pnpm exec next build --debug-prerender` passes
+  - `pnpm lint` passes
+  - `pnpm run build` passes with Cache Components enabled
+- Outcome:
+  - Cache Components is now enabled in `next.config.mjs` and stable in the current build pipeline.
+
+### Phase 2 invalidation parity expansion (2026-04-03)
+
+- Added mutation invalidation parity beyond courses:
+  - `app/notes/ui/notes-actions.ts`
+    - `createNote`/`updateNote`/`deleteNote` now update: `notes:user:{userId}`, `overview-summary:user:{userId}`, `overview-trend:user:{userId}`, and related `course:{courseId}` / `course-notes:{courseId}` when applicable
+  - `app/daily-entries/ui/daily-entries-actions.ts`
+    - `createEntry`/`updateEntry`/`deleteEntry` now update: `daily-entries:user:{userId}`, `overview-summary:user:{userId}`, `overview-trend:user:{userId}`
+  - `app/review/ui/review-actions.ts`
+    - `saveReviewSession`/`deleteReviewSession` now update: `review-sessions:user:{userId}`, `overview-summary:user:{userId}`, `overview-trend:user:{userId}`
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes (with Cache Components enabled)
+
+### Phase 2 read-side cache metadata expansion (2026-04-03)
+
+- Added explicit read-side cache directives/lifetimes/tags for non-course dashboard domains:
+  - `app/notes/ui/notes-actions.ts`
+    - `getNote`, `getNotes`, `getNotesList`, `getNoteCourses` now use cache directives with `cacheLife("minutes")` and domain tags (`notes:user:*`, `courses:user:*`)
+  - `app/daily-entries/ui/daily-entries-actions.ts`
+    - `getDailyEntriesPage` now uses cache directives with `cacheLife("minutes")` and `daily-entries:user:*` tag
+  - `app/review/ui/review-actions.ts`
+    - `getReviewSessionsPage`, `getReviewNotes` now use cache directives with `cacheLife("minutes")` and domain tags (`review-sessions:user:*`, `notes:user:*`)
+  - `app/overview/overview-data.ts`
+    - overview daily/trend/summary read functions now declare cache directives with `cacheLife("minutes")` and tags for `overview-summary:*`, `overview-trend:*`, and `daily-entries:*` domains
+- Extended read-side cache metadata coverage to course domains:
+  - `app/courses/ui/courses-actions.ts`
+    - `getCoursesPage` and `getCourseTopics` now use cache directives with `cacheLife("minutes")` and `courses:user:*` tag
+  - `app/(dashboard)/courses/page.tsx`
+    - `getInitialCoursesData` now uses cache directives with `cacheLife("minutes")` and `courses:user:*` tag
+  - `app/(dashboard)/courses/[id]/page.tsx`
+    - `getInitialCourseDetailData` now uses cache directives with `cacheLife("minutes")` and tags: `course:*`, `course-notes:*`
+- Extended cache metadata to route-entry initial data helpers for non-course dashboard routes:
+  - `app/(dashboard)/notes/page.tsx`
+    - introduced cached private `getInitialNotesData(userId)` helper with tags: `notes:user:*`, `courses:user:*`
+  - `app/(dashboard)/daily-entries/page.tsx`
+    - introduced cached private `getInitialDailyEntriesData(userId)` helper with tag: `daily-entries:user:*`
+  - `app/(dashboard)/review/page.tsx`
+    - introduced cached private `getInitialReviewData(userId)` helper with tags: `review-sessions:user:*`, `courses:user:*`, `notes:user:*`
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes (Cache Components still enabled)
