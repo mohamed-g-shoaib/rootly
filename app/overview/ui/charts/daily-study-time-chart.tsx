@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import {
   Bar,
   BarChart,
@@ -7,13 +7,13 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from "recharts"
 
 type Datum = {
-  date: string;
-  label: string;
-  minutes: number;
-};
+  date: string
+  label: string
+  minutes: number
+}
 
 export default function DailyStudyTimeChart({ data }: { data: Datum[] }) {
   return (
@@ -33,16 +33,16 @@ export default function DailyStudyTimeChart({ data }: { data: Datum[] }) {
           <YAxis width={40} tickLine={false} axisLine={false} tickMargin={8} />
           <Tooltip
             content={(props) => {
-              if (!props.active || !props.payload?.length) return null;
-              const entry = props.payload[0];
-              if (!entry) return null;
-              const datum = entry.payload as Datum;
+              if (!props.active || !props.payload?.length) return null
+              const entry = props.payload[0]
+              if (!entry) return null
+              const datum = entry.payload as Datum
               return (
                 <div className="rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md/5">
                   <p className="text-muted-foreground">{datum.date}</p>
                   <p className="font-medium">{String(entry.value)} min</p>
                 </div>
-              );
+              )
             }}
           />
           <Bar
@@ -53,5 +53,5 @@ export default function DailyStudyTimeChart({ data }: { data: Datum[] }) {
         </BarChart>
       </ResponsiveContainer>
     </div>
-  );
+  )
 }

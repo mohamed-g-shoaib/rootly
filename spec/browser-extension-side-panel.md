@@ -777,6 +777,3 @@ The Rootly extension should feel like this:
 "I can keep studying, and Rootly stays beside me just enough to capture what matters."
 
 If the extension starts feeling like a cramped duplicate of the website, the spec is being violated.
-
-
-

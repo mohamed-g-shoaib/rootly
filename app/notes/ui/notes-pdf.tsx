@@ -112,32 +112,35 @@ export function useExportPdf(notes: Note[]): {
 } {
   const [exporting, setExporting] = React.useState(false)
 
-  const exportPdf = React.useCallback(async (overrideNotes?: Note[]) => {
-    if (exporting) return
-    setExporting(true)
+  const exportPdf = React.useCallback(
+    async (overrideNotes?: Note[]) => {
+      if (exporting) return
+      setExporting(true)
 
-    try {
-      const notesToExport = overrideNotes ?? notes
-      const exportDate = new Date()
-      const [{ pdf }, pdfDocument] = await Promise.all([
-        import("@react-pdf/renderer"),
-        createPdfDocument(notesToExport, exportDate),
-      ])
-      const instance = pdf(pdfDocument)
+      try {
+        const notesToExport = overrideNotes ?? notes
+        const exportDate = new Date()
+        const [{ pdf }, pdfDocument] = await Promise.all([
+          import("@react-pdf/renderer"),
+          createPdfDocument(notesToExport, exportDate),
+        ])
+        const instance = pdf(pdfDocument)
 
-      const blob = await instance.toBlob()
-      const url = URL.createObjectURL(blob)
+        const blob = await instance.toBlob()
+        const url = URL.createObjectURL(blob)
 
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `rootly-notes-${formatDateForFilename(exportDate)}.pdf`
-      a.click()
+        const a = document.createElement("a")
+        a.href = url
+        a.download = `rootly-notes-${formatDateForFilename(exportDate)}.pdf`
+        a.click()
 
-      URL.revokeObjectURL(url)
-    } finally {
-      setExporting(false)
-    }
-  }, [exporting, notes])
+        URL.revokeObjectURL(url)
+      } finally {
+        setExporting(false)
+      }
+    },
+    [exporting, notes]
+  )
 
   return { exportPdf, exporting }
 }

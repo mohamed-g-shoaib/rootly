@@ -60,10 +60,8 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = await createClient()
-  const {
-    data: claimsData,
-    error: claimsError,
-  } = await supabase.auth.getClaims()
+  const { data: claimsData, error: claimsError } =
+    await supabase.auth.getClaims()
   const claims = claimsData?.claims
   const userId = typeof claims?.sub === "string" ? claims.sub : null
 

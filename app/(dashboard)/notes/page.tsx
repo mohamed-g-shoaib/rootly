@@ -116,6 +116,10 @@ export default async function NotesPage() {
   })
 
   return (
-    <NotesPageUI userId={userId} initialNotes={initialNotes} initialCourses={initialCourses} />
+    <NotesPageUI
+      userId={userId}
+      initialNotes={initialNotes}
+      initialCourses={initialCourses}
+    />
   )
 }

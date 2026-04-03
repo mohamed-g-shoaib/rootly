@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const Snapchat = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -38,6 +38,6 @@ const Snapchat = (props: SVGProps<SVGSVGElement>) => (
       />
     </g>
   </svg>
-);
+)
 
-export { Snapchat };
+export { Snapchat }

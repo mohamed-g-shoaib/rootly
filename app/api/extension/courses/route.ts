@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const message =
       error instanceof z.ZodError
-        ? error.issues[0]?.message ?? "Invalid request payload."
+        ? (error.issues[0]?.message ?? "Invalid request payload.")
         : "Invalid request payload."
 
     return jsonWithExtensionCors(
@@ -85,10 +85,8 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createClient()
-  const {
-    data: claimsData,
-    error: claimsError,
-  } = await supabase.auth.getClaims()
+  const { data: claimsData, error: claimsError } =
+    await supabase.auth.getClaims()
   const userId =
     !claimsError && typeof claimsData?.claims?.sub === "string"
       ? claimsData.claims.sub

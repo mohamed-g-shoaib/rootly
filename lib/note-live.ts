@@ -29,7 +29,8 @@ export function isNote(value: unknown): value is Note {
     typeof candidate.id === "string" &&
     (candidate.type === "qa" || candidate.type === "freeform") &&
     (candidate.courseId == null || typeof candidate.courseId === "string") &&
-    (candidate.courseTitle == null || typeof candidate.courseTitle === "string") &&
+    (candidate.courseTitle == null ||
+      typeof candidate.courseTitle === "string") &&
     (candidate.question == null || typeof candidate.question === "string") &&
     typeof candidate.previewText === "string" &&
     (candidate.answer == null || typeof candidate.answer === "string") &&
@@ -40,7 +41,8 @@ export function isNote(value: unknown): value is Note {
       candidate.understandingLevel === 3) &&
     typeof candidate.flag === "boolean" &&
     typeof candidate.hasCodeSnippet === "boolean" &&
-    (candidate.codeSnippet == null || typeof candidate.codeSnippet === "string") &&
+    (candidate.codeSnippet == null ||
+      typeof candidate.codeSnippet === "string") &&
     typeof candidate.codeLanguage === "string" &&
     typeof candidate.createdAt === "string" &&
     typeof candidate.updatedAt === "string" &&
@@ -67,7 +69,8 @@ export function isNoteRow(value: unknown): value is NoteRow {
       candidate.understanding_level === 2 ||
       candidate.understanding_level === 3) &&
     typeof candidate.flag === "boolean" &&
-    (candidate.code_snippet == null || typeof candidate.code_snippet === "string") &&
+    (candidate.code_snippet == null ||
+      typeof candidate.code_snippet === "string") &&
     typeof candidate.code_language === "string" &&
     typeof candidate.created_at === "string" &&
     typeof candidate.updated_at === "string"

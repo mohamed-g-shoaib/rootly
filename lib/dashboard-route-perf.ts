@@ -1,15 +1,20 @@
 type PerfMetaValue = string | number | boolean | null | undefined
 type PerfMeta = Record<string, PerfMetaValue>
-export function createDashboardRoutePerf(_route: string) {
-  async function measure<T>(
-    _label: string,
-    fn: () => T | PromiseLike<T>,
-    _getMeta?: (result: T) => PerfMeta | undefined
-  ) {
-    const result = await fn()
-    return result
-  }
 
+async function measurePerf<T>(
+  _label: string,
+  fn: () => T | PromiseLike<T>,
+  _getMeta?: (result: T) => PerfMeta | undefined
+) {
+  const result = await fn()
+  return result
+}
+
+function finishPerf(_meta?: PerfMeta) {
+  return
+}
+
+export function createDashboardRoutePerf(_route: string) {
   function createScope(prefix: string) {
     return {
       async measure<T>(
@@ -17,18 +22,14 @@ export function createDashboardRoutePerf(_route: string) {
         fn: () => T | PromiseLike<T>,
         getMeta?: (result: T) => PerfMeta | undefined
       ) {
-        return measure(`${prefix}:${label}`, fn, getMeta)
+        return measurePerf(`${prefix}:${label}`, fn, getMeta)
       },
     }
   }
 
-  function finish(_meta?: PerfMeta) {
-    return
-  }
-
   return {
     createScope,
-    measure,
-    finish,
+    measure: measurePerf,
+    finish: finishPerf,
   }
 }

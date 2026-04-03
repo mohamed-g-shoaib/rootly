@@ -253,7 +253,9 @@ function DesktopNotesHeader({
           value={selectedType}
           widthClassName="w-40"
           showClear={typeFilter !== "all"}
-          onValueChange={(value) => onTypeChange((value?.value ?? "all") as TypeFilter)}
+          onValueChange={(value) =>
+            onTypeChange((value?.value ?? "all") as TypeFilter)
+          }
         />
 
         <HeaderFilterCombobox
@@ -268,7 +270,11 @@ function DesktopNotesHeader({
           }
         />
 
-        <SortSelect sortKey={sortKey} sortLabel={sortLabel} onSortChange={onSortChange} />
+        <SortSelect
+          sortKey={sortKey}
+          sortLabel={sortLabel}
+          onSortChange={onSortChange}
+        />
 
         <NotesExportPopover
           filtersActive={filtersActive}
@@ -369,7 +375,12 @@ function MobileNotesHeader({
           >
             Sort by
           </Button>
-          <Button variant="outline" size="icon" aria-label="Export" onClick={onOpenMobileExport}>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Export"
+            onClick={onOpenMobileExport}
+          >
             <HugeiconsIcon icon={Download01Icon} size={18} />
           </Button>
           {filtersActive ? (
@@ -403,7 +414,11 @@ function HeaderFilterCombobox<T extends { value: string; label: string }>({
   return (
     <div className={widthClassName}>
       <Combobox items={items} value={value} onValueChange={onValueChange}>
-        <ComboboxInput placeholder={placeholder} aria-label={ariaLabel} showClear={showClear} />
+        <ComboboxInput
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+          showClear={showClear}
+        />
         <ComboboxPopup>
           <ComboboxEmpty>No results found.</ComboboxEmpty>
           <ComboboxList>
@@ -480,7 +495,12 @@ function NotesExportPopover({
               ? `Exporting ${filteredCount} filtered notes`
               : `Exporting all ${filteredCount} notes`}
           </div>
-          <Button variant="outline" className="gap-2" onClick={onExportPdf} disabled={exporting}>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={onExportPdf}
+            disabled={exporting}
+          >
             <HugeiconsIcon
               icon={exporting ? Loading01Icon : Pdf01Icon}
               size={18}
@@ -488,7 +508,11 @@ function NotesExportPopover({
             />
             Export as PDF
           </Button>
-          <Button variant="outline" className="gap-2" onClick={onExportMarkdown}>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={onExportMarkdown}
+          >
             <HugeiconsIcon icon={TextSquareIcon} size={18} />
             Export as Markdown
           </Button>
@@ -518,7 +542,15 @@ function NotesHeaderActions({
   return (
     <div className="flex items-center gap-2">
       <Button
-        variant={mobile ? (flaggedOnly ? "secondary" : "ghost") : flaggedOnly ? "secondary" : "outline"}
+        variant={
+          mobile
+            ? flaggedOnly
+              ? "secondary"
+              : "ghost"
+            : flaggedOnly
+              ? "secondary"
+              : "outline"
+        }
         size="icon"
         aria-label={flaggedOnly ? "Show all notes" : "Show flagged notes"}
         onClick={onToggleFlaggedOnly}
@@ -532,9 +564,19 @@ function NotesHeaderActions({
 
       {hasQa ? (
         <Button
-          variant={mobile ? (globalShowAnswers ? "secondary" : "ghost") : globalShowAnswers ? "secondary" : "outline"}
+          variant={
+            mobile
+              ? globalShowAnswers
+                ? "secondary"
+                : "ghost"
+              : globalShowAnswers
+                ? "secondary"
+                : "outline"
+          }
           size="icon"
-          aria-label={globalShowAnswers ? "Hide all answers" : "Show all answers"}
+          aria-label={
+            globalShowAnswers ? "Hide all answers" : "Show all answers"
+          }
           onClick={onToggleGlobalAnswers}
         >
           <HugeiconsIcon

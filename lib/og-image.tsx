@@ -1,16 +1,16 @@
-import * as React from "react";
+import * as React from "react"
 
-import { ImageResponse } from "next/og";
+import { ImageResponse } from "next/og"
 
-import RootlyLogo from "@/components/rootly-logo";
-import { absoluteUrl, siteConfig } from "@/lib/site-config";
+import RootlyLogo from "@/components/rootly-logo"
+import { absoluteUrl, siteConfig } from "@/lib/site-config"
 
-export const socialImageAlt = siteConfig.ogAlt;
+export const socialImageAlt = siteConfig.ogAlt
 export const socialImageSize = {
   width: 1200,
   height: 630,
-} as const;
-export const socialImageContentType = "image/png";
+} as const
+export const socialImageContentType = "image/png"
 
 const defaultOgColors = {
   background: "#f2f5fa",
@@ -26,14 +26,14 @@ const defaultOgColors = {
   accent: "#e6edf8",
   "accent-foreground": "#2f4561",
   border: "#d1dced",
-};
+}
 
 type RootlySocialImageOptions = {
-  description: string;
-  eyebrow?: string;
-  title: string;
-  url?: string;
-};
+  description: string
+  eyebrow?: string
+  title: string
+  url?: string
+}
 
 function LogoLockup() {
   return (
@@ -71,7 +71,7 @@ function LogoLockup() {
         Rootly
       </div>
     </div>
-  );
+  )
 }
 
 function Eyebrow({ children }: { children: string }) {
@@ -92,7 +92,7 @@ function Eyebrow({ children }: { children: string }) {
     >
       {children}
     </div>
-  );
+  )
 }
 
 export function createRootlySocialImage({
@@ -185,6 +185,6 @@ export function createRootlySocialImage({
     </div>,
     {
       ...socialImageSize,
-    },
-  );
+    }
+  )
 }

@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ReviewLoading() {
   return (
@@ -10,5 +10,5 @@ export default function ReviewLoading() {
         <Skeleton className="h-32 w-full" />
       </div>
     </div>
-  );
+  )
 }

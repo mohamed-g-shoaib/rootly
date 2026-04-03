@@ -165,6 +165,23 @@ Shared dashboard pieces live under:
   - `app/notes/ui/notes-page.tsx`
   - `app/courses/ui/course-detail-page.tsx`
 
+### Build stabilization (2026-04-03)
+
+- Fixed a `NoteCard` prop type mismatch in course detail notes rendering:
+  - removed unsupported `isMobile` prop pass in `app/courses/ui/course-detail-page.tsx`
+- Fixed topic filter option type inference regression in courses list:
+  - replaced literal-narrowing `.concat(...)` construction with an explicitly typed spread build in `app/courses/ui/courses-page.tsx`
+- Validation: `pnpm run build` now completes successfully.
+
+### Lint stabilization (2026-04-03)
+
+- Fixed `oxlint` config parse failure by removing unsupported `react/jsx-uses-react` rule from `.oxlintrc.json`.
+- Resolved follow-up lint blockers surfaced by `--deny-warnings`:
+  - `lib/dashboard-route-perf.ts`: hoisted non-capturing helper functions (`measure`, `finish`) out of factory scope to satisfy `unicorn/consistent-function-scoping`.
+  - `app/courses/ui/courses-components.tsx`: updated editor reset `useEffect` dependencies to include `course`.
+  - `app/daily-entries/ui/daily-entries-components.tsx`: updated entry editor reset `useEffect` dependencies to include `entry`.
+- Validation: `pnpm lint` now passes with 0 warnings and 0 errors.
+
 ---
 
 ## Current Task Status

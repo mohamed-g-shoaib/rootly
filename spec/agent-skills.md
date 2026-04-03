@@ -42,28 +42,28 @@ For Rootly extension work only, also load:
 
 ## Skills Index
 
-| #   | Skill                                                                   | Publisher                              | Version / Notes                                         | Path                                               |
-| --- | ----------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------- | -------------------------------------------------- |
-| 1   | [Vercel React Best Practices](#1-vercel-react-best-practices)           | Vercel                                 | `v1.0.0`                                                | `.agents/skills/vercel-react-best-practices/`      |
-| 2   | [Next.js Best Practices](#2-nextjs-best-practices)                      | Project-local                          | Topic index skill                                       | `.agents/skills/next-best-practices/`              |
-| 3   | [React Composition Patterns](#3-react-composition-patterns)             | Vercel                                 | `v1.0.0`                                                | `.agents/skills/vercel-composition-patterns/`      |
-| 4   | [Design Engineering](#4-design-engineering)                             | Project-local (Emil Kowalski-inspired) | Single-file skill                                       | `.agents/skills/emil-design-eng/`                  |
-| 5   | [Fixing Motion Performance](#5-fixing-motion-performance)               | Project-local                          | Single-file audit/fix skill                             | `.agents/skills/fixing-motion-performance/`        |
-| 6   | [Supabase Postgres Best Practices](#6-supabase-postgres-best-practices) | Supabase                               | `v1.1.0`                                                | `.agents/skills/supabase-postgres-best-practices/` |
-| 7   | [PostgreSQL Table Design](#7-postgresql-table-design)                   | Project-local                          | Single-file skill                                       | `.agents/skills/postgresql-table-design/`          |
-| 8   | [PostgreSQL Pro](#8-postgresql-pro)                                     | Jeff Allan                             | `v1.1.0`                                                | `.agents/skills/postgres-pro/`                     |
-| 9   | [TypeScript Advanced Types](#9-typescript-advanced-types)               | Project-local                          | Single-file skill                                       | `.agents/skills/typescript-advanced-types/`        |
-| 10  | [SEO Audit](#10-seo-audit)                                              | Project-local                          | `v1.1.0`                                                | `.agents/skills/seo-audit/`                        |
-| 11  | [React useEffect](#11-react-useeffect)                                  | Project-local                          | Official-docs-inspired guidance                         | `.agents/skills/react-useeffect/`                  |
-| 12  | [Make Interfaces Feel Better](#12-make-interfaces-feel-better)          | Project-local                          | UI polish skill with focused reference files            | `.agents/skills/make-interfaces-feel-better/`      |
-| 13  | [User Interface Wiki](#13-user-interface-wiki)                          | Raphael Salaja                         | `v3.0.0`                                                | `.agents/skills/userinterface-wiki/`               |
-| 14  | [Tailwind CSS Patterns](#14-tailwind-css-patterns)                      | Project-local                          | Utility-first styling and responsive composition guide  | `.agents/skills/tailwind-css-patterns/`            |
-| 15  | [Tailwind CSS Advanced Layouts](#15-tailwind-css-advanced-layouts)      | Project-local                          | Grid, flex, sticky, overflow, and fluid sizing patterns | `.agents/skills/tailwindcss-advanced-layouts/`     |
-| 16  | [Browser Extension Builder](#16-browser-extension-builder)              | vibeship-spawner-skills                | Imported single-file skill; source metadata notes Apache 2.0 | `.agents/skills/browser-extension-builder/`    |
-| 17  | [Chrome Extension Development](#17-chrome-extension-development)        | Project-local                          | Single-file Chrome extension engineering guide          | `.agents/skills/chrome-extension-development/`     |
-| 18  | [Chrome Extension UI](#18-chrome-extension-ui)                          | Chrome Extensions Community            | `0.1.0`                                                 | `.agents/skills/chrome-extension-ui/`              |
-| 19  | [HTML/CSS Best Practices](#19-htmlcss-best-practices)                   | Project-local                          | Extension-only HTML/CSS review and implementation guide | `.agents/skills/html-css-best-practices/`          |
-| 20  | [Modern JavaScript Patterns](#20-modern-javascript-patterns)            | Project-local                          | Extension-only JavaScript review and refactoring guide  | `.agents/skills/modern-javascript-patterns/`       |
+| #   | Skill                                                                   | Publisher                              | Version / Notes                                              | Path                                               |
+| --- | ----------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------- |
+| 1   | [Vercel React Best Practices](#1-vercel-react-best-practices)           | Vercel                                 | `v1.0.0`                                                     | `.agents/skills/vercel-react-best-practices/`      |
+| 2   | [Next.js Best Practices](#2-nextjs-best-practices)                      | Project-local                          | Topic index skill                                            | `.agents/skills/next-best-practices/`              |
+| 3   | [React Composition Patterns](#3-react-composition-patterns)             | Vercel                                 | `v1.0.0`                                                     | `.agents/skills/vercel-composition-patterns/`      |
+| 4   | [Design Engineering](#4-design-engineering)                             | Project-local (Emil Kowalski-inspired) | Single-file skill                                            | `.agents/skills/emil-design-eng/`                  |
+| 5   | [Fixing Motion Performance](#5-fixing-motion-performance)               | Project-local                          | Single-file audit/fix skill                                  | `.agents/skills/fixing-motion-performance/`        |
+| 6   | [Supabase Postgres Best Practices](#6-supabase-postgres-best-practices) | Supabase                               | `v1.1.0`                                                     | `.agents/skills/supabase-postgres-best-practices/` |
+| 7   | [PostgreSQL Table Design](#7-postgresql-table-design)                   | Project-local                          | Single-file skill                                            | `.agents/skills/postgresql-table-design/`          |
+| 8   | [PostgreSQL Pro](#8-postgresql-pro)                                     | Jeff Allan                             | `v1.1.0`                                                     | `.agents/skills/postgres-pro/`                     |
+| 9   | [TypeScript Advanced Types](#9-typescript-advanced-types)               | Project-local                          | Single-file skill                                            | `.agents/skills/typescript-advanced-types/`        |
+| 10  | [SEO Audit](#10-seo-audit)                                              | Project-local                          | `v1.1.0`                                                     | `.agents/skills/seo-audit/`                        |
+| 11  | [React useEffect](#11-react-useeffect)                                  | Project-local                          | Official-docs-inspired guidance                              | `.agents/skills/react-useeffect/`                  |
+| 12  | [Make Interfaces Feel Better](#12-make-interfaces-feel-better)          | Project-local                          | UI polish skill with focused reference files                 | `.agents/skills/make-interfaces-feel-better/`      |
+| 13  | [User Interface Wiki](#13-user-interface-wiki)                          | Raphael Salaja                         | `v3.0.0`                                                     | `.agents/skills/userinterface-wiki/`               |
+| 14  | [Tailwind CSS Patterns](#14-tailwind-css-patterns)                      | Project-local                          | Utility-first styling and responsive composition guide       | `.agents/skills/tailwind-css-patterns/`            |
+| 15  | [Tailwind CSS Advanced Layouts](#15-tailwind-css-advanced-layouts)      | Project-local                          | Grid, flex, sticky, overflow, and fluid sizing patterns      | `.agents/skills/tailwindcss-advanced-layouts/`     |
+| 16  | [Browser Extension Builder](#16-browser-extension-builder)              | vibeship-spawner-skills                | Imported single-file skill; source metadata notes Apache 2.0 | `.agents/skills/browser-extension-builder/`        |
+| 17  | [Chrome Extension Development](#17-chrome-extension-development)        | Project-local                          | Single-file Chrome extension engineering guide               | `.agents/skills/chrome-extension-development/`     |
+| 18  | [Chrome Extension UI](#18-chrome-extension-ui)                          | Chrome Extensions Community            | `0.1.0`                                                      | `.agents/skills/chrome-extension-ui/`              |
+| 19  | [HTML/CSS Best Practices](#19-htmlcss-best-practices)                   | Project-local                          | Extension-only HTML/CSS review and implementation guide      | `.agents/skills/html-css-best-practices/`          |
+| 20  | [Modern JavaScript Patterns](#20-modern-javascript-patterns)            | Project-local                          | Extension-only JavaScript review and refactoring guide       | `.agents/skills/modern-javascript-patterns/`       |
 
 ---
 
@@ -600,8 +600,8 @@ High-level browser extension architecture guidance focused on building practical
 
 ### Available Files
 
-| File       | Description                                                                      |
-| ---------- | -------------------------------------------------------------------------------- |
+| File       | Description                                                                                |
+| ---------- | ------------------------------------------------------------------------------------------ |
 | `SKILL.md` | Full self-contained skill covering MV3 architecture, storage, messaging, and anti-patterns |
 
 ---
@@ -631,8 +631,8 @@ Practical implementation guidance for Chrome extension engineering. The skill em
 
 ### Available Files
 
-| File       | Description                                                                 |
-| ---------- | --------------------------------------------------------------------------- |
+| File       | Description                                                                          |
+| ---------- | ------------------------------------------------------------------------------------ |
 | `SKILL.md` | Full self-contained guide for MV3 code structure, APIs, security, UX, and publishing |
 
 ---
@@ -662,12 +662,12 @@ Comprehensive UX and UI guidance for Chrome extensions, organized around the sur
 
 ### Available Files
 
-| File              | Description                                                                 |
-| ----------------- | --------------------------------------------------------------------------- |
-| `SKILL.md`        | Entry point with category overview, quick reference, and rule links         |
-| `AGENTS.md`       | Expanded compiled guide with all categories, rule summaries, and references |
-| `references/`     | 42 rule documents covering component choice, accessibility, feedback, and branding |
-| `assets/templates/` | Template file for adding new UI rules                                     |
+| File                | Description                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| `SKILL.md`          | Entry point with category overview, quick reference, and rule links                |
+| `AGENTS.md`         | Expanded compiled guide with all categories, rule summaries, and references        |
+| `references/`       | 42 rule documents covering component choice, accessibility, feedback, and branding |
+| `assets/templates/` | Template file for adding new UI rules                                              |
 
 ---
 

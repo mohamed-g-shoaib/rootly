@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const Twitch = (props: SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlSpace="preserve" viewBox="0 0 2400 2800">
@@ -8,6 +8,6 @@ const Twitch = (props: SVGProps<SVGSVGElement>) => (
       <path d="M1700 550h200v600h-200zm-550 0h200v600h-200z" />
     </g>
   </svg>
-);
+)
 
-export { Twitch };
+export { Twitch }

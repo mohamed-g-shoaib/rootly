@@ -216,7 +216,9 @@ export async function getNotes({
 }: {
   noteIds: string[]
   userId: string
-}): Promise<{ success: true; data: Note[] } | { success: false; error: string }> {
+}): Promise<
+  { success: true; data: Note[] } | { success: false; error: string }
+> {
   if (noteIds.length === 0) {
     return { success: true, data: [] }
   }

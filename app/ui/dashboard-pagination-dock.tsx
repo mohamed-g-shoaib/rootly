@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-} from "@/components/ui/pagination";
+} from "@/components/ui/pagination"
 
 type DashboardPaginationDockProps = {
-  currentPage: number;
-  totalPages: number;
-  onPrevious: () => void;
-  onNext: () => void;
-  disabled?: boolean;
-};
+  currentPage: number
+  totalPages: number
+  onPrevious: () => void
+  onNext: () => void
+  disabled?: boolean
+}
 
 export function DashboardPaginationDock({
   currentPage,
@@ -24,7 +24,7 @@ export function DashboardPaginationDock({
 }: DashboardPaginationDockProps) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-20 z-50 md:bottom-3">
-      <div className="mx-auto w-fit pointer-events-auto rounded-full border border-border/60 bg-background/82 px-1 py-1 shadow-sm backdrop-blur-md">
+      <div className="pointer-events-auto mx-auto w-fit rounded-full border border-border/60 bg-background/82 px-1 py-1 shadow-sm backdrop-blur-md">
         <Pagination className="w-auto">
           <PaginationContent className="gap-0.5">
             <PaginationItem>
@@ -60,5 +60,5 @@ export function DashboardPaginationDock({
         </Pagination>
       </div>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import OverviewInsightsClient from "@/app/overview/ui/overview-insights-client";
-import { Card } from "@/components/ui/card";
-import { PageContainer } from "@/components/ui/page-container";
+import OverviewInsightsClient from "@/app/overview/ui/overview-insights-client"
+import { Card } from "@/components/ui/card"
+import { PageContainer } from "@/components/ui/page-container"
 import {
   buildDaySeries,
   type CourseMasteryRow,
@@ -10,18 +10,18 @@ import {
   getOverviewEntryRows,
   getOverviewTrendRows,
   type UnderstandingDatum,
-} from "@/app/overview/overview-data";
-import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf";
+} from "@/app/overview/overview-data"
+import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf"
 
 export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
-  const perf = createDashboardRoutePerf("/overview#insights");
-  const insightsPerf = perf.createScope("insights");
-  const { now, days } = getOverviewDateWindow(nowIso);
+  const perf = createDashboardRoutePerf("/overview#insights")
+  const insightsPerf = perf.createScope("insights")
+  const { now, days } = getOverviewDateWindow(nowIso)
 
-  const dailyStudyTime: DailyStudyDatum[] = [];
-  const dailyMood: DailyMoodDatum[] = [];
-  const understandingProgress: UnderstandingDatum[] = [];
-  const courseMastery: CourseMasteryRow[] = [];
+  const dailyStudyTime: DailyStudyDatum[] = []
+  const dailyMood: DailyMoodDatum[] = []
+  const understandingProgress: UnderstandingDatum[] = []
+  const courseMastery: CourseMasteryRow[] = []
 
   const [entriesData, notesForTrend] = await Promise.all([
     insightsPerf.measure(
@@ -29,115 +29,115 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
       () => getOverviewEntryRows(nowIso),
       (result) => ({
         rows: result.length,
-      }),
+      })
     ),
     insightsPerf.measure(
       "trend-rows",
       () => getOverviewTrendRows(nowIso),
       (result) => ({
         rows: result.length,
-      }),
+      })
     ),
-  ]);
+  ])
 
   await insightsPerf.measure("derive-series", async () => {
-    const series = buildDaySeries(now, days);
+    const series = buildDaySeries(now, days)
     const entryByDate = new Map<
       string,
       { minutes: number; mood: 1 | 2 | 3 | null }
-    >();
+    >()
 
     for (const row of entriesData) {
       entryByDate.set(row.date, {
         minutes: row.study_time_minutes,
         mood: row.mood,
-      });
+      })
     }
 
     for (const d of series) {
-      const entry = entryByDate.get(d.date);
+      const entry = entryByDate.get(d.date)
       dailyStudyTime.push({
         date: d.date,
         label: d.label,
         minutes: entry?.minutes ?? 0,
-      });
+      })
       dailyMood.push({
         date: d.date,
         label: d.label,
         mood: entry?.mood ?? null,
-      });
+      })
     }
 
     const understandingByDate = new Map<
       string,
       { sum: number; count: number }
-    >();
+    >()
     const masteryByCourse = new Map<
       string,
       { title: string; sum: number; count: number }
-    >();
+    >()
 
     for (const row of notesForTrend) {
-      if (row.understanding_level == null) continue;
+      if (row.understanding_level == null) continue
 
-      const date = row.updated_at.slice(0, 10);
-      const bucket = understandingByDate.get(date) ?? { sum: 0, count: 0 };
-      bucket.sum += row.understanding_level;
-      bucket.count += 1;
-      understandingByDate.set(date, bucket);
+      const date = row.updated_at.slice(0, 10)
+      const bucket = understandingByDate.get(date) ?? { sum: 0, count: 0 }
+      bucket.sum += row.understanding_level
+      bucket.count += 1
+      understandingByDate.set(date, bucket)
 
       if (row.course_id) {
         const title = Array.isArray(row.courses)
           ? (row.courses[0]?.title ?? "")
-          : (row.courses?.title ?? "");
+          : (row.courses?.title ?? "")
         const courseBucket = masteryByCourse.get(row.course_id) ?? {
           title,
           sum: 0,
           count: 0,
-        };
-        courseBucket.sum += row.understanding_level;
-        courseBucket.count += 1;
-        courseBucket.title = courseBucket.title || title;
-        masteryByCourse.set(row.course_id, courseBucket);
+        }
+        courseBucket.sum += row.understanding_level
+        courseBucket.count += 1
+        courseBucket.title = courseBucket.title || title
+        masteryByCourse.set(row.course_id, courseBucket)
       }
     }
 
     for (const d of series) {
-      const bucket = understandingByDate.get(d.date);
-      const avg = bucket && bucket.count > 0 ? bucket.sum / bucket.count : null;
+      const bucket = understandingByDate.get(d.date)
+      const avg = bucket && bucket.count > 0 ? bucket.sum / bucket.count : null
       understandingProgress.push({
         date: d.date,
         label: d.label,
         avg: avg == null ? null : Number(avg.toFixed(2)),
-      });
+      })
     }
 
     for (const row of masteryByCourse.values()) {
-      if (!row.title || row.count <= 0) continue;
+      if (!row.title || row.count <= 0) continue
       courseMastery.push({
         title: row.title,
         avg: Number((row.sum / row.count).toFixed(2)),
-      });
+      })
     }
 
     courseMastery.sort(
-      (a, b) => a.avg - b.avg || a.title.localeCompare(b.title),
-    );
+      (a, b) => a.avg - b.avg || a.title.localeCompare(b.title)
+    )
 
     return {
       dailyStudyTime: dailyStudyTime.length,
       dailyMood: dailyMood.length,
       understandingProgress: understandingProgress.length,
       courseMastery: courseMastery.length,
-    };
-  });
+    }
+  })
 
   perf.finish({
     dailyStudyTime: dailyStudyTime.length,
     dailyMood: dailyMood.length,
     understandingProgress: understandingProgress.length,
     courseMastery: courseMastery.length,
-  });
+  })
 
   return (
     <OverviewInsightsClient
@@ -146,7 +146,7 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
       understandingProgress={understandingProgress}
       courseMastery={courseMastery}
     />
-  );
+  )
 }
 
 export function OverviewInsightsSkeleton() {
@@ -204,13 +204,11 @@ export function OverviewInsightsSkeleton() {
         </Card>
       </section>
     </PageContainer>
-  );
+  )
 }
 
 function LiteSkeleton({ className }: { className: string }) {
-  return (
-    <div className={`animate-pulse rounded-md bg-muted/70 ${className}`} />
-  );
+  return <div className={`animate-pulse rounded-md bg-muted/70 ${className}`} />
 }
 
 function ChartLiteSkeleton({ className }: { className: string }) {
@@ -231,5 +229,5 @@ function ChartLiteSkeleton({ className }: { className: string }) {
       <div className="h-5 w-4 animate-pulse rounded-sm bg-muted/70" />
       <div className="h-12 w-4 animate-pulse rounded-sm bg-muted/70" />
     </div>
-  );
+  )
 }

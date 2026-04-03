@@ -108,7 +108,7 @@ export function NoteViewerSheet({
   const title = note?.body
     ? note.body.split(" ").slice(0, 6).join(" ") +
       (note.body.split(" ").length > 6 ? "..." : "")
-    : note?.question ?? "Note"
+    : (note?.question ?? "Note")
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -383,7 +383,12 @@ function NoteEditorSheetBody({
         </SheetHeader>
         <SheetPanel className="px-4 pb-5">
           <div className="flex flex-col gap-5">
-            <NoteTypeSection mode={mode} note={note} type={type} onTypeChange={setType} />
+            <NoteTypeSection
+              mode={mode}
+              note={note}
+              type={type}
+              onTypeChange={setType}
+            />
 
             {type ? (
               <>
@@ -461,7 +466,11 @@ function NoteTypeSection({
     <FormSection>
       <FormSectionTitle>Note type</FormSectionTitle>
       <div className="grid grid-cols-2 gap-2">
-        <Button variant={type === "qa" ? "secondary" : "outline"} type="button" onClick={() => onTypeChange("qa")}>
+        <Button
+          variant={type === "qa" ? "secondary" : "outline"}
+          type="button"
+          onClick={() => onTypeChange("qa")}
+        >
           Q&A
         </Button>
         <Button
@@ -495,8 +504,16 @@ function CourseSelectionSection({
       {lockedCourse ? (
         <div className="pt-1 text-sm">{lockedCourse.title}</div>
       ) : (
-        <Combobox items={courseItems} value={selectedCourse} onValueChange={(value) => onCourseChange(value?.value ?? "none")}>
-          <ComboboxInput placeholder="Course" aria-label="Course" showClear={courseId !== "none"} />
+        <Combobox
+          items={courseItems}
+          value={selectedCourse}
+          onValueChange={(value) => onCourseChange(value?.value ?? "none")}
+        >
+          <ComboboxInput
+            placeholder="Course"
+            aria-label="Course"
+            showClear={courseId !== "none"}
+          />
           <ComboboxPopup>
             <ComboboxEmpty>No results found.</ComboboxEmpty>
             <ComboboxList>
@@ -532,18 +549,41 @@ function QaFieldsSection({
     <>
       <FormSection>
         <Label>Question</Label>
-        <Textarea placeholder="What is the question?" value={question} onChange={(e) => onQuestionChange(e.target.value)} />
+        <Textarea
+          placeholder="What is the question?"
+          value={question}
+          onChange={(e) => onQuestionChange(e.target.value)}
+        />
       </FormSection>
       <FormSection>
         <Label>Answer</Label>
-        <Textarea placeholder="Write the answer..." value={answer} onChange={(e) => onAnswerChange(e.target.value)} />
+        <Textarea
+          placeholder="Write the answer..."
+          value={answer}
+          onChange={(e) => onAnswerChange(e.target.value)}
+        />
       </FormSection>
       <FormSection>
         <Label>Understanding level</Label>
         <div className="grid grid-cols-3 gap-2">
-          <UnderstandingButton level={1} activeLevel={understandingLevel} label="Confused" onClick={onUnderstandingLevelChange} />
-          <UnderstandingButton level={2} activeLevel={understandingLevel} label="Getting It" onClick={onUnderstandingLevelChange} />
-          <UnderstandingButton level={3} activeLevel={understandingLevel} label="Clear" onClick={onUnderstandingLevelChange} />
+          <UnderstandingButton
+            level={1}
+            activeLevel={understandingLevel}
+            label="Confused"
+            onClick={onUnderstandingLevelChange}
+          />
+          <UnderstandingButton
+            level={2}
+            activeLevel={understandingLevel}
+            label="Getting It"
+            onClick={onUnderstandingLevelChange}
+          />
+          <UnderstandingButton
+            level={3}
+            activeLevel={understandingLevel}
+            label="Clear"
+            onClick={onUnderstandingLevelChange}
+          />
         </div>
       </FormSection>
     </>
@@ -571,7 +611,9 @@ function UnderstandingButton({
       <HugeiconsIcon
         icon={understandingIcon(level)}
         size={18}
-        color={activeLevel === level ? understandingColor(level) : "currentColor"}
+        color={
+          activeLevel === level ? understandingColor(level) : "currentColor"
+        }
       />
       {label}
     </Button>
@@ -613,7 +655,8 @@ function NoteOptionsSection({
     <FormSection>
       <FormSectionTitle>Options</FormSectionTitle>
       <FormSectionDescription>
-        Mark notes for future review or attach a code example when it helps explain the idea.
+        Mark notes for future review or attach a code example when it helps
+        explain the idea.
       </FormSectionDescription>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Button
@@ -622,7 +665,11 @@ function NoteOptionsSection({
           className="w-full justify-start gap-2"
           onClick={onToggleFlagged}
         >
-          <HugeiconsIcon icon={Flag01Icon} size={18} color={flagged ? "var(--destructive)" : "currentColor"} />
+          <HugeiconsIcon
+            icon={Flag01Icon}
+            size={18}
+            color={flagged ? "var(--destructive)" : "currentColor"}
+          />
           Flag for review
         </Button>
 
@@ -632,7 +679,11 @@ function NoteOptionsSection({
           className="w-full justify-start gap-2"
           onClick={onToggleCodeEnabled}
         >
-          <HugeiconsIcon icon={CodeIcon} size={18} color={codeEnabled ? "var(--info)" : "currentColor"} />
+          <HugeiconsIcon
+            icon={CodeIcon}
+            size={18}
+            color={codeEnabled ? "var(--info)" : "currentColor"}
+          />
           Add code snippet
         </Button>
       </div>
@@ -656,7 +707,10 @@ function CodeSnippetSection({
       <Label>Code snippet</Label>
       <Combobox
         items={[...CODE_LANGUAGE_OPTIONS]}
-        value={CODE_LANGUAGE_OPTIONS.find((x) => x.value === codeLanguage) ?? CODE_LANGUAGE_OPTIONS[0]}
+        value={
+          CODE_LANGUAGE_OPTIONS.find((x) => x.value === codeLanguage) ??
+          CODE_LANGUAGE_OPTIONS[0]
+        }
         onValueChange={(item) => onCodeLanguageChange(item?.value ?? "tsx")}
       >
         <ComboboxTrigger render={<SelectButton />} aria-label="Code language">
@@ -682,7 +736,12 @@ function CodeSnippetSection({
         </ComboboxPopup>
       </Combobox>
 
-      <CodeEditor language={codeLanguage} value={codeValue} onChange={onCodeValueChange} className="min-h-40" />
+      <CodeEditor
+        language={codeLanguage}
+        value={codeValue}
+        onChange={onCodeValueChange}
+        className="min-h-40"
+      />
     </FormSection>
   )
 }

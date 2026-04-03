@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { useMemo } from "react";
+import { useMemo } from "react"
 import {
   CartesianGrid,
   Line,
@@ -9,18 +9,18 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from "recharts"
 
 type Datum = {
-  date: string;
-  label: string;
-  avg: number | null;
-};
+  date: string
+  label: string
+  avg: number | null
+}
 
 export default function UnderstandingProgressChart({
   data,
 }: {
-  data: Datum[];
+  data: Datum[]
 }) {
   const chartData = useMemo(
     () =>
@@ -28,8 +28,8 @@ export default function UnderstandingProgressChart({
         ...d,
         avgValue: d.avg,
       })),
-    [data],
-  );
+    [data]
+  )
 
   return (
     <div className="h-56 w-full">
@@ -54,20 +54,20 @@ export default function UnderstandingProgressChart({
           />
           <Tooltip
             content={(props) => {
-              if (!props.active || !props.payload?.length) return null;
-              const entry = props.payload[0];
-              if (!entry) return null;
+              if (!props.active || !props.payload?.length) return null
+              const entry = props.payload[0]
+              if (!entry) return null
               const datum = entry.payload as Datum & {
-                avgValue: Datum["avg"];
-              };
-              const value = datum.avgValue;
-              if (value == null) return null;
+                avgValue: Datum["avg"]
+              }
+              const value = datum.avgValue
+              if (value == null) return null
               return (
                 <div className="rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md/5">
                   <p className="text-muted-foreground">{datum.date}</p>
                   <p className="font-medium">{Number(value).toFixed(1)} / 3</p>
                 </div>
-              );
+              )
             }}
           />
           <Line
@@ -81,5 +81,5 @@ export default function UnderstandingProgressChart({
         </LineChart>
       </ResponsiveContainer>
     </div>
-  );
+  )
 }

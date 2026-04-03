@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function DailyEntriesLoading() {
   return (
@@ -11,5 +11,5 @@ export default function DailyEntriesLoading() {
         <Skeleton className="h-20 w-full" />
       </div>
     </div>
-  );
+  )
 }
