@@ -3,7 +3,10 @@
   "name": "Rootly",
   "version": "0.0.1",
   "description": "A side-panel study companion for quick Rootly capture while you browse.",
-  "permissions": ["sidePanel", "storage"],
+  "permissions": [
+    "sidePanel",
+    "storage"
+  ],
   "host_permissions": [
     "http://localhost:3000/*",
     "https://rootly.app/*",
@@ -28,5 +31,18 @@
   },
   "side_panel": {
     "default_path": "sidepanel/index.html"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:3000/*",
+        "https://rootly.app/*",
+        "https://www.rootly.app/*"
+      ],
+      "run_at": "document_start",
+      "js": [
+        "content-script.js"
+      ]
+    }
+  ]
 }
