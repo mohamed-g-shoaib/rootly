@@ -1,27 +1,44 @@
-"use client"
+"use client";
 
-import { useMemo } from "react"
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts"
+import { useMemo } from "react";
+import dynamic from "next/dynamic";
+
+const CartesianGrid = dynamic(
+  () => import("recharts").then((mod) => mod.CartesianGrid),
+  { ssr: false },
+);
+const Line = dynamic(() => import("recharts").then((mod) => mod.Line), {
+  ssr: false,
+});
+const LineChart = dynamic(
+  () => import("recharts").then((mod) => mod.LineChart),
+  { ssr: false },
+);
+const ResponsiveContainer = dynamic(
+  () => import("recharts").then((mod) => mod.ResponsiveContainer),
+  { ssr: false },
+);
+const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
+  ssr: false,
+});
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), {
+  ssr: false,
+});
+const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis), {
+  ssr: false,
+});
 
 type Datum = {
-  date: string
-  label: string
-  mood: 1 | 2 | 3 | null
-}
+  date: string;
+  label: string;
+  mood: 1 | 2 | 3 | null;
+};
 
 const moodLabel: Record<1 | 2 | 3, string> = {
   1: "Low",
   2: "Neutral",
   3: "Good",
-}
+};
 
 export default function DailyMoodChart({ data }: { data: Datum[] }) {
   const chartData = useMemo(
@@ -30,8 +47,8 @@ export default function DailyMoodChart({ data }: { data: Datum[] }) {
         ...d,
         moodValue: d.mood,
       })),
-    [data]
-  )
+    [data],
+  );
 
   return (
     <div className="h-56 w-full">
@@ -58,20 +75,20 @@ export default function DailyMoodChart({ data }: { data: Datum[] }) {
           />
           <Tooltip
             content={(props) => {
-              if (!props.active || !props.payload?.length) return null
-              const entry = props.payload[0]
-              if (!entry) return null
+              if (!props.active || !props.payload?.length) return null;
+              const entry = props.payload[0];
+              if (!entry) return null;
               const datum = entry.payload as Datum & {
-                moodValue: Datum["mood"]
-              }
-              const value = datum.moodValue
-              if (value == null) return null
+                moodValue: Datum["mood"];
+              };
+              const value = datum.moodValue;
+              if (value == null) return null;
               return (
                 <div className="rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md/5">
                   <p className="text-muted-foreground">{datum.date}</p>
                   <p className="font-medium">{moodLabel[value]}</p>
                 </div>
-              )
+              );
             }}
           />
           <Line
@@ -85,5 +102,5 @@ export default function DailyMoodChart({ data }: { data: Datum[] }) {
         </LineChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }
