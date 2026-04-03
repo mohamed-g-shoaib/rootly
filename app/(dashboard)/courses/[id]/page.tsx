@@ -1,76 +1,51 @@
-import type { Metadata } from "next"
+import type { Metadata } from "next";
 
-import CourseDetailPageUI from "@/app/courses/ui/course-detail-page"
-import type { Course } from "@/app/courses/ui/courses-model"
-import { buildNotePreview, type Note } from "@/app/notes/ui/notes-model"
+import CourseDetailPageUI from "@/app/courses/ui/course-detail-page";
+import type { Course } from "@/app/courses/ui/courses-model";
+import { buildNotePreview, type Note } from "@/app/notes/ui/notes-model";
 import {
   getDashboardSupabase,
   getDashboardUserId,
-} from "@/lib/dashboard-session"
-import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf"
+} from "@/lib/dashboard-session";
+import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf";
 
 type NoteRow = {
-  id: string
-  type: "qa" | "freeform"
-  course_id: string | null
-  question: string | null
-  answer: string | null
-  body: string | null
-  understanding_level: 1 | 2 | 3 | null
-  flag: boolean
-  code_snippet: string | null
-  code_language: string
-  created_at: string
-  updated_at: string
-  courses: { title: string }[] | { title: string } | null
-}
+  id: string;
+  type: "qa" | "freeform";
+  course_id: string | null;
+  question: string | null;
+  answer: string | null;
+  body: string | null;
+  understanding_level: 1 | 2 | 3 | null;
+  flag: boolean;
+  code_snippet: string | null;
+  code_language: string;
+  created_at: string;
+  updated_at: string;
+  courses: { title: string }[] | { title: string } | null;
+};
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}): Promise<Metadata> {
-  const { id } = await params
-  const [supabase, userId] = await Promise.all([
-    getDashboardSupabase(),
-    getDashboardUserId(),
-  ])
-
-  if (!userId) {
-    return {
-      title: "Course",
-    }
-  }
-
-  const { data: courseRow } = await supabase
-    .from("courses")
-    .select("title")
-    .eq("id", id)
-    .eq("user_id", userId)
-    .maybeSingle()
-
-  return {
-    title: courseRow?.title ?? "Course",
-  }
-}
+export const metadata: Metadata = {
+  title: "Course",
+};
 
 export default async function CourseDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const perf = createDashboardRoutePerf("/courses/[id]")
-  const { id } = await params
+  const perf = createDashboardRoutePerf("/courses/[id]");
+  const { id } = await params;
   const [supabase, userId] = await perf.measure(
     "session",
     () => Promise.all([getDashboardSupabase(), getDashboardUserId()]),
     ([, currentUserId]) => ({
       authenticated: Boolean(currentUserId),
-    })
-  )
+    }),
+  );
 
-  let course: Course | null = null
-  let initialNotes: Note[] = []
+  let course: Course | null = null;
+  let initialNotes: Note[] = [];
 
   if (userId) {
     const { data: courseRow } = await perf.measure(
@@ -79,15 +54,15 @@ export default async function CourseDetailPage({
         supabase
           .from("courses")
           .select(
-            "id,title,instructor,course_link,links,topics,progress,created_at,updated_at"
+            "id,title,instructor,course_link,links,topics,progress,created_at,updated_at",
           )
           .eq("id", id)
           .eq("user_id", userId)
           .maybeSingle(),
       (result) => ({
         found: Boolean(result.data),
-      })
-    )
+      }),
+    );
 
     if (courseRow) {
       course = {
@@ -100,7 +75,7 @@ export default async function CourseDetailPage({
         progress: courseRow.progress,
         createdAt: courseRow.created_at,
         updatedAt: courseRow.updated_at,
-      }
+      };
     }
 
     const { data: notesRows } = await perf.measure(
@@ -109,15 +84,15 @@ export default async function CourseDetailPage({
         supabase
           .from("notes")
           .select(
-            "id,type,course_id,question,answer,body,understanding_level,flag,code_snippet,code_language,created_at,updated_at,courses(title)"
+            "id,type,course_id,question,answer,body,understanding_level,flag,code_snippet,code_language,created_at,updated_at,courses(title)",
           )
           .eq("user_id", userId)
           .eq("course_id", id)
           .order("updated_at", { ascending: false }),
       (result) => ({
         rows: result.data?.length ?? 0,
-      })
-    )
+      }),
+    );
 
     if (notesRows) {
       initialNotes = (notesRows as NoteRow[]).map((row) => ({
@@ -143,14 +118,14 @@ export default async function CourseDetailPage({
         createdAt: row.created_at,
         updatedAt: row.updated_at,
         detailsLoaded: true,
-      }))
+      }));
     }
   }
 
   perf.finish({
     foundCourse: Boolean(course),
     notes: initialNotes.length,
-  })
+  });
 
   return (
     <CourseDetailPageUI
@@ -159,5 +134,5 @@ export default async function CourseDetailPage({
       course={course}
       initialNotes={initialNotes}
     />
-  )
+  );
 }
