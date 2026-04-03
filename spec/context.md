@@ -38,6 +38,10 @@ For Supabase database advisor/index-maintenance work, also use:
 - `spec/sql/supabase-duplicate-index-drop-2026-04-03.sql`
 - `spec/sql/supabase-redundant-index-check-daily-entries.sql`
 
+For overview performance audits, use:
+
+- `spec/overview-performance-audit-2026-04-03.md`
+
 ---
 
 ## Important Project Rules
@@ -304,6 +308,62 @@ We hit another Base UI hydration mismatch in the dashboard after responsive clie
 Current fix:
 
 - `hooks/use-media-query.ts` now uses `useSyncExternalStore` with a stable server snapshot instead of effect-driven post-render state initialization
+
+### Dashboard UX polish follow-up
+
+- daily entries `Log Today` and courses `New Course` sheet editors were aligned with notes/review sheet behavior by keeping editor sheet bodies mounted and resetting local draft state on open, so open/close transitions are consistent
+- pointer cursor behavior for dashboard avatar interactions is now enforced at shared UI primitive level (not per-screen overrides):
+  - menu items/submenus
+  - combobox items
+  - select triggers/items
+  - switch root (used by dark/light toggle)
+- overview insights chart-loading skeleton was replaced with a lightweight pulse-based placeholder (no gradient shimmer) for lower paint/compositing overhead
+
+### Overview hydration and loading polish
+
+- hydration mismatch on dashboard/overview was addressed by stabilizing initial media-query values during hydration (`useMediaQuery` now returns SSR-aligned `false` until mount)
+- overview range toggle IDs were made explicit/stable (`overview-range-mobile`, `overview-range-desktop`) instead of generated ids
+- dashboard avatar menu trigger now uses a stable explicit id (`dashboard-user-menu-trigger`) to avoid generated-id drift warnings
+- overview insights client-side chart loading fallbacks now use the same lightweight pulse skeleton style as server fallback, removing the old heavy shimmer fallback from post-hydration chart loading
+
+### Overview performance optimization pass
+
+- created route audit/spec doc at `spec/overview-performance-audit-2026-04-03.md` with findings and execution plan
+- reduced chart chunk waterfalls by removing nested `dynamic(() => import("recharts"))` from chart modules and using direct `recharts` imports inside chart components
+- preloaded overview trend rows early in `app/(dashboard)/overview/page.tsx` to overlap summary and insights work
+- removed duplicate summary understanding query path by deriving `avgUnderstanding` from `getOverviewTrendRows(nowIso)` instead of a separate understanding-level query
+- introduced cached shared overview context in `app/overview/overview-data.ts` to reuse supabase/user session resolution across overview data functions
+- removed unnecessary dynamic import boundary for lightweight `CourseMasteryList` in insights client
+
+Latest follow-up:
+
+- overview summary now uses `get_overview_summary` RPC via `getOverviewSummaryStats()` as the fast-path for total courses/notes and average understanding
+- summary retains a fallback exact-count path for environments where the RPC is unavailable
+- summary still prewarms trend rows for streamed insights, but trend fetch is no longer on the summary critical path
+
+Newest update:
+
+- removed trend-row prewarm from summary request flow to reduce contention when summary is using fallback paths
+- logs showed `summary-rpc` fast-path unavailable (`hasData:false`) in active environment
+- added bootstrap SQL for RPC creation/grants:
+  - `spec/sql/overview-summary-rpc-bootstrap.sql`
+
+Most recent follow-up:
+
+- overview summary `entry-rows` is now lazy fallback only (no eager execution on fast-path)
+- overview summary RPC bootstrap now includes `today_study_minutes` and `streak_days` so hero metrics can be served from the same RPC payload
+- summary fallback trigger now checks RPC field presence instead of zero values, so valid `0` stats no longer cause unnecessary `entry-rows` fallback queries
+
+Newest additions:
+
+- summary now non-blockingly prewarms insights entry/trend data to improve streamed insights latency
+- overview summary RPC bootstrap SQL was optimized to reduce repeated table scans by using shared aggregate CTEs (`daily_agg`, `notes_agg`, `courses_agg`)
+
+Latest execution decision:
+
+- overview summary now defaults to the faster non-RPC path in this environment
+- RPC summary path remains available behind `ROOTLY_OVERVIEW_USE_SUMMARY_RPC=1` for benchmarking/feature-flag rollout
+- non-RPC path now derives average understanding from trend rows to preserve metric correctness
 
 ### Supabase performance advisor follow-up
 
