@@ -1,7 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import * as React from "react"
+import Link from "next/link";
+import * as React from "react";
+import { ViewTransition } from "react";
 
 import {
   AddCircleIcon,
@@ -12,15 +13,15 @@ import {
   FilterIcon,
   Link01Icon,
   MoreVerticalIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Form, FormSection } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Form, FormSection } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -30,14 +31,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu"
+} from "@/components/ui/menu";
 import {
   Sheet,
   SheetClose,
@@ -46,42 +47,42 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 import {
   PreviewCard,
   PreviewCardPopup,
   PreviewCardTrigger,
-} from "@/components/ui/preview-card"
-import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
+} from "@/components/ui/preview-card";
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover";
 import {
   Progress,
   ProgressIndicator,
   ProgressTrack,
-} from "@/components/ui/progress"
-import { Slider } from "@/components/ui/slider"
+} from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
 
-import type { Course } from "./courses-model"
-import { isValidUrl } from "./courses-model"
+import type { Course } from "./courses-model";
+import { isValidUrl } from "./courses-model";
 
 type CourseEditorSheetProps = {
-  mode: "create" | "edit"
-  course: Course | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  breakpoint: "mobile" | "tablet" | "desktop"
-  onSave: (course: Course) => void
-}
+  mode: "create" | "edit";
+  course: Course | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  breakpoint: "mobile" | "tablet" | "desktop";
+  onSave: (course: Course) => void;
+};
 
 type EditableLink = {
-  id: string
-  value: string
-}
+  id: string;
+  value: string;
+};
 
 function toEditableLinks(links: string[]): EditableLink[] {
   return links.map((value) => ({
     id: crypto.randomUUID(),
     value,
-  }))
+  }));
 }
 
 export function CourseEditorSheet({
@@ -93,7 +94,7 @@ export function CourseEditorSheet({
   onSave,
 }: CourseEditorSheetProps) {
   const editorKey =
-    mode === "edit" ? `edit-${course?.id ?? "missing"}` : "create"
+    mode === "edit" ? `edit-${course?.id ?? "missing"}` : "create";
 
   return (
     <CourseEditorSheetBody
@@ -105,7 +106,7 @@ export function CourseEditorSheet({
       breakpoint={breakpoint}
       onSave={onSave}
     />
-  )
+  );
 }
 
 function CourseEditorSheetBody({
@@ -116,46 +117,46 @@ function CourseEditorSheetBody({
   breakpoint,
   onSave,
 }: CourseEditorSheetProps) {
-  const [discardOpen, setDiscardOpen] = React.useState(false)
+  const [discardOpen, setDiscardOpen] = React.useState(false);
 
-  const [title, setTitle] = React.useState(course?.title ?? "")
-  const [instructor, setInstructor] = React.useState(course?.instructor ?? "")
-  const [courseLink, setCourseLink] = React.useState(course?.courseLink ?? "")
+  const [title, setTitle] = React.useState(course?.title ?? "");
+  const [instructor, setInstructor] = React.useState(course?.instructor ?? "");
+  const [courseLink, setCourseLink] = React.useState(course?.courseLink ?? "");
   const [links, setLinks] = React.useState<EditableLink[]>(() =>
-    toEditableLinks(course?.links ?? [])
-  )
+    toEditableLinks(course?.links ?? []),
+  );
   const [topics, setTopics] = React.useState<string[]>(
-    () => course?.topics ?? []
-  )
-  const [topicDraft, setTopicDraft] = React.useState("")
-  const [progress, setProgress] = React.useState(course?.progress ?? 0)
+    () => course?.topics ?? [],
+  );
+  const [topicDraft, setTopicDraft] = React.useState("");
+  const [progress, setProgress] = React.useState(course?.progress ?? 0);
 
-  const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false)
+  const [courseLinkInvalid, setCourseLinkInvalid] = React.useState(false);
   const [linkInvalidById, setLinkInvalidById] = React.useState<
     Record<string, boolean>
-  >({})
+  >({});
 
   React.useEffect(() => {
-    if (!open) return
+    if (!open) return;
 
-    setDiscardOpen(false)
-    setTitle(course?.title ?? "")
-    setInstructor(course?.instructor ?? "")
-    setCourseLink(course?.courseLink ?? "")
-    setLinks(toEditableLinks(course?.links ?? []))
-    setTopics(course?.topics ?? [])
-    setTopicDraft("")
-    setProgress(course?.progress ?? 0)
-    setCourseLinkInvalid(false)
-    setLinkInvalidById({})
-  }, [open, course, mode])
+    setDiscardOpen(false);
+    setTitle(course?.title ?? "");
+    setInstructor(course?.instructor ?? "");
+    setCourseLink(course?.courseLink ?? "");
+    setLinks(toEditableLinks(course?.links ?? []));
+    setTopics(course?.topics ?? []);
+    setTopicDraft("");
+    setProgress(course?.progress ?? 0);
+    setCourseLinkInvalid(false);
+    setLinkInvalidById({});
+  }, [open, course, mode]);
 
   const linkValues = React.useMemo(
     () => links.map((link) => link.value),
-    [links]
-  )
+    [links],
+  );
 
-  const side = breakpoint === "mobile" ? "bottom" : "right"
+  const side = breakpoint === "mobile" ? "bottom" : "right";
 
   return (
     <>
@@ -172,11 +173,11 @@ function CourseEditorSheetBody({
               JSON.stringify(topics) !== JSON.stringify(course?.topics ?? []) ||
               progress !== (course?.progress ?? 0))
           ) {
-            setDiscardOpen(true)
-            return
+            setDiscardOpen(true);
+            return;
           }
 
-          onOpenChange(next)
+          onOpenChange(next);
         }}
       >
         <SheetPopup side={side} variant="inset">
@@ -214,8 +215,8 @@ function CourseEditorSheetBody({
                     aria-invalid={courseLinkInvalid}
                     onBlur={() => setCourseLinkInvalid(!isValidUrl(courseLink))}
                     onValueChange={(v) => {
-                      setCourseLink(v)
-                      if (courseLinkInvalid) setCourseLinkInvalid(false)
+                      setCourseLink(v);
+                      if (courseLinkInvalid) setCourseLinkInvalid(false);
                     }}
                   />
                   {courseLinkInvalid ? (
@@ -246,14 +247,14 @@ function CourseEditorSheetBody({
                               prev.map((item) =>
                                 item.id === link.id
                                   ? { ...item, value: v }
-                                  : item
-                              )
-                            )
+                                  : item,
+                              ),
+                            );
                             if (linkInvalidById[link.id]) {
                               setLinkInvalidById((prev) => ({
                                 ...prev,
                                 [link.id]: false,
-                              }))
+                              }));
                             }
                           }}
                         />
@@ -263,13 +264,13 @@ function CourseEditorSheetBody({
                           aria-label="Remove link"
                           onClick={() => {
                             setLinks((prev) =>
-                              prev.filter((item) => item.id !== link.id)
-                            )
+                              prev.filter((item) => item.id !== link.id),
+                            );
                             setLinkInvalidById((prev) => {
-                              const next = { ...prev }
-                              delete next[link.id]
-                              return next
-                            })
+                              const next = { ...prev };
+                              delete next[link.id];
+                              return next;
+                            });
                           }}
                         >
                           <HugeiconsIcon icon={Cancel01Icon} size={18} />
@@ -284,7 +285,7 @@ function CourseEditorSheetBody({
                       setLinks((prev) => [
                         ...prev,
                         { id: crypto.randomUUID(), value: "" },
-                      ])
+                      ]);
                     }}
                   >
                     <HugeiconsIcon icon={AddCircleIcon} size={18} />
@@ -319,13 +320,13 @@ function CourseEditorSheetBody({
                     onValueChange={(v) => setTopicDraft(v)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === ",") {
-                        e.preventDefault()
+                        e.preventDefault();
                         if (topicDraft.trim()) {
                           setTopics((prev) => {
-                            if (prev.includes(topicDraft.trim())) return prev
-                            return [...prev, topicDraft.trim()]
-                          })
-                          setTopicDraft("")
+                            if (prev.includes(topicDraft.trim())) return prev;
+                            return [...prev, topicDraft.trim()];
+                          });
+                          setTopicDraft("");
                         }
                       }
                     }}
@@ -355,7 +356,7 @@ function CourseEditorSheetBody({
               <Button
                 type="button"
                 onClick={() => {
-                  if (!title.trim()) return
+                  if (!title.trim()) return;
                   onSave({
                     ...course,
                     id: course?.id ?? crypto.randomUUID(),
@@ -367,7 +368,7 @@ function CourseEditorSheetBody({
                     progress,
                     createdAt: course?.createdAt ?? new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
-                  } as Course)
+                  } as Course);
                 }}
                 disabled={
                   !title.trim() ||
@@ -406,8 +407,8 @@ function CourseEditorSheetBody({
               variant="destructive"
               type="button"
               onClick={() => {
-                setDiscardOpen(false)
-                onOpenChange(false)
+                setDiscardOpen(false);
+                onOpenChange(false);
               }}
             >
               Discard
@@ -416,7 +417,7 @@ function CourseEditorSheetBody({
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }
 
 export function EmptyState({
@@ -425,10 +426,10 @@ export function EmptyState({
   onNewCourse,
   onClearFilters,
 }: {
-  hasAnyCourses: boolean
-  hasFilters: boolean
-  onNewCourse: () => void
-  onClearFilters: () => void
+  hasAnyCourses: boolean;
+  hasFilters: boolean;
+  onNewCourse: () => void;
+  onClearFilters: () => void;
 }) {
   if (!hasAnyCourses) {
     return (
@@ -450,7 +451,7 @@ export function EmptyState({
           New Course
         </Button>
       </div>
-    )
+    );
   }
 
   if (hasFilters) {
@@ -471,10 +472,10 @@ export function EmptyState({
           Clear filters
         </Button>
       </div>
-    )
+    );
   }
 
-  return null
+  return null;
 }
 
 export function CourseCard({
@@ -485,20 +486,20 @@ export function CourseCard({
   onViewLinks,
   onDelete,
 }: {
-  course: Course
-  now: Date
-  isMobile: boolean
-  onEdit: () => void
-  onViewLinks: () => void
-  onDelete: () => void
+  course: Course;
+  now: Date;
+  isMobile: boolean;
+  onEdit: () => void;
+  onViewLinks: () => void;
+  onDelete: () => void;
 }) {
-  const showTopics = course.topics.length > 0
-  const visibleTopics = course.topics.slice(0, 3)
+  const showTopics = course.topics.length > 0;
+  const visibleTopics = course.topics.slice(0, 3);
   const remainingTopics = Math.max(
     0,
-    course.topics.length - visibleTopics.length
-  )
-  const hasLinks = Boolean(course.courseLink) || course.links.length > 0
+    course.topics.length - visibleTopics.length,
+  );
+  const hasLinks = Boolean(course.courseLink) || course.links.length > 0;
 
   return (
     <div className="h-[220px]">
@@ -512,8 +513,18 @@ export function CourseCard({
                 </div>
               ) : null}
 
-              <Link href={`/courses/${course.id}`} className="min-w-0 flex-1">
-                <div className="line-clamp-2 font-medium">{course.title}</div>
+              <Link
+                href={`/courses/${course.id}`}
+                transitionTypes={["nav-forward"]}
+                className="min-w-0 flex-1"
+              >
+                <ViewTransition
+                  name={`course-title-${course.id}`}
+                  share="auto"
+                  default="none"
+                >
+                  <div className="line-clamp-2 font-medium">{course.title}</div>
+                </ViewTransition>
               </Link>
             </div>
           </div>
@@ -597,7 +608,7 @@ export function CourseCard({
         </div>
       </Card>
     </div>
-  )
+  );
 }
 
 function TopicsOverflowBadge({
@@ -605,9 +616,9 @@ function TopicsOverflowBadge({
   remainingTopics,
   isMobile,
 }: {
-  topics: string[]
-  remainingTopics: number
-  isMobile: boolean
+  topics: string[];
+  remainingTopics: number;
+  isMobile: boolean;
 }) {
   const content = (
     <div className="flex flex-wrap gap-1.5">
@@ -617,7 +628,7 @@ function TopicsOverflowBadge({
         </Badge>
       ))}
     </div>
-  )
+  );
 
   if (isMobile) {
     return (
@@ -633,7 +644,7 @@ function TopicsOverflowBadge({
           {content}
         </PopoverPopup>
       </Popover>
-    )
+    );
   }
 
   return (
@@ -645,15 +656,15 @@ function TopicsOverflowBadge({
       </PreviewCardTrigger>
       <PreviewCardPopup>{content}</PreviewCardPopup>
     </PreviewCard>
-  )
+  );
 }
 
 function DeleteDialog({
   children,
   onDelete,
 }: {
-  children: React.ReactNode
-  onDelete: () => void
+  children: React.ReactNode;
+  onDelete: () => void;
 }) {
   return (
     <AlertDialog>
@@ -679,7 +690,7 @@ function DeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 export function FilterSheet({
@@ -690,12 +701,12 @@ export function FilterSheet({
   options,
   onValueChange,
 }: {
-  title: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  value: string
-  options: { label: string; value: string }[]
-  onValueChange: (value: string) => void
+  title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  value: string;
+  options: { label: string; value: string }[];
+  onValueChange: (value: string) => void;
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -712,8 +723,8 @@ export function FilterSheet({
                   variant={o.value === value ? "secondary" : "ghost"}
                   className="justify-start"
                   onClick={() => {
-                    onValueChange(o.value)
-                    onOpenChange(false)
+                    onValueChange(o.value);
+                    onOpenChange(false);
                   }}
                 >
                   {o.label}
@@ -727,7 +738,7 @@ export function FilterSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
 
 export function LinksViewerSheet({
@@ -737,13 +748,13 @@ export function LinksViewerSheet({
   isMobile,
   onEditCourse,
 }: {
-  course: Course | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  isMobile: boolean
-  onEditCourse: () => void
+  course: Course | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isMobile: boolean;
+  onEditCourse: () => void;
 }) {
-  const side = isMobile ? "bottom" : "right"
+  const side = isMobile ? "bottom" : "right";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -800,5 +811,5 @@ export function LinksViewerSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }

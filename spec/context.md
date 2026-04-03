@@ -713,3 +713,72 @@ Recent findings:
 - The current next step is continuing Phase 3 and Phase 5 work on route data, with Overview as the primary target and Review variability as the next thing to inspect.
 - Dashboard route timing logs are available via `ROOTLY_DASHBOARD_PERF=1`.
 - Do not reintroduce per-page `DashboardShell` wrappers.
+
+### View Transitions skill + rollout evaluation (2026-04-03)
+
+- Added new local skill registration in `spec/agent-skills.md`:
+  - `vercel-react-view-transitions`
+- Environment viability checks:
+  - Next.js version supports Link `transitionTypes` (`node_modules/next/dist/client/app-dir/link.d.ts` includes `transitionTypes?: string[]`)
+  - `next.config.mjs` does not yet enable `experimental.viewTransition`
+- Recommended integration map (priority order):
+  1. Dashboard route transitions:
+     - Add `experimental.viewTransition: true` in `next.config.mjs`
+     - Add `transitionTypes` on dashboard navigation links in `components/ui/floating-dock.tsx`
+     - Use directional types for hierarchical flows (`nav-forward`/`nav-back`) and non-directional types for lateral dashboard tab-like route switches
+  2. Shared element for Courses list -> detail:
+     - Source card/title link in `app/courses/ui/courses-components.tsx`
+     - Matching target element in `app/courses/ui/course-detail-page.tsx`
+     - Use stable names like `course-card-${id}` and keep names unique
+  3. Suspense reveal polish in Overview:
+     - `app/(dashboard)/overview/page.tsx` and `app/overview/ui/overview-insights-client.tsx`
+     - Wrap fallback/content pairs with VT enter/exit classes for streamed insights/charts
+  4. Loading boundary transitions for dashboard route segments:
+     - `app/(dashboard)/*/loading.tsx`
+     - Add fallback-side VT wrappers so loading-to-content swap feels continuous
+- Guardrails from the skill applied to this project:
+  - Avoid layout-level VT wrapper around dashboard `children` in `app/(dashboard)/layout.tsx` when page-level VTs are introduced
+  - Use `default="none"` on page-level VTs to avoid accidental cross-fade on every update
+  - Prefer explicit push navigations over `router.back()` when transition direction must be controlled
+
+### View Transitions Phase 1 implementation (2026-04-03)
+
+- Completed initial enablement for dashboard navigation transitions:
+  - enabled Next.js view transition experiment in `next.config.mjs` via `experimental.viewTransition: true`
+  - added `transitionTypes={["dashboard-lateral"]}` to dashboard dock links in `components/ui/floating-dock.tsx` (mobile and desktop variants)
+- Current semantics:
+  - dashboard primary route switching is tagged as lateral navigation, consistent with skill guidance to avoid directional depth motion for tab-like navigation
+  - no layout-level VT wrapper was added yet; page-level/suspense/shared-element VT wiring remains a later phase
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes and shows `viewTransition` experiment enabled
+
+### View Transitions Phase 2 implementation (2026-04-03)
+
+- Implemented shared-element transition for Courses list -> Course detail title:
+  - source: `app/courses/ui/courses-components.tsx`
+  - target: `app/courses/ui/course-detail-page.tsx`
+  - shared name pattern: `course-title-${course.id}`
+  - shared behavior: `share="auto"` with `default="none"`
+- Added hierarchical directional transition typing for course navigation flow:
+  - list -> detail links use `transitionTypes={["nav-forward"]}`
+  - detail -> list links use `transitionTypes={["nav-back"]}`
+  - includes both header back control and course-not-found fallback back link in course detail page
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+
+### View Transitions Phase 3 implementation (2026-04-03)
+
+- Implemented Suspense reveal transitions for overview streamed regions using React `ViewTransition` wrappers with explicit opt-in behavior:
+  - `app/(dashboard)/overview/page.tsx`
+    - top-level insights Suspense boundary now wraps fallback with `exit="auto"`
+    - streamed insights content now wraps with `enter="auto"` and `default="none"`
+  - `app/overview/ui/overview-insights-client.tsx`
+    - chart Suspense boundaries (daily study time, daily mood, understanding progress) now use fallback/content ViewTransition wrappers
+    - each fallback wrapper uses `exit="auto"`
+    - each chart content wrapper uses `enter="auto"` with `default="none"`
+- This phase intentionally avoided layout-level VT wrapping and avoided custom CSS class recipes; it uses browser-default transition behavior while retaining explicit trigger control.
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   AnimatePresence,
   domAnimation,
@@ -13,15 +13,15 @@ import {
   useReducedMotion,
   useSpring,
   useTransform,
-} from "motion/react"
+} from "motion/react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export type FloatingDockItem = {
-  label: string
-  icon: React.ReactNode
-  link: string
-}
+  label: string;
+  icon: React.ReactNode;
+  link: string;
+};
 
 function DockIcon({ children }: { children: React.ReactNode }) {
   return (
@@ -30,12 +30,12 @@ function DockIcon({ children }: { children: React.ReactNode }) {
         {children}
       </div>
     </div>
-  )
+  );
 }
 
 function isDockItemActive(pathname: string, link: string) {
-  if (link === "/overview") return pathname === "/overview"
-  return pathname === link
+  if (link === "/overview") return pathname === "/overview";
+  return pathname === link;
 }
 
 export function FloatingDock({
@@ -43,9 +43,9 @@ export function FloatingDock({
   desktopClassName,
   mobileClassName,
 }: {
-  navigationItems: FloatingDockItem[]
-  desktopClassName?: string
-  mobileClassName?: string
+  navigationItems: FloatingDockItem[];
+  desktopClassName?: string;
+  mobileClassName?: string;
 }) {
   return (
     <LazyMotion features={domAnimation}>
@@ -58,66 +58,67 @@ export function FloatingDock({
         className={mobileClassName}
       />
     </LazyMotion>
-  )
+  );
 }
 
 function FloatingDockMobile({
   navigationItems,
   className,
 }: {
-  navigationItems: FloatingDockItem[]
-  className?: string
+  navigationItems: FloatingDockItem[];
+  className?: string;
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <div
       className={cn(
         "fixed inset-x-0 bottom-0 z-30 flex justify-center md:hidden",
-        className
+        className,
       )}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <nav className="mx-auto mb-3 flex items-center gap-2 rounded-2xl border bg-background p-2 shadow-sm">
         {navigationItems.map((item) => {
-          const isActive = isDockItemActive(pathname, item.link)
+          const isActive = isDockItemActive(pathname, item.link);
           return (
             <Link
               key={item.label}
               href={item.link}
+              transitionTypes={["dashboard-lateral"]}
               aria-label={item.label}
               className={cn(
                 "flex size-11 items-center justify-center rounded-xl border transition-colors",
                 isActive
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-muted text-foreground hover:bg-muted"
+                  : "border-border bg-muted text-foreground hover:bg-muted",
               )}
             >
               <DockIcon>{item.icon}</DockIcon>
             </Link>
-          )
+          );
         })}
       </nav>
     </div>
-  )
+  );
 }
 
 function FloatingDockDesktop({
   navigationItems,
   className,
 }: {
-  navigationItems: FloatingDockItem[]
-  className?: string
+  navigationItems: FloatingDockItem[];
+  className?: string;
 }) {
-  const pathname = usePathname()
-  const mouseX = useMotionValue(Infinity)
-  const shouldReduceMotion = Boolean(useReducedMotion())
+  const pathname = usePathname();
+  const mouseX = useMotionValue(Infinity);
+  const shouldReduceMotion = Boolean(useReducedMotion());
 
   return (
     <div
       className={cn(
         "fixed inset-x-0 bottom-0 z-30 hidden justify-center md:flex",
-        className
+        className,
       )}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
@@ -143,7 +144,7 @@ function FloatingDockDesktop({
         ))}
       </m.nav>
     </div>
-  )
+  );
 }
 
 function DesktopIconContainer({
@@ -154,19 +155,19 @@ function DesktopIconContainer({
   active,
   shouldReduceMotion,
 }: {
-  mouseX: MotionValue<number>
-  label: string
-  icon: React.ReactNode
-  link: string
-  active: boolean
-  shouldReduceMotion: boolean
+  mouseX: MotionValue<number>;
+  label: string;
+  icon: React.ReactNode;
+  link: string;
+  active: boolean;
+  shouldReduceMotion: boolean;
 }) {
-  const ref = React.useRef<HTMLDivElement>(null)
+  const ref = React.useRef<HTMLDivElement>(null);
 
   const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 }
-    return val - bounds.x - bounds.width / 2
-  })
+    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+    return val - bounds.x - bounds.width / 2;
+  });
 
   let widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
   let heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
@@ -177,7 +178,7 @@ function DesktopIconContainer({
     mass: 0.1,
     stiffness: 150,
     damping: 12,
-  })
+  });
   let height = useSpring(heightTransform, {
     mass: 0.1,
     stiffness: 150,
@@ -190,14 +191,16 @@ function DesktopIconContainer({
     damping: 12,
   });
 
-  const [hovered, setHovered] = React.useState(false)
-  const style = shouldReduceMotion
-    ? undefined
-    : { width, height }
-  const iconStyle = shouldReduceMotion ? undefined : { scale: iconScale }
+  const [hovered, setHovered] = React.useState(false);
+  const style = shouldReduceMotion ? undefined : { width, height };
+  const iconStyle = shouldReduceMotion ? undefined : { scale: iconScale };
 
   return (
-    <Link href={link} aria-label={label}>
+    <Link
+      href={link}
+      transitionTypes={["dashboard-lateral"]}
+      aria-label={label}
+    >
       <m.div
         ref={ref}
         style={style}
@@ -207,7 +210,7 @@ function DesktopIconContainer({
           "relative flex size-10 items-center justify-center rounded-full border transition-colors motion-reduce:transition-none",
           active
             ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-muted text-foreground hover:bg-muted"
+            : "border-border bg-muted text-foreground hover:bg-muted",
         )}
       >
         <AnimatePresence>
@@ -222,13 +225,10 @@ function DesktopIconContainer({
             </m.div>
           )}
         </AnimatePresence>
-        <m.div
-          style={iconStyle}
-          className="flex items-center justify-center"
-        >
+        <m.div style={iconStyle} className="flex items-center justify-center">
           <DockIcon>{icon}</DockIcon>
         </m.div>
       </m.div>
     </Link>
-  )
+  );
 }

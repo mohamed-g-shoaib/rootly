@@ -64,6 +64,7 @@ For Rootly extension work only, also load:
 | 18  | [Chrome Extension UI](#18-chrome-extension-ui)                          | Chrome Extensions Community            | `0.1.0`                                                      | `.agents/skills/chrome-extension-ui/`              |
 | 19  | [HTML/CSS Best Practices](#19-htmlcss-best-practices)                   | Project-local                          | Extension-only HTML/CSS review and implementation guide      | `.agents/skills/html-css-best-practices/`          |
 | 20  | [Modern JavaScript Patterns](#20-modern-javascript-patterns)            | Project-local                          | Extension-only JavaScript review and refactoring guide       | `.agents/skills/modern-javascript-patterns/`       |
+| 21  | [Vercel React View Transitions](#21-vercel-react-view-transitions)      | Vercel                                 | `1.0.0`                                                      | `.agents/skills/vercel-react-view-transitions/`    |
 
 ---
 
@@ -730,3 +731,39 @@ Modern JavaScript guidance for the extension's plain-JS runtime. This skill is e
 | File       | Description                                                             |
 | ---------- | ----------------------------------------------------------------------- |
 | `SKILL.md` | Full self-contained guide for modern ES modules and JavaScript patterns |
+
+---
+
+## 21. Vercel React View Transitions
+
+**Publisher:** Vercel
+**Version:** `1.0.0`
+**When to load:** Adding or reviewing route transitions, shared-element animations, Suspense reveal motion, or typed directional navigation in React and Next.js apps using the native View Transition API
+
+### Purpose
+
+Guidance for implementing browser-native view transitions using React's `<ViewTransition>` API and Next.js integration points. The skill emphasizes animation semantics first (what motion communicates), then implementation order, CSS recipes, transition typing (`nav-forward` and `nav-back`), shared-element naming, Suspense reveals, and reduced-motion-safe behavior.
+
+### Top 10 Rules by Priority
+
+1. **Audit before implementation** - Map all navigation triggers, Suspense boundaries, persistent UI, and shared elements before coding
+2. **Implement patterns in priority order** - Shared elements, Suspense reveal, list identity, state enter/exit, then route transitions
+3. **Enable Next.js view-transition support intentionally** - Set `experimental.viewTransition: true` to animate `<Link>` navigations
+4. **Avoid layout-level VT wrappers for page transitions** - Page-level VTs should own enter/exit to prevent nested suppression
+5. **Use typed transitions for hierarchical navigation** - Use `nav-forward` and `nav-back` rather than generic fades for list-to-detail depth
+6. **Reserve directional slides for ordered/hierarchical flows** - Use non-directional transitions for lateral tab-like navigation
+7. **Use `default="none"` by default** - Opt in explicitly to avoid unwanted global cross-fades on every transition
+8. **Use simple string props for Suspense reveal transitions** - Transition types are not available for later Suspense resolves
+9. **Use stable unique names for shared elements** - `name` must be unique and present on both source and target in the same transition
+10. **Do not rely on `router.back()` for typed back transitions** - Use explicit `router.push()` paths for transition-type control
+
+### Available Files
+
+| File                           | Description                                                                        |
+| ------------------------------ | ---------------------------------------------------------------------------------- |
+| `SKILL.md`                     | Entry point with API usage, priorities, and integration summary                    |
+| `AGENTS.md`                    | Fully expanded compiled guide                                                      |
+| `references/implementation.md` | Step-by-step rollout workflow for audits, CSS setup, and pattern adoption          |
+| `references/nextjs.md`         | Next.js-specific setup (`experimental.viewTransition`, `transitionTypes`, routing) |
+| `references/css-recipes.md`    | Ready-to-use CSS animation and reduced-motion recipes                              |
+| `references/patterns.md`       | Common implementation patterns and troubleshooting                                 |
