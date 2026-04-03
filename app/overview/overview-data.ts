@@ -1,4 +1,5 @@
 import { cache } from "react"
+import { cacheLife, cacheTag } from "next/cache"
 
 import {
   getDashboardSupabase,
@@ -131,11 +132,18 @@ export const getOverviewSummaryEntryRows = cache(async (nowIso: string) => {
 })
 
 const getOverviewDailyRows = cache(async (nowIso: string) => {
+  "use cache: private"
+  cacheLife("minutes")
+
   const { supabase, userId } = await getOverviewContext()
 
   if (!userId) {
+    cacheTag("daily-entries:user:anonymous")
     return [] as DailyEntryRow[]
   }
+
+  cacheTag(`daily-entries:user:${userId}`)
+  cacheTag(`overview-summary:user:${userId}`)
 
   const now = new Date(nowIso)
   const streakStart = new Date(now)
@@ -155,11 +163,17 @@ const getOverviewDailyRows = cache(async (nowIso: string) => {
 })
 
 export const getOverviewTrendRows = cache(async (nowIso: string) => {
+  "use cache: private"
+  cacheLife("minutes")
+
   const { supabase, userId } = await getOverviewContext()
 
   if (!userId) {
+    cacheTag("overview-trend:user:anonymous")
     return [] as OverviewTrendRow[]
   }
+
+  cacheTag(`overview-trend:user:${userId}`)
 
   const { startDate } = getOverviewDateWindow(nowIso)
 
@@ -175,11 +189,17 @@ export const getOverviewTrendRows = cache(async (nowIso: string) => {
 
 export const getOverviewSummaryStats = cache(
   async (): Promise<OverviewSummaryStats | null> => {
+    "use cache: private"
+    cacheLife("minutes")
+
     const { supabase, userId } = await getOverviewContext()
 
     if (!userId) {
+      cacheTag("overview-summary:user:anonymous")
       return null
     }
+
+    cacheTag(`overview-summary:user:${userId}`)
 
     const { data, error } = await supabase.rpc("get_overview_summary")
 

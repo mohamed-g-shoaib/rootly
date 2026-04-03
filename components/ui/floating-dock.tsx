@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   AnimatePresence,
   domAnimation,
@@ -69,6 +69,25 @@ function FloatingDockMobile({
   className?: string;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const prefetch = React.useCallback(
+    (href: string) => {
+      if (href === pathname) return;
+      router.prefetch(href);
+    },
+    [pathname, router],
+  );
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      for (const item of navigationItems) {
+        prefetch(item.link);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [navigationItems, prefetch]);
 
   return (
     <div
@@ -76,17 +95,29 @@ function FloatingDockMobile({
         "fixed inset-x-0 bottom-0 z-30 flex justify-center md:hidden",
         className,
       )}
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom)",
+        viewTransitionName: "dashboard-dock",
+      }}
     >
       <nav className="mx-auto mb-3 flex items-center gap-2 rounded-2xl border bg-background p-2 shadow-sm">
         {navigationItems.map((item) => {
           const isActive = isDockItemActive(pathname, item.link);
+          const transitionTypes =
+            item.link === "/overview" || pathname === "/overview"
+              ? undefined
+              : (["dashboard-lateral"] as string[]);
+
           return (
             <Link
               key={item.label}
               href={item.link}
-              transitionTypes={["dashboard-lateral"]}
+              prefetch
+              transitionTypes={transitionTypes}
               aria-label={item.label}
+              onMouseEnter={() => prefetch(item.link)}
+              onFocus={() => prefetch(item.link)}
+              onTouchStart={() => prefetch(item.link)}
               className={cn(
                 "flex size-11 items-center justify-center rounded-xl border transition-colors",
                 isActive
@@ -111,8 +142,27 @@ function FloatingDockDesktop({
   className?: string;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const mouseX = useMotionValue(Infinity);
   const shouldReduceMotion = Boolean(useReducedMotion());
+
+  const prefetch = React.useCallback(
+    (href: string) => {
+      if (href === pathname) return;
+      router.prefetch(href);
+    },
+    [pathname, router],
+  );
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      for (const item of navigationItems) {
+        prefetch(item.link);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [navigationItems, prefetch]);
 
   return (
     <div
@@ -120,7 +170,10 @@ function FloatingDockDesktop({
         "fixed inset-x-0 bottom-0 z-30 hidden justify-center md:flex",
         className,
       )}
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom)",
+        viewTransitionName: "dashboard-dock",
+      }}
     >
       <m.nav
         onMouseMove={
@@ -140,6 +193,12 @@ function FloatingDockDesktop({
             link={item.link}
             active={isDockItemActive(pathname, item.link)}
             shouldReduceMotion={shouldReduceMotion}
+            onPrefetch={prefetch}
+            transitionTypes={
+              item.link === "/overview" || pathname === "/overview"
+                ? undefined
+                : (["dashboard-lateral"] as string[])
+            }
           />
         ))}
       </m.nav>
@@ -154,6 +213,8 @@ function DesktopIconContainer({
   link,
   active,
   shouldReduceMotion,
+  onPrefetch,
+  transitionTypes,
 }: {
   mouseX: MotionValue<number>;
   label: string;
@@ -161,6 +222,8 @@ function DesktopIconContainer({
   link: string;
   active: boolean;
   shouldReduceMotion: boolean;
+  onPrefetch: (href: string) => void;
+  transitionTypes?: string[];
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -198,8 +261,12 @@ function DesktopIconContainer({
   return (
     <Link
       href={link}
-      transitionTypes={["dashboard-lateral"]}
+      prefetch
+      transitionTypes={transitionTypes}
       aria-label={label}
+      onMouseEnter={() => onPrefetch(link)}
+      onFocus={() => onPrefetch(link)}
+      onTouchStart={() => onPrefetch(link)}
     >
       <m.div
         ref={ref}

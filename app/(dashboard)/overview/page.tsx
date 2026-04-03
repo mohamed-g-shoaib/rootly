@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense, ViewTransition } from "react";
+import { Suspense } from "react";
 
 import {
   getOverviewDateWindow,
@@ -73,6 +73,16 @@ export default async function OverviewPage() {
   const summaryPerf = perf.createScope("summary");
   const useSummaryRpc = process.env.ROOTLY_OVERVIEW_USE_SUMMARY_RPC === "1";
 
+  // Start async work early so session/context and data queries overlap.
+  const sessionPromise = perf.measure(
+    "session",
+    () => getOverviewContext(),
+    (ctx) => ({
+      authenticated: Boolean(ctx.userId),
+    }),
+  );
+  const { supabase, userId } = await sessionPromise;
+
   const now = new Date();
   const nowIso = now.toISOString();
   const { days, today } = getOverviewDateWindow(nowIso);
@@ -82,14 +92,6 @@ export default async function OverviewPage() {
   void getOverviewEntryRows(nowIso);
   void getOverviewTrendRows(nowIso);
 
-  // Start async work early so session/context and data queries overlap.
-  const sessionPromise = perf.measure(
-    "session",
-    () => getOverviewContext(),
-    (ctx) => ({
-      authenticated: Boolean(ctx.userId),
-    }),
-  );
   let summaryEntryRowsPromise: Promise<
     Array<{ date: string; study_time_minutes: number }>
   > | null = null;
@@ -116,7 +118,6 @@ export default async function OverviewPage() {
         }),
       )
     : null;
-  const { supabase, userId } = await sessionPromise;
 
   let totalCourses = 0;
   let totalNotes = 0;
@@ -227,16 +228,8 @@ export default async function OverviewPage() {
         totalNotes={totalNotes}
         avgUnderstanding={avgUnderstanding}
       />
-      <Suspense
-        fallback={
-          <ViewTransition exit="auto">
-            <OverviewInsightsSkeleton />
-          </ViewTransition>
-        }
-      >
-        <ViewTransition enter="auto" default="none">
-          <OverviewInsights nowIso={nowIso} />
-        </ViewTransition>
+      <Suspense fallback={<OverviewInsightsSkeleton />}>
+        <OverviewInsights nowIso={nowIso} />
       </Suspense>
     </>
   );

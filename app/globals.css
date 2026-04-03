@@ -225,6 +225,13 @@
     background: var(--foreground);
     background-clip: content-box;
   }
+
+  ::view-transition-group(dashboard-dock),
+  ::view-transition-old(dashboard-dock),
+  ::view-transition-new(dashboard-dock) {
+    animation: none;
+  }
+
   code,
   kbd,
   samp,
