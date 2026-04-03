@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import * as React from "react";
-import { ViewTransition } from "react";
 
 import {
   AddCircleIcon,
@@ -30,7 +29,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
@@ -500,11 +498,13 @@ export function CourseCard({
     course.topics.length - visibleTopics.length,
   );
   const hasLinks = Boolean(course.courseLink) || course.links.length > 0;
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
-    <div className="h-[220px]">
-      <Card className="h-full p-4">
-        <div className="flex h-full flex-col gap-3">
+    <>
+      <div className="h-[220px]">
+        <Card className="h-full p-4">
+          <div className="flex h-full flex-col gap-3">
           <div className="shrink-0">
             <div className="flex flex-col gap-1">
               {course.instructor ? (
@@ -515,16 +515,9 @@ export function CourseCard({
 
               <Link
                 href={`/courses/${course.id}`}
-                transitionTypes={["nav-forward"]}
                 className="min-w-0 flex-1"
               >
-                <ViewTransition
-                  name={`course-title-${course.id}`}
-                  share="auto"
-                  default="none"
-                >
-                  <div className="line-clamp-2 font-medium">{course.title}</div>
-                </ViewTransition>
+                <div className="line-clamp-2 font-medium">{course.title}</div>
               </Link>
             </div>
           </div>
@@ -575,39 +568,47 @@ export function CourseCard({
                 </Button>
               ) : null}
 
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost" size="icon" aria-label="More" />
-                  }
-                >
-                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={onEdit}>
-                    <HugeiconsIcon icon={Edit01Icon} size={18} />
-                    Edit
-                  </DropdownMenuItem>
-                  {hasLinks ? (
-                    <DropdownMenuItem onClick={onViewLinks}>
-                      <HugeiconsIcon icon={Link01Icon} size={18} />
-                      View links
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" aria-label="More" />
+                    }
+                  >
+                    <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={onEdit}>
+                      <HugeiconsIcon icon={Edit01Icon} size={18} />
+                      Edit
                     </DropdownMenuItem>
-                  ) : null}
-                  <DropdownMenuSeparator />
-                  <DeleteDialog onDelete={onDelete}>
-                    <DropdownMenuItem variant="destructive">
+                    {hasLinks ? (
+                      <DropdownMenuItem onClick={onViewLinks}>
+                        <HugeiconsIcon icon={Link01Icon} size={18} />
+                        View links
+                      </DropdownMenuItem>
+                    ) : null}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      closeOnClick
+                      onClick={() => setDeleteOpen(true)}
+                    >
                       <HugeiconsIcon icon={Delete01Icon} size={18} />
                       Delete
                     </DropdownMenuItem>
-                  </DeleteDialog>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuContent>
+                </DropdownMenu>
             </div>
           </div>
-        </div>
-      </Card>
-    </div>
+          </div>
+        </Card>
+      </div>
+      <DeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onDelete={onDelete}
+      />
+    </>
   );
 }
 
@@ -660,18 +661,16 @@ function TopicsOverflowBadge({
 }
 
 function DeleteDialog({
-  children,
+  open,
+  onOpenChange,
   onDelete,
 }: {
-  children: React.ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onDelete: () => void;
 }) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger
-        nativeButton={false}
-        render={children as React.ReactElement}
-      />
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete course?</AlertDialogTitle>
@@ -684,7 +683,13 @@ function DeleteDialog({
           <AlertDialogClose render={<Button variant="ghost" />}>
             Cancel
           </AlertDialogClose>
-          <Button variant="destructive" onClick={onDelete}>
+          <Button
+            variant="destructive"
+            onClick={() => {
+              onOpenChange(false);
+              onDelete();
+            }}
+          >
             Delete Course
           </Button>
         </AlertDialogFooter>

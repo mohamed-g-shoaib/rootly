@@ -24,7 +24,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import {
   DropdownMenu,
@@ -74,10 +73,13 @@ export function SessionCard({
   onView: () => void
   onDelete: () => void
 }) {
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
+
   return (
-    <div className="h-[220px]">
-      <Card className="h-full p-4">
-        <div className="flex h-full flex-col gap-3">
+    <>
+      <div className="h-[220px]">
+        <Card className="h-full p-4">
+          <div className="flex h-full flex-col gap-3">
           <div className="flex shrink-0 items-start justify-between gap-3">
             <button
               type="button"
@@ -155,54 +157,58 @@ export function SessionCard({
             </div>
 
             <div className="-mr-2 flex shrink-0 items-center gap-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost" size="icon" aria-label="More" />
-                  }
-                >
-                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={onView}>
-                    <HugeiconsIcon icon={Target01Icon} size={18} />
-                    View details
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DeleteSessionDialog
-                    sessionName={session.name}
-                    onDelete={onDelete}
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" aria-label="More" />
+                    }
                   >
-                    <DropdownMenuItem variant="destructive">
+                    <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={onView}>
+                      <HugeiconsIcon icon={Target01Icon} size={18} />
+                      View details
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      closeOnClick
+                      onClick={() => setDeleteOpen(true)}
+                    >
                       <HugeiconsIcon icon={Delete01Icon} size={18} />
                       Delete
                     </DropdownMenuItem>
-                  </DeleteSessionDialog>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuContent>
+                </DropdownMenu>
             </div>
           </div>
-        </div>
-      </Card>
-    </div>
+          </div>
+        </Card>
+      </div>
+      <DeleteSessionDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        sessionName={session.name}
+        onDelete={onDelete}
+      />
+    </>
   )
 }
 
 function DeleteSessionDialog({
-  children,
+  open,
+  onOpenChange,
   sessionName,
   onDelete,
 }: {
-  children: React.ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
   sessionName: string
   onDelete: () => void
 }) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger
-        nativeButton={false}
-        render={children as React.ReactElement}
-      />
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete session?</AlertDialogTitle>
@@ -215,7 +221,14 @@ function DeleteSessionDialog({
           <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Cancel
           </AlertDialogClose>
-          <Button variant="destructive" type="button" onClick={onDelete}>
+          <Button
+            variant="destructive"
+            type="button"
+            onClick={() => {
+              onOpenChange(false)
+              onDelete()
+            }}
+          >
             Delete
           </Button>
         </AlertDialogFooter>

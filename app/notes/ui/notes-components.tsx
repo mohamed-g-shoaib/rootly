@@ -29,7 +29,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -144,139 +143,149 @@ export function NoteCard({
   readOnly?: boolean
 }) {
   const isQa = note.type === "qa"
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
 
   return (
-    <div className="h-[220px]">
-      <Card className="h-full p-4">
-        <div className="flex h-full flex-col gap-3">
-          <div className="shrink-0">
-            <div className="flex flex-col gap-1">
-              {note.courseTitle ? (
-                <div className="truncate text-xs text-muted-foreground">
-                  {note.courseTitle}
-                </div>
-              ) : null}
+    <>
+      <div className="h-[220px]">
+        <Card className="h-full p-4">
+          <div className="flex h-full flex-col gap-3">
+            <div className="shrink-0">
+              <div className="flex flex-col gap-1">
+                {note.courseTitle ? (
+                  <div className="truncate text-xs text-muted-foreground">
+                    {note.courseTitle}
+                  </div>
+                ) : null}
 
-              {isQa ? (
-                <div className="line-clamp-2 font-medium">{note.question}</div>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-hidden">
-            {isQa ? (
-              <div className="flex min-h-0 flex-1 items-start overflow-hidden">
-                {showAnswer ? (
-                  <NoteCardExcerpt
-                    text={note.previewText}
-                    onOpen={onViewFull}
-                  />
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onShowAnswerChange(true)}
-                  >
-                    Show Answer
-                  </Button>
-                )}
+                {isQa ? (
+                  <div className="line-clamp-2 font-medium">{note.question}</div>
+                ) : null}
               </div>
-            ) : (
-              <NoteCardExcerpt text={note.previewText} onOpen={onViewFull} />
-            )}
-          </div>
-
-          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
-            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
-              {!readOnly && note.hasCodeSnippet ? (
-                <Badge
-                  variant="outline"
-                  className="shrink-0 cursor-pointer"
-                  onClick={onViewCode}
-                >
-                  <span className="inline-flex items-center gap-2">
-                    <HugeiconsIcon icon={CodeIcon} size={14} />
-                    {toCodeBadgeLabel(note.codeLanguage)}
-                  </span>
-                </Badge>
-              ) : null}
-
-              {note.type === "qa" && note.understandingLevel ? (
-                <Badge variant="outline" className="shrink-0">
-                  <HugeiconsIcon
-                    icon={understandingIcon(note.understandingLevel)}
-                    size={14}
-                    color={understandingColor(note.understandingLevel)}
-                  />
-                  {understandingLabel(note.understandingLevel)}
-                </Badge>
-              ) : null}
             </div>
 
-            <div className="-mr-2 flex shrink-0 items-center gap-1">
-              {isQa && showAnswer ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Hide answer"
-                  onClick={() => onShowAnswerChange(false)}
-                >
-                  <HugeiconsIcon
-                    icon={ViewOffIcon}
-                    size={18}
-                    color="var(--info)"
-                  />
-                </Button>
-              ) : null}
-              {note.flag ? (
-                <div
-                  aria-label="Flagged for review"
-                  className="flex size-8 items-center justify-center text-destructive"
-                  title="Flagged for review"
-                >
-                  <HugeiconsIcon icon={Flag01Icon} size={18} />
+            <div className="min-h-0 flex-1 overflow-hidden">
+              {isQa ? (
+                <div className="flex min-h-0 flex-1 items-start overflow-hidden">
+                  {showAnswer ? (
+                    <NoteCardExcerpt
+                      text={note.previewText}
+                      onOpen={onViewFull}
+                    />
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onShowAnswerChange(true)}
+                    >
+                      Show Answer
+                    </Button>
+                  )}
                 </div>
-              ) : null}
+              ) : (
+                <NoteCardExcerpt text={note.previewText} onOpen={onViewFull} />
+              )}
+            </div>
 
-              {!readOnly ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={
-                      <Button variant="ghost" size="icon" aria-label="More" />
-                    }
+            <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
+              <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+                {!readOnly && note.hasCodeSnippet ? (
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 cursor-pointer"
+                    onClick={onViewCode}
                   >
-                    <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={onEdit}>
-                      <HugeiconsIcon icon={Edit01Icon} size={18} />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onViewFull}>
-                      <HugeiconsIcon icon={Note01Icon} size={18} />
-                      View full note
-                    </DropdownMenuItem>
-                    {note.hasCodeSnippet ? (
-                      <DropdownMenuItem onClick={onViewCode}>
-                        <HugeiconsIcon icon={CodeIcon} size={18} />
-                        View code
+                    <span className="inline-flex items-center gap-2">
+                      <HugeiconsIcon icon={CodeIcon} size={14} />
+                      {toCodeBadgeLabel(note.codeLanguage)}
+                    </span>
+                  </Badge>
+                ) : null}
+
+                {note.type === "qa" && note.understandingLevel ? (
+                  <Badge variant="outline" className="shrink-0">
+                    <HugeiconsIcon
+                      icon={understandingIcon(note.understandingLevel)}
+                      size={14}
+                      color={understandingColor(note.understandingLevel)}
+                    />
+                    {understandingLabel(note.understandingLevel)}
+                  </Badge>
+                ) : null}
+              </div>
+
+              <div className="-mr-2 flex shrink-0 items-center gap-1">
+                {isQa && showAnswer ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Hide answer"
+                    onClick={() => onShowAnswerChange(false)}
+                  >
+                    <HugeiconsIcon
+                      icon={ViewOffIcon}
+                      size={18}
+                      color="var(--info)"
+                    />
+                  </Button>
+                ) : null}
+                {note.flag ? (
+                  <div
+                    aria-label="Flagged for review"
+                    className="flex size-8 items-center justify-center text-destructive"
+                    title="Flagged for review"
+                  >
+                    <HugeiconsIcon icon={Flag01Icon} size={18} />
+                  </div>
+                ) : null}
+
+                {!readOnly ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button variant="ghost" size="icon" aria-label="More" />
+                      }
+                    >
+                      <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={onEdit}>
+                        <HugeiconsIcon icon={Edit01Icon} size={18} />
+                        Edit
                       </DropdownMenuItem>
-                    ) : null}
-                    <DropdownMenuSeparator />
-                    <DeleteDialog onDelete={onDelete}>
-                      <DropdownMenuItem variant="destructive">
+                      <DropdownMenuItem onClick={onViewFull}>
+                        <HugeiconsIcon icon={Note01Icon} size={18} />
+                        View full note
+                      </DropdownMenuItem>
+                      {note.hasCodeSnippet ? (
+                        <DropdownMenuItem onClick={onViewCode}>
+                          <HugeiconsIcon icon={CodeIcon} size={18} />
+                          View code
+                        </DropdownMenuItem>
+                      ) : null}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        variant="destructive"
+                        closeOnClick
+                        onClick={() => setDeleteOpen(true)}
+                      >
                         <HugeiconsIcon icon={Delete01Icon} size={18} />
                         Delete
                       </DropdownMenuItem>
-                    </DeleteDialog>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : null}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : null}
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
-    </div>
+        </Card>
+      </div>
+      <DeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onDelete={onDelete}
+      />
+    </>
   )
 }
 
@@ -389,18 +398,16 @@ function NoteCardExcerpt({
 }
 
 function DeleteDialog({
-  children,
+  open,
+  onOpenChange,
   onDelete,
 }: {
-  children: React.ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onDelete: () => void
 }) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger
-        nativeButton={false}
-        render={children as React.ReactElement}
-      />
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete note?</AlertDialogTitle>
@@ -412,7 +419,14 @@ function DeleteDialog({
           <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Cancel
           </AlertDialogClose>
-          <Button variant="destructive" type="button" onClick={onDelete}>
+          <Button
+            variant="destructive"
+            type="button"
+            onClick={() => {
+              onOpenChange(false)
+              onDelete()
+            }}
+          >
             Delete
           </Button>
         </AlertDialogFooter>

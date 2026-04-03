@@ -29,7 +29,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import {
   DropdownMenu,
@@ -220,12 +219,14 @@ export function EntryCard({
   onDelete: () => void
 }) {
   const isToday = isSameDay(entry.date, toDateInputValue(now))
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
 
   return (
-    <div className="h-[160px]">
-      {/* EntryCard is intentionally shorter — less content than other card types */}
-      <Card className="h-full p-4">
-        <div className="flex h-full flex-col gap-3">
+    <>
+      <div className="h-[160px]">
+        {/* EntryCard is intentionally shorter — less content than other card types */}
+        <Card className="h-full p-4">
+          <div className="flex h-full flex-col gap-3">
           <div className="flex shrink-0 items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-1.5">
               <div className="truncate font-medium">
@@ -274,49 +275,55 @@ export function EntryCard({
             </div>
 
             <div className="-mr-2 flex shrink-0 items-center gap-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost" size="icon" aria-label="More" />
-                  }
-                >
-                  <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={onEdit}>
-                    <HugeiconsIcon icon={Edit01Icon} size={18} />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DeleteDialog onDelete={onDelete}>
-                    <DropdownMenuItem variant="destructive">
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" aria-label="More" />
+                    }
+                  >
+                    <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={onEdit}>
+                      <HugeiconsIcon icon={Edit01Icon} size={18} />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      closeOnClick
+                      onClick={() => setDeleteOpen(true)}
+                    >
                       <HugeiconsIcon icon={Delete01Icon} size={18} />
                       Delete
                     </DropdownMenuItem>
-                  </DeleteDialog>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuContent>
+                </DropdownMenu>
             </div>
           </div>
-        </div>
-      </Card>
-    </div>
+          </div>
+        </Card>
+      </div>
+      <DeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onDelete={onDelete}
+      />
+    </>
   )
 }
 
 function DeleteDialog({
-  children,
+  open,
+  onOpenChange,
   onDelete,
 }: {
-  children: React.ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onDelete: () => void
 }) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger
-        nativeButton={false}
-        render={children as React.ReactElement}
-      />
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete entry?</AlertDialogTitle>
@@ -329,7 +336,14 @@ function DeleteDialog({
           <AlertDialogClose render={<Button variant="ghost" type="button" />}>
             Cancel
           </AlertDialogClose>
-          <Button variant="destructive" type="button" onClick={onDelete}>
+          <Button
+            variant="destructive"
+            type="button"
+            onClick={() => {
+              onOpenChange(false)
+              onDelete()
+            }}
+          >
             Delete
           </Button>
         </AlertDialogFooter>
