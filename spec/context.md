@@ -189,12 +189,19 @@ Current behavior:
 - floating select menus should be able to escape card bounds cleanly rather than being clipped by their parent card
 - side-panel motion should stay subtle and purposeful, without decorative hover-lift effects
 - the footer now includes a quiet `Dashboard` link plus a minimal `Settings` door for environment switching during development, instead of guessing from open tabs
+- the footer settings panel now opens upward as a compact anchored popover so environment switching remains usable in narrow side-panel widths
 - extension environment selection is now explicit and stored locally rather than inferred from browser tab state
 - timer state now has a first background-worker foundation using `chrome.storage.local`
 - timer currently supports start, pause, resume, stop, and reset inside the extension foundation
 - the side panel now updates the running timer display locally instead of message-polling the background worker every second
 - side panel now supports quick note capture in website-faithful `Q&A` and `Freeform` modes
 - side panel now supports quick course creation with the same Rootly course meaning as the website
+- extension side-panel styling now follows the website's semantic token, radius, border, ring, and control-density contract more closely instead of using a looser Rootly-inspired approximation
+- extension side-panel density is now intentionally tighter, with softer coss-style edge treatment, clearer active-tab contrast, a compact single-line header (`Hi, <first name>` on the left and date on the right) without passive sync copy, and shared `+ / -` disclosure affordances for quick-course and custom select controls`r`n- the summary header no longer echoes today's daily note; instead, the log panel shows any existing saved daily note in a dedicated contextual summary card and treats the textarea below as the explicit edit surface for replacing it
+- extension action buttons now show explicit loading states (save/create/timer/environment actions) so user intent and in-flight work are always visible
+- custom selects now include stronger keyboard and a11y behavior (selected-option focus, Home/End support, Tab close behavior, and improved listbox semantics)
+- extension now injects a lightweight content script on Rootly pages so same-browser daily-entry saves can bridge into the open dashboard immediately without waiting for a full refresh
+- extension note saves now use the same browser-bridge pattern as daily entries, so an open Notes dashboard can upsert a newly created note immediately instead of waiting for reload
 - paused timer time can now be saved directly into `daily_entries`
 - manifest now wires the extension and toolbar icons from `extension/icons/*` for real browser chrome/store asset usage
 
@@ -221,13 +228,19 @@ Current write behavior:
   - creates today's entry if missing
   - adds minutes into today's existing total if present
   - lets same-day mood and daily note update to the current values provided by the user
+- daily-entry saves from the extension now also broadcast into the current browser via the background worker, and dashboard pages subscribe to `daily_entries` realtime updates plus the window bridge so open dashboard surfaces update immediately after extension saves
+- extension note saves now also broadcast into the current browser via the background worker, and the Notes page subscribes to `notes` realtime updates plus the window bridge so extension-created notes appear live in an open dashboard
 - side panel timer can now save paused timer time into today's `daily_entries`
 - timer save copy now makes the integer-minute save behavior explicit by telling the user exactly how much time will be added to today before they save
 - daily-log and timer drafts now treat today's current daily entry as the baseline so saved mood/note values do not linger as fake unsaved drafts
 - current implementation only allows timer save once at least 1 minute has elapsed, avoiding hidden sub-minute rounding behavior
 - timer now supports an explicit `stop` action in addition to start, pause, resume, and reset
 - the timer save panel now includes its own mood and quick-note inputs so ending a study session does not depend on the separate daily-log card
-- timer saves still write into the same daily-entry model and update today's visible mood, note, and accumulated time
+- timer saves still write into the same daily-entry model and update today's visible mood, note, and accumulated time`r`n- required extension fields now use destructive ring feedback when the user tries to save without completing them, instead of only surfacing validation through status text
+- post-save clearing behavior is now explicit:
+  - note and quick-course inputs/selects reset after successful create/save
+  - daily-log hours/minutes reset after save while daily mood/note remain persisted for same-day edits
+  - timer save mood/note reset after successful timer save so the next timer session starts clean
 - `POST /api/extension/notes` now supports quick note capture with the same Rootly note meaning as the website:
   - `Q&A` notes require `question`, `answer`, and `understandingLevel`
   - `Freeform` notes require `body`
@@ -243,6 +256,22 @@ Current write behavior:
   - `links`, `topics`, and `progress` default to the same website-compatible values used for a brand new course
 - the side panel quick-course form now inserts the created course into local extension state immediately and selects it for note capture without requiring a full refresh
 - side-panel logic is now split into focused modules for DOM refs, state, rendering, and custom select behavior instead of concentrating everything in one oversized file
+- side-panel controller logic was further modularized so `extension/sidepanel/sidepanel.js` now orchestrates focused modules:
+  - `extension/sidepanel/form-utils.js` for reusable field/button/form helpers
+  - `extension/sidepanel/draft-manager.js` for draft persistence/hydration and baseline-aware draft state
+  - `extension/sidepanel/listeners.js` for tab/select/input/action/document/runtime listener registration
+  - `extension/sidepanel/bootstrap-controller.js` for bootstrap/session hydrate, cache sync, timer state sync, and daily-entry write-through updates
+  - `extension/sidepanel/action-handlers.js` for note/course/daily/timer action workflows and environment switching logic
+- extension bridge messaging is now stricter:
+  - background service worker only accepts timer/broadcast commands from trusted side-panel sender URLs
+  - broadcast payloads are schema-validated in the worker before forwarding to tabs
+  - content script validates daily-entry and note bridge payload shape before posting into `window`
+- extension CORS handling now supports optional explicit extension-id allowlisting via `ROOTLY_EXTENSION_IDS`
+- `POST /api/extension/daily-entries` now accepts optional `clientRequestId` and performs best-effort in-memory idempotency replay protection for duplicate requests within a short TTL
+- extension reliability checks now include repo-local unit tests:
+  - `lib/extension-idempotency.test.js`
+  - `extension/lib/time.test.js`
+  - run via `pnpm run test:extension`
 
 ### Theme bug
 
@@ -261,6 +290,18 @@ Root cause:
 Fix:
 
 - only clear theme colors when the last active consumer unmounts
+
+### Responsive hydration safety
+
+We hit another Base UI hydration mismatch in the dashboard after responsive client branches diverged from the server tree.
+
+Current fix:
+
+- `hooks/use-media-query.ts` now uses `useSyncExternalStore` with a stable server snapshot instead of effect-driven post-render state initialization
+
+Reason:
+
+- responsive branching in dashboard shell and page headers must keep the same initial server/client tree so Base UI generated ids do not drift during hydration
 
 ### Homepage CTA loading state
 
@@ -447,7 +488,7 @@ Recent findings:
 - that means the remaining hot-path cost is more likely auth/request/Supabase round-trip overhead than raw database execution time for the current data volume
 - after the claims-based route and proxy auth changes, the main remaining warm-route bottlenecks are now Overview data work and occasional Review data spikes rather than auth/proxy overhead
 
---- 
+---
 
 ## What To Remember In A Fresh Chat
 
@@ -459,13 +500,3 @@ Recent findings:
 - The current next step is continuing Phase 3 and Phase 5 work on route data, with Overview as the primary target and Review variability as the next thing to inspect.
 - Dashboard route timing logs are available via `ROOTLY_DASHBOARD_PERF=1`.
 - Do not reintroduce per-page `DashboardShell` wrappers.
-
-
-
-
-
-
-
-
-
-
