@@ -1,44 +1,39 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import dynamic from "next/dynamic"
-import { Suspense, useMemo, useState, useId } from "react"
+import * as React from "react";
+import dynamic from "next/dynamic";
+import { Suspense, useMemo, useState } from "react";
 
-import { useIsMobile } from "@/hooks/use-media-query"
-import { cn } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
 
-import { Card } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs"
-import { PageContainer } from "@/components/ui/page-container"
-import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
+import { PageContainer } from "@/components/ui/page-container";
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header";
+import CourseMasteryList from "@/app/overview/ui/charts/course-mastery-list";
 
-type RangeKey = "7" | "30" | "90"
+type RangeKey = "7" | "30" | "90";
 
-type DailyStudyDatum = { date: string; label: string; minutes: number }
-type DailyMoodDatum = { date: string; label: string; mood: 1 | 2 | 3 | null }
-type UnderstandingDatum = { date: string; label: string; avg: number | null }
-type CourseMasteryRow = { title: string; avg: number }
+type DailyStudyDatum = { date: string; label: string; minutes: number };
+type DailyMoodDatum = { date: string; label: string; mood: 1 | 2 | 3 | null };
+type UnderstandingDatum = { date: string; label: string; avg: number | null };
+type CourseMasteryRow = { title: string; avg: number };
 
 const DailyStudyTimeChart = dynamic(
   () => import("../ui/charts/daily-study-time-chart"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> }
-)
+  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> },
+);
 
 const DailyMoodChart = dynamic(() => import("../ui/charts/daily-mood-chart"), {
   ssr: false,
   loading: () => <ChartSkeleton heightClassName="h-56" />,
-})
+});
 
 const UnderstandingProgressChart = dynamic(
   () => import("../ui/charts/understanding-progress-chart"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> }
-)
-
-const CourseMasteryList = dynamic(
-  () => import("../ui/charts/course-mastery-list"),
-  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-64" /> }
-)
+  { ssr: false, loading: () => <ChartSkeleton heightClassName="h-56" /> },
+);
 
 export default function OverviewInsightsClient({
   dailyStudyTime,
@@ -46,26 +41,25 @@ export default function OverviewInsightsClient({
   understandingProgress,
   courseMastery,
 }: {
-  dailyStudyTime: DailyStudyDatum[]
-  dailyMood: DailyMoodDatum[]
-  understandingProgress: UnderstandingDatum[]
-  courseMastery: CourseMasteryRow[]
+  dailyStudyTime: DailyStudyDatum[];
+  dailyMood: DailyMoodDatum[];
+  understandingProgress: UnderstandingDatum[];
+  courseMastery: CourseMasteryRow[];
 }) {
-  const isMobile = useIsMobile()
-  const id = useId()
-  const [range, setRange] = useState<RangeKey>("7")
+  const isMobile = useIsMobile();
+  const [range, setRange] = useState<RangeKey>("7");
 
-  const days = range === "7" ? 7 : range === "30" ? 30 : 90
+  const days = range === "7" ? 7 : range === "30" ? 30 : 90;
 
   const slicedStudy = useMemo(
     () => dailyStudyTime.slice(-days),
-    [dailyStudyTime, days]
-  )
-  const slicedMood = useMemo(() => dailyMood.slice(-days), [dailyMood, days])
+    [dailyStudyTime, days],
+  );
+  const slicedMood = useMemo(() => dailyMood.slice(-days), [dailyMood, days]);
   const slicedUnderstanding = useMemo(
     () => understandingProgress.slice(-days),
-    [understandingProgress, days]
-  )
+    [understandingProgress, days],
+  );
 
   const emptyStates = useMemo(
     () => ({
@@ -73,8 +67,8 @@ export default function OverviewInsightsClient({
       mood: slicedMood.every((d) => d.mood == null),
       understanding: slicedUnderstanding.every((d) => d.avg == null),
     }),
-    [slicedMood, slicedStudy, slicedUnderstanding]
-  )
+    [slicedMood, slicedStudy, slicedUnderstanding],
+  );
 
   return (
     <PageContainer>
@@ -82,7 +76,7 @@ export default function OverviewInsightsClient({
         <DashboardStickyHeader className="lg:hidden">
           <div className="-mx-4 px-4 pt-3 pb-3">
             <RangeToggle
-              id={`${id}-mobile`}
+              id="overview-range-mobile"
               range={range}
               onRangeChange={setRange}
               fullWidth
@@ -94,7 +88,7 @@ export default function OverviewInsightsClient({
       {!isMobile ? (
         <section className="pt-6">
           <RangeToggle
-            id={`${id}-desktop`}
+            id="overview-range-desktop"
             range={range}
             onRangeChange={setRange}
           />
@@ -154,16 +148,14 @@ export default function OverviewInsightsClient({
           title="Course Mastery"
           description="Which courses need more review, and which ones feel settled."
         >
-          <Suspense fallback={<ChartSkeleton heightClassName="h-64" />}>
-            <CourseMasteryList
-              rows={courseMastery}
-              emptyLabel="No course data for this period."
-            />
-          </Suspense>
+          <CourseMasteryList
+            rows={courseMastery}
+            emptyLabel="No course data for this period."
+          />
         </ChartFrame>
       </section>
     </PageContainer>
-  )
+  );
 }
 
 function RangeToggle({
@@ -172,10 +164,10 @@ function RangeToggle({
   fullWidth = false,
   id,
 }: {
-  range: RangeKey
-  onRangeChange: (value: RangeKey) => void
-  fullWidth?: boolean
-  id?: string
+  range: RangeKey;
+  onRangeChange: (value: RangeKey) => void;
+  fullWidth?: boolean;
+  id?: string;
 }) {
   return (
     <Tabs
@@ -196,7 +188,7 @@ function RangeToggle({
         </TabsTab>
       </TabsList>
     </Tabs>
-  )
+  );
 }
 
 function ChartFrame({
@@ -204,9 +196,9 @@ function ChartFrame({
   description,
   children,
 }: {
-  title: string
-  description: string
-  children: React.ReactNode
+  title: string;
+  description: string;
+  children: React.ReactNode;
 }) {
   return (
     <Card>
@@ -220,9 +212,33 @@ function ChartFrame({
         <div>{children}</div>
       </div>
     </Card>
-  )
+  );
 }
 
 function ChartSkeleton({ heightClassName }: { heightClassName: string }) {
-  return <Skeleton className={cn("w-full", heightClassName)} />
+  return <ChartLiteSkeleton className={cn("w-full", heightClassName)} />;
+}
+
+function ChartLiteSkeleton({ className }: { className: string }) {
+  return (
+    <div
+      className={cn(
+        "flex items-end gap-2 rounded-md bg-muted/40 p-3",
+        className,
+      )}
+    >
+      <div className="h-7 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-11 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-9 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-14 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-12 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-16 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-10 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-6 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-13 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-8 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-5 w-4 animate-pulse rounded-sm bg-muted/70" />
+      <div className="h-12 w-4 animate-pulse rounded-sm bg-muted/70" />
+    </div>
+  );
 }
