@@ -124,6 +124,25 @@
 :root {
   --selection-background: var(--primary);
   --selection-foreground: var(--primary-foreground);
+  --dashboard-floating-gap-mobile: 1.25rem;
+  --dashboard-floating-gap-desktop: 1.25rem;
+  --dashboard-dock-height-mobile: 2.75rem;
+  --dashboard-dock-height-desktop: 3rem;
+  --dashboard-pagination-height: 3rem;
+  --dashboard-shell-clearance-mobile: calc(
+    var(--dashboard-floating-gap-mobile) +
+      var(--dashboard-dock-height-mobile) +
+      var(--dashboard-floating-gap-mobile) +
+      var(--dashboard-pagination-height) +
+      var(--dashboard-floating-gap-mobile)
+  );
+  --dashboard-shell-clearance-desktop: calc(
+    var(--dashboard-floating-gap-desktop) +
+      var(--dashboard-dock-height-desktop) +
+      var(--dashboard-floating-gap-desktop) +
+      var(--dashboard-pagination-height) +
+      var(--dashboard-floating-gap-desktop)
+  );
 }
 
 @theme inline {

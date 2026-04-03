@@ -23,8 +23,8 @@ export function DashboardPaginationDock({
   disabled = false,
 }: DashboardPaginationDockProps) {
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-20 z-50 md:bottom-3">
-      <div className="pointer-events-auto mx-auto w-fit rounded-full border border-border/60 bg-background/82 px-1 py-1 shadow-sm backdrop-blur-md">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+var(--dashboard-floating-gap-mobile)+var(--dashboard-dock-height-mobile)+var(--dashboard-floating-gap-mobile))] z-50 md:bottom-[calc(var(--dashboard-floating-gap-desktop)+var(--dashboard-dock-height-desktop)+var(--dashboard-floating-gap-desktop))]">
+      <div className="pointer-events-auto mx-auto w-fit rounded-[calc(var(--radius)+4px)] border border-border/60 bg-background/82 px-1 py-1 shadow-sm backdrop-blur-md">
         <Pagination className="w-auto">
           <PaginationContent className="gap-0.5">
             <PaginationItem>
@@ -32,7 +32,7 @@ export function DashboardPaginationDock({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-10 rounded-full px-3 text-xs"
+                className="h-10 rounded-lg px-3 text-xs"
                 onClick={onPrevious}
                 disabled={disabled || currentPage <= 1}
               >
@@ -49,7 +49,7 @@ export function DashboardPaginationDock({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-10 rounded-full px-3 text-xs"
+                className="h-10 rounded-lg px-3 text-xs"
                 onClick={onNext}
                 disabled={disabled || currentPage >= totalPages}
               >

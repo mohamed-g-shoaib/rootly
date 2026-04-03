@@ -3,17 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  AnimatePresence,
-  domAnimation,
-  LazyMotion,
-  m,
-  type MotionValue,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "motion/react";
 
 import { cn } from "@/lib/utils";
 
@@ -25,7 +14,7 @@ export type FloatingDockItem = {
 
 function DockIcon({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid size-5 place-items-center [&_svg]:block">
+    <div className="grid size-4.5 place-items-center [&_svg]:block">
       <div className="flex items-center justify-center translate-y-[0.5px]">
         {children}
       </div>
@@ -48,7 +37,7 @@ export function FloatingDock({
   mobileClassName?: string;
 }) {
   return (
-    <LazyMotion features={domAnimation}>
+    <>
       <FloatingDockDesktop
         navigationItems={navigationItems}
         className={desktopClassName}
@@ -57,7 +46,7 @@ export function FloatingDock({
         navigationItems={navigationItems}
         className={mobileClassName}
       />
-    </LazyMotion>
+    </>
   );
 }
 
@@ -92,15 +81,14 @@ function FloatingDockMobile({
   return (
     <div
       className={cn(
-        "fixed inset-x-0 bottom-0 z-30 flex justify-center md:hidden",
+        "fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+var(--dashboard-floating-gap-mobile))] z-30 flex justify-center md:hidden",
         className,
       )}
       style={{
-        paddingBottom: "env(safe-area-inset-bottom)",
         viewTransitionName: "dashboard-dock",
       }}
     >
-      <nav className="mx-auto mb-3 flex items-center gap-2 rounded-2xl border bg-background p-2 shadow-sm">
+      <nav className="mx-auto flex items-center gap-1 rounded-[calc(var(--radius)+4px)] border bg-background/95 p-1 shadow-sm backdrop-blur-sm">
         {navigationItems.map((item) => {
           const isActive = isDockItemActive(pathname, item.link);
           const transitionTypes =
@@ -119,10 +107,10 @@ function FloatingDockMobile({
               onFocus={() => prefetch(item.link)}
               onTouchStart={() => prefetch(item.link)}
               className={cn(
-                "flex size-11 items-center justify-center rounded-xl border transition-colors",
+                "inline-flex size-9 items-center justify-center rounded-lg border transition-colors",
                 isActive
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-muted text-foreground hover:bg-muted",
+                  : "border-transparent bg-transparent text-muted-foreground hover:border-border hover:bg-accent/80 hover:text-accent-foreground",
               )}
             >
               <DockIcon>{item.icon}</DockIcon>
@@ -143,8 +131,6 @@ function FloatingDockDesktop({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const mouseX = useMotionValue(Infinity);
-  const shouldReduceMotion = Boolean(useReducedMotion());
 
   const prefetch = React.useCallback(
     (href: string) => {
@@ -167,32 +153,21 @@ function FloatingDockDesktop({
   return (
     <div
       className={cn(
-        "fixed inset-x-0 bottom-0 z-30 hidden justify-center md:flex",
+        "fixed inset-x-0 bottom-[var(--dashboard-floating-gap-desktop)] z-30 hidden justify-center md:flex",
         className,
       )}
       style={{
-        paddingBottom: "env(safe-area-inset-bottom)",
         viewTransitionName: "dashboard-dock",
       }}
     >
-      <m.nav
-        onMouseMove={
-          shouldReduceMotion ? undefined : (e) => mouseX.set(e.pageX)
-        }
-        onMouseLeave={
-          shouldReduceMotion ? undefined : () => mouseX.set(Infinity)
-        }
-        className="mx-auto mb-6 flex h-16 items-end gap-4 rounded-2xl border bg-background p-3 shadow-sm"
-      >
+      <nav className="mx-auto flex items-center gap-1 rounded-[calc(var(--radius)+4px)] border bg-background/95 p-1 shadow-sm backdrop-blur-sm">
         {navigationItems.map((item) => (
-          <DesktopIconContainer
+          <DesktopDockItem
             key={item.label}
-            mouseX={mouseX}
             label={item.label}
             icon={item.icon}
             link={item.link}
             active={isDockItemActive(pathname, item.link)}
-            shouldReduceMotion={shouldReduceMotion}
             onPrefetch={prefetch}
             transitionTypes={
               item.link === "/overview" || pathname === "/overview"
@@ -201,63 +176,26 @@ function FloatingDockDesktop({
             }
           />
         ))}
-      </m.nav>
+      </nav>
     </div>
   );
 }
 
-function DesktopIconContainer({
-  mouseX,
+function DesktopDockItem({
   label,
   icon,
   link,
   active,
-  shouldReduceMotion,
   onPrefetch,
   transitionTypes,
 }: {
-  mouseX: MotionValue<number>;
   label: string;
   icon: React.ReactNode;
   link: string;
   active: boolean;
-  shouldReduceMotion: boolean;
   onPrefetch: (href: string) => void;
   transitionTypes?: string[];
 }) {
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  let widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-
-  let iconScaleTransform = useTransform(distance, [-150, 0, 150], [1, 2, 1]);
-
-  const width = useSpring(widthTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-  let height = useSpring(heightTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-
-  let iconScale = useSpring(iconScaleTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-
-  const [hovered, setHovered] = React.useState(false);
-  const style = shouldReduceMotion ? undefined : { width, height };
-  const iconStyle = shouldReduceMotion ? undefined : { scale: iconScale };
-
   return (
     <Link
       href={link}
@@ -267,35 +205,15 @@ function DesktopIconContainer({
       onMouseEnter={() => onPrefetch(link)}
       onFocus={() => onPrefetch(link)}
       onTouchStart={() => onPrefetch(link)}
+      className={cn(
+        "inline-flex h-10 items-center gap-2 rounded-lg border px-3 text-sm font-medium tracking-[-0.01em] transition-colors",
+        active
+          ? "border-primary bg-primary text-primary-foreground"
+          : "border-transparent bg-transparent text-muted-foreground hover:border-border hover:bg-accent/80 hover:text-accent-foreground",
+      )}
     >
-      <m.div
-        ref={ref}
-        style={style}
-        onMouseEnter={shouldReduceMotion ? undefined : () => setHovered(true)}
-        onMouseLeave={shouldReduceMotion ? undefined : () => setHovered(false)}
-        className={cn(
-          "relative flex size-10 items-center justify-center rounded-full border transition-colors motion-reduce:transition-none",
-          active
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-muted text-foreground hover:bg-muted",
-        )}
-      >
-        <AnimatePresence>
-          {!shouldReduceMotion && hovered && (
-            <m.div
-              initial={{ opacity: 0, y: 10, x: "-50%" }}
-              animate={{ opacity: 1, y: 0, x: "-50%" }}
-              exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-8 left-1/2 w-fit whitespace-pre rounded-md border bg-background px-2 py-0.5 text-xs text-foreground shadow-sm"
-            >
-              {label}
-            </m.div>
-          )}
-        </AnimatePresence>
-        <m.div style={iconStyle} className="flex items-center justify-center">
-          <DockIcon>{icon}</DockIcon>
-        </m.div>
-      </m.div>
+      <DockIcon>{icon}</DockIcon>
+      <span className="leading-none whitespace-nowrap">{label}</span>
     </Link>
   );
 }

@@ -282,7 +282,9 @@ export function DashboardShell({
           </div>
         </header>
 
-        <main className="min-h-svh pt-14 pb-28">{children}</main>
+        <main className="min-h-svh pt-14 pb-[calc(env(safe-area-inset-bottom)+var(--dashboard-shell-clearance-mobile))] md:pb-[var(--dashboard-shell-clearance-desktop)]">
+          {children}
+        </main>
 
         <FloatingDock navigationItems={navigationItems} />
 

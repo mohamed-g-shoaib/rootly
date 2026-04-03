@@ -1089,3 +1089,51 @@ Recent findings:
   - `hooks/use-sound.ts`
 - Validation:
   - `pnpm lint` passes
+
+### Floating dock visual refresh (2026-04-03)
+
+- Refined `components/ui/floating-dock.tsx` to use a calmer coss-aligned visual treatment.
+- Changes made:
+  - route labels are now always visible on both desktop and mobile dock items
+  - removed the hover proximity zoom/enlarge behavior from the desktop dock
+  - changed dock items from circular/extra-rounded treatments to default-radius surfaces using `rounded-lg`
+  - changed the dock shell from oversized rounded styling to the same default-radius `rounded-lg` treatment
+  - preserved route prefetching and existing view-transition guardrails while simplifying the dock structure
+- Validation note:
+  - local shell did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Floating dock optical alignment refinement (2026-04-03)
+
+- Loaded design-focused skills for the dock refinement pass:
+  - `coss`
+  - `make-interfaces-feel-better`
+  - `emil-design-eng`
+  - `userinterface-wiki`
+- Applied a second dock polish pass in `components/ui/floating-dock.tsx`:
+  - reduced overall dock visual size (smaller shell padding, tighter gaps, smaller icon/text sizing, shorter button height)
+  - adjusted shell/button corner relationship toward a concentric-radius treatment so the shell and buttons feel optically aligned rather than equally pill-shaped
+  - made inactive buttons quieter by using transparent surfaces until hover, reducing visual bulk
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Dashboard bottom-stack symmetry pass (2026-04-03)
+
+- Unified floating dock, pagination dock, and dashboard content bottom clearance around shared spacing tokens in `app/globals.css`.
+- New layout model:
+  - bottom edge -> shared gap -> floating dock -> shared gap -> pagination dock -> shared gap -> page content
+- Updated:
+  - `components/ui/floating-dock.tsx`
+    - dock now uses shared mobile/desktop bottom offsets instead of ad-hoc `mb-*` spacing
+    - mobile dock is now icon-only
+  - `app/ui/dashboard-pagination-dock.tsx`
+    - pagination dock now sits above the floating dock using the same shared spacing system
+    - pagination shell/buttons now use the same calmer radius family as the dock
+  - `app/ui/dashboard-shell.tsx`
+    - main content bottom padding now reserves space using the same shared stack math
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Dashboard bottom-stack spacing correction (2026-04-03)
+
+- Follow-up after visual review: the first shared-gap value made the floating dock sit too close to the screen edge, so the stack did not feel symmetric in practice.
+- Adjusted `app/globals.css` shared bottom-stack gaps from `0.75rem` to `1.25rem` on both mobile and desktop so the edge/dock, dock/pagination, and pagination/content intervals read more evenly.
