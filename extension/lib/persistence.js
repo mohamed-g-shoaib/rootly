@@ -6,7 +6,11 @@ function isRecord(value) {
 }
 
 function normalizeBootstrapCacheEntry(value) {
-  if (!isRecord(value) || !isRecord(value.data) || typeof value.cachedAt !== "number") {
+  if (
+    !isRecord(value) ||
+    !isRecord(value.data) ||
+    typeof value.cachedAt !== "number"
+  ) {
     return null
   }
 

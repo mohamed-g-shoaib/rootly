@@ -74,7 +74,9 @@ export const selectRefs = {
     root: document.getElementById("select-note-course"),
     trigger: document.getElementById("select-note-course-trigger"),
     label: document.getElementById("select-note-course-label"),
-    chevron: document.querySelector("#select-note-course-trigger .select-chevron"),
+    chevron: document.querySelector(
+      "#select-note-course-trigger .select-chevron"
+    ),
     panel: document.getElementById("select-note-course-panel"),
     list: document.getElementById("select-note-course-list"),
   },
@@ -82,7 +84,9 @@ export const selectRefs = {
     root: document.getElementById("select-note-understanding"),
     trigger: document.getElementById("select-note-understanding-trigger"),
     label: document.getElementById("select-note-understanding-label"),
-    chevron: document.querySelector("#select-note-understanding-trigger .select-chevron"),
+    chevron: document.querySelector(
+      "#select-note-understanding-trigger .select-chevron"
+    ),
     panel: document.getElementById("select-note-understanding-panel"),
     list: document.getElementById("select-note-understanding-list"),
   },
@@ -90,7 +94,9 @@ export const selectRefs = {
     root: document.getElementById("select-daily-mood"),
     trigger: document.getElementById("select-daily-mood-trigger"),
     label: document.getElementById("select-daily-mood-label"),
-    chevron: document.querySelector("#select-daily-mood-trigger .select-chevron"),
+    chevron: document.querySelector(
+      "#select-daily-mood-trigger .select-chevron"
+    ),
     panel: document.getElementById("select-daily-mood-panel"),
     list: document.getElementById("select-daily-mood-list"),
   },
@@ -98,7 +104,9 @@ export const selectRefs = {
     root: document.getElementById("select-timer-mood"),
     trigger: document.getElementById("select-timer-mood-trigger"),
     label: document.getElementById("select-timer-mood-label"),
-    chevron: document.querySelector("#select-timer-mood-trigger .select-chevron"),
+    chevron: document.querySelector(
+      "#select-timer-mood-trigger .select-chevron"
+    ),
     panel: document.getElementById("select-timer-mood-panel"),
     list: document.getElementById("select-timer-mood-list"),
   },

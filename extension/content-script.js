@@ -1,25 +1,25 @@
-const FORWARDED_MESSAGE_TYPES = new Set(["daily-entry:upsert", "note:upsert"]);
+const FORWARDED_MESSAGE_TYPES = new Set(["daily-entry:upsert", "note:upsert"])
 
 function isRecord(value) {
-  return value != null && typeof value === "object" && !Array.isArray(value);
+  return value != null && typeof value === "object" && !Array.isArray(value)
 }
 
 function isDailyEntryPayload(payload) {
   if (!isRecord(payload)) {
-    return false;
+    return false
   }
 
   if (
     payload.source !== "rootly-extension" ||
     payload.type !== "rootly:daily-entry-upsert"
   ) {
-    return false;
+    return false
   }
 
-  const entry = payload.entry;
+  const entry = payload.entry
 
   if (!isRecord(entry)) {
-    return false;
+    return false
   }
 
   return (
@@ -30,25 +30,25 @@ function isDailyEntryPayload(payload) {
     (entry.notes == null || typeof entry.notes === "string") &&
     typeof entry.createdAt === "string" &&
     typeof entry.updatedAt === "string"
-  );
+  )
 }
 
 function isNotePayload(payload) {
   if (!isRecord(payload)) {
-    return false;
+    return false
   }
 
   if (
     payload.source !== "rootly-extension" ||
     payload.type !== "rootly:note-upsert"
   ) {
-    return false;
+    return false
   }
 
-  const note = payload.note;
+  const note = payload.note
 
   if (!isRecord(note)) {
-    return false;
+    return false
   }
 
   return (
@@ -63,7 +63,7 @@ function isNotePayload(payload) {
     typeof note.createdAt === "string" &&
     typeof note.updatedAt === "string" &&
     typeof note.detailsLoaded === "boolean"
-  );
+  )
 }
 
 chrome.runtime.onMessage.addListener((message) => {
@@ -72,23 +72,23 @@ chrome.runtime.onMessage.addListener((message) => {
     !FORWARDED_MESSAGE_TYPES.has(message.type) ||
     !message.payload
   ) {
-    return;
+    return
   }
 
   if (
     message.type === "daily-entry:upsert" &&
     !isDailyEntryPayload(message.payload)
   ) {
-    return;
+    return
   }
 
   if (message.type === "note:upsert" && !isNotePayload(message.payload)) {
-    return;
+    return
   }
 
   if (window.top !== window) {
-    return;
+    return
   }
 
-  window.postMessage(message.payload, window.location.origin);
-});
+  window.postMessage(message.payload, window.location.origin)
+})

@@ -1,4 +1,4 @@
-import { normalizeText } from "./form-utils.js";
+import { normalizeText } from "./form-utils.js"
 
 export function createActionHandlers({
   refs,
@@ -30,108 +30,108 @@ export function createActionHandlers({
   broadcastNoteUpdate,
 }) {
   function setNoteType(type) {
-    state.noteType = type;
-    clearNoteValidation(refs);
-    renderNoteType(refs, state);
-    refs.noteSaveStatus.textContent = "Ready";
-    syncDraftState("note");
+    state.noteType = type
+    clearNoteValidation(refs)
+    renderNoteType(refs, state)
+    refs.noteSaveStatus.textContent = "Ready"
+    syncDraftState("note")
   }
 
   function setNoteFlagged(flagged) {
-    state.noteFlagged = flagged;
-    renderNoteOptions(refs, state);
-    refs.noteSaveStatus.textContent = "Ready";
-    syncDraftState("note");
+    state.noteFlagged = flagged
+    renderNoteOptions(refs, state)
+    refs.noteSaveStatus.textContent = "Ready"
+    syncDraftState("note")
   }
 
   function setNoteCodeOpen(isOpen) {
-    state.noteCodeOpen = isOpen;
+    state.noteCodeOpen = isOpen
 
     if (!isOpen) {
-      refs.noteCodeInput.value = "";
-      refs.noteCodeLanguageInput.value = "";
-      clearFieldInvalid(refs.noteCodeInput);
+      refs.noteCodeInput.value = ""
+      refs.noteCodeLanguageInput.value = ""
+      clearFieldInvalid(refs.noteCodeInput)
     }
 
-    renderNoteOptions(refs, state);
-    refs.noteSaveStatus.textContent = "Ready";
-    syncDraftState("note");
+    renderNoteOptions(refs, state)
+    refs.noteSaveStatus.textContent = "Ready"
+    syncDraftState("note")
   }
 
   function resetNoteForm() {
-    state.noteType = "qa";
-    state.pendingNoteCourseId = null;
-    refs.noteQuestionInput.value = "";
-    refs.noteAnswerInput.value = "";
-    refs.noteBodyInput.value = "";
-    refs.noteCodeInput.value = "";
-    refs.noteCodeLanguageInput.value = "";
-    state.noteFlagged = false;
-    state.noteCodeOpen = false;
-    clearNoteValidation(refs);
+    state.noteType = "qa"
+    state.pendingNoteCourseId = null
+    refs.noteQuestionInput.value = ""
+    refs.noteAnswerInput.value = ""
+    refs.noteBodyInput.value = ""
+    refs.noteCodeInput.value = ""
+    refs.noteCodeLanguageInput.value = ""
+    state.noteFlagged = false
+    state.noteCodeOpen = false
+    clearNoteValidation(refs)
     selectController.setSelectValue("noteUnderstanding", "2", {
       close: false,
       quiet: true,
-    });
+    })
     selectController.setSelectValue("noteCourse", "none", {
       close: false,
       quiet: true,
-    });
-    selectController.renderAllSelects();
-    renderNoteType(refs, state);
-    renderNoteOptions(refs, state);
+    })
+    selectController.renderAllSelects()
+    renderNoteType(refs, state)
+    renderNoteOptions(refs, state)
   }
 
   function resetCourseForm() {
-    clearCourseValidation(refs);
-    refs.courseTitleInput.value = "";
-    refs.courseInstructorInput.value = "";
-    refs.courseLinkInput.value = "";
+    clearCourseValidation(refs)
+    refs.courseTitleInput.value = ""
+    refs.courseInstructorInput.value = ""
+    refs.courseLinkInput.value = ""
   }
 
   function resetDailyLogInputs() {
-    clearDailyValidation(refs);
-    refs.logHours.value = "0";
-    refs.logMinutes.value = "0";
+    clearDailyValidation(refs)
+    refs.logHours.value = "0"
+    refs.logMinutes.value = "0"
   }
 
   function resetTimerSaveForm() {
     selectController.setSelectValue("timerMood", "2", {
       close: false,
       quiet: true,
-    });
-    refs.timerNoteInput.value = "";
+    })
+    refs.timerNoteInput.value = ""
   }
 
   function buildNotePayload() {
-    clearNoteValidation(refs);
+    clearNoteValidation(refs)
 
-    const question = refs.noteQuestionInput.value.trim();
-    const answer = refs.noteAnswerInput.value.trim();
-    const body = refs.noteBodyInput.value.trim();
-    const codeSnippet = refs.noteCodeInput.value.trim();
-    const codeLanguage = refs.noteCodeLanguageInput.value.trim();
+    const question = refs.noteQuestionInput.value.trim()
+    const answer = refs.noteAnswerInput.value.trim()
+    const body = refs.noteBodyInput.value.trim()
+    const codeSnippet = refs.noteCodeInput.value.trim()
+    const codeLanguage = refs.noteCodeLanguageInput.value.trim()
 
     if (state.noteType === "qa") {
-      let hasError = false;
+      let hasError = false
 
       if (!question) {
-        setFieldInvalid(refs.noteQuestionInput, true);
-        hasError = true;
+        setFieldInvalid(refs.noteQuestionInput, true)
+        hasError = true
       }
 
       if (!answer) {
-        setFieldInvalid(refs.noteAnswerInput, true);
-        hasError = true;
+        setFieldInvalid(refs.noteAnswerInput, true)
+        hasError = true
       }
 
       if (hasError) {
-        throw new Error("Add both a question and answer.");
+        throw new Error("Add both a question and answer.")
       }
 
       if (state.noteCodeOpen && !codeSnippet) {
-        setFieldInvalid(refs.noteCodeInput, true);
-        throw new Error("Add a code snippet or turn the code option off.");
+        setFieldInvalid(refs.noteCodeInput, true)
+        throw new Error("Add a code snippet or turn the code option off.")
       }
 
       return {
@@ -146,17 +146,17 @@ export function createActionHandlers({
         flag: state.noteFlagged,
         codeSnippet: state.noteCodeOpen ? codeSnippet : null,
         codeLanguage,
-      };
+      }
     }
 
     if (!body) {
-      setFieldInvalid(refs.noteBodyInput, true);
-      throw new Error("Write a quick note before saving.");
+      setFieldInvalid(refs.noteBodyInput, true)
+      throw new Error("Write a quick note before saving.")
     }
 
     if (state.noteCodeOpen && !codeSnippet) {
-      setFieldInvalid(refs.noteCodeInput, true);
-      throw new Error("Add a code snippet or turn the code option off.");
+      setFieldInvalid(refs.noteCodeInput, true)
+      throw new Error("Add a code snippet or turn the code option off.")
     }
 
     return {
@@ -169,146 +169,144 @@ export function createActionHandlers({
       flag: state.noteFlagged,
       codeSnippet: state.noteCodeOpen ? codeSnippet : null,
       codeLanguage,
-    };
+    }
   }
 
   function buildCoursePayload() {
-    clearCourseValidation(refs);
+    clearCourseValidation(refs)
 
-    const title = refs.courseTitleInput.value.trim();
-    const instructor = refs.courseInstructorInput.value.trim();
-    const courseLink = refs.courseLinkInput.value.trim();
+    const title = refs.courseTitleInput.value.trim()
+    const instructor = refs.courseInstructorInput.value.trim()
+    const courseLink = refs.courseLinkInput.value.trim()
 
     if (!title) {
-      setFieldInvalid(refs.courseTitleInput, true);
-      throw new Error("Add a course title.");
+      setFieldInvalid(refs.courseTitleInput, true)
+      throw new Error("Add a course title.")
     }
 
     return {
       title,
       instructor: instructor || null,
       courseLink: normalizeText(courseLink) || null,
-    };
+    }
   }
 
   async function handleManualDailyLogSave() {
     if (state.pendingActionLocks.has("save:daily")) {
-      return;
+      return
     }
 
     await withActionLock("save:daily", async () => {
-      setButtonLoading(refs.dailyLogSave, true, "Saving...");
-      clearDailyValidation(refs);
+      setButtonLoading(refs.dailyLogSave, true, "Saving...")
+      clearDailyValidation(refs)
 
-      const addStudyTimeMinutes = getManualLogMinutes(refs);
+      const addStudyTimeMinutes = getManualLogMinutes(refs)
 
       if (addStudyTimeMinutes <= 0) {
-        refs.dailyLogStatus.textContent = "Enter time";
-        setFieldInvalid(refs.logHours, true);
-        setFieldInvalid(refs.logMinutes, true);
-        setButtonLoading(refs.dailyLogSave, false);
-        return;
+        refs.dailyLogStatus.textContent = "Enter time"
+        setFieldInvalid(refs.logHours, true)
+        setFieldInvalid(refs.logMinutes, true)
+        setButtonLoading(refs.dailyLogSave, false)
+        return
       }
 
-      refs.dailyLogStatus.textContent = "Saving";
+      refs.dailyLogStatus.textContent = "Saving"
 
       try {
         await saveDailyEntry({
           addStudyTimeMinutes,
           source: "manual",
-        });
+        })
 
-        resetDailyLogInputs();
-        state.draftState.daily = false;
-        syncDraftState("daily");
-        refs.dailyLogStatus.textContent = "Saved";
+        resetDailyLogInputs()
+        state.draftState.daily = false
+        syncDraftState("daily")
+        refs.dailyLogStatus.textContent = "Saved"
       } catch (error) {
         refs.dailyLogStatus.textContent =
-          error instanceof Error
-            ? error.message
-            : "Failed to save today's log.";
+          error instanceof Error ? error.message : "Failed to save today's log."
       } finally {
-        setButtonLoading(refs.dailyLogSave, false);
+        setButtonLoading(refs.dailyLogSave, false)
       }
-    });
+    })
   }
 
   async function handleNoteSave() {
     if (state.pendingActionLocks.has("save:note")) {
-      return;
+      return
     }
 
     await withActionLock("save:note", async () => {
-      setButtonLoading(refs.noteSave, true, "Saving...");
-      refs.noteSaveStatus.textContent = "Saving";
+      setButtonLoading(refs.noteSave, true, "Saving...")
+      refs.noteSaveStatus.textContent = "Saving"
 
       try {
-        const payload = buildNotePayload();
+        const payload = buildNotePayload()
         const result = await apiFetch("/api/extension/notes", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
-        });
+        })
 
         if (result?.note) {
-          await broadcastNoteUpdate(result.note);
+          await broadcastNoteUpdate(result.note)
         }
 
-        resetNoteForm();
-        state.draftState.note = false;
-        syncDraftState("note");
-        refs.noteSaveStatus.textContent = "Saved";
+        resetNoteForm()
+        state.draftState.note = false
+        syncDraftState("note")
+        refs.noteSaveStatus.textContent = "Saved"
       } catch (error) {
         refs.noteSaveStatus.textContent =
-          error instanceof Error ? error.message : "Retry";
+          error instanceof Error ? error.message : "Retry"
       } finally {
-        setButtonLoading(refs.noteSave, false);
+        setButtonLoading(refs.noteSave, false)
       }
-    });
+    })
   }
 
   async function handleCourseSave() {
     if (state.pendingActionLocks.has("save:course")) {
-      return;
+      return
     }
 
     await withActionLock("save:course", async () => {
-      setButtonLoading(refs.courseSave, true, "Creating...");
-      refs.courseSaveStatus.textContent = "Saving";
+      setButtonLoading(refs.courseSave, true, "Creating...")
+      refs.courseSaveStatus.textContent = "Saving"
 
       try {
-        const payload = buildCoursePayload();
+        const payload = buildCoursePayload()
         const result = await apiFetch("/api/extension/courses", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
-        });
+        })
 
         const nextCourses = [result.course, ...getBootstrapCourses()]
           .filter(
             (course, index, allCourses) =>
-              allCourses.findIndex((item) => item.id === course.id) === index,
+              allCourses.findIndex((item) => item.id === course.id) === index
           )
           .toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-          .slice(0, 8);
+          .slice(0, 8)
 
-        updateBootstrapCourses(nextCourses);
-        setCoursePanelOpen(refs, state, false);
-        resetCourseForm();
-        state.draftState.course = false;
-        syncDraftState("course");
-        refs.courseSaveStatus.textContent = "Saved";
+        updateBootstrapCourses(nextCourses)
+        setCoursePanelOpen(refs, state, false)
+        resetCourseForm()
+        state.draftState.course = false
+        syncDraftState("course")
+        refs.courseSaveStatus.textContent = "Saved"
       } catch (error) {
         refs.courseSaveStatus.textContent =
-          error instanceof Error ? error.message : "Retry";
+          error instanceof Error ? error.message : "Retry"
       } finally {
-        setButtonLoading(refs.courseSave, false);
+        setButtonLoading(refs.courseSave, false)
       }
-    });
+    })
   }
 
   async function handleTimerSave() {
@@ -316,24 +314,24 @@ export function createActionHandlers({
       !state.timer ||
       (state.timer.status !== "paused" && state.timer.status !== "stopped")
     ) {
-      return;
+      return
     }
 
     const savableMinutes = getSavableTimerMinutes(
-      getTimerElapsedMs(state.timer),
-    );
+      getTimerElapsedMs(state.timer)
+    )
 
     if (savableMinutes <= 0) {
-      return;
+      return
     }
 
     if (state.pendingActionLocks.has("save:timer")) {
-      return;
+      return
     }
 
     await withActionLock("save:timer", async () => {
-      setButtonLoading(refs.timerSave, true, "Saving...");
-      refs.timerSaveHint.textContent = `Saving ${formatStudyMinutes(savableMinutes)} into today's Rootly total...`;
+      setButtonLoading(refs.timerSave, true, "Saving...")
+      refs.timerSaveHint.textContent = `Saving ${formatStudyMinutes(savableMinutes)} into today's Rootly total...`
 
       try {
         await saveDailyEntry({
@@ -341,43 +339,43 @@ export function createActionHandlers({
           source: "timer",
           mood: Number(state.selectValues.timerMood),
           notes: refs.timerNoteInput.value,
-        });
+        })
 
-        await requestTimer("timer:reset");
-        resetTimerSaveForm();
-        state.draftState.timer = false;
-        syncDraftState("timer");
-        refs.timerSaveHint.textContent = `Saved ${formatStudyMinutes(savableMinutes)} into today's Rootly total.`;
-        refs.dailyLogStatus.textContent = "Saved";
+        await requestTimer("timer:reset")
+        resetTimerSaveForm()
+        state.draftState.timer = false
+        syncDraftState("timer")
+        refs.timerSaveHint.textContent = `Saved ${formatStudyMinutes(savableMinutes)} into today's Rootly total.`
+        refs.dailyLogStatus.textContent = "Saved"
       } catch (error) {
         refs.timerSaveHint.textContent =
-          error instanceof Error ? error.message : "Failed to save timer.";
+          error instanceof Error ? error.message : "Failed to save timer."
       } finally {
-        setButtonLoading(refs.timerSave, false);
+        setButtonLoading(refs.timerSave, false)
       }
-    });
+    })
   }
 
   async function handleEnvironmentChange(nextBaseUrl, button) {
-    setButtonLoading(button, true, "Switching...");
+    setButtonLoading(button, true, "Switching...")
     refs.siteEnvButtons.forEach((node) => {
       if (node !== button) {
-        node.disabled = true;
+        node.disabled = true
       }
-    });
-    refs.settingsHint.textContent = "Updating extension connection...";
+    })
+    refs.settingsHint.textContent = "Updating extension connection..."
 
     try {
-      state.siteBaseUrl = await setSiteBaseUrl(nextBaseUrl);
-      state.bootstrap = null;
-      state.bootstrapCachedAt = null;
-      renderEnvironmentSettings();
-      await bootstrapPanel({ preferCache: true });
+      state.siteBaseUrl = await setSiteBaseUrl(nextBaseUrl)
+      state.bootstrap = null
+      state.bootstrapCachedAt = null
+      renderEnvironmentSettings()
+      await bootstrapPanel({ preferCache: true })
     } finally {
       refs.siteEnvButtons.forEach((node) => {
-        node.disabled = false;
-      });
-      setButtonLoading(button, false);
+        node.disabled = false
+      })
+      setButtonLoading(button, false)
     }
   }
 
@@ -390,5 +388,5 @@ export function createActionHandlers({
     setNoteCodeOpen,
     setNoteFlagged,
     setNoteType,
-  };
+  }
 }

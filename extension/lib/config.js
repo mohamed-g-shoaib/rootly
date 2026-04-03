@@ -20,8 +20,8 @@ function normalizeSiteBaseUrl(value) {
     typeof value === "string" ? value.replace(/\/+$/, "") : ""
 
   return (
-    SITE_ENV_OPTIONS.find((option) => option.value === normalizedValue)?.value ??
-    PROD_BASE_URL
+    SITE_ENV_OPTIONS.find((option) => option.value === normalizedValue)
+      ?.value ?? PROD_BASE_URL
   )
 }
 
@@ -29,8 +29,8 @@ export function getSiteEnvironmentLabel(value) {
   const normalizedValue = normalizeSiteBaseUrl(value)
 
   return (
-    SITE_ENV_OPTIONS.find((option) => option.value === normalizedValue)?.label ??
-    "Production"
+    SITE_ENV_OPTIONS.find((option) => option.value === normalizedValue)
+      ?.label ?? "Production"
   )
 }
 

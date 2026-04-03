@@ -4,22 +4,22 @@ import {
   openRootlyPath,
   resolveSiteBaseUrl,
   setSiteBaseUrl,
-} from "../lib/config.js";
-import { apiFetch } from "../lib/api.js";
+} from "../lib/config.js"
+import { apiFetch } from "../lib/api.js"
 import {
   readBootstrapCache,
   readDrafts,
   writeBootstrapCache,
   writeDrafts,
   clearBootstrapCache,
-} from "../lib/persistence.js";
+} from "../lib/persistence.js"
 import {
   formatStudyMinutes,
   formatTimerMs,
   getSavableTimerMinutes,
   toDateInputValue,
-} from "../lib/time.js";
-import { refs, selectRefs } from "./dom.js";
+} from "../lib/time.js"
+import { refs, selectRefs } from "./dom.js"
 import {
   formatTodayLabel,
   getDisplayName,
@@ -34,8 +34,8 @@ import {
   setSettingsOpen,
   setSyncStatus,
   showSection,
-} from "./render.js";
-import { createSelectController } from "./selects.js";
+} from "./render.js"
+import { createSelectController } from "./selects.js"
 import {
   clearCourseValidation,
   clearDailyValidation,
@@ -44,8 +44,8 @@ import {
   getManualLogMinutes,
   setButtonLoading,
   setFieldInvalid,
-} from "./form-utils.js";
-import { createDraftManager } from "./draft-manager.js";
+} from "./form-utils.js"
+import { createDraftManager } from "./draft-manager.js"
 import {
   registerActionListeners,
   registerDocumentListeners,
@@ -53,72 +53,72 @@ import {
   registerRuntimeListeners,
   registerSelectListeners,
   registerTabListeners,
-} from "./listeners.js";
-import { moodOptions, state, tabOrder, understandingOptions } from "./state.js";
-import { createBootstrapController } from "./bootstrap-controller.js";
-import { createActionHandlers } from "./action-handlers.js";
+} from "./listeners.js"
+import { moodOptions, state, tabOrder, understandingOptions } from "./state.js"
+import { createBootstrapController } from "./bootstrap-controller.js"
+import { createActionHandlers } from "./action-handlers.js"
 
 function getBootstrapCourses() {
-  return state.bootstrap?.courses ?? [];
+  return state.bootstrap?.courses ?? []
 }
 
 async function withActionLock(lockKey, task) {
   if (state.pendingActionLocks.has(lockKey)) {
-    return null;
+    return null
   }
 
-  state.pendingActionLocks.add(lockKey);
+  state.pendingActionLocks.add(lockKey)
 
   try {
-    return await task();
+    return await task()
   } finally {
-    state.pendingActionLocks.delete(lockKey);
+    state.pendingActionLocks.delete(lockKey)
   }
 }
 
-let draftManager = null;
+let draftManager = null
 
 function syncDraftState(section, options) {
-  draftManager?.syncDraftState(section, options);
+  draftManager?.syncDraftState(section, options)
 }
 
 function refreshDraftStates(options) {
-  draftManager?.refreshDraftStates(options);
+  draftManager?.refreshDraftStates(options)
 }
 
 function applyPendingNoteCourseSelection() {
-  draftManager?.applyPendingNoteCourseSelection();
+  draftManager?.applyPendingNoteCourseSelection()
 }
 
 function setDailyDraftFromEntry(todayEntry) {
-  draftManager?.setDailyDraftFromEntry(todayEntry);
+  draftManager?.setDailyDraftFromEntry(todayEntry)
 }
 
 function setTimerDraftFromEntry(todayEntry) {
-  draftManager?.setTimerDraftFromEntry(todayEntry);
+  draftManager?.setTimerDraftFromEntry(todayEntry)
 }
 
 function handleSelectValueChange(key, _value, { quiet }) {
   if (quiet) {
-    return;
+    return
   }
 
   if (key === "noteCourse" || key === "noteUnderstanding") {
     if (key === "noteCourse") {
-      state.pendingNoteCourseId = null;
+      state.pendingNoteCourseId = null
     }
 
-    syncDraftState("note");
-    return;
+    syncDraftState("note")
+    return
   }
 
   if (key === "dailyMood") {
-    syncDraftState("daily");
-    return;
+    syncDraftState("daily")
+    return
   }
 
   if (key === "timerMood") {
-    syncDraftState("timer");
+    syncDraftState("timer")
   }
 }
 
@@ -130,7 +130,7 @@ const selectController = createSelectController({
   moodOptions,
   getBootstrapCourses,
   onValueChange: handleSelectValueChange,
-});
+})
 
 draftManager = createDraftManager({
   refs,
@@ -140,7 +140,7 @@ draftManager = createDraftManager({
   selectController,
   getBootstrapCourses,
   setCoursePanelOpen,
-});
+})
 
 const bootstrapController = createBootstrapController({
   refs,
@@ -173,7 +173,7 @@ const bootstrapController = createBootstrapController({
   getTimerElapsedMs,
   withActionLock,
   setButtonLoading,
-});
+})
 
 const actionHandlers = createActionHandlers({
   refs,
@@ -203,43 +203,43 @@ const actionHandlers = createActionHandlers({
   saveDailyEntry: bootstrapController.saveDailyEntry,
   requestTimer: bootstrapController.requestTimer,
   broadcastNoteUpdate: bootstrapController.broadcastNoteUpdate,
-});
+})
 
 async function initializeSidePanel() {
-  selectController.renderAllSelects();
-  setCoursePanelOpen(refs, state, false);
-  setSettingsOpen(refs, state, false);
-  setActivePanel(refs, state, state.activePanel);
-  renderNoteType(refs, state);
-  renderNoteOptions(refs, state);
-  setSyncStatus(refs, "");
+  selectController.renderAllSelects()
+  setCoursePanelOpen(refs, state, false)
+  setSettingsOpen(refs, state, false)
+  setActivePanel(refs, state, state.activePanel)
+  renderNoteType(refs, state)
+  renderNoteOptions(refs, state)
+  setSyncStatus(refs, "")
 
-  await bootstrapController.hydrateEnvironmentSettings();
-  await draftManager.hydrateStoredDrafts();
+  await bootstrapController.hydrateEnvironmentSettings()
+  await draftManager.hydrateStoredDrafts()
 
-  selectController.renderAllSelects();
-  renderNoteType(refs, state);
-  renderNoteOptions(refs, state);
+  selectController.renderAllSelects()
+  renderNoteType(refs, state)
+  renderNoteOptions(refs, state)
 
   registerTabListeners({
     refs,
     state,
     tabOrder,
     setActivePanel,
-  });
+  })
 
   registerSelectListeners({
     selectRefs,
     state,
     selectController,
-  });
+  })
 
   registerInputListeners({
     refs,
     syncDraftState,
     clearFieldInvalid,
     clearDailyValidation,
-  });
+  })
 
   registerActionListeners({
     refs,
@@ -258,7 +258,7 @@ async function initializeSidePanel() {
     handleManualDailyLogSave: actionHandlers.handleManualDailyLogSave,
     requestTimer: bootstrapController.requestTimer,
     handleTimerSave: actionHandlers.handleTimerSave,
-  });
+  })
 
   registerDocumentListeners({
     refs,
@@ -267,18 +267,18 @@ async function initializeSidePanel() {
     selectController,
     setSettingsOpen,
     bootstrapPanel: bootstrapController.bootstrapPanel,
-  });
+  })
 
   registerRuntimeListeners({
     refs,
     state,
     renderTimerState,
-  });
+  })
 
-  bootstrapController.startTimerDisplayTicker();
+  bootstrapController.startTimerDisplayTicker()
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await initializeSidePanel();
-  await bootstrapController.bootstrapPanel({ preferCache: true });
-});
+  await initializeSidePanel()
+  await bootstrapController.bootstrapPanel({ preferCache: true })
+})

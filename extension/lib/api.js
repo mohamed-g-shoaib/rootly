@@ -28,4 +28,3 @@ export async function apiFetch(path, init = {}) {
 
   return body
 }
-

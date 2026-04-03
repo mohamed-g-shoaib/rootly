@@ -1,4 +1,4 @@
-import { normalizeText, parseClampedInteger } from "./form-utils.js";
+import { normalizeText, parseClampedInteger } from "./form-utils.js"
 
 export function createDraftManager({
   refs,
@@ -13,17 +13,17 @@ export function createDraftManager({
     return {
       mood: String(state.bootstrap?.todayEntry?.mood ?? 2),
       notes: normalizeText(state.bootstrap?.todayEntry?.notes ?? ""),
-    };
+    }
   }
 
   function serializeNoteDraft() {
-    const question = normalizeText(refs.noteQuestionInput.value);
-    const answer = normalizeText(refs.noteAnswerInput.value);
-    const body = normalizeText(refs.noteBodyInput.value);
-    const codeSnippet = normalizeText(refs.noteCodeInput.value);
-    const codeLanguage = normalizeText(refs.noteCodeLanguageInput.value);
-    const noteCourse = state.selectValues.noteCourse;
-    const understanding = state.selectValues.noteUnderstanding;
+    const question = normalizeText(refs.noteQuestionInput.value)
+    const answer = normalizeText(refs.noteAnswerInput.value)
+    const body = normalizeText(refs.noteBodyInput.value)
+    const codeSnippet = normalizeText(refs.noteCodeInput.value)
+    const codeLanguage = normalizeText(refs.noteCodeLanguageInput.value)
+    const noteCourse = state.selectValues.noteCourse
+    const understanding = state.selectValues.noteUnderstanding
 
     const hasDraft =
       state.noteType !== "qa" ||
@@ -35,10 +35,10 @@ export function createDraftManager({
       answer.length > 0 ||
       body.length > 0 ||
       codeSnippet.length > 0 ||
-      codeLanguage.length > 0;
+      codeLanguage.length > 0
 
     if (!hasDraft) {
-      return null;
+      return null
     }
 
     return {
@@ -52,16 +52,16 @@ export function createDraftManager({
       body,
       codeSnippet,
       codeLanguage,
-    };
+    }
   }
 
   function serializeCourseDraft() {
-    const title = normalizeText(refs.courseTitleInput.value);
-    const instructor = normalizeText(refs.courseInstructorInput.value);
-    const courseLink = normalizeText(refs.courseLinkInput.value);
+    const title = normalizeText(refs.courseTitleInput.value)
+    const instructor = normalizeText(refs.courseInstructorInput.value)
+    const courseLink = normalizeText(refs.courseLinkInput.value)
 
     if (!state.coursePanelOpen && !title && !instructor && !courseLink) {
-      return null;
+      return null
     }
 
     return {
@@ -69,18 +69,18 @@ export function createDraftManager({
       title,
       instructor,
       courseLink,
-    };
+    }
   }
 
   function serializeDailyDraft() {
-    const hours = parseClampedInteger(refs.logHours.value, { min: 0, max: 23 });
+    const hours = parseClampedInteger(refs.logHours.value, { min: 0, max: 23 })
     const minutes = parseClampedInteger(refs.logMinutes.value, {
       min: 0,
       max: 59,
-    });
-    const mood = state.selectValues.dailyMood;
-    const notes = normalizeText(refs.dailyNoteInput.value);
-    const baseline = getTodayEntryBaseline();
+    })
+    const mood = state.selectValues.dailyMood
+    const notes = normalizeText(refs.dailyNoteInput.value)
+    const baseline = getTodayEntryBaseline()
 
     if (
       hours === 0 &&
@@ -88,7 +88,7 @@ export function createDraftManager({
       mood === baseline.mood &&
       notes === baseline.notes
     ) {
-      return null;
+      return null
     }
 
     return {
@@ -96,22 +96,22 @@ export function createDraftManager({
       minutes,
       mood,
       notes,
-    };
+    }
   }
 
   function serializeTimerDraft() {
-    const mood = state.selectValues.timerMood;
-    const notes = normalizeText(refs.timerNoteInput.value);
-    const baseline = getTodayEntryBaseline();
+    const mood = state.selectValues.timerMood
+    const notes = normalizeText(refs.timerNoteInput.value)
+    const baseline = getTodayEntryBaseline()
 
     if (mood === baseline.mood && notes === baseline.notes) {
-      return null;
+      return null
     }
 
     return {
       mood,
       notes,
-    };
+    }
   }
 
   const draftSerializers = {
@@ -119,7 +119,7 @@ export function createDraftManager({
     course: serializeCourseDraft,
     daily: serializeDailyDraft,
     timer: serializeTimerDraft,
-  };
+  }
 
   function buildDraftPayload() {
     return {
@@ -127,58 +127,58 @@ export function createDraftManager({
       course: serializeCourseDraft(),
       daily: serializeDailyDraft(),
       timer: serializeTimerDraft(),
-    };
+    }
   }
 
   function scheduleDraftPersist() {
     if (state.draftPersistHandle != null) {
-      clearTimeout(state.draftPersistHandle);
+      clearTimeout(state.draftPersistHandle)
     }
 
     state.draftPersistHandle = setTimeout(() => {
-      state.draftPersistHandle = null;
-      void writeDrafts(buildDraftPayload());
-    }, 180);
+      state.draftPersistHandle = null
+      void writeDrafts(buildDraftPayload())
+    }, 180)
   }
 
   function syncDraftState(section, { persist = true } = {}) {
-    state.draftState[section] = draftSerializers[section]() != null;
+    state.draftState[section] = draftSerializers[section]() != null
 
     if (persist) {
-      scheduleDraftPersist();
+      scheduleDraftPersist()
     }
   }
 
   function refreshDraftStates({ persist = true } = {}) {
     for (const section of Object.keys(draftSerializers)) {
-      state.draftState[section] = draftSerializers[section]() != null;
+      state.draftState[section] = draftSerializers[section]() != null
     }
 
     if (persist) {
-      scheduleDraftPersist();
+      scheduleDraftPersist()
     }
   }
 
   function applyPendingNoteCourseSelection() {
     if (!state.pendingNoteCourseId) {
-      return;
+      return
     }
 
     const hasPendingCourse = getBootstrapCourses().some(
-      (course) => course.id === state.pendingNoteCourseId,
-    );
+      (course) => course.id === state.pendingNoteCourseId
+    )
 
     if (!hasPendingCourse) {
-      return;
+      return
     }
 
-    state.selectValues.noteCourse = state.pendingNoteCourseId;
-    state.pendingNoteCourseId = null;
+    state.selectValues.noteCourse = state.pendingNoteCourseId
+    state.pendingNoteCourseId = null
   }
 
   function setDailyDraftFromEntry(todayEntry) {
     if (state.draftState.daily) {
-      return;
+      return
     }
 
     selectController.setSelectValue(
@@ -187,66 +187,66 @@ export function createDraftManager({
       {
         close: false,
         quiet: true,
-      },
-    );
-    refs.dailyNoteInput.value = todayEntry?.notes ?? "";
-    refs.logHours.value = "0";
-    refs.logMinutes.value = "0";
+      }
+    )
+    refs.dailyNoteInput.value = todayEntry?.notes ?? ""
+    refs.logHours.value = "0"
+    refs.logMinutes.value = "0"
   }
 
   function setTimerDraftFromEntry(_todayEntry) {
     if (state.draftState.timer) {
-      return;
+      return
     }
 
     selectController.setSelectValue("timerMood", "2", {
       close: false,
       quiet: true,
-    });
-    refs.timerNoteInput.value = "";
+    })
+    refs.timerNoteInput.value = ""
   }
 
   async function hydrateStoredDrafts() {
-    const drafts = await readDrafts();
+    const drafts = await readDrafts()
 
     if (!drafts) {
-      return;
+      return
     }
 
     if (drafts.note) {
-      state.noteType = drafts.note.noteType === "freeform" ? "freeform" : "qa";
-      state.noteFlagged = Boolean(drafts.note.flagged);
-      state.noteCodeOpen = Boolean(drafts.note.codeOpen);
-      state.pendingNoteCourseId = drafts.note.courseId ?? null;
-      state.selectValues.noteCourse = "none";
-      state.selectValues.noteUnderstanding = drafts.note.understanding ?? "2";
-      refs.noteQuestionInput.value = drafts.note.question ?? "";
-      refs.noteAnswerInput.value = drafts.note.answer ?? "";
-      refs.noteBodyInput.value = drafts.note.body ?? "";
-      refs.noteCodeInput.value = drafts.note.codeSnippet ?? "";
-      refs.noteCodeLanguageInput.value = drafts.note.codeLanguage ?? "";
+      state.noteType = drafts.note.noteType === "freeform" ? "freeform" : "qa"
+      state.noteFlagged = Boolean(drafts.note.flagged)
+      state.noteCodeOpen = Boolean(drafts.note.codeOpen)
+      state.pendingNoteCourseId = drafts.note.courseId ?? null
+      state.selectValues.noteCourse = "none"
+      state.selectValues.noteUnderstanding = drafts.note.understanding ?? "2"
+      refs.noteQuestionInput.value = drafts.note.question ?? ""
+      refs.noteAnswerInput.value = drafts.note.answer ?? ""
+      refs.noteBodyInput.value = drafts.note.body ?? ""
+      refs.noteCodeInput.value = drafts.note.codeSnippet ?? ""
+      refs.noteCodeLanguageInput.value = drafts.note.codeLanguage ?? ""
     }
 
     if (drafts.course) {
-      refs.courseTitleInput.value = drafts.course.title ?? "";
-      refs.courseInstructorInput.value = drafts.course.instructor ?? "";
-      refs.courseLinkInput.value = drafts.course.courseLink ?? "";
-      setCoursePanelOpen(refs, state, Boolean(drafts.course.open));
+      refs.courseTitleInput.value = drafts.course.title ?? ""
+      refs.courseInstructorInput.value = drafts.course.instructor ?? ""
+      refs.courseLinkInput.value = drafts.course.courseLink ?? ""
+      setCoursePanelOpen(refs, state, Boolean(drafts.course.open))
     }
 
     if (drafts.daily) {
-      refs.logHours.value = String(drafts.daily.hours ?? 0);
-      refs.logMinutes.value = String(drafts.daily.minutes ?? 0);
-      state.selectValues.dailyMood = drafts.daily.mood ?? "2";
-      refs.dailyNoteInput.value = drafts.daily.notes ?? "";
+      refs.logHours.value = String(drafts.daily.hours ?? 0)
+      refs.logMinutes.value = String(drafts.daily.minutes ?? 0)
+      state.selectValues.dailyMood = drafts.daily.mood ?? "2"
+      refs.dailyNoteInput.value = drafts.daily.notes ?? ""
     }
 
     if (drafts.timer) {
-      state.selectValues.timerMood = drafts.timer.mood ?? "2";
-      refs.timerNoteInput.value = drafts.timer.notes ?? "";
+      state.selectValues.timerMood = drafts.timer.mood ?? "2"
+      refs.timerNoteInput.value = drafts.timer.notes ?? ""
     }
 
-    refreshDraftStates({ persist: false });
+    refreshDraftStates({ persist: false })
   }
 
   return {
@@ -256,5 +256,5 @@ export function createDraftManager({
     setDailyDraftFromEntry,
     setTimerDraftFromEntry,
     syncDraftState,
-  };
+  }
 }

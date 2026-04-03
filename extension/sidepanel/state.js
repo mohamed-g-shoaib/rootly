@@ -26,18 +26,18 @@ export const state = {
   },
   timer: null,
   timerDisplayHandle: null,
-};
+}
 
-export const tabOrder = ["capture", "timer", "log"];
+export const tabOrder = ["capture", "timer", "log"]
 
 export const understandingOptions = [
   { value: "1", label: "Confused" },
   { value: "2", label: "Getting It" },
   { value: "3", label: "Clear" },
-];
+]
 
 export const moodOptions = [
   { value: "1", label: "Burned Out" },
   { value: "2", label: "Neutral" },
   { value: "3", label: "Focused" },
-];
+]
