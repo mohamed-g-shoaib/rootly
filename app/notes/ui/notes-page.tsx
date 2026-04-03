@@ -1,54 +1,57 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { AddCircleIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  AddCircleIcon,
+  ArrowLeft02Icon,
+  ArrowRight02Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { useAnswerVisibility } from "@/hooks/use-answer-visibility"
-import { useIsMobile } from "@/hooks/use-media-query"
-import { useNoteLiveUpdates } from "@/hooks/use-note-live-updates"
+import { useAnswerVisibility } from "@/hooks/use-answer-visibility";
+import { useIsMobile } from "@/hooks/use-media-query";
+import { useNoteLiveUpdates } from "@/hooks/use-note-live-updates";
 
-import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
-import { PageContainer } from "@/components/ui/page-container"
-import { toastManager } from "@/components/ui/toast"
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
+import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/ui/page-container";
+import { toastManager } from "@/components/ui/toast";
 
-import { Spinner } from "@/components/ui/spinner"
-
-import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model"
+import type { CourseFilter, Note, SortKey, TypeFilter } from "./notes-model";
 import {
   createNote,
   deleteNote,
   getNote,
   getNotes,
   updateNote,
-} from "./notes-actions"
-import { upsertNote } from "@/lib/note-live"
-import { NotesHeader } from "./notes-header"
+} from "./notes-actions";
+import { upsertNote } from "@/lib/note-live";
+import { NotesHeader } from "./notes-header";
 import {
   EmptyState,
   ExportSheet,
   NoteCard,
   FilterSheet,
-} from "./notes-components"
+} from "./notes-components";
 import {
   NoteViewerSheet,
   CodeViewerSheet,
   NoteEditorSheet,
-} from "./notes-sheets"
-import { exportNotesAsMarkdown } from "./notes-export"
-import { useExportPdf } from "./notes-pdf"
+} from "./notes-sheets";
+import { exportNotesAsMarkdown } from "./notes-export";
+import { useExportPdf } from "./notes-pdf";
 
 export default function NotesPage({
   userId,
   initialNotes,
   initialCourses,
 }: {
-  userId: string | null
-  initialNotes: Note[]
-  initialCourses: { id: string; title: string }[]
+  userId: string | null;
+  initialNotes: Note[];
+  initialCourses: { id: string; title: string }[];
 }) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
   const shellFab = React.useMemo(
     () =>
       isMobile
@@ -58,358 +61,356 @@ export default function NotesPage({
             onClick: () => setCreateOpen(true),
           }
         : undefined,
-    [isMobile]
-  )
-  useDashboardShellFab(shellFab)
+    [isMobile],
+  );
+  useDashboardShellFab(shellFab);
 
-  const [courses] = React.useState(() => initialCourses)
-  const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
+  const [courses] = React.useState(() => initialCourses);
+  const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes);
+  const coursesById = React.useMemo(
+    () => new Map(courses.map((course) => [course.id, course.title])),
+    [courses],
+  );
 
   const getCourseTitle = React.useCallback(
     (courseId: string | null) =>
-      courses.find((course) => course.id === courseId)?.title ?? null,
-    [courses]
-  )
+      courseId ? (coursesById.get(courseId) ?? null) : null,
+    [coursesById],
+  );
 
   useNoteLiveUpdates({
     userId,
     getCourseTitle,
     onNoteUpsert: React.useCallback((note: Note) => {
       setAllNotes((items) => {
-        const existingNote = items.find((item) => item.id === note.id)
+        const existingNote = items.find((item) => item.id === note.id);
 
-        if (
-          existingNote &&
-          existingNote.detailsLoaded &&
-          !note.detailsLoaded
-        ) {
+        if (existingNote && existingNote.detailsLoaded && !note.detailsLoaded) {
           return upsertNote(items, {
             ...note,
             answer: existingNote.answer,
             body: existingNote.body,
             codeSnippet: existingNote.codeSnippet,
             detailsLoaded: true,
-          })
+          });
         }
 
-        return upsertNote(items, note)
-      })
+        return upsertNote(items, note);
+      });
     }, []),
-  })
+  });
 
-  const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all")
-  const [courseFilter, setCourseFilter] = React.useState<CourseFilter>("all")
-  const [flaggedOnly, setFlaggedOnly] = React.useState(false)
-  const [sortKey, setSortKey] = React.useState<SortKey>("last_updated")
-  const answerVisibility = useAnswerVisibility()
+  const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all");
+  const [courseFilter, setCourseFilter] = React.useState<CourseFilter>("all");
+  const [flaggedOnly, setFlaggedOnly] = React.useState(false);
+  const [sortKey, setSortKey] = React.useState<SortKey>("last_updated");
+  const answerVisibility = useAnswerVisibility();
 
-  const [createOpen, setCreateOpen] = React.useState(false)
-  const [editOpen, setEditOpen] = React.useState(false)
-  const [viewOpen, setViewOpen] = React.useState(false)
-  const [codeOpen, setCodeOpen] = React.useState(false)
-  const [activeNoteId, setActiveNoteId] = React.useState<string | null>(null)
-  const [loadingNoteId, setLoadingNoteId] = React.useState<string | null>(null)
-  const [exportingFullNotes, setExportingFullNotes] = React.useState(false)
+  const [createOpen, setCreateOpen] = React.useState(false);
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [viewOpen, setViewOpen] = React.useState(false);
+  const [codeOpen, setCodeOpen] = React.useState(false);
+  const [activeNoteId, setActiveNoteId] = React.useState<string | null>(null);
+  const [loadingNoteId, setLoadingNoteId] = React.useState<string | null>(null);
+  const [exportingFullNotes, setExportingFullNotes] = React.useState(false);
 
-  const [mobileTypeSheetOpen, setMobileTypeSheetOpen] = React.useState(false)
+  const [mobileTypeSheetOpen, setMobileTypeSheetOpen] = React.useState(false);
   const [mobileCourseSheetOpen, setMobileCourseSheetOpen] =
-    React.useState(false)
-  const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false)
+    React.useState(false);
+  const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false);
   const [mobileExportSheetOpen, setMobileExportSheetOpen] =
-    React.useState(false)
+    React.useState(false);
 
-  const [visibleCount, setVisibleCount] = React.useState(20)
-  const [loadingMore, setLoadingMore] = React.useState(false)
+  const pageSize = 18;
+  const [currentPage, setCurrentPage] = React.useState(1);
 
-  const loadMoreRef = React.useRef<HTMLDivElement | null>(null)
-
-  const now = React.useMemo(() => new Date(), [])
+  const now = React.useMemo(() => new Date(), []);
 
   const filtered = React.useMemo(() => {
     const base = allNotes.filter((n) => {
-      if (typeFilter !== "all" && n.type !== typeFilter) return false
+      if (typeFilter !== "all" && n.type !== typeFilter) return false;
 
-      if (courseFilter === "none" && n.courseId != null) return false
+      if (courseFilter === "none" && n.courseId != null) return false;
       if (
         courseFilter !== "all" &&
         courseFilter !== "none" &&
         n.courseId !== courseFilter
       )
-        return false
+        return false;
 
-      if (flaggedOnly && !n.flag) return false
+      if (flaggedOnly && !n.flag) return false;
 
-      return true
-    })
+      return true;
+    });
 
-    const listHasQa = base.some((n) => n.type === "qa")
+    const listHasQa = base.some((n) => n.type === "qa");
     const listIsOnlyFreeform =
-      base.length > 0 && base.every((n) => n.type === "freeform")
+      base.length > 0 && base.every((n) => n.type === "freeform");
 
     const effectiveSortKey =
       listIsOnlyFreeform &&
       (sortKey === "understanding_low" || sortKey === "understanding_high")
         ? "last_updated"
-        : sortKey
+        : sortKey;
 
     const sorted = base.toSorted((a, b) => {
       if (effectiveSortKey === "last_updated")
-        return b.updatedAt.localeCompare(a.updatedAt)
+        return b.updatedAt.localeCompare(a.updatedAt);
       if (effectiveSortKey === "date_created")
-        return b.createdAt.localeCompare(a.createdAt)
+        return b.createdAt.localeCompare(a.createdAt);
       if (effectiveSortKey === "course")
-        return (a.courseTitle ?? "").localeCompare(b.courseTitle ?? "")
+        return (a.courseTitle ?? "").localeCompare(b.courseTitle ?? "");
 
-      const aLevel = a.understandingLevel ?? 0
-      const bLevel = b.understandingLevel ?? 0
+      const aLevel = a.understandingLevel ?? 0;
+      const bLevel = b.understandingLevel ?? 0;
 
-      if (effectiveSortKey === "understanding_low") return aLevel - bLevel
-      return bLevel - aLevel
-    })
+      if (effectiveSortKey === "understanding_low") return aLevel - bLevel;
+      return bLevel - aLevel;
+    });
 
-    return { items: sorted, hasQa: listHasQa }
-  }, [allNotes, courseFilter, flaggedOnly, sortKey, typeFilter])
-  const { exportPdf, exporting } = useExportPdf(filtered.items)
+    return { items: sorted, hasQa: listHasQa };
+  }, [allNotes, courseFilter, flaggedOnly, sortKey, typeFilter]);
+  const { exportPdf, exporting } = useExportPdf(filtered.items);
 
-  const visibleNotes = React.useMemo(
-    () =>
-      filtered.items.slice(0, Math.min(visibleCount, filtered.items.length)),
-    [filtered.items, visibleCount]
-  )
+  const totalPages = Math.max(1, Math.ceil(filtered.items.length / pageSize));
+  const visibleNotes = React.useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filtered.items.slice(start, start + pageSize);
+  }, [currentPage, filtered.items]);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [typeFilter, courseFilter, flaggedOnly, sortKey]);
+
+  React.useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const activeNote = React.useMemo(
     () =>
       activeNoteId
         ? (allNotes.find((n) => n.id === activeNoteId) ?? null)
         : null,
-    [activeNoteId, allNotes]
-  )
+    [activeNoteId, allNotes],
+  );
   const activeNoteLoading =
-    loadingNoteId != null && activeNoteId === loadingNoteId
+    loadingNoteId != null && activeNoteId === loadingNoteId;
 
   const filtersActive =
     typeFilter !== "all" ||
     courseFilter !== "all" ||
     flaggedOnly ||
-    sortKey !== "last_updated"
+    sortKey !== "last_updated";
 
   const qaNoteIds = React.useMemo(
     () =>
       filtered.items
         .filter((note) => note.type === "qa")
         .map((note) => note.id),
-    [filtered.items]
-  )
+    [filtered.items],
+  );
 
   const globalShowAnswers =
     qaNoteIds.length > 0 &&
-    qaNoteIds.every((id) => answerVisibility.isShown(id))
+    qaNoteIds.every((id) => answerVisibility.isShown(id));
 
   function clearFilters() {
-    setTypeFilter("all")
-    setCourseFilter("all")
-    setFlaggedOnly(false)
-    setSortKey("last_updated")
+    setTypeFilter("all");
+    setCourseFilter("all");
+    setFlaggedOnly(false);
+    setSortKey("last_updated");
   }
 
   async function ensureNoteDetails(noteId: string) {
-    const existing = allNotes.find((note) => note.id === noteId)
+    const existing = allNotes.find((note) => note.id === noteId);
     if (!userId || !existing || existing.detailsLoaded) {
-      return existing ?? null
+      return existing ?? null;
     }
 
-    setLoadingNoteId(noteId)
-    const res = await getNote({ noteId, userId })
-    setLoadingNoteId((current) => (current === noteId ? null : current))
+    setLoadingNoteId(noteId);
+    const res = await getNote({ noteId, userId });
+    setLoadingNoteId((current) => (current === noteId ? null : current));
 
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not load note",
         description: res.error,
-      })
-      return null
+      });
+      return null;
     }
 
     setAllNotes((items) =>
-      items.map((note) => (note.id === noteId ? res.data : note))
-    )
+      items.map((note) => (note.id === noteId ? res.data : note)),
+    );
 
-    return res.data
+    return res.data;
   }
 
   async function ensureNotesDetails(noteIds: string[]) {
-    if (!userId) return []
+    if (!userId) return [];
+
+    const notesById = new Map(allNotes.map((note) => [note.id, note]));
 
     const missingNoteIds = noteIds.filter((noteId) => {
-      const note = allNotes.find((candidate) => candidate.id === noteId)
-      return note != null && !note.detailsLoaded
-    })
+      const note = notesById.get(noteId);
+      return note != null && !note.detailsLoaded;
+    });
 
     if (missingNoteIds.length === 0) {
-      return allNotes.filter((note) => noteIds.includes(note.id))
+      return noteIds
+        .map((noteId) => notesById.get(noteId))
+        .filter((note): note is Note => note != null);
     }
 
-    const res = await getNotes({ noteIds: missingNoteIds, userId })
+    const res = await getNotes({ noteIds: missingNoteIds, userId });
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not load notes",
         description: res.error,
-      })
-      return []
+      });
+      return [];
     }
 
-    const fetchedById = new Map(res.data.map((note) => [note.id, note] as const))
+    const fetchedById = new Map(
+      res.data.map((note) => [note.id, note] as const),
+    );
 
     setAllNotes((items) =>
-      items.map((note) => fetchedById.get(note.id) ?? note)
-    )
+      items.map((note) => fetchedById.get(note.id) ?? note),
+    );
 
     return noteIds
-      .map((noteId) => fetchedById.get(noteId) ?? allNotes.find((note) => note.id === noteId))
-      .filter((note): note is Note => note != null)
+      .map(
+        (noteId) =>
+          fetchedById.get(noteId) ??
+          allNotes.find((note) => note.id === noteId),
+      )
+      .filter((note): note is Note => note != null);
   }
 
   async function openView(noteId: string) {
-    setActiveNoteId(noteId)
-    setViewOpen(true)
-    await ensureNoteDetails(noteId)
+    setActiveNoteId(noteId);
+    setViewOpen(true);
+    await ensureNoteDetails(noteId);
   }
 
   async function openCode(noteId: string) {
-    setActiveNoteId(noteId)
-    setCodeOpen(true)
-    await ensureNoteDetails(noteId)
+    setActiveNoteId(noteId);
+    setCodeOpen(true);
+    await ensureNoteDetails(noteId);
   }
 
   async function openEdit(noteId: string) {
-    setActiveNoteId(noteId)
-    setEditOpen(true)
-    await ensureNoteDetails(noteId)
+    setActiveNoteId(noteId);
+    setEditOpen(true);
+    await ensureNoteDetails(noteId);
   }
 
   async function onDeleteNote(noteId: string) {
-    if (!userId) return
+    if (!userId) return;
 
-    const prev = allNotes
+    const prev = allNotes;
 
-    setAllNotes((items) => items.filter((n) => n.id !== noteId))
-    answerVisibility.clearForId(noteId)
+    setAllNotes((items) => items.filter((n) => n.id !== noteId));
+    answerVisibility.clearForId(noteId);
 
-    const res = await deleteNote({ noteId, userId })
+    const res = await deleteNote({ noteId, userId });
     if (!res.success) {
-      setAllNotes(prev)
+      setAllNotes(prev);
       toastManager.add({
         type: "error",
         title: "Could not delete note",
         description: res.error,
-      })
+      });
     }
   }
 
   async function onCreateNote(draft: Note) {
-    if (!userId) return
+    if (!userId) return;
 
     const optimistic: Note = {
       ...draft,
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    }
+    };
 
-    const prev = allNotes
+    const prev = allNotes;
 
-    setAllNotes((items) => [optimistic, ...items])
-    setCreateOpen(false)
+    setAllNotes((items) => [optimistic, ...items]);
+    setCreateOpen(false);
 
-    const res = await createNote({ note: optimistic, userId })
+    const res = await createNote({ note: optimistic, userId });
     if (!res.success) {
-      setAllNotes(prev)
+      setAllNotes(prev);
       toastManager.add({
         type: "error",
         title: "Could not create note",
         description: res.error,
-      })
-      return
+      });
+      return;
     }
 
     setAllNotes((items) =>
-      items.map((n) => (n.id === optimistic.id ? res.data : n))
-    )
+      items.map((n) => (n.id === optimistic.id ? res.data : n)),
+    );
   }
 
   async function onUpdateNote(next: Note) {
-    if (!userId) return
+    if (!userId) return;
 
-    const prev = allNotes
+    const prev = allNotes;
 
-    setAllNotes((items) => items.map((n) => (n.id === next.id ? next : n)))
-    setEditOpen(false)
+    setAllNotes((items) => items.map((n) => (n.id === next.id ? next : n)));
+    setEditOpen(false);
 
     const res = await updateNote({
       noteId: next.id,
       patch: next,
       userId,
-    })
+    });
     if (!res.success) {
-      setAllNotes(prev)
+      setAllNotes(prev);
       toastManager.add({
         type: "error",
         title: "Could not update note",
         description: res.error,
-      })
-      return
+      });
+      return;
     }
 
-    setAllNotes((items) => items.map((n) => (n.id === next.id ? res.data : n)))
+    setAllNotes((items) => items.map((n) => (n.id === next.id ? res.data : n)));
   }
 
-  React.useEffect(() => {
-    const el = loadMoreRef.current
-    if (!el) return
-    if (loadingMore) return
-    if (visibleCount >= filtered.items.length) return
-
-    const obs = new IntersectionObserver(
-      async (entries) => {
-        const [entry] = entries
-        if (!entry?.isIntersecting) return
-        if (loadingMore) return
-        if (visibleCount >= filtered.items.length) return
-        setLoadingMore(true)
-        await new Promise((r) => setTimeout(r, 450))
-        setVisibleCount((c) => c + 20)
-        setLoadingMore(false)
-      },
-      { root: null, rootMargin: "300px" }
-    )
-
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [filtered.items.length, loadingMore, visibleCount])
-
   async function exportFilteredNotesAsPdf() {
-    setExportingFullNotes(true)
+    setExportingFullNotes(true);
     try {
-      const notes = await ensureNotesDetails(filtered.items.map((note) => note.id))
+      const notes = await ensureNotesDetails(
+        filtered.items.map((note) => note.id),
+      );
       if (notes.length > 0) {
-        await exportPdf(notes)
+        await exportPdf(notes);
       }
     } finally {
-      setExportingFullNotes(false)
+      setExportingFullNotes(false);
     }
   }
 
   async function exportFilteredNotesAsMarkdown() {
-    setExportingFullNotes(true)
+    setExportingFullNotes(true);
     try {
-      const notes = await ensureNotesDetails(filtered.items.map((note) => note.id))
+      const notes = await ensureNotesDetails(
+        filtered.items.map((note) => note.id),
+      );
       if (notes.length > 0) {
-        exportNotesAsMarkdown(notes)
+        exportNotesAsMarkdown(notes);
       }
     } finally {
-      setExportingFullNotes(false)
+      setExportingFullNotes(false);
     }
   }
 
@@ -430,7 +431,9 @@ export default function NotesPage({
         onCourseChange={setCourseFilter}
         onToggleFlaggedOnly={() => setFlaggedOnly((v) => !v)}
         onSortChange={setSortKey}
-        onToggleGlobalAnswers={() => answerVisibility.setAllShown(!globalShowAnswers)}
+        onToggleGlobalAnswers={() =>
+          answerVisibility.setAllShown(!globalShowAnswers)
+        }
         onNewNote={() => setCreateOpen(true)}
         onClearFilters={clearFilters}
         onOpenMobileType={() => setMobileTypeSheetOpen(true)}
@@ -438,10 +441,10 @@ export default function NotesPage({
         onOpenMobileSort={() => setMobileSortSheetOpen(true)}
         onOpenMobileExport={() => setMobileExportSheetOpen(true)}
         onExportPdf={() => {
-          void exportFilteredNotesAsPdf()
+          void exportFilteredNotesAsPdf();
         }}
         onExportMarkdown={() => {
-          void exportFilteredNotesAsMarkdown()
+          void exportFilteredNotesAsMarkdown();
         }}
         exporting={exporting || exportingFullNotes}
       />
@@ -451,13 +454,16 @@ export default function NotesPage({
         filtersActive={filtersActive}
         filteredItemsCount={filtered.items.length}
         visibleNotes={visibleNotes}
+        currentPage={currentPage}
+        totalPages={totalPages}
         now={now}
-        isMobile={isMobile}
         answerVisibility={answerVisibility}
-        loadingMore={loadingMore}
-        loadMoreRef={loadMoreRef}
         onNewNote={() => setCreateOpen(true)}
         onClearFilters={clearFilters}
+        onPreviousPage={() => setCurrentPage((page) => Math.max(1, page - 1))}
+        onNextPage={() =>
+          setCurrentPage((page) => Math.min(totalPages, page + 1))
+        }
         onEdit={openEdit}
         onViewFull={openView}
         onViewCode={openCode}
@@ -501,16 +507,16 @@ export default function NotesPage({
         onCreateNote={onCreateNote}
         onUpdateNote={onUpdateNote}
         onExportPdf={async () => {
-          await exportFilteredNotesAsPdf()
-          setMobileExportSheetOpen(false)
+          await exportFilteredNotesAsPdf();
+          setMobileExportSheetOpen(false);
         }}
         onExportMarkdown={async () => {
-          await exportFilteredNotesAsMarkdown()
-          setMobileExportSheetOpen(false)
+          await exportFilteredNotesAsMarkdown();
+          setMobileExportSheetOpen(false);
         }}
       />
     </>
-  )
+  );
 }
 
 function NotesGridSection({
@@ -518,37 +524,39 @@ function NotesGridSection({
   filtersActive,
   filteredItemsCount,
   visibleNotes,
+  currentPage,
+  totalPages,
   now,
-  isMobile,
   answerVisibility,
-  loadingMore,
-  loadMoreRef,
   onNewNote,
   onClearFilters,
+  onPreviousPage,
+  onNextPage,
   onEdit,
   onViewFull,
   onViewCode,
   onDelete,
 }: {
-  allNotesCount: number
-  filtersActive: boolean
-  filteredItemsCount: number
-  visibleNotes: Note[]
-  now: Date
-  isMobile: boolean
-  answerVisibility: ReturnType<typeof useAnswerVisibility>
-  loadingMore: boolean
-  loadMoreRef: React.RefObject<HTMLDivElement | null>
-  onNewNote: () => void
-  onClearFilters: () => void
-  onEdit: (noteId: string) => Promise<void>
-  onViewFull: (noteId: string) => Promise<void>
-  onViewCode: (noteId: string) => Promise<void>
-  onDelete: (noteId: string) => Promise<void>
+  allNotesCount: number;
+  filtersActive: boolean;
+  filteredItemsCount: number;
+  visibleNotes: Note[];
+  currentPage: number;
+  totalPages: number;
+  now: Date;
+  answerVisibility: ReturnType<typeof useAnswerVisibility>;
+  onNewNote: () => void;
+  onClearFilters: () => void;
+  onPreviousPage: () => void;
+  onNextPage: () => void;
+  onEdit: (noteId: string) => Promise<void>;
+  onViewFull: (noteId: string) => Promise<void>;
+  onViewCode: (noteId: string) => Promise<void>;
+  onDelete: (noteId: string) => Promise<void>;
 }) {
   return (
     <PageContainer>
-      <div className="pt-4">
+      <div className="flex min-h-[calc(100vh-14rem)] flex-col pt-4 pb-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredItemsCount === 0 ? (
             <div className="col-span-full">
@@ -565,9 +573,10 @@ function NotesGridSection({
                 key={note.id}
                 note={note}
                 now={now}
-                isMobile={isMobile}
                 showAnswer={answerVisibility.isShown(note.id)}
-                onShowAnswerChange={(value) => answerVisibility.setShown(note.id, value)}
+                onShowAnswerChange={(value) =>
+                  answerVisibility.setShown(note.id, value)
+                }
                 onEdit={() => void onEdit(note.id)}
                 onViewFull={() => void onViewFull(note.id)}
                 onViewCode={() => void onViewCode(note.id)}
@@ -575,18 +584,40 @@ function NotesGridSection({
               />
             ))
           )}
-
-          {loadingMore ? (
-            <div className="flex items-center justify-center py-6">
-              <Spinner />
-            </div>
-          ) : null}
-
-          <div ref={loadMoreRef} />
         </div>
+
+        {filteredItemsCount > 0 ? (
+          <div className="mt-auto flex items-center justify-start gap-2 pt-6">
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={onPreviousPage}
+              disabled={currentPage <= 1}
+              aria-label="Previous page"
+            >
+              <HugeiconsIcon icon={ArrowLeft02Icon} size={16} />
+            </Button>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {currentPage} / {totalPages}
+            </span>
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={onNextPage}
+              disabled={currentPage >= totalPages}
+              aria-label="Next page"
+            >
+              <HugeiconsIcon icon={ArrowRight02Icon} size={16} />
+            </Button>
+          </div>
+        ) : null}
       </div>
     </PageContainer>
-  )
+  );
 }
 
 function NotesFilterSheets({
@@ -604,19 +635,19 @@ function NotesFilterSheets({
   onCourseChange,
   onSortChange,
 }: {
-  courses: { id: string; title: string }[]
-  typeFilter: TypeFilter
-  courseFilter: CourseFilter
-  sortKey: SortKey
-  mobileTypeSheetOpen: boolean
-  mobileCourseSheetOpen: boolean
-  mobileSortSheetOpen: boolean
-  onTypeOpenChange: (open: boolean) => void
-  onCourseOpenChange: (open: boolean) => void
-  onSortOpenChange: (open: boolean) => void
-  onTypeChange: (value: TypeFilter) => void
-  onCourseChange: (value: CourseFilter) => void
-  onSortChange: (value: SortKey) => void
+  courses: { id: string; title: string }[];
+  typeFilter: TypeFilter;
+  courseFilter: CourseFilter;
+  sortKey: SortKey;
+  mobileTypeSheetOpen: boolean;
+  mobileCourseSheetOpen: boolean;
+  mobileSortSheetOpen: boolean;
+  onTypeOpenChange: (open: boolean) => void;
+  onCourseOpenChange: (open: boolean) => void;
+  onSortOpenChange: (open: boolean) => void;
+  onTypeChange: (value: TypeFilter) => void;
+  onCourseChange: (value: CourseFilter) => void;
+  onSortChange: (value: SortKey) => void;
 }) {
   return (
     <>
@@ -663,7 +694,7 @@ function NotesFilterSheets({
         onValueChange={(v) => onSortChange(v as SortKey)}
       />
     </>
-  )
+  );
 }
 
 function NotesOverlaySheets({
@@ -689,27 +720,27 @@ function NotesOverlaySheets({
   onExportPdf,
   onExportMarkdown,
 }: {
-  activeNote: Note | null
-  activeNoteId: string | null
-  activeNoteLoading: boolean
-  courses: { id: string; title: string }[]
-  isMobile: boolean
-  createOpen: boolean
-  editOpen: boolean
-  viewOpen: boolean
-  codeOpen: boolean
-  mobileExportSheetOpen: boolean
-  exporting: boolean
-  onCreateOpenChange: (open: boolean) => void
-  onEditOpenChange: (open: boolean) => void
-  onViewOpenChange: (open: boolean) => void
-  onCodeOpenChange: (open: boolean) => void
-  onMobileExportOpenChange: (open: boolean) => void
-  onOpenEdit: (noteId: string) => Promise<void>
-  onCreateNote: (note: Note) => Promise<void>
-  onUpdateNote: (note: Note) => Promise<void>
-  onExportPdf: () => Promise<void>
-  onExportMarkdown: () => Promise<void>
+  activeNote: Note | null;
+  activeNoteId: string | null;
+  activeNoteLoading: boolean;
+  courses: { id: string; title: string }[];
+  isMobile: boolean;
+  createOpen: boolean;
+  editOpen: boolean;
+  viewOpen: boolean;
+  codeOpen: boolean;
+  mobileExportSheetOpen: boolean;
+  exporting: boolean;
+  onCreateOpenChange: (open: boolean) => void;
+  onEditOpenChange: (open: boolean) => void;
+  onViewOpenChange: (open: boolean) => void;
+  onCodeOpenChange: (open: boolean) => void;
+  onMobileExportOpenChange: (open: boolean) => void;
+  onOpenEdit: (noteId: string) => Promise<void>;
+  onCreateNote: (note: Note) => Promise<void>;
+  onUpdateNote: (note: Note) => Promise<void>;
+  onExportPdf: () => Promise<void>;
+  onExportMarkdown: () => Promise<void>;
 }) {
   return (
     <>
@@ -718,10 +749,10 @@ function NotesOverlaySheets({
         onOpenChange={onMobileExportOpenChange}
         exporting={exporting}
         onExportPdf={() => {
-          void onExportPdf()
+          void onExportPdf();
         }}
         onExportMarkdown={() => {
-          void onExportMarkdown()
+          void onExportMarkdown();
         }}
       />
 
@@ -732,8 +763,8 @@ function NotesOverlaySheets({
         isMobile={isMobile}
         loading={activeNoteLoading}
         onEdit={() => {
-          onViewOpenChange(false)
-          if (activeNoteId) void onOpenEdit(activeNoteId)
+          onViewOpenChange(false);
+          if (activeNoteId) void onOpenEdit(activeNoteId);
         }}
       />
 
@@ -744,8 +775,8 @@ function NotesOverlaySheets({
         isMobile={isMobile}
         loading={activeNoteLoading}
         onEdit={() => {
-          onCodeOpenChange(false)
-          if (activeNoteId) void onOpenEdit(activeNoteId)
+          onCodeOpenChange(false);
+          if (activeNoteId) void onOpenEdit(activeNoteId);
         }}
       />
 
@@ -757,7 +788,7 @@ function NotesOverlaySheets({
         onOpenChange={onCreateOpenChange}
         isMobile={isMobile}
         onSave={(next) => {
-          void onCreateNote(next)
+          void onCreateNote(next);
         }}
       />
 
@@ -770,9 +801,9 @@ function NotesOverlaySheets({
         isMobile={isMobile}
         loading={activeNoteLoading}
         onSave={(next) => {
-          void onUpdateNote(next)
+          void onUpdateNote(next);
         }}
       />
     </>
-  )
+  );
 }

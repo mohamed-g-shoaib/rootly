@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   AddCircleIcon,
@@ -14,12 +14,12 @@ import {
   Loading01Icon,
   Pdf01Icon,
   TextSquareIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import * as React from "react"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import * as React from "react";
 
-import { useElementOverflow } from "@/hooks/use-element-overflow"
-import { cn } from "@/lib/utils"
+import { useElementOverflow } from "@/hooks/use-element-overflow";
+import { cn } from "@/lib/utils";
 
 import {
   AlertDialog,
@@ -30,22 +30,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu"
-import {
-  PreviewCard,
-  PreviewCardPopup,
-  PreviewCardTrigger,
-} from "@/components/ui/preview-card"
+} from "@/components/ui/menu";
 import {
   Sheet,
   SheetClose,
@@ -54,8 +49,8 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-} from "@/components/ui/sheet"
-import { Form } from "@/components/ui/form"
+} from "@/components/ui/sheet";
+import { Form } from "@/components/ui/form";
 
 import {
   understandingColor,
@@ -63,7 +58,7 @@ import {
   understandingLabel,
   type Note,
   toCodeBadgeLabel,
-} from "./notes-model"
+} from "./notes-model";
 
 export function EmptyState({
   hasAnyNotes,
@@ -71,10 +66,10 @@ export function EmptyState({
   onNewNote,
   onClearFilters,
 }: {
-  hasAnyNotes: boolean
-  hasFilters: boolean
-  onNewNote: () => void
-  onClearFilters: () => void
+  hasAnyNotes: boolean;
+  hasFilters: boolean;
+  onNewNote: () => void;
+  onClearFilters: () => void;
 }) {
   if (!hasAnyNotes) {
     return (
@@ -95,7 +90,7 @@ export function EmptyState({
           New Note
         </Button>
       </div>
-    )
+    );
   }
 
   if (hasFilters) {
@@ -121,16 +116,15 @@ export function EmptyState({
           Clear filters
         </Button>
       </div>
-    )
+    );
   }
 
-  return null
+  return null;
 }
 
 export function NoteCard({
   note,
   now: _now,
-  isMobile,
   showAnswer,
   onShowAnswerChange,
   onEdit,
@@ -139,18 +133,17 @@ export function NoteCard({
   onDelete,
   readOnly = false,
 }: {
-  note: Note
-  now: Date
-  isMobile: boolean
-  showAnswer: boolean
-  onShowAnswerChange: (value: boolean) => void
-  onEdit: () => void
-  onViewFull: () => void
-  onViewCode: () => void
-  onDelete: () => void
-  readOnly?: boolean
+  note: Note;
+  now: Date;
+  showAnswer: boolean;
+  onShowAnswerChange: (value: boolean) => void;
+  onEdit: () => void;
+  onViewFull: () => void;
+  onViewCode: () => void;
+  onDelete: () => void;
+  readOnly?: boolean;
 }) {
-  const isQa = note.type === "qa"
+  const isQa = note.type === "qa";
 
   return (
     <div className="h-[220px]">
@@ -176,9 +169,7 @@ export function NoteCard({
                 {showAnswer ? (
                   <NoteCardExcerpt
                     text={note.previewText}
-                    isMobile={isMobile}
                     onOpen={onViewFull}
-                    previewTitle={note.question ?? ""}
                   />
                 ) : (
                   <Button
@@ -191,11 +182,7 @@ export function NoteCard({
                 )}
               </div>
             ) : (
-              <NoteCardExcerpt
-                text={note.previewText}
-                isMobile={isMobile}
-                onOpen={onViewFull}
-              />
+              <NoteCardExcerpt text={note.previewText} onOpen={onViewFull} />
             )}
           </div>
 
@@ -290,7 +277,7 @@ export function NoteCard({
         </div>
       </Card>
     </div>
-  )
+  );
 }
 
 export function ExportSheet({
@@ -300,11 +287,11 @@ export function ExportSheet({
   onExportPdf,
   onExportMarkdown,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  exporting: boolean
-  onExportPdf: () => void | Promise<void>
-  onExportMarkdown: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  exporting: boolean;
+  onExportPdf: () => void | Promise<void>;
+  onExportMarkdown: () => void;
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -346,24 +333,20 @@ export function ExportSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
 
 function NoteCardExcerpt({
   text,
-  isMobile,
   onOpen,
-  previewTitle,
 }: {
-  text: string
-  isMobile: boolean
-  onOpen: () => void
-  previewTitle?: string
+  text: string;
+  onOpen: () => void;
 }) {
   const { contentRef, isOverflowing, targetRef } =
     useElementOverflow<HTMLParagraphElement>({
       watch: text,
-    })
+    });
 
   return (
     <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 overflow-hidden">
@@ -390,35 +373,6 @@ function NoteCardExcerpt({
 
       {isOverflowing ? (
         <div className="flex items-center gap-2 self-start">
-          {!isMobile ? (
-            <PreviewCard>
-              <PreviewCardTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    type="button"
-                    className="h-6 px-1.5 text-xs text-muted-foreground hover:text-foreground"
-                  />
-                }
-              >
-                Preview
-              </PreviewCardTrigger>
-              <PreviewCardPopup className="w-[min(18rem,calc(100vw-2rem))]">
-                <div className="flex flex-col gap-3">
-                  {previewTitle ? (
-                    <div className="text-sm font-medium break-words whitespace-pre-wrap">
-                      {previewTitle}
-                    </div>
-                  ) : null}
-                  <div className="line-clamp-8 text-sm break-words whitespace-pre-wrap text-muted-foreground">
-                    {text}
-                  </div>
-                </div>
-              </PreviewCardPopup>
-            </PreviewCard>
-          ) : null}
-
           <Button
             variant="ghost"
             size="xs"
@@ -431,15 +385,15 @@ function NoteCardExcerpt({
         </div>
       ) : null}
     </div>
-  )
+  );
 }
 
 function DeleteDialog({
   children,
   onDelete,
 }: {
-  children: React.ReactNode
-  onDelete: () => void
+  children: React.ReactNode;
+  onDelete: () => void;
 }) {
   return (
     <AlertDialog>
@@ -464,7 +418,7 @@ function DeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 export function FilterSheet({
@@ -475,12 +429,12 @@ export function FilterSheet({
   options,
   onValueChange,
 }: {
-  title: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  value: string
-  options: { label: string; value: string }[]
-  onValueChange: (value: string) => void
+  title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  value: string;
+  options: { label: string; value: string }[];
+  onValueChange: (value: string) => void;
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -499,11 +453,11 @@ export function FilterSheet({
                     "flex w-full items-center justify-between rounded-lg px-4 py-3 text-sm transition-colors hover:bg-muted",
                     value === opt.value
                       ? "bg-primary/10 font-medium text-primary"
-                      : "text-foreground"
+                      : "text-foreground",
                   )}
                   onClick={() => {
-                    onValueChange(opt.value)
-                    onOpenChange(false)
+                    onValueChange(opt.value);
+                    onOpenChange(false);
                   }}
                 >
                   {opt.label}
@@ -522,5 +476,5 @@ export function FilterSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
