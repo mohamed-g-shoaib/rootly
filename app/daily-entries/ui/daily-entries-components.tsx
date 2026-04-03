@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 import {
   Calendar01Icon,
@@ -10,17 +10,17 @@ import {
   FilterIcon,
   MoreVerticalIcon,
   Note01Icon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
-import type { DateRange } from "react-day-picker"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import type { DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Form, FormSection } from "@/components/ui/form"
-import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Form, FormSection } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -30,14 +30,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu"
+} from "@/components/ui/menu";
 import {
   Sheet,
   SheetClose,
@@ -46,11 +46,11 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-} from "@/components/ui/sheet"
-import { Textarea } from "@/components/ui/textarea"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
-import { Field } from "@/components/ui/field"
+} from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover";
+import { Field } from "@/components/ui/field";
 import {
   NumberField,
   NumberFieldDecrement,
@@ -58,13 +58,13 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldScrubArea,
-} from "@/components/ui/number-field"
+} from "@/components/ui/number-field";
 
 import {
   EmojioneV1GrinningFaceWithSmilingEyes,
   EmojioneV1SlightlySmilingFace,
   EmojioneV1WearyFace,
-} from "./daily-entries-emojis"
+} from "./daily-entries-emojis";
 
 import {
   formatEntryDate,
@@ -75,7 +75,7 @@ import {
   type DailyEntry,
   type MoodFilter,
   type MoodValue,
-} from "./daily-entries-model"
+} from "./daily-entries-model";
 
 export function EmptyState({
   hasAnyEntries,
@@ -83,10 +83,10 @@ export function EmptyState({
   onLogToday,
   onClearFilters,
 }: {
-  hasAnyEntries: boolean
-  hasFilters: boolean
-  onLogToday: () => void
-  onClearFilters: () => void
+  hasAnyEntries: boolean;
+  hasFilters: boolean;
+  onLogToday: () => void;
+  onClearFilters: () => void;
 }) {
   if (!hasAnyEntries) {
     return (
@@ -107,7 +107,7 @@ export function EmptyState({
           Log Today
         </Button>
       </div>
-    )
+    );
   }
 
   if (hasFilters) {
@@ -134,10 +134,10 @@ export function EmptyState({
           Clear filters
         </Button>
       </div>
-    )
+    );
   }
 
-  return null
+  return null;
 }
 
 export function DateRangeFilterSheet({
@@ -148,19 +148,19 @@ export function DateRangeFilterSheet({
   onFromDateChange,
   onToDateChange,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  fromDate: string
-  toDate: string
-  onFromDateChange: (value: string) => void
-  onToDateChange: (value: string) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  fromDate: string;
+  toDate: string;
+  onFromDateChange: (value: string) => void;
+  onToDateChange: (value: string) => void;
 }) {
   const selected = React.useMemo<DateRange | undefined>(() => {
-    const from = fromDate ? new Date(`${fromDate}T00:00:00`) : undefined
-    const to = toDate ? new Date(`${toDate}T00:00:00`) : undefined
-    if (!from && !to) return undefined
-    return { from, to }
-  }, [fromDate, toDate])
+    const from = fromDate ? new Date(`${fromDate}T00:00:00`) : undefined;
+    const to = toDate ? new Date(`${toDate}T00:00:00`) : undefined;
+    if (!from && !to) return undefined;
+    return { from, to };
+  }, [fromDate, toDate]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -177,9 +177,9 @@ export function DateRangeFilterSheet({
                   mode="range"
                   onSelect={(range) => {
                     onFromDateChange(
-                      range?.from ? toDateInputValue(range.from) : ""
-                    )
-                    onToDateChange(range?.to ? toDateInputValue(range.to) : "")
+                      range?.from ? toDateInputValue(range.from) : "",
+                    );
+                    onToDateChange(range?.to ? toDateInputValue(range.to) : "");
                   }}
                   selected={selected}
                 />
@@ -190,9 +190,9 @@ export function DateRangeFilterSheet({
                 }
                 className="justify-start"
                 onClick={() => {
-                  onFromDateChange("")
-                  onToDateChange("")
-                  onOpenChange(false)
+                  onFromDateChange("");
+                  onToDateChange("");
+                  onOpenChange(false);
                 }}
               >
                 Any time
@@ -205,7 +205,7 @@ export function DateRangeFilterSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
 
 export function EntryCard({
@@ -214,12 +214,12 @@ export function EntryCard({
   onEdit,
   onDelete,
 }: {
-  entry: DailyEntry
-  now: Date
-  onEdit: () => void
-  onDelete: () => void
+  entry: DailyEntry;
+  now: Date;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
-  const isToday = isSameDay(entry.date, toDateInputValue(now))
+  const isToday = isSameDay(entry.date, toDateInputValue(now));
 
   return (
     <div className="h-[160px]">
@@ -301,15 +301,15 @@ export function EntryCard({
         </div>
       </Card>
     </div>
-  )
+  );
 }
 
 function DeleteDialog({
   children,
   onDelete,
 }: {
-  children: React.ReactNode
-  onDelete: () => void
+  children: React.ReactNode;
+  onDelete: () => void;
 }) {
   return (
     <AlertDialog>
@@ -335,7 +335,7 @@ function DeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 function MobileFilterSheet({
@@ -346,12 +346,12 @@ function MobileFilterSheet({
   options,
   onValueChange,
 }: {
-  title: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  value: string
-  options: { label: string; value: string }[]
-  onValueChange: (value: string) => void
+  title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  value: string;
+  options: { label: string; value: string }[];
+  onValueChange: (value: string) => void;
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -368,8 +368,8 @@ function MobileFilterSheet({
                   variant={o.value === value ? "secondary" : "ghost"}
                   className="justify-start"
                   onClick={() => {
-                    onValueChange(o.value)
-                    onOpenChange(false)
+                    onValueChange(o.value);
+                    onOpenChange(false);
                   }}
                 >
                   {o.label}
@@ -383,7 +383,7 @@ function MobileFilterSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
+  );
 }
 
 export function EntryEditorSheet({
@@ -396,23 +396,19 @@ export function EntryEditorSheet({
   lockedDateValue,
   onSave,
 }: {
-  mode: "create" | "edit"
-  entry: DailyEntry | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  isMobile: boolean
-  lockDate: boolean
-  lockedDateValue: string
-  onSave: (entry: DailyEntry) => void
+  mode: "create" | "edit";
+  entry: DailyEntry | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isMobile: boolean;
+  lockDate: boolean;
+  lockedDateValue: string;
+  onSave: (entry: DailyEntry) => void;
 }) {
   const editorKey =
     mode === "edit"
       ? `edit-${entry?.id ?? "missing"}`
-      : `create-${lockedDateValue}`
-
-  if (!open) {
-    return <Sheet open={open} onOpenChange={onOpenChange} />
-  }
+      : `create-${lockedDateValue}`;
 
   return (
     <EntryEditorSheetBody
@@ -426,19 +422,19 @@ export function EntryEditorSheet({
       lockedDateValue={lockedDateValue}
       onSave={onSave}
     />
-  )
+  );
 }
 
 type EntryEditorSheetBodyProps = {
-  mode: "create" | "edit"
-  entry: DailyEntry | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  isMobile: boolean
-  lockDate: boolean
-  lockedDateValue: string
-  onSave: (entry: DailyEntry) => void
-}
+  mode: "create" | "edit";
+  entry: DailyEntry | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isMobile: boolean;
+  lockDate: boolean;
+  lockedDateValue: string;
+  onSave: (entry: DailyEntry) => void;
+};
 
 function EntryEditorSheetBody({
   mode,
@@ -450,28 +446,40 @@ function EntryEditorSheetBody({
   lockedDateValue,
   onSave,
 }: EntryEditorSheetBodyProps) {
-  const [discardOpen, setDiscardOpen] = React.useState(false)
-  const [datePopoverOpen, setDatePopoverOpen] = React.useState(false)
+  const [discardOpen, setDiscardOpen] = React.useState(false);
+  const [datePopoverOpen, setDatePopoverOpen] = React.useState(false);
 
-  const [date, setDate] = React.useState(entry?.date ?? lockedDateValue)
+  const [date, setDate] = React.useState(entry?.date ?? lockedDateValue);
   const [studyHours, setStudyHours] = React.useState<number>(
-    entry ? Math.floor(entry.studyTimeMinutes / 60) : 0
-  )
+    entry ? Math.floor(entry.studyTimeMinutes / 60) : 0,
+  );
   const [studyMinutes, setStudyMinutes] = React.useState<number>(
-    entry ? entry.studyTimeMinutes % 60 : 0
-  )
-  const [mood, setMood] = React.useState<MoodValue | null>(entry?.mood ?? null)
-  const [notes, setNotes] = React.useState(entry?.notes ?? "")
+    entry ? entry.studyTimeMinutes % 60 : 0,
+  );
+  const [mood, setMood] = React.useState<MoodValue | null>(entry?.mood ?? null);
+  const [notes, setNotes] = React.useState(entry?.notes ?? "");
 
-  const now = React.useMemo(() => new Date(), [])
+  React.useEffect(() => {
+    if (!open) return;
+
+    setDiscardOpen(false);
+    setDatePopoverOpen(false);
+    setDate(entry?.date ?? lockedDateValue);
+    setStudyHours(entry ? Math.floor(entry.studyTimeMinutes / 60) : 0);
+    setStudyMinutes(entry ? entry.studyTimeMinutes % 60 : 0);
+    setMood(entry?.mood ?? null);
+    setNotes(entry?.notes ?? "");
+  }, [open, entry?.id, entry?.updatedAt, mode, lockedDateValue]);
+
+  const now = React.useMemo(() => new Date(), []);
 
   const totalStudyMinutes = React.useMemo(() => {
-    const safeH = Number.isFinite(studyHours) ? studyHours : 0
-    const safeM = Number.isFinite(studyMinutes) ? studyMinutes : 0
-    return Math.max(0, safeH) * 60 + Math.max(0, safeM)
-  }, [studyHours, studyMinutes])
+    const safeH = Number.isFinite(studyHours) ? studyHours : 0;
+    const safeM = Number.isFinite(studyMinutes) ? studyMinutes : 0;
+    return Math.max(0, safeH) * 60 + Math.max(0, safeM);
+  }, [studyHours, studyMinutes]);
 
-  const hasValidStudyTime = totalStudyMinutes > 0
+  const hasValidStudyTime = totalStudyMinutes > 0;
 
   const hasChanges = React.useMemo(() => {
     if (mode === "create") {
@@ -480,40 +488,40 @@ function EntryEditorSheetBody({
         totalStudyMinutes !== 0 ||
         mood != null ||
         notes.trim() !== ""
-      )
+      );
     }
 
-    if (!entry) return false
+    if (!entry) return false;
 
     return (
       date !== entry.date ||
       totalStudyMinutes !== entry.studyTimeMinutes ||
       mood !== entry.mood ||
       notes.trim() !== (entry.notes ?? "").trim()
-    )
-  }, [date, entry, lockedDateValue, mode, mood, notes, totalStudyMinutes])
+    );
+  }, [date, entry, lockedDateValue, mode, mood, notes, totalStudyMinutes]);
 
   function requestClose(nextOpen: boolean) {
     if (nextOpen) {
-      onOpenChange(true)
-      return
+      onOpenChange(true);
+      return;
     }
 
     if (hasChanges) {
-      setDiscardOpen(true)
-      return
+      setDiscardOpen(true);
+      return;
     }
 
-    onOpenChange(false)
+    onOpenChange(false);
   }
 
   function submit() {
-    if (!hasValidStudyTime) return
-    if (!mood) return
+    if (!hasValidStudyTime) return;
+    if (!mood) return;
 
-    const id = mode === "edit" && entry ? entry.id : crypto.randomUUID()
+    const id = mode === "edit" && entry ? entry.id : crypto.randomUUID();
     const createdAt =
-      mode === "edit" && entry ? entry.createdAt : now.toISOString()
+      mode === "edit" && entry ? entry.createdAt : now.toISOString();
 
     const next: DailyEntry = {
       id,
@@ -523,12 +531,12 @@ function EntryEditorSheetBody({
       notes: notes.trim() ? notes.trim() : null,
       createdAt,
       updatedAt: now.toISOString(),
-    }
+    };
 
-    onSave(next)
+    onSave(next);
   }
 
-  const side = isMobile ? "bottom" : "right"
+  const side = isMobile ? "bottom" : "right";
 
   return (
     <>
@@ -550,8 +558,8 @@ function EntryEditorSheetBody({
                   <Popover
                     open={datePopoverOpen}
                     onOpenChange={(next) => {
-                      if (mode === "edit" || lockDate) return
-                      setDatePopoverOpen(next)
+                      if (mode === "edit" || lockDate) return;
+                      setDatePopoverOpen(next);
                     }}
                   >
                     <PopoverTrigger
@@ -574,9 +582,9 @@ function EntryEditorSheetBody({
                         }
                         onSelect={(selectedDate) => {
                           setDate(
-                            selectedDate ? toDateInputValue(selectedDate) : ""
-                          )
-                          setDatePopoverOpen(false)
+                            selectedDate ? toDateInputValue(selectedDate) : "",
+                          );
+                          setDatePopoverOpen(false);
                         }}
                       />
                     </PopoverPopup>
@@ -632,7 +640,7 @@ function EntryEditorSheetBody({
                       onClick={() => setMood(1)}
                       className={cn(
                         "justify-center gap-2",
-                        mood === 1 && "bg-muted"
+                        mood === 1 && "bg-muted",
                       )}
                     >
                       <EmojioneV1WearyFace
@@ -647,7 +655,7 @@ function EntryEditorSheetBody({
                       onClick={() => setMood(2)}
                       className={cn(
                         "justify-center gap-2",
-                        mood === 2 && "bg-muted"
+                        mood === 2 && "bg-muted",
                       )}
                     >
                       <EmojioneV1SlightlySmilingFace
@@ -661,7 +669,7 @@ function EntryEditorSheetBody({
                       onClick={() => setMood(3)}
                       className={cn(
                         "justify-center gap-2",
-                        mood === 3 && "bg-muted"
+                        mood === 3 && "bg-muted",
                       )}
                     >
                       <EmojioneV1GrinningFaceWithSmilingEyes
@@ -720,8 +728,8 @@ function EntryEditorSheetBody({
               variant="destructive"
               type="button"
               onClick={() => {
-                setDiscardOpen(false)
-                onOpenChange(false)
+                setDiscardOpen(false);
+                onOpenChange(false);
               }}
             >
               Discard
@@ -730,7 +738,7 @@ function EntryEditorSheetBody({
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }
 
 export function MoodFilterSheet({
@@ -739,10 +747,10 @@ export function MoodFilterSheet({
   value,
   onValueChange,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  value: MoodFilter
-  onValueChange: (value: MoodFilter) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  value: MoodFilter;
+  onValueChange: (value: MoodFilter) => void;
 }) {
   const options = React.useMemo(
     () => [
@@ -751,8 +759,8 @@ export function MoodFilterSheet({
       { value: "2", label: "Neutral" },
       { value: "1", label: "Burned Out" },
     ],
-    []
-  )
+    [],
+  );
 
   return (
     <MobileFilterSheet
@@ -762,9 +770,9 @@ export function MoodFilterSheet({
       value={value === "all" ? "all" : String(value)}
       options={options}
       onValueChange={(v) => {
-        if (v === "all") onValueChange("all")
-        else onValueChange(Number(v) as MoodValue)
+        if (v === "all") onValueChange("all");
+        else onValueChange(Number(v) as MoodValue);
       }}
     />
-  )
+  );
 }
