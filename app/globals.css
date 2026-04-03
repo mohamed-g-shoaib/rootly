@@ -126,7 +126,7 @@
   --selection-foreground: var(--primary-foreground);
   --dashboard-floating-gap-mobile: 1.25rem;
   --dashboard-floating-gap-desktop: 1.25rem;
-  --dashboard-dock-height-mobile: 2.75rem;
+  --dashboard-dock-height-mobile: 4rem;
   --dashboard-dock-height-desktop: 3rem;
   --dashboard-pagination-height: 3rem;
   --dashboard-shell-clearance-mobile: calc(
@@ -215,9 +215,15 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
     scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: var(--ring) transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
   ::-moz-selection {
     background: var(--selection-background);
@@ -245,10 +251,42 @@
     background-clip: content-box;
   }
 
-  ::view-transition-group(dashboard-dock),
-  ::view-transition-old(dashboard-dock),
-  ::view-transition-new(dashboard-dock) {
-    animation: none;
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 12px, 0);
+      filter: blur(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes page-enter-reduced {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .page-transition-shell {
+    animation: page-enter 220ms cubic-bezier(0.23, 1, 0.32, 1);
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform, opacity, filter;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-transition-shell {
+      animation: page-enter-reduced 140ms linear;
+      will-change: opacity;
+    }
   }
 
   code,
