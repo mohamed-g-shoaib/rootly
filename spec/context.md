@@ -182,6 +182,21 @@ Shared dashboard pieces live under:
   - `app/daily-entries/ui/daily-entries-components.tsx`: updated entry editor reset `useEffect` dependencies to include `entry`.
 - Validation: `pnpm lint` now passes with 0 warnings and 0 errors.
 
+### React Doctor follow-up (2026-04-03)
+
+- Addressed `react-doctor/prefer-dynamic-import` warnings for overview charts by replacing direct `recharts` imports with `next/dynamic(..., { ssr: false })` component loading:
+  - `app/overview/ui/charts/understanding-progress-chart.tsx`
+  - `app/overview/ui/charts/daily-study-time-chart.tsx`
+  - `app/overview/ui/charts/daily-mood-chart.tsx`
+- Addressed `react-doctor/nextjs-no-use-search-params-without-suspense` warning in login UI by removing `useSearchParams` usage and reading the callback error query param from `window.location.search` on mount:
+  - `app/(auth)/login/ui/login-page.tsx`
+- Validation:
+  - `pnpm lint` passes
+  - `pnpm run build` passes
+  - `npx -y react-doctor@latest .` no longer reports the two specific warnings above
+- React effect hygiene follow-up:
+  - `app/(auth)/login/ui/login-page.tsx` callback error handling now derives value via `useMemo` (with a `window` guard) instead of `useEffect` + state sync, aligning with `react-useeffect` guidance to avoid effects for derived render state.
+
 ---
 
 ## Current Task Status
