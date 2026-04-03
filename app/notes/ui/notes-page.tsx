@@ -7,6 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 
 import { useAnswerVisibility } from "@/hooks/use-answer-visibility"
 import { useIsMobile } from "@/hooks/use-media-query"
+import { useNoteLiveUpdates } from "@/hooks/use-note-live-updates"
 
 import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import { PageContainer } from "@/components/ui/page-container"
@@ -22,6 +23,7 @@ import {
   getNotes,
   updateNote,
 } from "./notes-actions"
+import { upsertNote } from "@/lib/note-live"
 import { NotesHeader } from "./notes-header"
 import {
   EmptyState,
@@ -62,6 +64,38 @@ export default function NotesPage({
 
   const [courses] = React.useState(() => initialCourses)
   const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
+
+  const getCourseTitle = React.useCallback(
+    (courseId: string | null) =>
+      courses.find((course) => course.id === courseId)?.title ?? null,
+    [courses]
+  )
+
+  useNoteLiveUpdates({
+    userId,
+    getCourseTitle,
+    onNoteUpsert: React.useCallback((note: Note) => {
+      setAllNotes((items) => {
+        const existingNote = items.find((item) => item.id === note.id)
+
+        if (
+          existingNote &&
+          existingNote.detailsLoaded &&
+          !note.detailsLoaded
+        ) {
+          return upsertNote(items, {
+            ...note,
+            answer: existingNote.answer,
+            body: existingNote.body,
+            codeSnippet: existingNote.codeSnippet,
+            detailsLoaded: true,
+          })
+        }
+
+        return upsertNote(items, note)
+      })
+    }, []),
+  })
 
   const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all")
   const [courseFilter, setCourseFilter] = React.useState<CourseFilter>("all")

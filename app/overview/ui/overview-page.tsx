@@ -1,8 +1,15 @@
+"use client"
+
+import * as React from "react"
+
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-container"
+import { useDailyEntryLiveUpdates } from "@/hooks/use-daily-entry-live-updates"
 
 export default function OverviewPage({
+  userId,
+  todayDate,
   streakDays,
   todayLabel,
   todayStudyMinutes,
@@ -10,6 +17,8 @@ export default function OverviewPage({
   totalNotes,
   avgUnderstanding,
 }: {
+  userId: string | null
+  todayDate: string
   streakDays: number
   todayLabel: string
   todayStudyMinutes: number
@@ -17,13 +26,34 @@ export default function OverviewPage({
   totalNotes: number
   avgUnderstanding: number
 }) {
+  const [liveStreakDays, setLiveStreakDays] = React.useState(streakDays)
+  const [liveTodayStudyMinutes, setLiveTodayStudyMinutes] =
+    React.useState(todayStudyMinutes)
+
+  useDailyEntryLiveUpdates({
+    userId,
+    onEntryUpsert: React.useCallback(
+      (entry) => {
+        if (entry.date !== todayDate) {
+          return
+        }
+
+        setLiveTodayStudyMinutes(entry.studyTimeMinutes)
+        setLiveStreakDays((currentStreakDays) =>
+          currentStreakDays > 0 ? currentStreakDays : 1
+        )
+      },
+      [todayDate]
+    ),
+  })
+
   return (
     <PageContainer>
       <section className="pt-4 lg:pt-6">
         <HeroBlock
-          streakDays={streakDays}
+          streakDays={liveStreakDays}
           todayLabel={todayLabel}
-          todayStudyMinutes={todayStudyMinutes}
+          todayStudyMinutes={liveTodayStudyMinutes}
           totalCourses={totalCourses}
           totalNotes={totalNotes}
           avgUnderstanding={avgUnderstanding}

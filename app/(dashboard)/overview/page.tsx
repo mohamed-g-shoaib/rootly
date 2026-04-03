@@ -143,6 +143,8 @@ export default async function OverviewPage() {
   return (
     <>
       <OverviewPageUI
+        userId={userId}
+        todayDate={today}
         streakDays={streakDays}
         todayLabel={formatLongDate(now)}
         todayStudyMinutes={todayStudyMinutes}

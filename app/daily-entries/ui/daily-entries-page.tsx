@@ -7,10 +7,12 @@ import { HugeiconsIcon } from "@hugeicons/react"
 
 import { PageContainer } from "@/components/ui/page-container"
 
+import { useDailyEntryLiveUpdates } from "@/hooks/use-daily-entry-live-updates"
 import { useIsMobile } from "@/hooks/use-media-query"
 
 import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import { toastManager } from "@/components/ui/toast"
+import { upsertDailyEntry } from "@/lib/daily-entry-live"
 
 import {
   DateRangeFilterSheet,
@@ -43,6 +45,13 @@ export default function DailyEntriesPage({
   const [entries, setEntries] = React.useState<DailyEntry[]>(
     () => initialEntries
   )
+
+  useDailyEntryLiveUpdates({
+    userId,
+    onEntryUpsert: React.useCallback((entry: DailyEntry) => {
+      setEntries((items) => upsertDailyEntry(items, entry))
+    }, []),
+  })
 
   const [fromDate, setFromDate] = React.useState("")
   const [toDate, setToDate] = React.useState("")
