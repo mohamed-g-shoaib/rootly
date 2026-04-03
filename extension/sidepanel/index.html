@@ -28,25 +28,22 @@
       </section>
 
       <section id="app-section" class="stack hidden">
-        <section class="card stack">
-          <p id="today-label" class="card-label">Apr 2</p>
-          <h1 id="greeting">Welcome back</h1>
-          <p id="sync-status" class="sync-status" data-tone="neutral">
-            Checking your Rootly session.
-          </p>
-          <div class="daily-grid">
-            <div class="metric">
+        <section class="card stack summary-card">
+          <div class="summary-head">
+            <div class="summary-title">
+              <h1 id="greeting">Hi, there</h1>
+              <p id="today-label" class="card-label">Apr 2</p>
+            </div>
+          </div>
+          <div class="daily-grid compact-grid">
+            <div class="metric compact-metric">
               <span class="metric-label">Study time</span>
               <strong id="today-time">0m</strong>
             </div>
-            <div class="metric">
+            <div class="metric compact-metric">
               <span class="metric-label">Mood</span>
               <strong id="today-mood">Not set</strong>
             </div>
-          </div>
-          <div class="note-block">
-            <span class="metric-label">Daily note</span>
-            <p id="today-note" class="muted">No note logged yet for today.</p>
           </div>
         </section>
 
@@ -92,13 +89,20 @@
           role="tabpanel"
           aria-labelledby="tab-capture"
         >
-          <section class="card stack">
+          <section class="card stack dense-card">
             <div class="split-row">
               <div>
                 <p class="card-label">Quick note</p>
                 <h2>Capture what matters</h2>
               </div>
-              <p id="note-save-status" class="status-pill subtle">Ready</p>
+              <p
+                id="note-save-status"
+                class="status-pill subtle"
+                role="status"
+                aria-live="polite"
+              >
+                Ready
+              </p>
             </div>
             <div class="type-row" role="group" aria-label="Note type">
               <button
@@ -119,7 +123,7 @@
               </button>
             </div>
 
-            <div class="field-stack">
+            <div class="field-stack compact-stack">
               <span class="metric-label">Course</span>
               <div id="select-note-course" class="select-root">
                 <button
@@ -131,7 +135,7 @@
                   aria-controls="select-note-course-list"
                 >
                   <span id="select-note-course-label">No course</span>
-                  <span class="select-chevron" aria-hidden="true">▾</span>
+                  <span class="select-chevron" aria-hidden="true">+</span>
                 </button>
                 <div id="select-note-course-panel" class="select-panel hidden">
                   <div
@@ -139,13 +143,36 @@
                     class="select-list"
                     role="listbox"
                     aria-label="Course"
+                    tabindex="-1"
                   ></div>
                 </div>
               </div>
             </div>
 
-            <div id="qa-fields" class="stack">
-              <label class="field-stack" for="note-question-input">
+            <div class="option-row" role="group" aria-label="Note options">
+              <button
+                id="note-flag-toggle"
+                class="ghost-button option-toggle"
+                type="button"
+                aria-pressed="false"
+              >
+                Flag for review
+              </button>
+              <button
+                id="note-code-toggle"
+                class="ghost-button option-toggle"
+                type="button"
+                aria-pressed="false"
+              >
+                Add code snippet
+              </button>
+            </div>
+
+            <div id="qa-fields" class="stack compact-stack">
+              <label
+                class="field-stack compact-stack"
+                for="note-question-input"
+              >
                 <span class="metric-label">Question</span>
                 <textarea
                   id="note-question-input"
@@ -154,7 +181,7 @@
                   placeholder="What are you trying to understand?"
                 ></textarea>
               </label>
-              <label class="field-stack" for="note-answer-input">
+              <label class="field-stack compact-stack" for="note-answer-input">
                 <span class="metric-label">Answer</span>
                 <textarea
                   id="note-answer-input"
@@ -163,7 +190,7 @@
                   placeholder="Write the answer you just learned."
                 ></textarea>
               </label>
-              <div class="field-stack">
+              <div class="field-stack compact-stack">
                 <span class="metric-label">Understanding</span>
                 <div id="select-note-understanding" class="select-root">
                   <button
@@ -175,7 +202,7 @@
                     aria-controls="select-note-understanding-list"
                   >
                     <span id="select-note-understanding-label">Getting It</span>
-                    <span class="select-chevron" aria-hidden="true">▾</span>
+                    <span class="select-chevron" aria-hidden="true">+</span>
                   </button>
                   <div
                     id="select-note-understanding-panel"
@@ -186,6 +213,7 @@
                       class="select-list"
                       role="listbox"
                       aria-label="Understanding"
+                      tabindex="-1"
                     ></div>
                   </div>
                 </div>
@@ -194,24 +222,48 @@
 
             <label
               id="freeform-fields"
-              class="field-stack hidden"
+              class="field-stack compact-stack hidden"
               for="note-body-input"
             >
               <span class="metric-label">Note</span>
               <textarea
                 id="note-body-input"
                 class="text-area"
-                rows="6"
+                rows="5"
                 placeholder="Write a quick freeform note."
               ></textarea>
             </label>
+
+            <div id="note-code-fields" class="stack compact-stack hidden">
+              <label class="field-stack compact-stack" for="note-code-input">
+                <span class="metric-label">Code snippet</span>
+                <textarea
+                  id="note-code-input"
+                  class="text-area compact"
+                  rows="4"
+                  placeholder="Paste the code you want to keep with this note."
+                ></textarea>
+              </label>
+              <label
+                class="field-stack compact-stack"
+                for="note-code-language-input"
+              >
+                <span class="metric-label">Language</span>
+                <input
+                  id="note-code-language-input"
+                  class="text-input"
+                  type="text"
+                  placeholder="Optional, e.g. tsx"
+                />
+              </label>
+            </div>
 
             <button id="note-save" class="primary-button" type="button">
               Save note
             </button>
           </section>
 
-          <section class="card stack">
+          <section class="card stack dense-card">
             <button
               id="course-disclosure"
               class="disclosure-button"
@@ -225,12 +277,19 @@
               </span>
               <span id="course-disclosure-icon" class="disclosure-icon">+</span>
             </button>
-            <div id="course-panel" class="stack hidden">
+            <div id="course-panel" class="stack compact-stack hidden">
               <div class="split-row">
                 <h2>New course</h2>
-                <p id="course-save-status" class="status-pill subtle">Ready</p>
+                <p
+                  id="course-save-status"
+                  class="status-pill subtle"
+                  role="status"
+                  aria-live="polite"
+                >
+                  Ready
+                </p>
               </div>
-              <label class="field-stack" for="course-title-input">
+              <label class="field-stack compact-stack" for="course-title-input">
                 <span class="metric-label">Title</span>
                 <input
                   id="course-title-input"
@@ -239,7 +298,10 @@
                   placeholder="e.g. Epic React"
                 />
               </label>
-              <label class="field-stack" for="course-instructor-input">
+              <label
+                class="field-stack compact-stack"
+                for="course-instructor-input"
+              >
                 <span class="metric-label">Instructor</span>
                 <input
                   id="course-instructor-input"
@@ -248,7 +310,7 @@
                   placeholder="Optional"
                 />
               </label>
-              <label class="field-stack" for="course-link-input">
+              <label class="field-stack compact-stack" for="course-link-input">
                 <span class="metric-label">Main course URL</span>
                 <input
                   id="course-link-input"
@@ -270,7 +332,7 @@
           role="tabpanel"
           aria-labelledby="tab-timer"
         >
-          <section class="card stack">
+          <section class="card stack dense-card">
             <div class="split-row">
               <div>
                 <p class="card-label">Timer</p>
@@ -278,7 +340,7 @@
               </div>
               <p id="timer-status" class="status-pill subtle">Idle</p>
             </div>
-            <div class="button-row">
+            <div class="button-row compact-row">
               <button id="timer-start" class="primary-button" type="button">
                 Start
               </button>
@@ -307,8 +369,8 @@
                 Reset
               </button>
             </div>
-            <div id="timer-save-panel" class="stack hidden">
-              <div class="field-stack">
+            <div id="timer-save-panel" class="stack compact-stack hidden">
+              <div class="field-stack compact-stack">
                 <span class="metric-label">Mood</span>
                 <div id="select-timer-mood" class="select-root">
                   <button
@@ -320,7 +382,7 @@
                     aria-controls="select-timer-mood-list"
                   >
                     <span id="select-timer-mood-label">Neutral</span>
-                    <span class="select-chevron" aria-hidden="true">▾</span>
+                    <span class="select-chevron" aria-hidden="true">+</span>
                   </button>
                   <div id="select-timer-mood-panel" class="select-panel hidden">
                     <div
@@ -328,15 +390,16 @@
                       class="select-list"
                       role="listbox"
                       aria-label="Timer mood"
+                      tabindex="-1"
                     ></div>
                   </div>
                 </div>
               </div>
-              <label class="field-stack" for="timer-note-input">
+              <label class="field-stack compact-stack" for="timer-note-input">
                 <span class="metric-label">Quick note</span>
                 <textarea
                   id="timer-note-input"
-                  class="text-area"
+                  class="text-area compact"
                   rows="3"
                   placeholder="How did this session feel?"
                 ></textarea>
@@ -344,7 +407,12 @@
               <button id="timer-save" class="primary-button" type="button">
                 Save timer to today
               </button>
-              <p id="timer-save-hint" class="muted">
+              <p
+                id="timer-save-hint"
+                class="muted"
+                role="status"
+                aria-live="polite"
+              >
                 Pause or stop the timer, then save it into today's total.
               </p>
             </div>
@@ -357,16 +425,23 @@
           role="tabpanel"
           aria-labelledby="tab-log"
         >
-          <section class="card stack">
+          <section class="card stack dense-card">
             <div class="split-row">
               <div>
                 <p class="card-label">Quick daily log</p>
                 <h2>Add time to today</h2>
               </div>
-              <p id="daily-log-status" class="status-pill subtle">Ready</p>
+              <p
+                id="daily-log-status"
+                class="status-pill subtle"
+                role="status"
+                aria-live="polite"
+              >
+                Ready
+              </p>
             </div>
             <div class="inline-grid">
-              <label class="field-stack" for="log-hours">
+              <label class="field-stack compact-stack" for="log-hours">
                 <span class="metric-label">Hours</span>
                 <input
                   id="log-hours"
@@ -378,7 +453,7 @@
                   value="0"
                 />
               </label>
-              <label class="field-stack" for="log-minutes">
+              <label class="field-stack compact-stack" for="log-minutes">
                 <span class="metric-label">Minutes</span>
                 <input
                   id="log-minutes"
@@ -391,7 +466,7 @@
                 />
               </label>
             </div>
-            <div class="field-stack">
+            <div class="field-stack compact-stack">
               <span class="metric-label">Mood</span>
               <div id="select-daily-mood" class="select-root">
                 <button
@@ -403,7 +478,7 @@
                   aria-controls="select-daily-mood-list"
                 >
                   <span id="select-daily-mood-label">Neutral</span>
-                  <span class="select-chevron" aria-hidden="true">▾</span>
+                  <span class="select-chevron" aria-hidden="true">+</span>
                 </button>
                 <div id="select-daily-mood-panel" class="select-panel hidden">
                   <div
@@ -411,15 +486,23 @@
                     class="select-list"
                     role="listbox"
                     aria-label="Daily mood"
+                    tabindex="-1"
                   ></div>
                 </div>
               </div>
             </div>
-            <label class="field-stack" for="daily-note-input">
-              <span class="metric-label">Daily note</span>
+            <div id="daily-note-summary" class="note-summary hidden">
+              <div class="note-summary-copy">
+                <span class="card-label">Saved note</span>
+                <p id="daily-note-summary-text" class="note-summary-text"></p>
+              </div>
+              <p class="note-summary-hint">Editing below will replace it.</p>
+            </div>
+            <label class="field-stack compact-stack" for="daily-note-input">
+              <span id="daily-note-label" class="metric-label">Note</span>
               <textarea
                 id="daily-note-input"
-                class="text-area"
+                class="text-area compact"
                 rows="3"
                 placeholder="How did your study day go?"
               ></textarea>
@@ -439,6 +522,16 @@
       </section>
 
       <footer class="panel-footer">
+        <div class="footer-meta">
+          <p
+            id="sync-status"
+            class="sync-status hidden"
+            data-tone="neutral"
+            aria-hidden="true"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </div>
         <div class="footer-actions">
           <button id="dashboard-link" class="footer-link-button" type="button">
             Dashboard
@@ -452,35 +545,43 @@
           >
             Settings
           </button>
-        </div>
-        <section id="settings-panel" class="card stack footer-panel hidden">
-          <div class="split-row">
-            <div>
-              <p class="card-label">Environment</p>
-              <h2>Connection</h2>
+          <section
+            id="settings-panel"
+            class="card stack footer-panel settings-popover hidden"
+            aria-label="Extension settings"
+          >
+            <div class="split-row">
+              <div>
+                <p class="card-label">Environment</p>
+                <h2>Connection</h2>
+              </div>
+              <p id="settings-status" class="status-pill subtle">Production</p>
             </div>
-            <p id="settings-status" class="status-pill subtle">Production</p>
-          </div>
-          <p id="settings-hint" class="muted">
-            Choose which Rootly site this extension talks to.
-          </p>
-          <div class="environment-row" role="group" aria-label="Rootly environment">
-            <button
-              class="environment-button"
-              type="button"
-              data-site-base-url="https://rootly.app"
+            <p id="settings-hint" class="muted">
+              Choose which Rootly site this extension talks to.
+            </p>
+            <div
+              class="environment-row"
+              role="group"
+              aria-label="Rootly environment"
             >
-              Production
-            </button>
-            <button
-              class="environment-button"
-              type="button"
-              data-site-base-url="http://localhost:3000"
-            >
-              Localhost
-            </button>
-          </div>
-        </section>
+              <button
+                class="environment-button"
+                type="button"
+                data-site-base-url="https://rootly.app"
+              >
+                Production
+              </button>
+              <button
+                class="environment-button"
+                type="button"
+                data-site-base-url="http://localhost:3000"
+              >
+                Localhost
+              </button>
+            </div>
+          </section>
+        </div>
       </footer>
     </main>
 

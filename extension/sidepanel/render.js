@@ -21,6 +21,8 @@ export function setError(refs, message) {
 export function setSyncStatus(refs, message, tone = "neutral") {
   refs.syncStatus.textContent = message
   refs.syncStatus.dataset.tone = tone
+  refs.syncStatus.classList.toggle("hidden", !message)
+  refs.syncStatus.setAttribute("aria-hidden", String(!message))
 }
 
 export function formatTodayLabel(date = new Date()) {
@@ -81,6 +83,13 @@ function getTimerSaveHint(timerState) {
   return saveCopy
 }
 
+function setToggleButtonState(button, isActive) {
+  button.classList.toggle("active", isActive)
+  button.classList.toggle("secondary-button", isActive)
+  button.classList.toggle("ghost-button", !isActive)
+  button.setAttribute("aria-pressed", String(isActive))
+}
+
 export function setCoursePanelOpen(refs, state, isOpen) {
   state.coursePanelOpen = isOpen
   refs.coursePanel.classList.toggle("hidden", !isOpen)
@@ -97,18 +106,17 @@ export function setSettingsOpen(refs, state, isOpen) {
 export function renderNoteType(refs, state) {
   const isQa = state.noteType === "qa"
 
-  refs.noteTypeQa.classList.toggle("active", isQa)
-  refs.noteTypeQa.classList.toggle("secondary-button", isQa)
-  refs.noteTypeQa.classList.toggle("ghost-button", !isQa)
-  refs.noteTypeQa.setAttribute("aria-pressed", String(isQa))
-
-  refs.noteTypeFreeform.classList.toggle("active", !isQa)
-  refs.noteTypeFreeform.classList.toggle("secondary-button", !isQa)
-  refs.noteTypeFreeform.classList.toggle("ghost-button", isQa)
-  refs.noteTypeFreeform.setAttribute("aria-pressed", String(!isQa))
+  setToggleButtonState(refs.noteTypeQa, isQa)
+  setToggleButtonState(refs.noteTypeFreeform, !isQa)
 
   refs.qaFields.classList.toggle("hidden", !isQa)
   refs.freeformFields.classList.toggle("hidden", isQa)
+}
+
+export function renderNoteOptions(refs, state) {
+  setToggleButtonState(refs.noteFlagToggle, state.noteFlagged)
+  setToggleButtonState(refs.noteCodeToggle, state.noteCodeOpen)
+  refs.noteCodeFields.classList.toggle("hidden", !state.noteCodeOpen)
 }
 
 export function setActivePanel(refs, state, panel) {
@@ -126,15 +134,37 @@ export function setActivePanel(refs, state, panel) {
   }
 }
 
+function getPreferredName(user) {
+  const rawName = user.fullName || user.name || user.email || "there"
+  const normalized = String(rawName).trim()
+
+  if (!normalized) {
+    return "there"
+  }
+
+  const firstSegment = normalized.includes("@")
+    ? normalized.split("@")[0]
+    : normalized.split(/\s+/)[0]
+
+  if (!firstSegment) {
+    return "there"
+  }
+
+  return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
+}
+
 export function getDisplayName(user) {
-  return user.fullName || user.name || user.email || "there"
+  return getPreferredName(user)
 }
 
 export function renderTodayEntry(refs, todayEntry, onDailyDraft, onTimerDraft) {
   if (!todayEntry) {
     refs.todayTime.textContent = "0m"
     refs.todayMood.textContent = "Not set"
-    refs.todayNote.textContent = "No note logged yet for today."
+    refs.dailyNoteSummaryText.textContent = ""
+    refs.dailyNoteSummary.classList.add("hidden")
+    refs.dailyNoteLabel.textContent = "Note"
+    refs.dailyNoteInput.placeholder = "How did your study day go?"
     onDailyDraft(null)
     onTimerDraft(null)
     return
@@ -142,10 +172,19 @@ export function renderTodayEntry(refs, todayEntry, onDailyDraft, onTimerDraft) {
 
   refs.todayTime.textContent = formatStudyMinutes(todayEntry.studyTimeMinutes)
   refs.todayMood.textContent = moodLabel(todayEntry.mood)
-  refs.todayNote.textContent =
+
+  const nextNote =
     todayEntry.notes && todayEntry.notes.trim().length > 0
-      ? todayEntry.notes
-      : "No note logged yet for today."
+      ? todayEntry.notes.trim()
+      : ""
+
+  refs.dailyNoteSummaryText.textContent = nextNote
+  refs.dailyNoteSummary.classList.toggle("hidden", nextNote.length === 0)
+  refs.dailyNoteLabel.textContent = nextNote.length > 0 ? "Edit note" : "Note"
+  refs.dailyNoteInput.placeholder =
+    nextNote.length > 0
+      ? "Update today's note if something changed."
+      : "How did your study day go?"
 
   onDailyDraft(todayEntry)
   onTimerDraft(todayEntry)
@@ -181,6 +220,8 @@ export function renderTimerState(refs, state, timerState) {
   refs.timerSavePanel.classList.toggle("hidden", !hasElapsedTime)
   refs.timerSave.disabled = !canSaveTimer
   refs.timerSave.textContent =
-    savableMinutes > 0 ? `Save ${formatStudyMinutes(savableMinutes)} to today` : "Save timer to today"
+    savableMinutes > 0
+      ? `Save ${formatStudyMinutes(savableMinutes)} to today`
+      : "Save timer to today"
   refs.timerSaveHint.textContent = getTimerSaveHint(timerState)
 }
