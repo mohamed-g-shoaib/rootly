@@ -7,15 +7,15 @@ import { PageContainer } from "@/components/ui/page-container"
 
 export default function HomepageFinalCta() {
   return (
-    <section className="pt-14">
+    <section className="pt-20">
       <PageContainer>
         <Reveal y={16}>
           <Card className="py-14">
             <div className="flex flex-col items-center gap-4 px-6 text-center">
-              <div className="text-3xl font-semibold text-balance">
+              <div className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
                 Start learning with intention.
               </div>
-              <div className="max-w-2xl text-sm text-pretty text-muted-foreground">
+              <div className="max-w-2xl text-base text-pretty text-muted-foreground sm:text-lg">
                 Rootly gives your study sessions a place to build on each other
                 instead of starting from scratch every time.
               </div>

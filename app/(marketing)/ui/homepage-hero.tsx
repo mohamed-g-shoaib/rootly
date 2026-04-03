@@ -2,17 +2,17 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Reveal } from "./reveal"
-import { HomepageHeroSurface } from "./homepage-hero-surface"
 import { MarketingPrimaryCta } from "./marketing-primary-cta"
-import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
+import { HomepageExtensionDialog } from "./homepage-extension-dialog"
+import { BrowserWindowMock } from "./homepage-extension-highlight"
 
 export default function HomepageHero() {
   return (
-    <section className="pt-24 pb-14">
+    <section className="pt-24">
       <PageContainer>
-        <div className="flex flex-col gap-10">
-          <div className="flex max-w-3xl flex-col gap-6">
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6">
             <Reveal mode="mount">
               <Badge variant="outline" className="w-fit">
                 Built for self-taught developers
@@ -26,17 +26,19 @@ export default function HomepageHero() {
                 delay={0.05}
                 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
               >
-                Your tutorial tabs are not a learning system.
+                Save what you learn from docs and tutorials in one place.
               </Reveal>
 
               <Reveal
                 as="p"
                 mode="mount"
                 delay={0.1}
-                className="max-w-2xl text-base text-pretty text-muted-foreground sm:text-lg"
+                className="text-base text-pretty text-muted-foreground sm:text-lg lg:max-w-4xl"
               >
-                Rootly turns scattered learning fragments into one deliberate
-                place to think, remember, and continue with context.
+                Rootly is a learning notebook for self-taught developers. Save
+                notes from docs and tutorials, track study time, and review the
+                ideas you want to remember. The browser side panel keeps note
+                capture and your study timer beside the page while you study.
               </Reveal>
             </div>
 
@@ -46,21 +48,12 @@ export default function HomepageHero() {
               className="flex flex-col items-start gap-2 sm:flex-row sm:items-center"
             >
               <MarketingPrimaryCta />
-
-              <Button
-                variant="outline"
-                render={
-                  <a href="#how-it-works" aria-label="See how Rootly works" />
-                }
-                className="w-full sm:w-auto"
-              >
-                See how it works
-              </Button>
+              <HomepageExtensionDialog buttonClassName="w-full sm:w-auto" />
             </Reveal>
           </div>
 
           <Reveal mode="mount" delay={0.2}>
-            <HomepageHeroSurface />
+            <BrowserWindowMock />
           </Reveal>
         </div>
       </PageContainer>

@@ -347,17 +347,17 @@ export default function HomepageHowItWorks() {
     useCarouselControls()
 
   return (
-    <section id="how-it-works" className="pt-14">
+    <section id="how-it-works" className="pt-20">
       <PageContainer>
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-2">
-            <Reveal as="h2" className="text-2xl font-semibold">
+            <Reveal as="h2" className="text-3xl font-semibold tracking-tight">
               How it works
             </Reveal>
             <Reveal
               as="p"
               delay={0.05}
-              className="text-sm text-muted-foreground"
+              className="text-base text-muted-foreground sm:text-lg"
             >
               Set up a course, capture notes, log daily progress, review what
               you learned, and see the pattern in your effort.
@@ -387,7 +387,7 @@ export default function HomepageHowItWorks() {
           </div>
 
           <HowItWorksCarousel scrollerRef={scrollerRef}>
-            <Reveal amount={0.1} className={HOW_IT_WORKS_CARD_CLASS}>
+            <Reveal mode="mount" className={HOW_IT_WORKS_CARD_CLASS}>
               <HowItWorksStep
                 visual={<CreateCourseVisual />}
                 title="Create a course"
@@ -395,11 +395,7 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal
-              amount={0.1}
-              delay={0.05}
-              className={HOW_IT_WORKS_CARD_CLASS}
-            >
+            <Reveal mode="mount" delay={0.05} className={HOW_IT_WORKS_CARD_CLASS}>
               <HowItWorksStep
                 visual={<CaptureVisual />}
                 title="Capture notes"
@@ -407,11 +403,7 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal
-              amount={0.1}
-              delay={0.1}
-              className={HOW_IT_WORKS_CARD_CLASS}
-            >
+            <Reveal mode="mount" delay={0.1} className={HOW_IT_WORKS_CARD_CLASS}>
               <HowItWorksStep
                 visual={<DailyLogVisual />}
                 title="Log daily progress"
@@ -419,11 +411,7 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal
-              amount={0.1}
-              delay={0.15}
-              className={HOW_IT_WORKS_CARD_CLASS}
-            >
+            <Reveal mode="mount" delay={0.15} className={HOW_IT_WORKS_CARD_CLASS}>
               <HowItWorksStep
                 visual={<ReviewVisual />}
                 title="Start a review session"
@@ -431,11 +419,7 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal
-              amount={0.1}
-              delay={0.2}
-              className={HOW_IT_WORKS_CARD_CLASS}
-            >
+            <Reveal mode="mount" delay={0.2} className={HOW_IT_WORKS_CARD_CLASS}>
               <HowItWorksStep
                 visual={<TrackVisual />}
                 title="Watch analytics"

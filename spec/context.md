@@ -1137,3 +1137,270 @@ Recent findings:
 
 - Follow-up after visual review: the first shared-gap value made the floating dock sit too close to the screen edge, so the stack did not feel symmetric in practice.
 - Adjusted `app/globals.css` shared bottom-stack gaps from `0.75rem` to `1.25rem` on both mobile and desktop so the edge/dock, dock/pagination, and pagination/content intervals read more evenly.
+
+### Homepage extension marketing update (2026-04-03)
+
+- Updated the homepage hero CTA in `app/(marketing)/ui/homepage-hero.tsx`:
+  - replaced `See how it works` with `Download Extension`
+  - CTA now opens a reusable install dialog instead of scrolling
+- Added reusable homepage extension install dialog:
+  - `app/(marketing)/ui/homepage-extension-dialog.tsx`
+  - dialog includes Chrome unpacked-install instructions and the provided Google Drive download URL
+- Added a new extension highlight section after `How it works`:
+  - `app/(marketing)/ui/homepage-extension-highlight.tsx`
+  - showcases the side-panel extension value proposition, a side-panel-style marketing mock, and key benefits
+- Wired the new section into the landing page in `app/(marketing)/page.tsx`
+- Source of product/UX direction for homepage extension messaging remained `spec/browser-extension-side-panel.md`
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension marketing refinement (2026-04-03)
+
+- Loaded design-focused skills for a tighter homepage pass:
+  - `coss`
+  - `make-interfaces-feel-better`
+  - `emil-design-eng`
+  - `userinterface-wiki`
+- Refined `app/(marketing)/ui/homepage-extension-highlight.tsx` toward a more compact delivery style:
+  - removed the `Browser extension` badge
+  - removed the separate feature-card row
+  - replaced the previous looser mock with a more accurate docs-page browser shell plus side-panel composition
+  - the browser side now shows a highlighted excerpt to communicate “extracting from the page” more directly
+  - kept benefits concise and folded them into the section instead of spending a full extra row on them
+- Reworked `app/(marketing)/ui/homepage-hero-surface.tsx` to be more visual and less text-heavy:
+  - simplified the `Before Rootly` and `With Rootly` halves into compact visual states
+  - reduced explanatory copy density so the hero surface reads faster and feels less skippable
+  - kept the `With Rootly` story aligned with the dashboard + extension system rather than only the website
+- Follow-up visual cleanup from user review:
+  - removed redundant `Side panel note` copy from the hero surface
+  - tightened outer-shell padding on both `homepage-hero-surface.tsx` and `homepage-extension-highlight.tsx`
+  - made the hero card halves more symmetrical by tightening and normalizing header height/copy
+  - refined the extension browser shell to feel more like a real modern docs page:
+    - more compact browser chrome
+    - removed unnecessary bottom badges
+    - increased excerpt line-height so the marker-style highlight reads cleanly
+  - simplified the extension panel header by removing redundant label/description copy and keeping the section itself responsible for the broader explanation
+  - removed the trailing separator-line feature list below the extension mock
+  - increased section top rhythm so the extension section stands as an independent section instead of a follow-up block
+  - normalized section heading/subheading emphasis across marketing sections by increasing section-title scale and supporting-copy scale in:
+    - `app/(marketing)/ui/homepage-how-it-works.tsx`
+    - `app/(marketing)/ui/homepage-extension-highlight.tsx`
+    - `app/(marketing)/ui/homepage-final-cta.tsx`
+  - cleaned the extension panel header further by removing redundant `Capture` and `Side panel` labels
+  - refined browser chrome further by removing the URL-pill background and slightly enlarging the traffic-light dots
+  - removed the leftover side-panel icon from the extension mock header for a cleaner panel surface
+  - softened hero/extension surface backgrounds so they align better with the calmer `How it works` card treatment instead of reading as heavy dark blocks
+  - follow-up softness pass: reduced the visual weight of the code-example panel and adjacent extension sub-cards so no single panel reads as a heavy dark patch
+  - second follow-up softness pass: reduced the remaining inner-card fill strength in both `homepage-hero-surface.tsx` and `homepage-extension-highlight.tsx` so the surface cards and panel cards no longer stand out as darker blocks
+
+### Homepage hero simplification pass (2026-04-03)
+
+- Loaded the same design/UI guidance for this continuation:
+  - `coss`
+  - `make-interfaces-feel-better`
+  - `emil-design-eng`
+  - `chrome-extension-ui`
+  - `userinterface-wiki`
+- Updated `app/(marketing)/ui/homepage-hero.tsx` to remove the separate hero surface area entirely so the page now flows directly from the hero into `How it works`.
+- Hero messaging was rewritten to carry more of the product story on its own:
+  - heading now emphasizes studying from the current page without losing continuity
+  - subheading now makes Rootly's purpose clearer by connecting capture, study-time tracking, later review, and the side-panel-first workflow
+- Removed the previous hero text width constraint so the hero copy can use the section width more naturally.
+- Reduced hero bottom spacing slightly to keep the transition into `How it works` compact after removing the visual surface.
+- Deleted the now-unused file `app/(marketing)/ui/homepage-hero-surface.tsx`.
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension mock unification pass (2026-04-03)
+
+- Continued using the active UI/design skill set for the homepage marketing refinement:
+  - `coss`
+  - `make-interfaces-feel-better`
+  - `emil-design-eng`
+  - `chrome-extension-ui`
+  - `userinterface-wiki`
+- Updated `app/(marketing)/ui/homepage-extension-highlight.tsx` so the extension marketing visual now lives inside a single browser-window mock instead of two side-by-side cards.
+- The extension section composition now communicates:
+  - the docs/tutorial website remains visible in the main browser content area
+  - the Rootly side panel is open inside the same browser window
+  - Rootly is “beside the page while you study,” not a detached second surface
+- Visual adjustments made inside the unified mock:
+  - browser chrome now wraps both the page and the panel together
+  - the page side keeps the highlighted excerpt and code block as the study source
+  - the right side is now rendered as an in-window sidebar/panel with its own compact Rootly header and capture/timer/daily-state cards
+  - panel and page surfaces were softened and tightened so the split reads as one believable browser context rather than a decorative two-card layout
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension mock polish pass (2026-04-03)
+
+- Continued with the required design/UI skills:
+  - `coss`
+  - `make-interfaces-feel-better`
+  - `emil-design-eng`
+  - `chrome-extension-ui`
+  - `userinterface-wiki`
+- Refined `app/(marketing)/ui/homepage-extension-highlight.tsx` after visual review:
+  - removed the background-pill treatment behind the URL so the shell chrome reads more naturally
+  - removed the `Rootly panel open` helper text from the browser chrome
+  - removed the staged/cliche page callout copy (`This is the exact kind of...`)
+  - simplified the side-panel edge treatment by removing the extra inset left-edge effect that was making the divider feel wrong
+  - tightened radius relationships across the browser content area, side panel, and inner cards so the roundness feels more optically consistent
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension optical alignment refinement (2026-04-03)
+
+- Continued using the required homepage UI skill stack:
+  - `coss`
+  - `make-interfaces-feel-better`
+  - `emil-design-eng`
+  - `chrome-extension-ui`
+  - `userinterface-wiki`
+- Refined `app/(marketing)/ui/homepage-extension-highlight.tsx` so the docs area and side panel now sit inside one joined inner frame instead of behaving like two separate rounded cards touching each other.
+- Key visual changes:
+  - reduced the shell inset padding from `8px` to a tighter interior spacing
+  - removed the `React docs` badge
+  - changed `SIDE PANEL` treatment from a capsule/badge feel to plain supporting text
+  - replaced the split-card bottom-corner behavior with a single shared rounded interior frame plus a clean divider so the meeting edge feels optically aligned
+  - tightened small supporting copy in the panel (`Capture while you keep reading`, `Adds to today's study time`, `Today`) so labels support the layout without cluttering it
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension corner-alignment correction (2026-04-03)
+
+- Corrected an interpretation mistake in `app/(marketing)/ui/homepage-extension-highlight.tsx`:
+  - the page surface and side panel should remain independent rounded surfaces inside the browser window
+  - the optical-alignment request was specifically about the outer browser bottom corners relative to the page bottom-left and panel bottom-right corners
+- Updated the mock accordingly:
+  - removed the mistakenly joined shared inner frame
+  - restored separate rounded page and panel surfaces
+  - kept the tighter shell inset spacing
+  - tuned the radius sizes and inter-surface gap so the bottom corners read more concentric with the outer browser shell rather than looking fused or misaligned
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension spacing balance pass (2026-04-03)
+
+- Continued the homepage refinement with the active design skill set:
+  - `coss`
+  - `make-interfaces-feel-better`
+  - `emil-design-eng`
+  - `chrome-extension-ui`
+  - `userinterface-wiki`
+- Rebalanced spacing in `app/(marketing)/ui/homepage-extension-highlight.tsx` so the outer browser shell inset and the inner page/panel padding no longer feel mismatched.
+- Adjustments:
+  - slightly reduced the docs-surface interior padding
+  - slightly reduced the docs text section top spacing
+  - slightly increased the side-panel header/content insets
+  - kept the shell itself tight while making the inner surfaces feel intentionally dense rather than uneven
+- Goal of the pass:
+  - equalize the spacing rhythm across shell and inner surfaces without making the mock feel cheap, roomy, or boxy
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension spacing correction (2026-04-03)
+
+- Follow-up after user review: the earlier spacing pass still left the browser shell too tight relative to the panel interior, especially in the side-panel content wrapper and nested cards.
+- Corrected `app/(marketing)/ui/homepage-extension-highlight.tsx` by:
+  - increasing the browser shell inset and inter-surface gap from `p-1/gap-1` to `p-2/gap-2`
+  - reducing the docs surface padding from `p-3.5` to `p-3`
+  - reducing panel header insets from `px-3.5 py-3` to `px-3 py-2.5`
+  - reducing panel body padding and nested card padding from `3.5/3` down to `3/2.5`
+  - tightening internal vertical spacing in the panel cards (`pt-3` -> `pt-2.5`, `pt-2` -> `pt-1.5`)
+- Result intent:
+  - the shell should no longer feel visually starved while the panel burns more space than the surrounding frame
+  - all three levels (shell, main surfaces, nested cards) now sit in a more coherent compact rhythm
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage extension panel-header simplification (2026-04-03)
+
+- Further refined `app/(marketing)/ui/homepage-extension-highlight.tsx` so the mock side-panel header is now part of the panel body instead of being separated by its own tinted band and divider.
+- New treatment:
+  - quiet inline top row inside the panel content
+  - `Rootly` and supporting copy on the left
+  - `Side panel` as plain supporting text on the right
+- Rationale:
+  - reduces visual segmentation in the already compact panel
+  - makes the panel feel more believable and less decorative
+  - aligns better with the homepage direction of compact delivery and minimal fuzz
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage hero mock promotion (2026-04-03)
+
+- Promoted the refined browser-extension mock into the hero:
+  - `app/(marketing)/ui/homepage-hero.tsx` now renders the browser-and-side-panel mock directly under the hero CTA row
+  - `app/(marketing)/ui/homepage-extension-highlight.tsx` now exports `BrowserWindowMock` for reuse
+- Rewrote the hero messaging to be more explicit and less vague:
+  - heading now states the concrete promise: capture study notes and track study time without leaving the page
+  - subheading now describes Rootly directly as a learning notebook for self-taught developers and names the core behaviors: saving notes from docs/tutorials, running a study timer in the browser side panel, and keeping daily progress in one place
+- Removed the now-duplicative standalone extension section from `app/(marketing)/page.tsx` so the homepage does not repeat the same browser+panel story twice.
+- Resulting homepage flow is now:
+  - hero with direct product copy + mock
+  - `How it works`
+  - final CTA
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage section-spacing normalization (2026-04-03)
+
+- Fixed inconsistent vertical spacing across the marketing homepage sections.
+- Root cause:
+  - the hero was still contributing bottom padding while the following sections (`How it works`, final CTA) were also spacing themselves from the top, which made the hero-to-next-section gap larger than the rest of the page
+- Updated:
+  - `app/(marketing)/ui/homepage-hero.tsx`
+    - removed hero bottom padding so section rhythm is no longer doubled at the first boundary
+- Current spacing model:
+  - hero owns the top offset from the nav
+  - subsequent sections own the spacing before themselves via their top padding
+  - this keeps section gaps more consistent and avoids duplicate padding contributing to one boundary
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage hero copy + carousel motion refinement (2026-04-03)
+
+- Adjusted `app/(marketing)/ui/homepage-hero.tsx` so the hero heading no longer focuses too narrowly on the “without leaving the page” angle.
+- New hero messaging emphasis:
+  - heading now sells the broader product promise: saving what you learn from docs and tutorials in one place
+  - supporting copy still names the side-panel behavior, but only as one concrete part of the wider Rootly workflow (notes, study time, review)
+- Updated `app/(marketing)/ui/homepage-how-it-works.tsx` to remove swipe-triggered reveal animation from the horizontal carousel cards:
+  - replaced per-card `Reveal` wrappers with plain container divs
+  - section heading, supporting copy, and arrow controls still use reveal on page entry
+  - carousel cards themselves no longer animate in as they enter the horizontal viewport during swipe/scroll
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage carousel mount-animation correction (2026-04-03)
+
+- Follow-up after behavior review: the previous change removed `Reveal` from the `How it works` cards entirely, which made page-load motion inconsistent with the rest of the homepage.
+- Updated `app/(marketing)/ui/homepage-how-it-works.tsx` so each carousel card now uses `Reveal mode="mount"` with light stagger delays.
+- Resulting behavior:
+  - cards animate once on page load when the section renders
+  - cards do not re-trigger reveal animation while swiping horizontally through the carousel
+  - section intro and cards now feel consistent on initial load without adding swipe-linked motion noise
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Claude Blue theme token replacement (2026-04-03)
+
+- Updated `lib/themes.ts` to replace the `claude-blue` custom theme color tokens with the new palette provided by the user.
+- Scope of this replacement:
+  - applied to the semantic color-token set stored in the custom theme registry (`background`, `foreground`, `card`, `primary`, `secondary`, `muted`, `accent`, `border`, `input`, `ring`, charts, sidebar tokens, and dark equivalents)
+  - kept the theme id as `claude-blue`, so existing default-theme behavior in `lib/color-theme.ts` remains unchanged
+- Important implementation note:
+  - the provided snippet also included non-color CSS tokens such as fonts, radius, shadows, and spacing, but `lib/themes.ts` only stores color tokens for custom dashboard themes, so those global non-color values were not applied in this pass
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### Homepage mock browser-chrome compaction (2026-04-03)
+
+- Refined `app/(marketing)/ui/homepage-extension-highlight.tsx` to make the browser top bar slightly more compact.
+- Changes:
+  - reduced the top-bar vertical padding from `py-2.5` to `py-2`
+  - reduced the URL row inner vertical padding from `py-1` to `py-0.5`
+- Intent:
+  - keep the browser chrome believable while making it feel a little shorter and less visually tall above the mock content
+- Validation note:
+  - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
