@@ -1,5 +1,7 @@
 "use server"
 
+import { cacheLife, cacheTag, updateTag } from "next/cache"
+
 import { createClient } from "@/lib/supabase/server"
 
 import type { ReviewNote, ReviewSession } from "./review-model"
@@ -78,6 +80,10 @@ export async function getReviewSessionsPage({
   | { success: true; data: ReviewSession[]; totalCount: number }
   | { success: false; error: string }
 > {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`review-sessions:user:${userId}`)
+
   const supabase = await createClient()
 
   const safePage = Math.max(1, Math.trunc(page))
@@ -157,6 +163,10 @@ export async function saveReviewSession({
     }
   }
 
+  updateTag(`review-sessions:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
+
   return { success: true, data: fromDb(data as DbReviewSessionRow) }
 }
 
@@ -187,6 +197,10 @@ export async function deleteReviewSession({
       error: error?.message ?? "Failed to delete review session",
     }
   }
+
+  updateTag(`review-sessions:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
 
   return { success: true, data: fromDb(data as DbReviewSessionRow) }
 }
@@ -233,6 +247,10 @@ export async function getReviewNotes({
 }): Promise<
   { success: true; data: ReviewNote[] } | { success: false; error: string }
 > {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`notes:user:${userId}`)
+
   if (noteIds.length === 0) {
     return { success: true, data: [] }
   }

@@ -1,5 +1,7 @@
 "use server"
 
+import { cacheLife, cacheTag, updateTag } from "next/cache"
+
 import { createClient } from "@/lib/supabase/server"
 
 import { buildNotePreview, type Note } from "./notes-model"
@@ -49,6 +51,31 @@ function fromDb(row: DbNoteRow): Note {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     detailsLoaded: true,
+  }
+}
+
+function fromDbPreview(row: DbNoteRow): Note {
+  return {
+    id: row.id,
+    type: row.type,
+    courseId: row.course_id,
+    courseTitle: getCourseTitle(row.courses),
+    question: row.question,
+    previewText: buildNotePreview({
+      type: row.type,
+      answer: row.answer,
+      body: row.body,
+    }),
+    answer: null,
+    body: null,
+    understandingLevel: row.understanding_level,
+    flag: row.flag,
+    hasCodeSnippet: Boolean(row.code_snippet),
+    codeSnippet: null,
+    codeLanguage: row.code_language,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    detailsLoaded: false,
   }
 }
 
@@ -109,7 +136,17 @@ export async function createNote({
     return { success: false, error: error?.message ?? "Failed to create note" }
   }
 
-  return { success: true, data: fromDb(data as DbNoteRow) }
+  const created = fromDb(data as DbNoteRow)
+
+  updateTag(`notes:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
+  if (created.courseId) {
+    updateTag(`course:${created.courseId}`)
+    updateTag(`course-notes:${created.courseId}`)
+  }
+
+  return { success: true, data: created }
 }
 
 export async function updateNote({
@@ -156,7 +193,17 @@ export async function updateNote({
     return { success: false, error: error?.message ?? "Failed to update note" }
   }
 
-  return { success: true, data: fromDb(data as DbNoteRow) }
+  const updated = fromDb(data as DbNoteRow)
+
+  updateTag(`notes:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
+  if (updated.courseId) {
+    updateTag(`course:${updated.courseId}`)
+    updateTag(`course-notes:${updated.courseId}`)
+  }
+
+  return { success: true, data: updated }
 }
 
 export async function deleteNote({
@@ -182,7 +229,17 @@ export async function deleteNote({
     return { success: false, error: error?.message ?? "Failed to delete note" }
   }
 
-  return { success: true, data: fromDb(data as DbNoteRow) }
+  const deleted = fromDb(data as DbNoteRow)
+
+  updateTag(`notes:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
+  if (deleted.courseId) {
+    updateTag(`course:${deleted.courseId}`)
+    updateTag(`course-notes:${deleted.courseId}`)
+  }
+
+  return { success: true, data: deleted }
 }
 
 export async function getNote({
@@ -192,6 +249,10 @@ export async function getNote({
   noteId: string
   userId: string
 }): Promise<{ success: true; data: Note } | { success: false; error: string }> {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`notes:user:${userId}`)
+
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -219,6 +280,10 @@ export async function getNotes({
 }): Promise<
   { success: true; data: Note[] } | { success: false; error: string }
 > {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`notes:user:${userId}`)
+
   if (noteIds.length === 0) {
     return { success: true, data: [] }
   }
@@ -249,5 +314,69 @@ export async function getNotes({
     data: noteIds
       .map((noteId) => notesById.get(noteId))
       .filter((note): note is Note => note != null),
+  }
+}
+
+export async function getNotesList({
+  userId,
+}: {
+  userId: string
+}): Promise<
+  { success: true; data: Note[] } | { success: false; error: string }
+> {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`notes:user:${userId}`)
+
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from("notes")
+    .select(
+      "id,user_id,type,course_id,question,answer,body,understanding_level,flag,code_snippet,code_language,created_at,updated_at,courses(title)"
+    )
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false })
+
+  if (error || !data) {
+    return { success: false, error: error?.message ?? "Failed to load notes" }
+  }
+
+  return { success: true, data: (data as DbNoteRow[]).map(fromDbPreview) }
+}
+
+export async function getNoteCourses({
+  userId,
+}: {
+  userId: string
+}): Promise<
+  | { success: true; data: { id: string; title: string }[] }
+  | { success: false; error: string }
+> {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`courses:user:${userId}`)
+
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id,title")
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false })
+
+  if (error || !data) {
+    return {
+      success: false,
+      error: error?.message ?? "Failed to load courses",
+    }
+  }
+
+  return {
+    success: true,
+    data: (data as Array<{ id: string; title: string }>).map((course) => ({
+      id: course.id,
+      title: course.title,
+    })),
   }
 }

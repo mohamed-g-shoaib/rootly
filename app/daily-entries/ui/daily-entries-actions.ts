@@ -1,5 +1,7 @@
 "use server"
 
+import { cacheLife, cacheTag, updateTag } from "next/cache"
+
 import { createClient } from "@/lib/supabase/server"
 
 import type { DailyEntry, MoodFilter } from "./daily-entries-model"
@@ -69,6 +71,10 @@ export async function getDailyEntriesPage({
   | { success: true; data: DailyEntry[]; totalCount: number }
   | { success: false; error: string }
 > {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`daily-entries:user:${userId}`)
+
   const supabase = await createClient()
   const safePage = Math.max(1, Math.trunc(page))
   const safePageSize = Math.max(1, Math.min(100, Math.trunc(pageSize)))
@@ -155,6 +161,10 @@ export async function createEntry({
     return { success: false, error: error?.message ?? "Failed to create entry" }
   }
 
+  updateTag(`daily-entries:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
+
   return { success: true, data: fromDb(data as DbEntryRow) }
 }
 
@@ -196,6 +206,10 @@ export async function updateEntry({
     return { success: false, error: error?.message ?? "Failed to update entry" }
   }
 
+  updateTag(`daily-entries:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
+
   return { success: true, data: fromDb(data as DbEntryRow) }
 }
 
@@ -223,6 +237,10 @@ export async function deleteEntry({
   if (error || !data) {
     return { success: false, error: error?.message ?? "Failed to delete entry" }
   }
+
+  updateTag(`daily-entries:user:${userId}`)
+  updateTag(`overview-summary:user:${userId}`)
+  updateTag(`overview-trend:user:${userId}`)
 
   return { success: true, data: fromDb(data as DbEntryRow) }
 }
