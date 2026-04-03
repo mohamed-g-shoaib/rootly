@@ -66,6 +66,49 @@ function fromDb(row: DbReviewSessionRow): ReviewSession {
   }
 }
 
+export async function getReviewSessionsPage({
+  page,
+  pageSize,
+  userId,
+}: {
+  page: number
+  pageSize: number
+  userId: string
+}): Promise<
+  | { success: true; data: ReviewSession[]; totalCount: number }
+  | { success: false; error: string }
+> {
+  const supabase = await createClient()
+
+  const safePage = Math.max(1, Math.trunc(page))
+  const safePageSize = Math.max(1, Math.min(100, Math.trunc(pageSize)))
+  const from = (safePage - 1) * safePageSize
+  const to = from + safePageSize - 1
+
+  const { data, error, count } = await supabase
+    .from("review_sessions")
+    .select(
+      "id,user_id,name,accuracy,time_spent_minutes,question_count,shuffled,flagged_only,course_scores,created_at",
+      { count: "exact" }
+    )
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .range(from, to)
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message ?? "Failed to load review sessions",
+    }
+  }
+
+  return {
+    success: true,
+    data: ((data ?? []) as DbReviewSessionRow[]).map(fromDb),
+    totalCount: count ?? 0,
+  }
+}
+
 export async function saveReviewSession({
   session,
   userId,
