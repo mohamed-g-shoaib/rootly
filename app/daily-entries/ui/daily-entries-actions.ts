@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 
-import type { DailyEntry } from "./daily-entries-model"
+import type { DailyEntry, MoodFilter } from "./daily-entries-model"
 
 type DbEntryRow = {
   id: string
@@ -48,6 +48,66 @@ function toDbInsert(entry: DailyEntry, userId: string): DbInsertEntryRow {
     notes: entry.notes,
     created_at: entry.createdAt,
     updated_at: entry.updatedAt,
+  }
+}
+
+export async function getDailyEntriesPage({
+  page,
+  pageSize,
+  fromDate,
+  toDate,
+  moodFilter,
+  userId,
+}: {
+  page: number
+  pageSize: number
+  fromDate: string
+  toDate: string
+  moodFilter: MoodFilter
+  userId: string
+}): Promise<
+  | { success: true; data: DailyEntry[]; totalCount: number }
+  | { success: false; error: string }
+> {
+  const supabase = await createClient()
+  const safePage = Math.max(1, Math.trunc(page))
+  const safePageSize = Math.max(1, Math.min(100, Math.trunc(pageSize)))
+  const from = (safePage - 1) * safePageSize
+  const to = from + safePageSize - 1
+
+  let query = supabase
+    .from("daily_entries")
+    .select(
+      "id,user_id,date,study_time_minutes,mood,notes,created_at,updated_at",
+      { count: "exact" }
+    )
+    .eq("user_id", userId)
+
+  if (fromDate) {
+    query = query.gte("date", fromDate)
+  }
+  if (toDate) {
+    query = query.lte("date", toDate)
+  }
+  if (moodFilter !== "all") {
+    query = query.eq("mood", moodFilter)
+  }
+
+  const { data, error, count } = await query
+    .order("date", { ascending: false })
+    .range(from, to)
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message ?? "Failed to load daily entries",
+    }
+  }
+
+  return {
+    success: true,
+    data: ((data ?? []) as DbEntryRow[]).map(fromDb),
+    totalCount: count ?? 0,
   }
 }
 
