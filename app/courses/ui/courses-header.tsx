@@ -78,8 +78,6 @@ export function CoursesHeader({
       <PageContainer>
         {!isMobile ? (
           <div className="flex items-center gap-3 py-4">
-            <div className="text-lg font-medium">Courses</div>
-
             <div className="flex flex-1 items-center gap-2">
               <div className="w-56">
                 <Combobox
@@ -144,46 +142,28 @@ export function CoursesHeader({
           </div>
         ) : (
           <div className="py-3">
-            <div className="flex items-center justify-between">
-              <div className="text-lg font-medium">Courses</div>
+            <DashboardMobileActionRow>
               <Button
-                size="icon"
-                type="button"
-                aria-label="New course"
-                onClick={onNewCourse}
+                variant="outline"
+                className={cn(topicFilter !== "all" && "bg-muted")}
+                onClick={onOpenMobileTopic}
               >
-                <HugeiconsIcon icon={AddCircleIcon} size={18} />
+                Topic
               </Button>
-            </div>
+              <Button
+                variant="outline"
+                className={cn(sortKey !== "last_updated" && "bg-muted")}
+                onClick={onOpenMobileSort}
+              >
+                Sort by
+              </Button>
 
-            <div className="pt-3">
-              <DashboardMobileActionRow>
-                <Button
-                  variant="outline"
-                  className={cn(topicFilter !== "all" && "bg-muted")}
-                  onClick={onOpenMobileTopic}
-                >
-                  Topic
+              {filtersActive ? (
+                <Button variant="ghost" type="button" onClick={onClearFilters}>
+                  Clear
                 </Button>
-                <Button
-                  variant="outline"
-                  className={cn(sortKey !== "last_updated" && "bg-muted")}
-                  onClick={onOpenMobileSort}
-                >
-                  Sort by
-                </Button>
-
-                {filtersActive ? (
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={onClearFilters}
-                  >
-                    Clear
-                  </Button>
-                ) : null}
-              </DashboardMobileActionRow>
-            </div>
+              ) : null}
+            </DashboardMobileActionRow>
           </div>
         )}
       </PageContainer>

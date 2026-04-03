@@ -18,6 +18,7 @@ import { PageContainer } from "@/components/ui/page-container";
 
 import { useDailyEntryLiveUpdates } from "@/hooks/use-daily-entry-live-updates";
 import { useIsMobile } from "@/hooks/use-media-query";
+import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset";
 
 import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
 import { Button } from "@/components/ui/button";
@@ -79,6 +80,7 @@ export default function DailyEntriesPage({
   const [moodFilter, setMoodFilter] = React.useState<MoodFilter>("all");
 
   const [currentPage, setCurrentPage] = React.useState(1);
+  usePaginationScrollReset(currentPage);
 
   const resolvedEntriesQueryKey = React.useMemo(
     () =>
@@ -266,6 +268,9 @@ export default function DailyEntriesPage({
   ]);
 
   const filtersActive = Boolean(fromDate || toDate || moodFilter !== "all");
+  const changePage = React.useCallback((nextPage: number) => {
+    setCurrentPage(nextPage);
+  }, []);
   const openPrimaryAction = React.useCallback(() => {
     if (todayEntry) {
       setActiveEntryId(todayEntry.id);
@@ -448,9 +453,7 @@ export default function DailyEntriesPage({
                 variant="default"
                 size="sm"
                 className="h-8 w-8 p-0"
-                onClick={() => {
-                  setCurrentPage((page) => Math.max(1, page - 1));
-                }}
+                onClick={() => changePage(Math.max(1, currentPage - 1))}
                 disabled={currentPage <= 1 || pageLoading}
                 aria-label="Previous page"
               >
@@ -464,9 +467,9 @@ export default function DailyEntriesPage({
                 variant="default"
                 size="sm"
                 className="h-8 w-8 p-0"
-                onClick={() => {
-                  setCurrentPage((page) => Math.min(totalPages, page + 1));
-                }}
+                onClick={() =>
+                  changePage(Math.min(totalPages, currentPage + 1))
+                }
                 disabled={currentPage >= totalPages || pageLoading}
                 aria-label="Next page"
               >

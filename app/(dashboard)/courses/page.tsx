@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { ViewTransition } from "react";
 
 import CoursesPageUI from "@/app/courses/ui/courses-page";
 import type { Course } from "@/app/courses/ui/courses-model";
@@ -113,14 +112,12 @@ export default async function CoursesPage() {
   });
 
   return (
-    <ViewTransition enter="auto" exit="auto" default="none">
-      <CoursesPageUI
-        userId={userId}
-        initialCourses={initialCourses}
-        initialCoursesTotal={initialCoursesTotal}
-        coursesPageSize={COURSES_PAGE_SIZE}
-        initialTopicItems={uniqueTopicItems}
-      />
-    </ViewTransition>
+    <CoursesPageUI
+      userId={userId}
+      initialCourses={initialCourses}
+      initialCoursesTotal={initialCoursesTotal}
+      coursesPageSize={COURSES_PAGE_SIZE}
+      initialTopicItems={uniqueTopicItems}
+    />
   );
 }

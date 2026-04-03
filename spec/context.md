@@ -1138,6 +1138,294 @@ Recent findings:
 - Follow-up after visual review: the first shared-gap value made the floating dock sit too close to the screen edge, so the stack did not feel symmetric in practice.
 - Adjusted `app/globals.css` shared bottom-stack gaps from `0.75rem` to `1.25rem` on both mobile and desktop so the edge/dock, dock/pagination, and pagination/content intervals read more evenly.
 
+### Dashboard dock backdrop pass (2026-04-03)
+
+- Added the layered masked backdrop-blur treatment behind the desktop dashboard floating dock in `components/ui/floating-dock.tsx`.
+- Kept the effect desktop-only to stay conservative on performance and avoid extra visual weight on the mobile dock.
+- Implementation note:
+  - the dock still uses its own glass surface (`bg-background/95` + `backdrop-blur-sm`)
+  - the ambient backdrop is a separate non-interactive blur stack rendered behind the dock, mirroring the landing-page dock technique without changing dashboard spacing tokens
+
+### Dashboard dock transition isolation correction (2026-04-03)
+
+- Investigated a route-switch bug where dashboard page content could briefly render above the floating dock when navigating to Notes, then settle back into the correct stacking order.
+- Root cause:
+  - `components/ui/floating-dock.tsx` had the dock opted into view-transition snapshots via `viewTransitionName: "dashboard-dock"`
+  - even with animation disabled for that named group in `app/globals.css`, the browser still composited the dock as a transition snapshot layer during route switches, which could briefly produce incorrect visual stacking against incoming page content
+- Fix:
+  - restored true dock isolation by setting `viewTransitionName: "none"` on the desktop and mobile dock containers
+  - kept route-link `transitionTypes` behavior intact so page-to-page dashboard transitions still occur without treating the dock as animated page content
+
+### Dashboard dock blur visibility correction (2026-04-03)
+
+- Follow-up after visual review: the desktop dock had the blur-ramp structure, but the effect was not reading because the dock shell itself was too opaque.
+- Adjusted `components/ui/floating-dock.tsx`:
+  - extracted a shared `DOCK_SURFACE_CLASS`
+  - changed the dock shell from an almost-solid surface (`bg-background/95` + `backdrop-blur-sm`) to a proper frosted surface (`bg-background/60` + `backdrop-blur-xl` with a subtle border)
+- Result intent:
+  - content behind the dock should now visibly diffuse through the dock surface
+  - the atmospheric ramp behind the dock remains desktop-only and decorative, while the shell itself now contributes the readable frosted-glass effect
+
+### Dashboard dock blur-width alignment correction (2026-04-03)
+
+- Follow-up after user review: the decorative blur ramp footprint was still dock-sized, so it did not align with the actual dashboard content frame.
+- Updated `components/ui/floating-dock.tsx`:
+  - desktop dock wrapper now uses the same content-width frame as dashboard pages (`w-full max-w-7xl px-4 lg:px-6`)
+  - `DockBackdrop` now fills that local content frame with `absolute inset-x-0` instead of using a hard-coded width cap
+- Result intent:
+  - the behind-dock atmospheric blur now spans the same horizontal content region as the dashboard instead of reading like a narrower independent effect
+
+### Dashboard dock blur edge-to-edge correction (2026-04-03)
+
+- Follow-up after user review: aligning the decorative blur to the dashboard content frame created a visibly sharp transition near the viewport edges, where the bottom of the screen stayed clear and the blur only began inside the content column.
+- Updated `components/ui/floating-dock.tsx`:
+  - moved `DockBackdrop` to a viewport-wide fixed layer (`fixed inset-x-0 bottom-0`) on desktop
+  - kept the dock itself centered within the existing constrained dashboard frame
+- Result intent:
+  - the atmospheric blur now feathers continuously across the full bottom edge of the screen
+  - the dock remains aligned with dashboard content, while the decorative blur reads as ambient screen-space atmosphere rather than a boxed local effect
+
+### Dashboard dock full transition opt-out hardening (2026-04-03)
+
+- Follow-up after user review: the dock and/or decorative blur could still appear affected during dashboard route transitions, especially when opening Overview and Notes.
+- Applied hardening updates:
+  - `components/ui/floating-dock.tsx`
+    - introduced a shared `DOCK_VIEW_TRANSITION_STYLE`
+    - applied `viewTransitionName: "none"` not only to the dock wrappers, but also to the desktop blur layer and the dock `nav` surfaces themselves
+  - `app/(dashboard)/overview/page.tsx`
+    - restored a route-level `ViewTransition` wrapper so Overview transitions stay scoped to route content instead of falling back to a broader page transition shape
+  - `app/globals.css`
+    - removed stale `dashboard-dock` view-transition CSS after moving away from named dock snapshots entirely
+- Result intent:
+  - neither the dock surface nor the ambient blur ramp should participate in route transition snapshots
+  - dashboard route transitions should remain content-scoped instead of visually pulling fixed shell chrome along with them
+
+### Overview + Notes transition boundary disablement (2026-04-03)
+
+- Follow-up after additional user testing: the dock/blur still flickered or briefly disappeared specifically on `Overview` and `Notes` transitions.
+- Applied route-specific fallback:
+  - `components/ui/floating-dock.tsx`
+    - dock links now disable `transitionTypes` when either the current route or destination route is `/overview` or `/notes`
+  - `app/(dashboard)/overview/page.tsx`
+    - removed route-level `ViewTransition` wrapper
+  - `app/(dashboard)/notes/page.tsx`
+    - removed route-level `ViewTransition` wrapper
+- Rationale:
+  - those two boundaries are now treated as reliability-first no-transition paths
+  - if route transitions destabilize fixed chrome, remove the transition on the problematic boundary rather than letting shell UI flicker
+
+### Overview transition diagnosis refinement + Notes restoration (2026-04-03)
+
+- Follow-up after more testing: `Notes` was not actually the problematic route; `Overview` was the real outlier.
+- Root-cause framing:
+  - `Notes` matches the other stable list routes structurally: a single route-level UI subtree
+  - `Overview` is different because it has a stable top summary shell plus a separate streamed `Suspense` insights subtree, so a broad route transition boundary is more fragile there
+- Updated implementation:
+  - `components/ui/floating-dock.tsx`
+    - restored normal dashboard lateral transitions for `Notes`
+    - kept `/overview` as the only route excluded from dock-link `transitionTypes`
+  - `app/(dashboard)/notes/page.tsx`
+    - restored the route-level `ViewTransition` wrapper
+  - `app/(dashboard)/overview/page.tsx`
+    - reintroduced `ViewTransition`, but only around `OverviewPageUI`
+    - left `OverviewInsights` outside that transition boundary, still rendered via `Suspense`
+- Result intent:
+  - `Notes` should behave like the other working dashboard routes again
+  - `Overview` should regain a route transition on its stable shell without letting the streamed insights subtree destabilize the fixed dock/blur chrome
+
+### Shared page-transition rewrite (2026-04-03)
+
+- User decision: remove the browser/React View Transition implementation entirely and replace it with one shared, highly performant page transition used across the app.
+- Removed old transition system:
+  - disabled Next experimental browser view transitions in `next.config.mjs`
+  - removed route-level `ViewTransition` wrappers from dashboard route pages
+  - removed `transitionTypes` link usage and shared-element `ViewTransition` usage from courses UI
+  - removed all dock-specific view-transition opt-out plumbing because the browser transition system is no longer in use
+- New shared transition architecture:
+  - added route-group templates:
+    - `app/(dashboard)/template.tsx`
+    - `app/(marketing)/template.tsx`
+    - `app/(auth)/template.tsx`
+  - added shared wrapper component:
+    - `components/ui/page-transition-shell.tsx`
+  - added shared CSS animation in `app/globals.css`:
+    - short entry-only transition using `opacity`, `translate3d`, and a small blur
+    - custom strong ease-out curve (`cubic-bezier(0.23, 1, 0.32, 1)`)
+    - reduced-motion fallback with opacity-only animation
+- Design/performance rationale:
+  - avoids browser view-transition snapshot issues with fixed shell chrome like the dashboard dock
+  - uses a small, consistent CSS animation instead of per-route transition wiring
+  - keeps motion subtle, fast, and reusable across all main app pages
+
+### Shared page-transition fix (2026-04-04)
+
+- Follow-up after user report: the shared CSS page transition was wired, but it was not visibly replaying during client-side navigation.
+- Root cause:
+  - `components/ui/page-transition-shell.tsx` rendered a static wrapper with the animation class, but nothing forced a fresh animated DOM node per pathname change
+  - result: the CSS entry animation could run on initial mount without reliably replaying on route transitions
+- Fix:
+  - converted `components/ui/page-transition-shell.tsx` into a client component
+  - keyed the animated shell by `usePathname()` so route changes remount the transition wrapper and replay the shared entry animation
+- This keeps the same architecture:
+  - route-group templates still provide the single shared transition surface
+  - animation timing and styling remain centralized in `app/globals.css`
+
+### Theme switch sound alignment (2026-04-04)
+
+- Updated theme-changing controls so they use the switch audio instead of falling through to the generic click sound.
+- Added a shared helper in `components/theme-provider.tsx`:
+  - `playThemeSwitchSound(...)` now centralizes theme-audio behavior for explicit theme changes
+  - reused that helper in the keyboard theme hotkey so all theme changes share the same sound logic
+- Dashboard avatar menu:
+  - `app/ui/dashboard-shell.tsx`
+  - the light/dark `Switch` in both desktop avatar popover and mobile avatar sheet now opts out of generic click audio and plays the switch sound before calling `setTheme(...)`
+- Marketing homepage footer:
+  - `app/(marketing)/ui/theme-switcher-multi-button.tsx`
+  - the multi-button theme selector now opts out of generic click audio and uses the same switch-sound helper for `system`, `light`, and `dark`
+
+### Theme toggle click-sound suppression hardening (2026-04-04)
+
+- Follow-up after user testing: the dashboard avatar-menu theme toggle could still play the generic click sound alongside the intended switch sound.
+- Root cause:
+  - the global click-sound listener only checked the nearest matched clickable target itself
+  - it did not suppress clicks that occurred inside an ancestor subtree already marked with `data-click-sound="off"`
+- Fix:
+  - updated `components/theme-provider.tsx` so the global click handler bails early when the event target is inside any `[data-click-sound="off"]` subtree
+  - marked the full dashboard `ThemeToggle` wrapper in `app/ui/dashboard-shell.tsx` as `data-click-sound="off"` so the entire control is explicitly switch-sound-only
+
+### Understanding Progress chart interpolation correction (2026-04-04)
+
+- Updated `app/overview/ui/charts/understanding-progress-chart.tsx` to use `type="linear"` instead of `type="monotone"` on the Recharts line.
+- Rationale:
+  - the chart is still correctly a line chart because it shows a time trend
+  - but the metric itself is a bounded daily average derived from discrete understanding levels (`1`, `2`, `3`)
+  - `monotone` smoothing implied a more continuous organic curve than the underlying data justified
+  - `linear` keeps the trend readable without over-smoothing the signal
+
+### Delete menu-to-dialog composition fix (2026-04-04)
+
+- Loaded the `coss` skill and re-reviewed Base UI composition guidance for cross-component overlay flows.
+- Root cause of delete doing nothing from card menus:
+  - note, course, daily-entry, and review card deletes all tried to open `AlertDialog` from inside `DropdownMenuContent` using `AlertDialogTrigger`
+  - when the menu item was selected, the menu subtree closed/unmounted, which prevented the dialog handoff from occurring reliably
+  - this matched the observed symptom: no delete request, no console error, and no network activity
+- Correct fix:
+  - keep delete confirmation dialogs controlled with local `open` state
+  - render the `AlertDialog` outside the dropdown menu subtree
+  - let the destructive menu item only set `open = true`
+- Updated files:
+  - `app/notes/ui/notes-components.tsx`
+  - `app/courses/ui/courses-components.tsx`
+  - `app/daily-entries/ui/daily-entries-components.tsx`
+  - `app/review/ui/review-components.tsx`
+
+### Understanding Progress y-axis tick correction (2026-04-04)
+
+- Updated `app/overview/ui/charts/understanding-progress-chart.tsx` so the Y axis now uses explicit ticks `[1, 2, 3]`.
+- Rationale:
+  - Recharts auto-generated intermediate tick positions within the `1..3` domain
+  - the chart formatted those positions as whole numbers, which produced duplicate visible labels like `1 2 2 3 3`
+  - explicit integer ticks keep the bounded understanding scale readable and semantically correct
+
+### Overview Course Mastery removal (2026-04-04)
+
+- Removed the `Course Mastery` block from the Overview page and cleaned up its app-side implementation.
+- Deleted the lightweight list component:
+  - `app/overview/ui/charts/course-mastery-list.tsx`
+- Cleaned the Overview insights pipeline:
+  - `app/overview/ui/overview-insights-client.tsx`
+    - removed the `Course Mastery` section, prop, and local row type
+  - `app/overview/ui/overview-insights.tsx`
+    - removed course-mastery derivation, perf payload fields, prop passing, and skeleton section
+  - `app/overview/overview-data.ts`
+    - removed now-unused `CourseMasteryRow` type export
+- Result:
+  - Overview now focuses on daily study time, daily mood, and understanding progress only
+  - app code no longer carries dead overview UI/data structures for the removed block
+
+### Dashboard pagination sizing + scroll behavior update (2026-04-04)
+
+- Updated visible card counts before pagination on the main dashboard surfaces:
+  - Notes: `12` per page in `app/notes/ui/notes-page.tsx`
+  - Courses: remains `12` per page via `app/(dashboard)/courses/page.tsx`
+  - Daily Entries: `10` per page in `app/(dashboard)/daily-entries/page.tsx`
+  - Review Sessions: `8` per page in `app/(dashboard)/review/page.tsx`
+- Added scroll-to-top behavior on page changes so pagination no longer leaves the user stuck at the bottom after advancing pages:
+  - `app/notes/ui/notes-page.tsx`
+  - `app/courses/ui/courses-page.tsx`
+  - `app/daily-entries/ui/daily-entries-page.tsx`
+  - `app/review/ui/review-page.tsx`
+- Enabled global smooth scrolling in `app/globals.css` with a reduced-motion fallback back to `auto`.
+
+### Dashboard pagination scroll-anchor follow-up (2026-04-04)
+
+- Reworked dashboard pagination scroll reset so it follows actual page-number changes instead of firing immediately inside pagination button click handlers.
+- Added shared hook:
+  - `hooks/use-pagination-scroll-reset.ts`
+    - waits for the paginated state update to land, then scrolls the window to the true page top
+    - respects `prefers-reduced-motion`
+- Applied the shared true-top reset pattern to all paginated dashboard list screens:
+  - `app/notes/ui/notes-page.tsx`
+  - `app/courses/ui/courses-page.tsx`
+  - `app/daily-entries/ui/daily-entries-page.tsx`
+  - `app/review/ui/review-page.tsx`
+- UX intent:
+  - avoids the “works once” feel caused by scrolling too early
+  - resets all the way to the top of the page instead of only the top of the content grid
+
+### Dashboard page-identity hierarchy cleanup (2026-04-04)
+
+- Removed redundant root-page titles from sticky dashboard action bars now that page identity already lives in the dock:
+  - `app/notes/ui/notes-header.tsx`
+  - `app/courses/ui/courses-header.tsx`
+  - `app/daily-entries/ui/daily-entries-header.tsx`
+  - `app/review/ui/review-page.tsx`
+- Updated the mobile dock to carry page labels below icons instead of inline beside them:
+  - `components/ui/floating-dock.tsx`
+  - each mobile item now behaves more like a native tab-bar target with:
+    - icon on top
+    - small label underneath
+    - larger vertical hit area
+- Increased shared mobile dock height token in `app/globals.css` from `2.75rem` to `4rem` so shell clearance matches the taller native-style mobile dock.
+- UX intent:
+  - keep page identity in one stable place instead of repeating it in the sticky top bar
+  - make the mobile dock read like a real navigation tab bar rather than icon chips with hidden meaning
+
+### Mobile sticky-header space cleanup (2026-04-04)
+
+- Removed leftover mobile header rows that were still reserving space after page titles were removed:
+  - `app/notes/ui/notes-header.tsx`
+  - `app/courses/ui/courses-header.tsx`
+  - `app/daily-entries/ui/daily-entries-header.tsx`
+- Notes mobile header was regrouped by control type instead of keeping top-right icon actions:
+  - first row now carries filters/export
+  - second row now carries note-state toggles (`Flagged`, `Reveal/Hide Answers`) plus `Clear` when needed
+  - mobile create action is no longer duplicated in the sticky header because the dashboard FAB already owns that role
+- Courses and Daily mobile headers now rely on the dashboard FAB for create/log actions and keep only filter chips in the sticky row.
+
+### FAB spacing + review header cleanup (2026-04-04)
+
+- Fixed the mobile dashboard FAB offset in `app/ui/dashboard-shell.tsx`:
+  - replaced the hardcoded `bottom-20` position with a token-based offset derived from the mobile floating-gap and dock-height variables
+  - this restores a deliberate gap between the FAB and the taller mobile dock instead of making them feel stuck together
+- Follow-up adjustment:
+  - attempted a dedicated mobile FAB clearance token in `app/globals.css`
+  - that change regressed FAB visibility in practice, so it was removed
+- Follow-up implementation hardening:
+  - reverted the mobile FAB positioning experiment in `app/ui/dashboard-shell.tsx`
+  - FAB now uses a simple visible mobile offset class again (`bottom-28`) instead of CSS-calc/token positioning
+- Root-cause fix for disappearing FAB:
+  - aligned `hooks/use-media-query.ts` breakpoint token `md` from `800` to `768`
+  - this removes the mismatch where `useIsMobile()` could register a mobile FAB while Tailwind `md:hidden` was already hiding it
+  - result: JS/mobile logic and CSS/mobile visibility now use the same threshold
+- Removed the now-empty sticky review header from `app/review/ui/review-page.tsx`.
+- Review start action now lives:
+  - on mobile: dashboard FAB
+  - on desktop list view: a regular top-right content action above the sessions grid
+- UX intent:
+  - preserve one clear action entry point per context without dedicating a whole sticky bar to a single button
+
+
 ### Homepage extension marketing update (2026-04-03)
 
 - Updated the homepage hero CTA in `app/(marketing)/ui/homepage-hero.tsx`:

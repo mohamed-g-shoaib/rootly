@@ -13,6 +13,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useAnswerVisibility } from "@/hooks/use-answer-visibility";
 import { useIsMobile } from "@/hooks/use-media-query";
 import { useNoteLiveUpdates } from "@/hooks/use-note-live-updates";
+import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset";
 
 import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
 import { Button } from "@/components/ui/button";
@@ -221,8 +222,9 @@ export default function NotesPage({
   const [mobileExportSheetOpen, setMobileExportSheetOpen] =
     React.useState(false);
 
-  const pageSize = 18;
+  const pageSize = 12;
   const [currentPage, setCurrentPage] = React.useState(1);
+  usePaginationScrollReset(currentPage);
 
   const now = React.useMemo(() => new Date(), []);
 
@@ -315,6 +317,10 @@ export default function NotesPage({
   const globalShowAnswers =
     qaNoteIds.length > 0 &&
     qaNoteIds.every((id) => answerVisibility.isShown(id));
+
+  const changePage = React.useCallback((nextPage: number) => {
+    setCurrentPage(nextPage);
+  }, []);
 
   function clearFilters() {
     setTypeFilter("all");
@@ -575,10 +581,8 @@ export default function NotesPage({
         answerVisibility={answerVisibility}
         onNewNote={() => setCreateOpen(true)}
         onClearFilters={clearFilters}
-        onPreviousPage={() => setCurrentPage((page) => Math.max(1, page - 1))}
-        onNextPage={() =>
-          setCurrentPage((page) => Math.min(totalPages, page + 1))
-        }
+        onPreviousPage={() => changePage(Math.max(1, currentPage - 1))}
+        onNextPage={() => changePage(Math.min(totalPages, currentPage + 1))}
         onEdit={openEdit}
         onViewFull={openView}
         onViewCode={openCode}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { ViewTransition } from "react";
 
 import ReviewPageUI from "@/app/review/ui/review-page";
 import type {
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
   title: "Review",
 };
 
-const REVIEW_SESSIONS_PAGE_SIZE = 12;
+const REVIEW_SESSIONS_PAGE_SIZE = 8;
 
 async function getInitialReviewData(userId: string) {
   "use cache: private";
@@ -190,15 +189,13 @@ export default async function ReviewPage() {
   });
 
   return (
-    <ViewTransition enter="auto" exit="auto" default="none">
-      <ReviewPageUI
-        userId={userId}
-        initialSessions={initialSessions}
-        initialSessionsTotal={initialSessionsTotal}
-        sessionsPageSize={REVIEW_SESSIONS_PAGE_SIZE}
-        courses={courses}
-        initialNotesPool={initialNotesPool}
-      />
-    </ViewTransition>
+    <ReviewPageUI
+      userId={userId}
+      initialSessions={initialSessions}
+      initialSessionsTotal={initialSessionsTotal}
+      sessionsPageSize={REVIEW_SESSIONS_PAGE_SIZE}
+      courses={courses}
+      initialNotesPool={initialNotesPool}
+    />
   );
 }

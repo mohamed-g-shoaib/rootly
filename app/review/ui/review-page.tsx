@@ -17,6 +17,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import { PageContainer } from "@/components/ui/page-container";
 import { useIsMobile } from "@/hooks/use-media-query";
+import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -41,7 +42,6 @@ import {
 } from "@/components/ui/form";
 
 import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
-import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header";
 import {
   deleteReviewSession,
   getReviewSessionsPage,
@@ -181,6 +181,7 @@ export default function ReviewPage({
 
   const queryClient = useQueryClient();
   const [sessionsPage, setSessionsPage] = React.useState(1);
+  usePaginationScrollReset(sessionsPage);
 
   const [detailOpen, setDetailOpen] = React.useState(false);
   const [selectedSessionId, setSelectedSessionId] = React.useState<
@@ -274,6 +275,10 @@ export default function ReviewPage({
       },
     });
   }, [queryClient, sessionsPage, sessionsPageSize, sessionsTotalPages, userId]);
+
+  const changeSessionsPage = React.useCallback((nextPage: number) => {
+    setSessionsPage(nextPage);
+  }, []);
 
   async function ensureReviewNotesLoaded(noteIds: string[]) {
     if (!userId) return [];
@@ -563,8 +568,6 @@ export default function ReviewPage({
 
   return (
     <>
-      <ReviewPageHeader onStart={() => setSetupOpen(true)} />
-
       <ReviewPageContent
         view={view}
         courses={courses}
@@ -578,9 +581,7 @@ export default function ReviewPage({
         onStart={() => setSetupOpen(true)}
         onSaveSession={onSaveSession}
         onDiscardSummary={() => setView({ type: "list" })}
-        onChangeSessionsPage={(page) => {
-          setSessionsPage(page);
-        }}
+        onChangeSessionsPage={changeSessionsPage}
         onOpenSessionDetail={openSessionDetail}
         onDeleteSession={onDeleteSession}
       />
@@ -660,22 +661,6 @@ function ActiveReviewSession({
   );
 }
 
-function ReviewPageHeader({ onStart }: { onStart: () => void }) {
-  return (
-    <DashboardStickyHeader>
-      <PageContainer>
-        <div className="flex items-center justify-between py-4">
-          <div className="text-lg font-medium">Review Sessions</div>
-          <Button onClick={onStart} type="button" className="gap-2">
-            <HugeiconsIcon icon={PlayIcon} size={18} />
-            <span className="hidden sm:inline">Start Review</span>
-          </Button>
-        </div>
-      </PageContainer>
-    </DashboardStickyHeader>
-  );
-}
-
 function ReviewPageContent({
   view,
   courses,
@@ -718,6 +703,15 @@ function ReviewPageContent({
   return (
     <PageContainer>
       <div className="flex min-h-[calc(100vh-14rem)] flex-col py-6 pb-8">
+        {view.type === "list" ? (
+          <div className="hidden justify-end pb-4 md:flex">
+            <Button onClick={onStart} type="button" className="gap-2">
+              <HugeiconsIcon icon={PlayIcon} size={18} />
+              Start Review
+            </Button>
+          </div>
+        ) : null}
+
         {view.type === "summary" ? (
           <ReviewSummary
             data={view.data}

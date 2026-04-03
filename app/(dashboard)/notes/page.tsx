@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { ViewTransition } from "react";
 
 import NotesPageUI from "@/app/notes/ui/notes-page";
 import { buildNotePreview, type Note } from "@/app/notes/ui/notes-model";
@@ -117,12 +116,10 @@ export default async function NotesPage() {
   });
 
   return (
-    <ViewTransition enter="auto" exit="auto" default="none">
-      <NotesPageUI
-        userId={userId}
-        initialNotes={initialNotes}
-        initialCourses={initialCourses}
-      />
-    </ViewTransition>
+    <NotesPageUI
+      userId={userId}
+      initialNotes={initialNotes}
+      initialCourses={initialCourses}
+    />
   );
 }

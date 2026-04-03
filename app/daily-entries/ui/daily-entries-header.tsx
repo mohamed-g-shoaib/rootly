@@ -96,8 +96,6 @@ export function DailyEntriesHeader({
       <PageContainer>
         {!isMobile ? (
           <div className="flex items-center gap-3 py-4">
-            <div className="text-lg font-medium">Daily Entries</div>
-
             <div className="flex flex-1 items-center gap-2">
               <Popover>
                 <PopoverTrigger
@@ -168,47 +166,28 @@ export function DailyEntriesHeader({
           </div>
         ) : (
           <div className="py-3">
-            <div className="flex items-center justify-between">
-              <div className="text-lg font-medium">Daily Entries</div>
+            <DashboardMobileActionRow>
               <Button
-                size="icon"
-                aria-label={todayHasEntry ? "Today's entry" : "Log today"}
-                onClick={onPrimaryAction}
+                variant="outline"
+                className={cn((fromDate !== "" || toDate !== "") && "bg-muted")}
+                onClick={onOpenMobileDates}
               >
-                <HugeiconsIcon icon={AddCircleIcon} size={18} />
+                Dates
               </Button>
-            </div>
+              <Button
+                variant="outline"
+                className={cn(moodFilter !== "all" && "bg-muted")}
+                onClick={onOpenMobileMood}
+              >
+                Mood
+              </Button>
 
-            <div className="pt-3">
-              <DashboardMobileActionRow>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    (fromDate !== "" || toDate !== "") && "bg-muted"
-                  )}
-                  onClick={onOpenMobileDates}
-                >
-                  Dates
+              {filtersActive ? (
+                <Button variant="ghost" type="button" onClick={onClearFilters}>
+                  Clear
                 </Button>
-                <Button
-                  variant="outline"
-                  className={cn(moodFilter !== "all" && "bg-muted")}
-                  onClick={onOpenMobileMood}
-                >
-                  Mood
-                </Button>
-
-                {filtersActive ? (
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={onClearFilters}
-                  >
-                    Clear
-                  </Button>
-                ) : null}
-              </DashboardMobileActionRow>
-            </div>
+              ) : null}
+            </DashboardMobileActionRow>
           </div>
         )}
       </PageContainer>

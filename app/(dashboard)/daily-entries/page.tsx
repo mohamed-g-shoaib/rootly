@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { ViewTransition } from "react";
 
 import DailyEntriesPageUI from "@/app/daily-entries/ui/daily-entries-page";
 import type { DailyEntry } from "@/app/daily-entries/ui/daily-entries-model";
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
   title: "Daily Entries",
 };
 
-const DAILY_ENTRIES_PAGE_SIZE = 20;
+const DAILY_ENTRIES_PAGE_SIZE = 10;
 
 async function getInitialDailyEntriesData(userId: string) {
   "use cache: private";
@@ -82,13 +81,11 @@ export default async function DailyEntriesPage() {
   });
 
   return (
-    <ViewTransition enter="auto" exit="auto" default="none">
-      <DailyEntriesPageUI
-        userId={userId}
-        initialEntries={initialEntries}
-        initialEntriesTotal={initialEntriesTotal}
-        entriesPageSize={DAILY_ENTRIES_PAGE_SIZE}
-      />
-    </ViewTransition>
+    <DailyEntriesPageUI
+      userId={userId}
+      initialEntries={initialEntries}
+      initialEntriesTotal={initialEntriesTotal}
+      entriesPageSize={DAILY_ENTRIES_PAGE_SIZE}
+    />
   );
 }

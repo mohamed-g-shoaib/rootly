@@ -243,8 +243,6 @@ function DesktopNotesHeader({
 }) {
   return (
     <div className="flex items-center gap-3 py-4">
-      <div className="text-lg font-medium">Notes</div>
-
       <div className="flex flex-1 items-center gap-2">
         <HeaderFilterCombobox
           ariaLabel="Type"
@@ -339,8 +337,39 @@ function MobileNotesHeader({
 }) {
   return (
     <div className="py-3">
-      <div className="flex items-center justify-between">
-        <div className="text-lg font-medium">Notes</div>
+      <DashboardMobileActionRow>
+        <Button
+          variant="outline"
+          className={cn(typeFilter !== "all" && "bg-muted")}
+          onClick={onOpenMobileType}
+        >
+          Type
+        </Button>
+        <Button
+          variant="outline"
+          className={cn(courseFilter !== "all" && "bg-muted")}
+          onClick={onOpenMobileCourse}
+        >
+          Course
+        </Button>
+        <Button
+          variant="outline"
+          className={cn(sortKey !== "last_updated" && "bg-muted")}
+          onClick={onOpenMobileSort}
+        >
+          Sort by
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Export"
+          onClick={onOpenMobileExport}
+        >
+          <HugeiconsIcon icon={Download01Icon} size={18} />
+        </Button>
+      </DashboardMobileActionRow>
+
+      <DashboardMobileActionRow className="pt-2">
         <NotesHeaderActions
           flaggedOnly={flaggedOnly}
           hasQa={hasQa}
@@ -350,46 +379,12 @@ function MobileNotesHeader({
           onToggleGlobalAnswers={onToggleGlobalAnswers}
           onNewNote={onNewNote}
         />
-      </div>
-
-      <div className="pt-3">
-        <DashboardMobileActionRow>
-          <Button
-            variant="outline"
-            className={cn(typeFilter !== "all" && "bg-muted")}
-            onClick={onOpenMobileType}
-          >
-            Type
+        {filtersActive ? (
+          <Button variant="ghost" type="button" onClick={onClearFilters}>
+            Clear
           </Button>
-          <Button
-            variant="outline"
-            className={cn(courseFilter !== "all" && "bg-muted")}
-            onClick={onOpenMobileCourse}
-          >
-            Course
-          </Button>
-          <Button
-            variant="outline"
-            className={cn(sortKey !== "last_updated" && "bg-muted")}
-            onClick={onOpenMobileSort}
-          >
-            Sort by
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Export"
-            onClick={onOpenMobileExport}
-          >
-            <HugeiconsIcon icon={Download01Icon} size={18} />
-          </Button>
-          {filtersActive ? (
-            <Button variant="ghost" type="button" onClick={onClearFilters}>
-              Clear
-            </Button>
-          ) : null}
-        </DashboardMobileActionRow>
-      </div>
+        ) : null}
+      </DashboardMobileActionRow>
     </div>
   )
 }
@@ -551,15 +546,17 @@ function NotesHeaderActions({
               ? "secondary"
               : "outline"
         }
-        size="icon"
+        size={mobile ? "sm" : "icon"}
         aria-label={flaggedOnly ? "Show all notes" : "Show flagged notes"}
         onClick={onToggleFlaggedOnly}
+        className={mobile ? "gap-2" : undefined}
       >
         <HugeiconsIcon
           icon={Flag01Icon}
           size={18}
           color={flaggedOnly ? "var(--destructive)" : "currentColor"}
         />
+        {mobile ? "Flagged" : null}
       </Button>
 
       {hasQa ? (
@@ -573,30 +570,37 @@ function NotesHeaderActions({
                 ? "secondary"
                 : "outline"
           }
-          size="icon"
+          size={mobile ? "sm" : "icon"}
           aria-label={
             globalShowAnswers ? "Hide all answers" : "Show all answers"
           }
           onClick={onToggleGlobalAnswers}
+          className={mobile ? "gap-2" : undefined}
         >
           <HugeiconsIcon
             icon={globalShowAnswers ? ViewOffIcon : EyeIcon}
             size={18}
             color={globalShowAnswers ? "var(--info)" : "currentColor"}
           />
+          {mobile
+            ? globalShowAnswers
+              ? "Hide Answers"
+              : "Reveal Answers"
+            : null}
         </Button>
       ) : null}
 
-      <Button
-        onClick={onNewNote}
-        type="button"
-        className={mobile ? undefined : "gap-2"}
-        size={mobile ? "icon" : undefined}
-        aria-label="New note"
-      >
-        <HugeiconsIcon icon={AddCircleIcon} size={18} />
-        {mobile ? null : "New Note"}
-      </Button>
+      {mobile ? null : (
+        <Button
+          onClick={onNewNote}
+          type="button"
+          className="gap-2"
+          aria-label="New note"
+        >
+          <HugeiconsIcon icon={AddCircleIcon} size={18} />
+          New Note
+        </Button>
+      )}
     </div>
   )
 }

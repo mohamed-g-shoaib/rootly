@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import * as React from "react";
-import { ViewTransition } from "react";
 
 import {
   ArrowLeft01Icon,
@@ -372,9 +371,7 @@ export default function CourseDetailPage({
         <div className="pt-6">
           <div className="text-lg font-medium">Course not found</div>
           <div className="pt-3">
-            <Button
-              render={<Link href="/courses" transitionTypes={["nav-back"]} />}
-            >
+            <Button render={<Link href="/courses" />}>
               Back to Courses
             </Button>
           </div>
@@ -564,7 +561,7 @@ function CourseDetailHeader({
             <Button
               variant="ghost"
               className="gap-2"
-              render={<Link href="/courses" transitionTypes={["nav-back"]} />}
+              render={<Link href="/courses" />}
             >
               <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
               Courses
@@ -583,13 +580,7 @@ function CourseDetailHeader({
           <div className="flex items-start justify-between gap-4 pt-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <ViewTransition
-                  name={`course-title-${course.id}`}
-                  share="auto"
-                  default="none"
-                >
-                  <div className="text-xl font-semibold">{course.title}</div>
-                </ViewTransition>
+                <div className="text-xl font-semibold">{course.title}</div>
                 {course.topics.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {course.topics.map((t) => (

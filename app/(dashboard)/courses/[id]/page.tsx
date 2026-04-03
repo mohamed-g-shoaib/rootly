@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { Suspense, ViewTransition } from "react";
+import { Suspense } from "react";
 
 import CourseDetailPageUI from "@/app/courses/ui/course-detail-page";
 import type { Course } from "@/app/courses/ui/courses-model";
@@ -146,13 +146,11 @@ async function CourseDetailPageContent({
   });
 
   return (
-    <ViewTransition enter="auto" exit="auto" default="none">
-      <CourseDetailPageUI
-        courseId={id}
-        userId={userId}
-        course={course}
-        initialNotes={initialNotes}
-      />
-    </ViewTransition>
+    <CourseDetailPageUI
+      courseId={id}
+      userId={userId}
+      course={course}
+      initialNotes={initialNotes}
+    />
   );
 }
