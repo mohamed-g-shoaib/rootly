@@ -51,6 +51,11 @@
       "sourceType": "github",
       "computedHash": "c31ddd68ba5798a79a516c619b1e1fc4408cc4876ad600fefa4f5add4425719d"
     },
+    "next-cache-components": {
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github",
+      "computedHash": "844401be868754beba2e7dc2c66abbe08b740eeefdec69c630ff6cbd81cc4c62"
+    },
     "postgres-pro": {
       "source": "jeffallan/claude-skills",
       "sourceType": "github",
@@ -65,6 +70,11 @@
       "source": "softaworks/agent-toolkit",
       "sourceType": "github",
       "computedHash": "1fdf524f8335afac6f44d3460d6d20e71db9c1d14643e4a31ea17d6463504447"
+    },
+    "redis-development": {
+      "source": "redis/agent-skills",
+      "sourceType": "github",
+      "computedHash": "993ad240385d830a9717796a4b76e835ed737bfc9d3e10a4528e00bacd58cbf8"
     },
     "seo-audit": {
       "source": "coreyhaines31/marketingskills",
@@ -85,6 +95,11 @@
       "source": "josiahsiegel/claude-plugin-marketplace",
       "sourceType": "github",
       "computedHash": "bf3eb96bcdcceb54cf2c0ba01daa18275c169627f37f5a861490c78e8055a5ce"
+    },
+    "tanstack-query-best-practices": {
+      "source": "deckardger/tanstack-agent-skills",
+      "sourceType": "github",
+      "computedHash": "addf4358803d7746f7fe0475a3370d835775217e00dd5fc7bbd8a7d6c53d81e5"
     },
     "typescript-advanced-types": {
       "source": "wshobson/agents",
