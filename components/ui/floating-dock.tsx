@@ -3,6 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import {
+  Moon02Icon,
+  Sun01Icon,
+  VolumeHighIcon,
+  VolumeOffIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AnimatePresence,
   domAnimation,
@@ -16,6 +24,10 @@ import {
 } from "motion/react";
 
 import { cn } from "@/lib/utils";
+import { switchOffSound } from "@/lib/audio/switch-off";
+import { switchOnSound } from "@/lib/audio/switch-on";
+import { playSound } from "@/lib/audio/sound-engine";
+import { useAudioPreferences } from "@/components/theme-provider";
 
 export type FloatingDockItem = {
   label: string;
@@ -70,6 +82,28 @@ function FloatingDockMobile({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { resolvedTheme, setTheme } = useTheme();
+  const { muted, setMuted } = useAudioPreferences();
+
+  function handleThemeToggle() {
+    if (muted) {
+      setTheme(resolvedTheme === "dark" ? "light" : "dark");
+      return;
+    }
+
+    if (resolvedTheme === "dark") {
+      void playSound(switchOnSound.dataUri);
+      setTheme("light");
+      return;
+    }
+
+    void playSound(switchOffSound.dataUri);
+    setTheme("dark");
+  }
+
+  function handleMuteToggle() {
+    setMuted((previous) => !previous);
+  }
 
   const prefetch = React.useCallback(
     (href: string) => {
@@ -129,6 +163,36 @@ function FloatingDockMobile({
             </Link>
           );
         })}
+
+        <button
+          type="button"
+          data-click-sound="off"
+          aria-label="Toggle theme"
+          onClick={handleThemeToggle}
+          className="flex size-11 items-center justify-center rounded-xl border border-border bg-muted text-foreground transition-colors hover:bg-muted"
+        >
+          <DockIcon>
+            <HugeiconsIcon
+              icon={resolvedTheme === "dark" ? Sun01Icon : Moon02Icon}
+              size={18}
+            />
+          </DockIcon>
+        </button>
+
+        <button
+          type="button"
+          data-click-sound="off"
+          aria-label={muted ? "Unmute sounds" : "Mute sounds"}
+          onClick={handleMuteToggle}
+          className="flex size-11 items-center justify-center rounded-xl border border-border bg-muted text-foreground transition-colors hover:bg-muted"
+        >
+          <DockIcon>
+            <HugeiconsIcon
+              icon={muted ? VolumeOffIcon : VolumeHighIcon}
+              size={18}
+            />
+          </DockIcon>
+        </button>
       </nav>
     </div>
   );
@@ -143,8 +207,30 @@ function FloatingDockDesktop({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { resolvedTheme, setTheme } = useTheme();
+  const { muted, setMuted } = useAudioPreferences();
   const mouseX = useMotionValue(Infinity);
   const shouldReduceMotion = Boolean(useReducedMotion());
+
+  function handleThemeToggle() {
+    if (muted) {
+      setTheme(resolvedTheme === "dark" ? "light" : "dark");
+      return;
+    }
+
+    if (resolvedTheme === "dark") {
+      void playSound(switchOnSound.dataUri);
+      setTheme("light");
+      return;
+    }
+
+    void playSound(switchOffSound.dataUri);
+    setTheme("dark");
+  }
+
+  function handleMuteToggle() {
+    setMuted((previous) => !previous);
+  }
 
   const prefetch = React.useCallback(
     (href: string) => {
@@ -201,8 +287,72 @@ function FloatingDockDesktop({
             }
           />
         ))}
+
+        <DesktopActionButton
+          label="Toggle theme"
+          icon={
+            <HugeiconsIcon
+              icon={resolvedTheme === "dark" ? Sun01Icon : Moon02Icon}
+              size={18}
+            />
+          }
+          onClick={handleThemeToggle}
+          shouldReduceMotion={shouldReduceMotion}
+        />
+
+        <DesktopActionButton
+          label={muted ? "Unmute sounds" : "Mute sounds"}
+          icon={
+            <HugeiconsIcon
+              icon={muted ? VolumeOffIcon : VolumeHighIcon}
+              size={18}
+            />
+          }
+          onClick={handleMuteToggle}
+          shouldReduceMotion={shouldReduceMotion}
+        />
       </m.nav>
     </div>
+  );
+}
+
+function DesktopActionButton({
+  label,
+  icon,
+  onClick,
+  shouldReduceMotion,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  shouldReduceMotion: boolean;
+}) {
+  const [hovered, setHovered] = React.useState(false);
+
+  return (
+    <button
+      type="button"
+      data-click-sound="off"
+      aria-label={label}
+      onClick={onClick}
+      onMouseEnter={shouldReduceMotion ? undefined : () => setHovered(true)}
+      onMouseLeave={shouldReduceMotion ? undefined : () => setHovered(false)}
+      className="relative flex size-10 items-center justify-center rounded-full border border-border bg-muted text-foreground transition-colors motion-reduce:transition-none hover:bg-muted"
+    >
+      <AnimatePresence>
+        {!shouldReduceMotion && hovered ? (
+          <m.div
+            initial={{ opacity: 0, y: 10, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 2, x: "-50%" }}
+            className="absolute -top-8 left-1/2 w-fit whitespace-pre rounded-md border bg-background px-2 py-0.5 text-xs text-foreground shadow-sm"
+          >
+            {label}
+          </m.div>
+        ) : null}
+      </AnimatePresence>
+      <DockIcon>{icon}</DockIcon>
+    </button>
   );
 }
 

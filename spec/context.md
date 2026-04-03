@@ -1075,3 +1075,17 @@ Recent findings:
 - Validation:
   - `pnpm lint` passes
   - `pnpm run build` passes (Cache Components still enabled)
+
+### Sound-on-click system implementation (2026-04-03)
+
+- Implemented the full dashboard sound interaction spec from `spec/add-click-sound.md`.
+- Added a shared audio preferences context in `components/theme-provider.tsx` with persisted mute state (`portfolio-audio-muted`).
+- Added global click-capture playback with interactive-target filtering and opt-out support via `data-click-sound="off"`.
+- Added keyboard theme-toggle sound behavior in ThemeProvider (`D` hotkey) with mute guard.
+- Added explicit theme and mute controls in `components/ui/floating-dock.tsx`, each opted out from global click sound and using dedicated switch sounds where appropriate.
+- Added mute controls to both desktop and mobile account surfaces in `app/ui/dashboard-shell.tsx`.
+- Audio engine and hook lint hardening completed by switching `onended` assignment to `addEventListener("ended", ...)` in:
+  - `lib/audio/sound-engine.ts`
+  - `hooks/use-sound.ts`
+- Validation:
+  - `pnpm lint` passes
