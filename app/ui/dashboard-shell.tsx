@@ -115,9 +115,9 @@ export function DashboardShell({
 
   const [commandOpen, setCommandOpen] = React.useState(false);
   const [avatarOpen, setAvatarOpen] = React.useState(false);
-  const [fabRegistry, setFabRegistry] = React.useState<Record<string, ShellFab>>(
-    {}
-  );
+  const [fabRegistry, setFabRegistry] = React.useState<
+    Record<string, ShellFab>
+  >({});
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -178,24 +178,27 @@ export function DashboardShell({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const registerFab = React.useCallback((targetPathname: string, nextFab?: ShellFab) => {
-    setFabRegistry((current) => {
-      if (!nextFab) {
-        if (!(targetPathname in current)) {
-          return current;
+  const registerFab = React.useCallback(
+    (targetPathname: string, nextFab?: ShellFab) => {
+      setFabRegistry((current) => {
+        if (!nextFab) {
+          if (!(targetPathname in current)) {
+            return current;
+          }
+
+          const next = { ...current };
+          delete next[targetPathname];
+          return next;
         }
 
-        const next = { ...current };
-        delete next[targetPathname];
-        return next;
-      }
-
-      return {
-        ...current,
-        [targetPathname]: nextFab,
-      };
-    });
-  }, []);
+        return {
+          ...current,
+          [targetPathname]: nextFab,
+        };
+      });
+    },
+    [],
+  );
 
   const unregisterFab = React.useCallback((targetPathname: string) => {
     setFabRegistry((current) => {
@@ -211,7 +214,7 @@ export function DashboardShell({
 
   const contextValue = React.useMemo(
     () => ({ registerFab, unregisterFab }),
-    [registerFab, unregisterFab]
+    [registerFab, unregisterFab],
   );
 
   const activeFab = fabRegistry[pathname] ?? fab;
@@ -353,6 +356,7 @@ function UserAvatarPopover({ user }: { user: DashboardShellUser | null }) {
       <DropdownMenuTrigger
         render={
           <Button
+            id="dashboard-user-menu-trigger"
             variant="ghost"
             size="icon"
             aria-label="User menu"

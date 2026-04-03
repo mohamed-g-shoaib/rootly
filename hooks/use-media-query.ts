@@ -68,6 +68,11 @@ export function useMediaQuery(
   query: BreakpointQuery | MediaQueryInput | (string & {})
 ): boolean {
   const mediaQuery = React.useMemo(() => parseQuery(query), [query])
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
   const subscribe = React.useCallback(
     (onStoreChange: () => void) => {
       if (typeof window === "undefined") {
@@ -92,7 +97,15 @@ export function useMediaQuery(
     return window.matchMedia(mediaQuery).matches
   }, [mediaQuery])
 
-  return React.useSyncExternalStore(subscribe, getSnapshot, () => false)
+  const matches = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    () => false
+  )
+
+  // Keep the first client render aligned with SSR to avoid hydration mismatch
+  // when UI branches on media query state.
+  return mounted ? matches : false
 }
 
 export function useIsMobile(): boolean {
