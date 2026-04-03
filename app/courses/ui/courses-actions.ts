@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 
-import type { Course } from "./courses-model"
+import type { Course, SortKey, TopicFilter } from "./courses-model"
 
 type DbCourseRow = {
   id: string
@@ -43,6 +43,101 @@ function toDbInsert(course: Course, userId: string): DbCourseRow {
     progress: course.progress,
     created_at: course.createdAt,
     updated_at: course.updatedAt,
+  }
+}
+
+export async function getCoursesPage({
+  page,
+  pageSize,
+  sortKey,
+  topicFilter,
+  userId,
+}: {
+  page: number
+  pageSize: number
+  sortKey: SortKey
+  topicFilter: TopicFilter
+  userId: string
+}): Promise<
+  | { success: true; data: Course[]; totalCount: number }
+  | { success: false; error: string }
+> {
+  const supabase = await createClient()
+  const safePage = Math.max(1, Math.trunc(page))
+  const safePageSize = Math.max(1, Math.min(100, Math.trunc(pageSize)))
+  const from = (safePage - 1) * safePageSize
+  const to = from + safePageSize - 1
+
+  let query = supabase
+    .from("courses")
+    .select(
+      "id,user_id,title,instructor,course_link,links,topics,progress,created_at,updated_at",
+      { count: "exact" }
+    )
+    .eq("user_id", userId)
+
+  if (topicFilter !== "all") {
+    query = query.contains("topics", [topicFilter])
+  }
+
+  if (sortKey === "alphabetical") {
+    query = query.order("title", { ascending: true })
+  } else if (sortKey === "date_created") {
+    query = query.order("created_at", { ascending: false })
+  } else if (sortKey === "progress_low") {
+    query = query.order("progress", { ascending: true })
+  } else if (sortKey === "progress_high") {
+    query = query.order("progress", { ascending: false })
+  } else {
+    query = query.order("updated_at", { ascending: false })
+  }
+
+  const { data, error, count } = await query.range(from, to)
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message ?? "Failed to load courses",
+    }
+  }
+
+  return {
+    success: true,
+    data: ((data ?? []) as DbCourseRow[]).map(fromDb),
+    totalCount: count ?? 0,
+  }
+}
+
+export async function getCourseTopics({
+  userId,
+}: {
+  userId: string
+}): Promise<
+  { success: true; topics: string[] } | { success: false; error: string }
+> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("courses")
+    .select("topics")
+    .eq("user_id", userId)
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message ?? "Failed to load topics",
+    }
+  }
+
+  const unique = new Set<string>()
+  for (const row of (data ?? []) as Array<{ topics: string[] }>) {
+    for (const topic of row.topics ?? []) {
+      unique.add(topic)
+    }
+  }
+
+  return {
+    success: true,
+    topics: Array.from(unique).toSorted((a, b) => a.localeCompare(b)),
   }
 }
 
