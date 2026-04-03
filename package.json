@@ -10,6 +10,7 @@
     "lint": "oxlint --deny-warnings",
     "lint:fix": "oxlint --fix",
     "lint:github": "oxlint --deny-warnings --format=github",
+    "test:extension": "node --test lib/extension-idempotency.test.js extension/lib/time.test.js",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit"
