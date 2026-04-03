@@ -64,6 +64,7 @@ export default function UnderstandingProgressChart({
           />
           <YAxis
             domain={[1, 3]}
+            ticks={[1, 2, 3]}
             tickLine={false}
             axisLine={false}
             tickMargin={8}
@@ -88,7 +89,7 @@ export default function UnderstandingProgressChart({
             }}
           />
           <Line
-            type="monotone"
+            type="linear"
             dataKey="avgValue"
             stroke="var(--color-chart-3)"
             strokeWidth={2}

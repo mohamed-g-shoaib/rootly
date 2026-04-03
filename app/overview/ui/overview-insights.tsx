@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-container"
 import {
   buildDaySeries,
-  type CourseMasteryRow,
   type DailyMoodDatum,
   type DailyStudyDatum,
   getOverviewDateWindow,
@@ -21,7 +20,6 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
   const dailyStudyTime: DailyStudyDatum[] = []
   const dailyMood: DailyMoodDatum[] = []
   const understandingProgress: UnderstandingDatum[] = []
-  const courseMastery: CourseMasteryRow[] = []
 
   const [entriesData, notesForTrend] = await Promise.all([
     insightsPerf.measure(
@@ -72,10 +70,6 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
       string,
       { sum: number; count: number }
     >()
-    const masteryByCourse = new Map<
-      string,
-      { title: string; sum: number; count: number }
-    >()
 
     for (const row of notesForTrend) {
       if (row.understanding_level == null) continue
@@ -85,21 +79,6 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
       bucket.sum += row.understanding_level
       bucket.count += 1
       understandingByDate.set(date, bucket)
-
-      if (row.course_id) {
-        const title = Array.isArray(row.courses)
-          ? (row.courses[0]?.title ?? "")
-          : (row.courses?.title ?? "")
-        const courseBucket = masteryByCourse.get(row.course_id) ?? {
-          title,
-          sum: 0,
-          count: 0,
-        }
-        courseBucket.sum += row.understanding_level
-        courseBucket.count += 1
-        courseBucket.title = courseBucket.title || title
-        masteryByCourse.set(row.course_id, courseBucket)
-      }
     }
 
     for (const d of series) {
@@ -112,23 +91,10 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
       })
     }
 
-    for (const row of masteryByCourse.values()) {
-      if (!row.title || row.count <= 0) continue
-      courseMastery.push({
-        title: row.title,
-        avg: Number((row.sum / row.count).toFixed(2)),
-      })
-    }
-
-    courseMastery.sort(
-      (a, b) => a.avg - b.avg || a.title.localeCompare(b.title)
-    )
-
     return {
       dailyStudyTime: dailyStudyTime.length,
       dailyMood: dailyMood.length,
       understandingProgress: understandingProgress.length,
-      courseMastery: courseMastery.length,
     }
   })
 
@@ -136,7 +102,6 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
     dailyStudyTime: dailyStudyTime.length,
     dailyMood: dailyMood.length,
     understandingProgress: understandingProgress.length,
-    courseMastery: courseMastery.length,
   })
 
   return (
@@ -144,7 +109,6 @@ export default async function OverviewInsights({ nowIso }: { nowIso: string }) {
       dailyStudyTime={dailyStudyTime}
       dailyMood={dailyMood}
       understandingProgress={understandingProgress}
-      courseMastery={courseMastery}
     />
   )
 }
@@ -190,18 +154,6 @@ export function OverviewInsightsSkeleton() {
             </div>
           </Card>
         </div>
-      </section>
-
-      <section className="pt-6 pb-6">
-        <Card>
-          <div className="flex flex-col gap-4 p-5">
-            <div className="flex flex-col gap-1">
-              <LiteSkeleton className="h-5 w-36" />
-              <LiteSkeleton className="h-4 w-72" />
-            </div>
-            <ChartLiteSkeleton className="h-64" />
-          </div>
-        </Card>
       </section>
     </PageContainer>
   )

@@ -17,7 +17,6 @@ export type UnderstandingDatum = {
   label: string
   avg: number | null
 }
-export type CourseMasteryRow = { title: string; avg: number }
 
 type OverviewDateWindow = {
   now: Date

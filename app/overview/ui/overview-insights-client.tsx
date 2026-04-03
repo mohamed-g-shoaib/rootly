@@ -11,14 +11,12 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { PageContainer } from "@/components/ui/page-container";
 import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header";
-import CourseMasteryList from "@/app/overview/ui/charts/course-mastery-list";
 
 type RangeKey = "7" | "30" | "90";
 
 type DailyStudyDatum = { date: string; label: string; minutes: number };
 type DailyMoodDatum = { date: string; label: string; mood: 1 | 2 | 3 | null };
 type UnderstandingDatum = { date: string; label: string; avg: number | null };
-type CourseMasteryRow = { title: string; avg: number };
 
 const DailyStudyTimeChart = dynamic(
   () => import("../ui/charts/daily-study-time-chart"),
@@ -39,12 +37,10 @@ export default function OverviewInsightsClient({
   dailyStudyTime,
   dailyMood,
   understandingProgress,
-  courseMastery,
 }: {
   dailyStudyTime: DailyStudyDatum[];
   dailyMood: DailyMoodDatum[];
   understandingProgress: UnderstandingDatum[];
-  courseMastery: CourseMasteryRow[];
 }) {
   const isMobile = useIsMobile();
   const [range, setRange] = useState<RangeKey>("7");
@@ -141,18 +137,6 @@ export default function OverviewInsightsClient({
             ) : null}
           </ChartFrame>
         </div>
-      </section>
-
-      <section className="pt-6 pb-6">
-        <ChartFrame
-          title="Course Mastery"
-          description="Which courses need more review, and which ones feel settled."
-        >
-          <CourseMasteryList
-            rows={courseMastery}
-            emptyLabel="No course data for this period."
-          />
-        </ChartFrame>
       </section>
     </PageContainer>
   );
