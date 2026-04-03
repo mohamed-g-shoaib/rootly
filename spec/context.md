@@ -32,6 +32,12 @@ For browser extension work, also read:
 
 - `spec/browser-extension-side-panel.md`
 
+For Supabase database advisor/index-maintenance work, also use:
+
+- `spec/sql/supabase-duplicate-index-audit.sql`
+- `spec/sql/supabase-duplicate-index-drop-2026-04-03.sql`
+- `spec/sql/supabase-redundant-index-check-daily-entries.sql`
+
 ---
 
 ## Important Project Rules
@@ -298,6 +304,49 @@ We hit another Base UI hydration mismatch in the dashboard after responsive clie
 Current fix:
 
 - `hooks/use-media-query.ts` now uses `useSyncExternalStore` with a stable server snapshot instead of effect-driven post-render state initialization
+
+### Supabase performance advisor follow-up
+
+Duplicate-index advisor warnings for `daily_entries` and `notes` were validated as exact duplicate non-unique index pairs. Audit output selected these for removal:
+
+- `public.daily_entries_user_date_desc_idx`
+- `public.notes_user_updated_at_desc_idx`
+
+Prepared cleanup script:
+
+- `spec/sql/supabase-duplicate-index-drop-2026-04-03.sql`
+
+Execution caveat captured from Supabase SQL editor:
+
+- `DROP INDEX CONCURRENTLY` may fail with `cannot run inside a transaction block` when the runner wraps statements in a transaction
+- for this environment, use transaction-safe `DROP INDEX IF EXISTS ...` statements
+
+Current status:
+
+- duplicate index drops were applied successfully
+- post-drop verification confirms the removed indexes are no longer present:
+  - `public.daily_entries_user_date_desc_idx`
+  - `public.notes_user_updated_at_desc_idx`
+
+Optional next cleanup candidate to validate with usage stats and EXPLAIN before dropping:
+
+- `daily_entries_user_date_idx` may overlap with unique index `daily_entries_user_date_unique` for many access paths
+- redundant-index validation script now samples a real `daily_entries.user_id` automatically for EXPLAIN checks, because placeholder UUID checks can produce inconclusive seq-scan plans on small datasets
+
+Follow-up decision:
+
+- `daily_entries_user_date_idx` is structurally redundant with `daily_entries_user_date_unique` (same btree key columns) and is a valid cleanup candidate
+- small-table EXPLAIN output remained seq-scan-heavy and not highly diagnostic, but index-structure analysis still supports removal to reduce write overhead
+- prepared cleanup script:
+  - `spec/sql/supabase-redundant-index-drop-daily-entries.sql`
+
+Current status:
+
+- redundant index drop was applied successfully
+- post-drop `daily_entries` indexes now are:
+  - `daily_entries_pkey`
+  - `daily_entries_user_date_unique`
+  - `daily_entries_user_id_idx`
 
 Reason:
 
