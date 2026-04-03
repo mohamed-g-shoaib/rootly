@@ -93,6 +93,78 @@ Shared dashboard pieces live under:
 - `app/ui/*`
 - `components/*`
 
+### Dashboard optimization update (2026-04-03)
+
+- Non-overview dashboard optimization implementation started.
+- Applied first-pass high-impact updates:
+  - `/courses/[id]`: removed duplicate metadata DB fetch by switching to static metadata title.
+  - `/review` client: removed repeated O(n) note-id lookups in summary/detail helpers by using id maps.
+  - `/review` server: reduced initial notes payload; moved question/answer completeness checks to SQL `not is null` filters.
+  - `/notes` client: replaced repeated course/title and note-id linear lookups with memoized maps.
+  - Added route-level loading boundaries for `/notes`, `/courses`, `/courses/[id]`, `/daily-entries`, `/review` to improve perceived responsiveness during server fetches.
+- Touched files:
+  - `app/(dashboard)/courses/[id]/page.tsx`
+  - `app/review/ui/review-page.tsx`
+  - `app/(dashboard)/review/page.tsx`
+  - `app/notes/ui/notes-page.tsx`
+  - `app/(dashboard)/notes/loading.tsx`
+  - `app/(dashboard)/courses/loading.tsx`
+  - `app/(dashboard)/courses/[id]/loading.tsx`
+  - `app/(dashboard)/daily-entries/loading.tsx`
+  - `app/(dashboard)/review/loading.tsx`
+
+### Pagination update (2026-04-03)
+
+- Added explicit list pagination controls to remaining non-overview dashboard list pages so pagination now exists across all dashboard list surfaces.
+- Existing incremental pagination on Notes and Course Detail notes remains in place.
+- New explicit page controls (`Previous` / `Next`) added to:
+  - `app/courses/ui/courses-page.tsx`
+  - `app/daily-entries/ui/daily-entries-page.tsx`
+  - `app/review/ui/review-page.tsx`
+
+### Pagination phase 2 update (2026-04-03)
+
+- Started server-backed pagination rollout.
+- Review sessions list is now server-backed by page (instead of loading all sessions on first render):
+  - `app/review/ui/review-actions.ts`: added `getReviewSessionsPage`.
+  - `app/(dashboard)/review/page.tsx`: initial sessions query now fetches first page with exact count.
+  - `app/review/ui/review-page.tsx`: page transitions now fetch from server and keep count-aware controls.
+
+### Pagination + server paging extension (2026-04-03)
+
+- Fixed runtime regression in courses list (`Button` usage/import mismatch in `app/courses/ui/courses-page.tsx`).
+- Pagination controls are now explicit, subtle, and bottom-anchored across dashboard list surfaces:
+  - `app/courses/ui/courses-page.tsx`
+  - `app/daily-entries/ui/daily-entries-page.tsx`
+  - `app/review/ui/review-page.tsx`
+  - `app/notes/ui/notes-page.tsx`
+  - `app/courses/ui/course-detail-page.tsx`
+- Extended server-backed pagination beyond Review:
+  - Courses:
+    - `app/courses/ui/courses-actions.ts`: added `getCoursesPage`, `getCourseTopics`
+    - `app/(dashboard)/courses/page.tsx`: initial paged fetch + total count + topic data
+    - `app/courses/ui/courses-page.tsx`: page/filter/sort transitions now fetch from server
+  - Daily Entries:
+    - `app/daily-entries/ui/daily-entries-actions.ts`: added `getDailyEntriesPage`
+    - `app/(dashboard)/daily-entries/page.tsx`: initial paged fetch + total count
+    - `app/daily-entries/ui/daily-entries-page.tsx`: page/filter transitions now fetch from server
+
+### Pagination design refresh (2026-04-03)
+
+- Loaded design-focused skills (`coss`, `make-interfaces-feel-better`, `emil-design-eng`, `userinterface-wiki`) and updated pagination UI to match a quieter coss-style pattern.
+- Introduced shared fixed-bottom pagination dock:
+  - `app/ui/dashboard-pagination-dock.tsx`
+- Dock behavior:
+  - fixed viewport position (mobile-safe offset)
+  - subtle capsule surface, low-contrast controls, tabular numeric page indicator
+  - hidden when only one page exists (`totalPages <= 1`)
+- Applied dock across paginated list pages:
+  - `app/courses/ui/courses-page.tsx`
+  - `app/daily-entries/ui/daily-entries-page.tsx`
+  - `app/review/ui/review-page.tsx`
+  - `app/notes/ui/notes-page.tsx`
+  - `app/courses/ui/course-detail-page.tsx`
+
 ---
 
 ## Current Task Status
