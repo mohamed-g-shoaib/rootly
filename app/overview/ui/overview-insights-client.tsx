@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Suspense, ViewTransition, useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 
 import { useIsMobile } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
@@ -100,16 +100,8 @@ export default function OverviewInsightsClient({
           title="Daily Study Time"
           description="Minutes logged across your selected range."
         >
-          <Suspense
-            fallback={
-              <ViewTransition exit="auto">
-                <ChartSkeleton heightClassName="h-56" />
-              </ViewTransition>
-            }
-          >
-            <ViewTransition enter="auto" default="none">
-              <DailyStudyTimeChart data={slicedStudy} />
-            </ViewTransition>
+          <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
+            <DailyStudyTimeChart data={slicedStudy} />
           </Suspense>
           {emptyStates.studyTime ? (
             <div className="pt-3 text-sm text-muted-foreground">
@@ -125,16 +117,8 @@ export default function OverviewInsightsClient({
             title="Daily Mood"
             description="A quick read on how your study sessions have felt."
           >
-            <Suspense
-              fallback={
-                <ViewTransition exit="auto">
-                  <ChartSkeleton heightClassName="h-56" />
-                </ViewTransition>
-              }
-            >
-              <ViewTransition enter="auto" default="none">
-                <DailyMoodChart data={slicedMood} />
-              </ViewTransition>
+            <Suspense fallback={<ChartSkeleton heightClassName="h-56" />}>
+              <DailyMoodChart data={slicedMood} />
             </Suspense>
             {emptyStates.mood ? (
               <div className="pt-3 text-sm text-muted-foreground">
@@ -147,16 +131,8 @@ export default function OverviewInsightsClient({
             title="Understanding Progress"
             description="Average understanding level across your Q&A notes."
           >
-            <Suspense
-              fallback={
-                <ViewTransition exit="auto">
-                  <ChartSkeleton heightClassName="h-48" />
-                </ViewTransition>
-              }
-            >
-              <ViewTransition enter="auto" default="none">
-                <UnderstandingProgressChart data={slicedUnderstanding} />
-              </ViewTransition>
+            <Suspense fallback={<ChartSkeleton heightClassName="h-48" />}>
+              <UnderstandingProgressChart data={slicedUnderstanding} />
             </Suspense>
             {emptyStates.understanding ? (
               <div className="pt-3 text-sm text-muted-foreground">
@@ -226,14 +202,14 @@ function ChartFrame({
 }) {
   return (
     <Card>
-      <div className="flex flex-col gap-4 p-5">
+      <div className="flex min-w-0 flex-col gap-4 p-5">
         <div className="flex flex-col gap-1">
           <div className="font-medium">{title}</div>
           <div className="text-sm text-pretty text-muted-foreground">
             {description}
           </div>
         </div>
-        <div>{children}</div>
+        <div className="min-w-0">{children}</div>
       </div>
     </Card>
   );

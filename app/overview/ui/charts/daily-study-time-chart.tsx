@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic";
 
+import { ChartResponsiveShell } from "./chart-responsive-shell";
+
 const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar), {
   ssr: false,
 });
@@ -10,10 +12,6 @@ const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), {
 });
 const CartesianGrid = dynamic(
   () => import("recharts").then((mod) => mod.CartesianGrid),
-  { ssr: false },
-);
-const ResponsiveContainer = dynamic(
-  () => import("recharts").then((mod) => mod.ResponsiveContainer),
   { ssr: false },
 );
 const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
@@ -34,9 +32,11 @@ type Datum = {
 
 export default function DailyStudyTimeChart({ data }: { data: Datum[] }) {
   return (
-    <div className="h-56 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <ChartResponsiveShell className="h-56 w-full min-w-0">
+      {({ width, height }) => (
         <BarChart
+          width={width}
+          height={height}
           data={data}
           margin={{ top: 8, right: 40, left: 8, bottom: 8 }}
         >
@@ -68,7 +68,7 @@ export default function DailyStudyTimeChart({ data }: { data: Datum[] }) {
             radius={[6, 6, 0, 0]}
           />
         </BarChart>
-      </ResponsiveContainer>
-    </div>
+      )}
+    </ChartResponsiveShell>
   );
 }

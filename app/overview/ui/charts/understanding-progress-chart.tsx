@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
 
+import { ChartResponsiveShell } from "./chart-responsive-shell";
+
 const CartesianGrid = dynamic(
   () => import("recharts").then((mod) => mod.CartesianGrid),
   { ssr: false },
@@ -12,10 +14,6 @@ const Line = dynamic(() => import("recharts").then((mod) => mod.Line), {
 });
 const LineChart = dynamic(
   () => import("recharts").then((mod) => mod.LineChart),
-  { ssr: false },
-);
-const ResponsiveContainer = dynamic(
-  () => import("recharts").then((mod) => mod.ResponsiveContainer),
   { ssr: false },
 );
 const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
@@ -49,9 +47,11 @@ export default function UnderstandingProgressChart({
   );
 
   return (
-    <div className="h-56 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <ChartResponsiveShell className="h-56 w-full min-w-0">
+      {({ width, height }) => (
         <LineChart
+          width={width}
+          height={height}
           data={chartData}
           margin={{ top: 8, right: 16, left: 8, bottom: 8 }}
         >
@@ -96,7 +96,7 @@ export default function UnderstandingProgressChart({
             connectNulls={false}
           />
         </LineChart>
-      </ResponsiveContainer>
-    </div>
+      )}
+    </ChartResponsiveShell>
   );
 }
