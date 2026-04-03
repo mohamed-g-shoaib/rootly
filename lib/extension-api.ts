@@ -1,9 +1,37 @@
 import { NextResponse } from "next/server"
 
 const EXTENSION_ORIGIN_PREFIXES = ["chrome-extension://", "moz-extension://"]
+const ALLOWED_EXTENSION_IDS = (process.env.ROOTLY_EXTENSION_IDS ?? "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter((value) => value.length > 0)
+
+function getExtensionOriginId(origin: string) {
+  try {
+    const parsed = new URL(origin)
+
+    if (!EXTENSION_ORIGIN_PREFIXES.includes(`${parsed.protocol}//`)) {
+      return null
+    }
+
+    return parsed.host || null
+  } catch {
+    return null
+  }
+}
 
 function isAllowedExtensionOrigin(origin: string) {
-  return EXTENSION_ORIGIN_PREFIXES.some((prefix) => origin.startsWith(prefix))
+  const extensionId = getExtensionOriginId(origin)
+
+  if (!extensionId) {
+    return false
+  }
+
+  if (ALLOWED_EXTENSION_IDS.length === 0) {
+    return true
+  }
+
+  return ALLOWED_EXTENSION_IDS.includes(extensionId)
 }
 
 export function getExtensionCorsHeaders(origin: string | null | undefined) {

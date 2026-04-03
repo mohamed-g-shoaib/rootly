@@ -7,23 +7,47 @@ import {
 } from "@/lib/extension-api"
 import { createClient } from "@/lib/supabase/server"
 
+const noteMetaSchema = z.object({
+  flag: z.boolean().optional(),
+  codeSnippet: z.string().trim().min(1).nullable().optional(),
+  codeLanguage: z.string().trim().max(40).optional(),
+})
+
 const createNoteSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("qa"),
-    courseId: z.string().uuid().nullable().optional(),
-    question: z.string().trim().min(1),
-    answer: z.string().trim().min(1),
-    understandingLevel: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-  }),
-  z.object({
-    type: z.literal("freeform"),
-    courseId: z.string().uuid().nullable().optional(),
-    body: z.string().trim().min(1),
-  }),
+  z
+    .object({
+      type: z.literal("qa"),
+      courseId: z.string().uuid().nullable().optional(),
+      question: z.string().trim().min(1),
+      answer: z.string().trim().min(1),
+      understandingLevel: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+    })
+    .merge(noteMetaSchema),
+  z
+    .object({
+      type: z.literal("freeform"),
+      courseId: z.string().uuid().nullable().optional(),
+      body: z.string().trim().min(1),
+    })
+    .merge(noteMetaSchema),
 ])
 
 function normalizeCourseId(courseId: string | null | undefined) {
   return courseId ?? null
+}
+
+function normalizeCodeSnippet(codeSnippet: string | null | undefined) {
+  if (codeSnippet == null) {
+    return null
+  }
+
+  const trimmed = codeSnippet.trim()
+  return trimmed.length > 0 ? trimmed : null
+}
+
+function normalizeCodeLanguage(codeLanguage: string | undefined) {
+  const trimmed = codeLanguage?.trim()
+  return trimmed && trimmed.length > 0 ? trimmed : "text"
 }
 
 export async function OPTIONS(request: NextRequest) {
@@ -85,6 +109,9 @@ export async function POST(request: NextRequest) {
 
   const now = new Date().toISOString()
   const noteId = crypto.randomUUID()
+  const codeSnippet = normalizeCodeSnippet(parsedBody.codeSnippet)
+  const codeLanguage = normalizeCodeLanguage(parsedBody.codeLanguage)
+  const isFlagged = Boolean(parsedBody.flag)
 
   const insertPayload =
     parsedBody.type === "qa"
@@ -97,9 +124,9 @@ export async function POST(request: NextRequest) {
           answer: parsedBody.answer.trim(),
           body: null,
           understanding_level: parsedBody.understandingLevel,
-          flag: false,
-          code_snippet: null,
-          code_language: "text",
+          flag: isFlagged,
+          code_snippet: codeSnippet,
+          code_language: codeSnippet ? codeLanguage : "text",
           created_at: now,
           updated_at: now,
         }
@@ -112,9 +139,9 @@ export async function POST(request: NextRequest) {
           answer: null,
           body: parsedBody.body.trim(),
           understanding_level: null,
-          flag: false,
-          code_snippet: null,
-          code_language: "text",
+          flag: isFlagged,
+          code_snippet: codeSnippet,
+          code_language: codeSnippet ? codeLanguage : "text",
           created_at: now,
           updated_at: now,
         }
@@ -175,5 +202,3 @@ export async function POST(request: NextRequest) {
     }
   )
 }
-
-

@@ -5,6 +5,10 @@ import {
   getExtensionCorsHeaders,
   jsonWithExtensionCors,
 } from "@/lib/extension-api"
+import {
+  buildExtensionIdempotencyKey,
+  createInMemoryIdempotencyStore,
+} from "@/lib/extension-idempotency"
 import { createClient } from "@/lib/supabase/server"
 
 const createDailyEntrySchema = z.object({
@@ -12,7 +16,38 @@ const createDailyEntrySchema = z.object({
   addStudyTimeMinutes: z.number().int().positive(),
   mood: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
   notes: z.string().nullable().optional(),
+  clientRequestId: z.string().uuid().optional(),
 })
+
+type ExtensionDailyEntryResponse = {
+  entry: {
+    id: string
+    date: string
+    studyTimeMinutes: number
+    mood: 1 | 2 | 3
+    notes: string | null
+    createdAt: string
+    updatedAt: string
+  }
+}
+
+type GlobalWithExtensionIdempotencyStore = typeof globalThis & {
+  __rootlyExtensionDailyEntryIdempotencyStore?: ReturnType<
+    typeof createInMemoryIdempotencyStore
+  >
+}
+
+const globalWithStore = globalThis as GlobalWithExtensionIdempotencyStore
+
+const dailyEntryIdempotencyStore =
+  globalWithStore.__rootlyExtensionDailyEntryIdempotencyStore ??
+  createInMemoryIdempotencyStore({
+    ttlMs: 10 * 60 * 1000,
+    maxEntries: 3000,
+  })
+
+globalWithStore.__rootlyExtensionDailyEntryIdempotencyStore =
+  dailyEntryIdempotencyStore
 
 function normalizeNotes(notes: string | null | undefined) {
   if (notes == null) {
@@ -21,6 +56,28 @@ function normalizeNotes(notes: string | null | undefined) {
 
   const trimmed = notes.trim()
   return trimmed.length > 0 ? trimmed : null
+}
+
+function toDailyEntryResponse(entry: {
+  id: string
+  date: string
+  study_time_minutes: number
+  mood: 1 | 2 | 3
+  notes: string | null
+  created_at: string
+  updated_at: string
+}): ExtensionDailyEntryResponse {
+  return {
+    entry: {
+      id: entry.id,
+      date: entry.date,
+      studyTimeMinutes: entry.study_time_minutes,
+      mood: entry.mood,
+      notes: entry.notes,
+      createdAt: entry.created_at,
+      updatedAt: entry.updated_at,
+    },
+  }
 }
 
 export async function OPTIONS(request: NextRequest) {
@@ -49,7 +106,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const message =
       error instanceof z.ZodError
-        ? error.issues[0]?.message ?? "Invalid request payload."
+        ? (error.issues[0]?.message ?? "Invalid request payload.")
         : "Invalid request payload."
 
     return jsonWithExtensionCors(
@@ -62,10 +119,8 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createClient()
-  const {
-    data: claimsData,
-    error: claimsError,
-  } = await supabase.auth.getClaims()
+  const { data: claimsData, error: claimsError } =
+    await supabase.auth.getClaims()
   const userId =
     !claimsError && typeof claimsData?.claims?.sub === "string"
       ? claimsData.claims.sub
@@ -79,6 +134,24 @@ export async function POST(request: NextRequest) {
         origin,
       }
     )
+  }
+
+  const idempotencyKey = buildExtensionIdempotencyKey({
+    userId,
+    date: parsedBody.date,
+    requestId: parsedBody.clientRequestId,
+  })
+
+  if (idempotencyKey) {
+    dailyEntryIdempotencyStore.prune()
+    const cachedResponse = dailyEntryIdempotencyStore.get(idempotencyKey)
+
+    if (cachedResponse) {
+      return jsonWithExtensionCors(cachedResponse, {
+        status: 200,
+        origin,
+      })
+    }
   }
 
   const { data: existingEntry, error: existingEntryError } = await supabase
@@ -102,7 +175,9 @@ export async function POST(request: NextRequest) {
   }
 
   const bodyObject =
-    rawBody && typeof rawBody === "object" ? (rawBody as Record<string, unknown>) : {}
+    rawBody && typeof rawBody === "object"
+      ? (rawBody as Record<string, unknown>)
+      : {}
   const notesWasProvided = Object.hasOwn(bodyObject, "notes")
   const moodWasProvided = Object.hasOwn(bodyObject, "mood")
 
@@ -145,23 +220,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return jsonWithExtensionCors(
-      {
-        entry: {
-          id: createdEntry.id,
-          date: createdEntry.date,
-          studyTimeMinutes: createdEntry.study_time_minutes,
-          mood: createdEntry.mood,
-          notes: createdEntry.notes,
-          createdAt: createdEntry.created_at,
-          updatedAt: createdEntry.updated_at,
-        },
-      },
-      {
-        status: 200,
-        origin,
-      }
-    )
+    const response = toDailyEntryResponse(createdEntry)
+
+    if (idempotencyKey) {
+      dailyEntryIdempotencyStore.set(idempotencyKey, response)
+    }
+
+    return jsonWithExtensionCors(response, {
+      status: 200,
+      origin,
+    })
   }
 
   const nextMood = moodWasProvided ? parsedBody.mood : existingEntry.mood
@@ -195,22 +263,14 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  return jsonWithExtensionCors(
-    {
-      entry: {
-        id: updatedEntry.id,
-        date: updatedEntry.date,
-        studyTimeMinutes: updatedEntry.study_time_minutes,
-        mood: updatedEntry.mood,
-        notes: updatedEntry.notes,
-        createdAt: updatedEntry.created_at,
-        updatedAt: updatedEntry.updated_at,
-      },
-    },
-    {
-      status: 200,
-      origin,
-    }
-  )
-}
+  const response = toDailyEntryResponse(updatedEntry)
 
+  if (idempotencyKey) {
+    dailyEntryIdempotencyStore.set(idempotencyKey, response)
+  }
+
+  return jsonWithExtensionCors(response, {
+    status: 200,
+    origin,
+  })
+}
