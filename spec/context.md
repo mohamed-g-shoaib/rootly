@@ -1082,7 +1082,7 @@ Recent findings:
 - Added a shared audio preferences context in `components/theme-provider.tsx` with persisted mute state (`portfolio-audio-muted`).
 - Added global click-capture playback with interactive-target filtering and opt-out support via `data-click-sound="off"`.
 - Added keyboard theme-toggle sound behavior in ThemeProvider (`D` hotkey) with mute guard.
-- Added explicit theme and mute controls in `components/ui/floating-dock.tsx`, each opted out from global click sound and using dedicated switch sounds where appropriate.
+- Added explicit mute controls to both desktop and mobile account surfaces in `app/ui/dashboard-shell.tsx`; the floating dock no longer carries theme or sound controls.
 - Added mute controls to both desktop and mobile account surfaces in `app/ui/dashboard-shell.tsx`.
 - Audio engine and hook lint hardening completed by switching `onended` assignment to `addEventListener("ended", ...)` in:
   - `lib/audio/sound-engine.ts`
