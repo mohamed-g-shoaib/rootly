@@ -1,20 +1,22 @@
-import type { Metadata, Viewport } from "next"
-import { Geist_Mono, Inter } from "next/font/google"
+import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
+import { Geist_Mono, Inter } from "next/font/google";
 
-import "./globals.css"
-import { ColorThemeApplicator } from "@/components/color-theme-applicator"
-import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
-import { ThemeProvider } from "@/components/theme-provider"
-import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
-import { cn } from "@/lib/utils"
-import { siteConfig } from "@/lib/site-config"
+import "./globals.css";
+import { ColorThemeApplicator } from "@/components/color-theme-applicator";
+import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style";
+import { QueryProvider } from "@/components/query-provider";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast";
+import { cn } from "@/lib/utils";
+import { siteConfig } from "@/lib/site-config";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-})
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -57,19 +59,19 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-}
+};
 
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
-}
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
@@ -79,18 +81,24 @@ export default async function RootLayout({
         "antialiased",
         fontMono.variable,
         "font-sans",
-        inter.variable
+        inter.variable,
       )}
     >
       <body suppressHydrationWarning>
-        <DashboardColorThemeStyle />
-        <ThemeProvider>
-          <ColorThemeApplicator />
-          <ToastProvider>
-            <AnchoredToastProvider>{children}</AnchoredToastProvider>
-          </ToastProvider>
-        </ThemeProvider>
+        <Suspense fallback={null}>
+          <DashboardColorThemeStyle />
+        </Suspense>
+        <QueryProvider>
+          <ThemeProvider>
+            <ColorThemeApplicator />
+            <ToastProvider>
+              <AnchoredToastProvider>
+                <Suspense fallback={null}>{children}</Suspense>
+              </AnchoredToastProvider>
+            </ToastProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
-  )
+  );
 }
