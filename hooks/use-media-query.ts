@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useSyncExternalStore } from "react"
+import * as React from "react"
 
 const BREAKPOINTS = {
   "2xl": 1536,
@@ -64,31 +64,35 @@ function parseQuery(
   return parts.length > 0 ? parts.join(" and ") : query
 }
 
-function getServerSnapshot(): boolean {
-  return false
-}
-
 export function useMediaQuery(
   query: BreakpointQuery | MediaQueryInput | (string & {})
 ): boolean {
-  const mediaQuery = parseQuery(query)
+  const mediaQuery = React.useMemo(() => parseQuery(query), [query])
+  const subscribe = React.useCallback(
+    (onStoreChange: () => void) => {
+      if (typeof window === "undefined") {
+        return () => {}
+      }
 
-  const subscribe = useCallback(
-    (callback: () => void) => {
-      if (typeof window === "undefined") return () => {}
-      const mql = window.matchMedia(mediaQuery)
-      mql.addEventListener("change", callback)
-      return () => mql.removeEventListener("change", callback)
+      const mediaQueryList = window.matchMedia(mediaQuery)
+      mediaQueryList.addEventListener("change", onStoreChange)
+
+      return () => {
+        mediaQueryList.removeEventListener("change", onStoreChange)
+      }
     },
     [mediaQuery]
   )
 
-  const getSnapshot = useCallback(() => {
-    if (typeof window === "undefined") return false
+  const getSnapshot = React.useCallback(() => {
+    if (typeof window === "undefined") {
+      return false
+    }
+
     return window.matchMedia(mediaQuery).matches
   }, [mediaQuery])
 
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  return React.useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
 
 export function useIsMobile(): boolean {
