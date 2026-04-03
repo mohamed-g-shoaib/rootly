@@ -6,13 +6,18 @@ import { ComputerIcon, Moon02Icon, Sun01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useTheme } from "next-themes"
 
+import {
+  playThemeSwitchSound,
+  useAudioPreferences,
+} from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
 export function ThemeSwitcherMultiButton({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const { theme, setTheme } = useTheme()
+  const { theme, resolvedTheme, setTheme } = useTheme()
+  const { muted } = useAudioPreferences()
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
@@ -69,7 +74,15 @@ export function ThemeSwitcherMultiButton({
           aria-label={label}
           title={label}
           type="button"
-          onClick={() => setTheme(value)}
+          data-click-sound="off"
+          onClick={() => {
+            playThemeSwitchSound({
+              muted,
+              fromTheme: resolvedTheme,
+              toTheme: value,
+            })
+            setTheme(value)
+          }}
           className="group relative size-6 cursor-pointer rounded-full transition duration-200 ease-out"
         >
           {theme === value ? (

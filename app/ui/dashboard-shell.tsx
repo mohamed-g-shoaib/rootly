@@ -66,7 +66,10 @@ import {
 } from "@/components/ui/command";
 
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { useAudioPreferences } from "@/components/theme-provider";
+import {
+  playThemeSwitchSound,
+  useAudioPreferences,
+} from "@/components/theme-provider";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import type { DashboardShellUser } from "@/lib/dashboard-session";
 
@@ -92,10 +95,11 @@ function ThemeToggle({
   onCheckedChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2" data-click-sound="off">
       <HugeiconsIcon icon={Sun01Icon} size={18} />
       <Switch
         aria-label="Toggle theme"
+        data-click-sound="off"
         checked={checked}
         onCheckedChange={(value) => onCheckedChange(Boolean(value))}
       />
@@ -292,7 +296,7 @@ export function DashboardShell({
           <Button
             size="icon-lg"
             type="button"
-            className="fixed right-4 bottom-20 z-30 rounded-full md:hidden"
+            className="fixed right-4 bottom-28 z-40 rounded-full md:hidden"
             aria-label={activeFab.ariaLabel}
             onClick={activeFab.onClick}
           >
@@ -389,9 +393,15 @@ function UserAvatarPopover({ user }: { user: DashboardShellUser | null }) {
             <div className="text-sm">Theme</div>
             <ThemeToggle
               checked={resolvedTheme === "dark"}
-              onCheckedChange={(checked) =>
-                setTheme(checked ? "dark" : "light")
-              }
+              onCheckedChange={(checked) => {
+                const nextTheme = checked ? "dark" : "light";
+                playThemeSwitchSound({
+                  muted,
+                  fromTheme: resolvedTheme,
+                  toTheme: nextTheme,
+                });
+                setTheme(nextTheme);
+              }}
             />
           </div>
 
@@ -490,9 +500,15 @@ function MobileAvatarSheet({
               <div className="text-sm">Theme</div>
               <ThemeToggle
                 checked={resolvedTheme === "dark"}
-                onCheckedChange={(checked) =>
-                  setTheme(checked ? "dark" : "light")
-                }
+                onCheckedChange={(checked) => {
+                  const nextTheme = checked ? "dark" : "light";
+                  playThemeSwitchSound({
+                    muted,
+                    fromTheme: resolvedTheme,
+                    toTheme: nextTheme,
+                  });
+                  setTheme(nextTheme);
+                }}
               />
             </div>
 

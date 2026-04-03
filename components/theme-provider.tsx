@@ -46,6 +46,37 @@ export function useAudioPreferences() {
   return context;
 }
 
+export function playThemeSwitchSound({
+  muted,
+  fromTheme,
+  toTheme,
+}: {
+  muted: boolean;
+  fromTheme: string | undefined;
+  toTheme: string;
+}) {
+  if (muted) {
+    return;
+  }
+
+  const nextResolvedTheme =
+    toTheme === "system"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+      : toTheme;
+
+  if (fromTheme === nextResolvedTheme) {
+    return;
+  }
+
+  void playSound(
+    nextResolvedTheme === "dark"
+      ? switchOffSound.dataUri
+      : switchOnSound.dataUri,
+  );
+}
+
 function ThemeProvider({
   children,
   ...props
@@ -90,6 +121,10 @@ function isDisabledTarget(target: HTMLElement) {
 
 function getClickableTarget(target: EventTarget | null) {
   if (!(target instanceof Element)) {
+    return null;
+  }
+
+  if (target.closest("[data-click-sound='off']")) {
     return null;
   }
 
@@ -146,20 +181,15 @@ function ThemeHotkey() {
   const { muted } = useAudioPreferences();
 
   const toggleTheme = React.useEffectEvent(() => {
-    if (resolvedTheme === "dark") {
-      if (!muted) {
-        void playSound(switchOnSound.dataUri);
-      }
+    const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
 
-      setTheme("light");
-      return;
-    }
+    playThemeSwitchSound({
+      muted,
+      fromTheme: resolvedTheme,
+      toTheme: nextTheme,
+    });
 
-    if (!muted) {
-      void playSound(switchOffSound.dataUri);
-    }
-
-    setTheme("dark");
+    setTheme(nextTheme);
   });
 
   React.useEffect(() => {
