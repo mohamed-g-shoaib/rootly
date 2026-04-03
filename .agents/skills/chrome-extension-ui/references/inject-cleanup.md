@@ -14,9 +14,9 @@ Remove all injected elements and event listeners when the extension is disabled 
 ```typescript
 // content.js - No cleanup mechanism
 function showTooltip(target) {
-  const tooltip = document.createElement('div')
-  tooltip.className = 'ext-tooltip'
-  tooltip.textContent = 'Helpful information'
+  const tooltip = document.createElement("div")
+  tooltip.className = "ext-tooltip"
+  tooltip.textContent = "Helpful information"
   document.body.appendChild(tooltip)
 
   // Tooltip never removed
@@ -24,7 +24,7 @@ function showTooltip(target) {
   // Memory accumulates with each show
 }
 
-document.addEventListener('mouseover', handleHover)
+document.addEventListener("mouseover", handleHover)
 // Listener remains even if extension disabled
 ```
 
@@ -40,12 +40,12 @@ class ExtensionUI {
   }
 
   init() {
-    this.root = document.createElement('div')
-    this.root.id = 'my-extension-root'
+    this.root = document.createElement("div")
+    this.root.id = "my-extension-root"
     document.body.appendChild(this.root)
     this.elements.add(this.root)
 
-    this.addListener(document, 'mouseover', this.handleHover.bind(this))
+    this.addListener(document, "mouseover", this.handleHover.bind(this))
   }
 
   createElement(tag, parent = this.root) {
@@ -63,8 +63,8 @@ class ExtensionUI {
   showTooltip(content, position) {
     this.hideTooltip() // Remove existing tooltip first
 
-    const tooltip = this.createElement('div')
-    tooltip.className = 'ext-tooltip'
+    const tooltip = this.createElement("div")
+    tooltip.className = "ext-tooltip"
     tooltip.textContent = content
     tooltip.style.cssText = `
       position: fixed;
@@ -74,7 +74,7 @@ class ExtensionUI {
   }
 
   hideTooltip() {
-    const existing = this.root?.querySelector('.ext-tooltip')
+    const existing = this.root?.querySelector(".ext-tooltip")
     if (existing) {
       existing.remove()
       this.elements.delete(existing)
@@ -89,7 +89,7 @@ class ExtensionUI {
     this.listeners = []
 
     // Remove all DOM elements
-    this.elements.forEach(element => {
+    this.elements.forEach((element) => {
       element.remove()
     })
     this.elements.clear()
@@ -114,14 +114,16 @@ chrome.runtime.onSuspend?.addListener(() => {
 // content.js - Modern cleanup with AbortController
 const controller = new AbortController()
 
-document.addEventListener('click', handleClick, { signal: controller.signal })
-document.addEventListener('mouseover', handleHover, { signal: controller.signal })
-window.addEventListener('scroll', handleScroll, { signal: controller.signal })
+document.addEventListener("click", handleClick, { signal: controller.signal })
+document.addEventListener("mouseover", handleHover, {
+  signal: controller.signal,
+})
+window.addEventListener("scroll", handleScroll, { signal: controller.signal })
 
 // Single call removes all listeners
 function cleanup() {
   controller.abort()
-  document.getElementById('my-extension-root')?.remove()
+  document.getElementById("my-extension-root")?.remove()
 }
 ```
 

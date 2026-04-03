@@ -10,6 +10,7 @@ Comprehensive UX/UI design guide for Chrome Extensions, optimized for Manifest V
 ## When to Apply
 
 Reference these guidelines when:
+
 - Building new Chrome extension user interfaces
 - Choosing between popup, side panel, or content script UI
 - Implementing accessible, keyboard-navigable interfaces
@@ -18,16 +19,16 @@ Reference these guidelines when:
 
 ## Rule Categories by Priority
 
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-| 1 | Component Selection | CRITICAL | `comp-` |
-| 2 | Accessibility & Navigation | CRITICAL | `access-` |
-| 3 | Popup Design | HIGH | `popup-` |
-| 4 | Side Panel UX | HIGH | `panel-` |
-| 5 | Content Script UI | MEDIUM-HIGH | `inject-` |
-| 6 | Visual Feedback | MEDIUM | `feedback-` |
-| 7 | Options & Settings | MEDIUM | `options-` |
-| 8 | Icons & Branding | LOW-MEDIUM | `brand-` |
+| Priority | Category                   | Impact      | Prefix      |
+| -------- | -------------------------- | ----------- | ----------- |
+| 1        | Component Selection        | CRITICAL    | `comp-`     |
+| 2        | Accessibility & Navigation | CRITICAL    | `access-`   |
+| 3        | Popup Design               | HIGH        | `popup-`    |
+| 4        | Side Panel UX              | HIGH        | `panel-`    |
+| 5        | Content Script UI          | MEDIUM-HIGH | `inject-`   |
+| 6        | Visual Feedback            | MEDIUM      | `feedback-` |
+| 7        | Options & Settings         | MEDIUM      | `options-`  |
+| 8        | Icons & Branding           | LOW-MEDIUM  | `brand-`    |
 
 ## Quick Reference
 
@@ -106,8 +107,8 @@ Read individual reference files for detailed explanations and code examples:
 
 ## Reference Files
 
-| File | Description |
-|------|-------------|
-| [references/_sections.md](references/_sections.md) | Category definitions and ordering |
-| [assets/templates/_template.md](assets/templates/_template.md) | Template for new rules |
-| [metadata.json](metadata.json) | Version and reference information |
+| File                                                            | Description                       |
+| --------------------------------------------------------------- | --------------------------------- |
+| [references/\_sections.md](references/_sections.md)             | Category definitions and ordering |
+| [assets/templates/\_template.md](assets/templates/_template.md) | Template for new rules            |
+| [metadata.json](metadata.json)                                  | Version and reference information |

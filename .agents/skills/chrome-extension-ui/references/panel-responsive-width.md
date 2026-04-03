@@ -80,15 +80,15 @@ Build side panel layouts that adapt to user-resized widths. Users can drag the p
 
 ```typescript
 // sidepanel.js - Adapt UI based on panel width
-const panelContainer = document.querySelector('.panel-container')
+const panelContainer = document.querySelector(".panel-container")
 
 const resizeObserver = new ResizeObserver((entries) => {
   for (const entry of entries) {
     const width = entry.contentRect.width
 
-    panelContainer.classList.toggle('narrow', width < 280)
-    panelContainer.classList.toggle('medium', width >= 280 && width < 400)
-    panelContainer.classList.toggle('wide', width >= 400)
+    panelContainer.classList.toggle("narrow", width < 280)
+    panelContainer.classList.toggle("medium", width >= 280 && width < 400)
+    panelContainer.classList.toggle("wide", width >= 400)
   }
 })
 

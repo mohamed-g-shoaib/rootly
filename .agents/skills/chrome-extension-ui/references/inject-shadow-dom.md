@@ -43,10 +43,10 @@ function injectToolbar() {
 ```typescript
 // content.js - Complete style isolation
 function injectToolbar() {
-  const host = document.createElement('div')
-  host.id = 'my-extension-root'
+  const host = document.createElement("div")
+  host.id = "my-extension-root"
 
-  const shadow = host.attachShadow({ mode: 'closed' })
+  const shadow = host.attachShadow({ mode: "closed" })
 
   shadow.innerHTML = `
     <style>
@@ -90,16 +90,16 @@ function injectToolbar() {
 ```typescript
 // content.js - Use CSS file instead of inline styles
 function injectToolbar() {
-  const host = document.createElement('div')
-  const shadow = host.attachShadow({ mode: 'closed' })
+  const host = document.createElement("div")
+  const shadow = host.attachShadow({ mode: "closed" })
 
   // Load CSS from extension
-  const styleLink = document.createElement('link')
-  styleLink.rel = 'stylesheet'
-  styleLink.href = chrome.runtime.getURL('toolbar.css')
+  const styleLink = document.createElement("link")
+  styleLink.rel = "stylesheet"
+  styleLink.href = chrome.runtime.getURL("toolbar.css")
 
-  const toolbar = document.createElement('div')
-  toolbar.className = 'toolbar'
+  const toolbar = document.createElement("div")
+  toolbar.className = "toolbar"
   toolbar.innerHTML = `
     <button class="btn">Save</button>
     <button class="btn">Share</button>

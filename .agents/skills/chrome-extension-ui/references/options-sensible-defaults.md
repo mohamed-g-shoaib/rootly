@@ -19,7 +19,10 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // popup.js - Forces user to settings
 async function init() {
-  const { apiKey, endpoint } = await chrome.storage.sync.get(['apiKey', 'endpoint'])
+  const { apiKey, endpoint } = await chrome.storage.sync.get([
+    "apiKey",
+    "endpoint",
+  ])
 
   if (!apiKey || !endpoint) {
     document.body.innerHTML = `
@@ -37,14 +40,14 @@ async function init() {
 ```typescript
 // background.js - Sensible defaults on install
 const DEFAULT_SETTINGS = {
-  theme: 'system',           // Follows OS preference
-  notifications: true,       // Most users want notifications
-  refreshInterval: 15,       // Reasonable balance
-  autoSave: true,            // Prevent data loss
-  language: 'auto',          // Detect from browser
-  fontSize: 'medium',        // Accessible default
-  keyboardShortcuts: true,   // Power user friendly
-  dataCollection: 'minimal'  // Privacy conscious
+  theme: "system", // Follows OS preference
+  notifications: true, // Most users want notifications
+  refreshInterval: 15, // Reasonable balance
+  autoSave: true, // Prevent data loss
+  language: "auto", // Detect from browser
+  fontSize: "medium", // Accessible default
+  keyboardShortcuts: true, // Power user friendly
+  dataCollection: "minimal", // Privacy conscious
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -72,14 +75,14 @@ async function getSetting(key) {
 
 **Default selection guidelines:**
 
-| Setting Type | Good Default | Why |
-|--------------|--------------|-----|
-| Theme | 'system' | Respects user's OS choice |
-| Notifications | On (but not aggressive) | Features should be visible |
-| Auto-save | On | Prevents data loss |
-| Privacy options | Most private | Build trust first |
-| Language | Auto-detect | Most convenient |
-| Advanced features | Off | Don't overwhelm new users |
+| Setting Type      | Good Default            | Why                        |
+| ----------------- | ----------------------- | -------------------------- |
+| Theme             | 'system'                | Respects user's OS choice  |
+| Notifications     | On (but not aggressive) | Features should be visible |
+| Auto-save         | On                      | Prevents data loss         |
+| Privacy options   | Most private            | Build trust first          |
+| Language          | Auto-detect             | Most convenient            |
+| Advanced features | Off                     | Don't overwhelm new users  |
 
 **Optional features with smart detection:**
 
@@ -90,16 +93,16 @@ async function getSmartDefaults() {
 
   // Detect user's likely preferences
   const browserLang = navigator.language
-  defaults.language = browserLang.startsWith('en') ? 'en' : browserLang
+  defaults.language = browserLang.startsWith("en") ? "en" : browserLang
 
   // Check if user prefers reduced motion
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     defaults.animations = false
   }
 
   // Check color scheme preference
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    defaults.theme = 'dark'
+  if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    defaults.theme = "dark"
   }
 
   return defaults

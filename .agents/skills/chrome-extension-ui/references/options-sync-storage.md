@@ -18,7 +18,7 @@ async function saveSettings(settings) {
 }
 
 async function loadSettings() {
-  const { settings } = await chrome.storage.local.get('settings')
+  const { settings } = await chrome.storage.local.get("settings")
   return settings || defaultSettings
 }
 // User configures on laptop → sits at desktop → must reconfigure
@@ -33,7 +33,7 @@ async function saveSettings(settings) {
 }
 
 async function loadSettings() {
-  const { settings } = await chrome.storage.sync.get('settings')
+  const { settings } = await chrome.storage.sync.get("settings")
   return settings || defaultSettings
 }
 // User configures on laptop → sits at desktop → same settings
@@ -59,9 +59,9 @@ async function saveWithFallback(key, data) {
   try {
     await chrome.storage.sync.set({ [key]: data })
   } catch (error) {
-    if (error.message.includes('QUOTA_BYTES')) {
+    if (error.message.includes("QUOTA_BYTES")) {
       // Quota exceeded - fall back to local
-      console.warn('Sync quota exceeded, using local storage')
+      console.warn("Sync quota exceeded, using local storage")
       await chrome.storage.local.set({ [key]: data })
     } else {
       throw error
@@ -72,19 +72,20 @@ async function saveWithFallback(key, data) {
 // Separate what should sync vs. stay local
 const storageStrategy = {
   // Small user preferences - SYNC
-  preferences: 'sync',    // theme, language, notifications
-  shortcuts: 'sync',      // keyboard shortcuts
+  preferences: "sync", // theme, language, notifications
+  shortcuts: "sync", // keyboard shortcuts
 
   // Large or device-specific data - LOCAL
-  cache: 'local',         // cached API responses
-  largeDatasets: 'local', // user's full history
-  deviceSettings: 'local' // window positions, local paths
+  cache: "local", // cached API responses
+  largeDatasets: "local", // user's full history
+  deviceSettings: "local", // window positions, local paths
 }
 
 async function saveSetting(category, key, value) {
-  const storage = storageStrategy[category] === 'sync'
-    ? chrome.storage.sync
-    : chrome.storage.local
+  const storage =
+    storageStrategy[category] === "sync"
+      ? chrome.storage.sync
+      : chrome.storage.local
 
   await storage.set({ [`${category}.${key}`]: value })
 }
@@ -92,11 +93,11 @@ async function saveSetting(category, key, value) {
 
 **Sync storage limits:**
 
-| Limit | Value |
-|-------|-------|
-| Total storage | 102,400 bytes |
-| Per item | 8,192 bytes |
-| Max items | 512 |
-| Write operations/hour | 1,800 |
+| Limit                 | Value         |
+| --------------------- | ------------- |
+| Total storage         | 102,400 bytes |
+| Per item              | 8,192 bytes   |
+| Max items             | 512           |
+| Write operations/hour | 1,800         |
 
 Reference: [Storage API](https://developer.chrome.com/docs/extensions/reference/api/storage)

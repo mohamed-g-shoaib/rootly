@@ -45,12 +45,12 @@ Supply icons in all required sizes (16, 32, 48, 128px) to ensure crisp display e
 
 **Icon size usage:**
 
-| Size | Where Used |
-|------|------------|
-| 16×16 | Toolbar, favicon, context menu |
-| 24×24 | Toolbar on Windows (125% DPI) |
-| 32×32 | Toolbar on Retina/HiDPI displays |
-| 48×48 | Extensions management page |
+| Size    | Where Used                       |
+| ------- | -------------------------------- |
+| 16×16   | Toolbar, favicon, context menu   |
+| 24×24   | Toolbar on Windows (125% DPI)    |
+| 32×32   | Toolbar on Retina/HiDPI displays |
+| 48×48   | Extensions management page       |
 | 128×128 | Chrome Web Store, install dialog |
 
 **Creating optimized icons for each size:**
@@ -68,14 +68,15 @@ convert icon.svg -resize 128x128 -density 96 icons/icon-128.png
 
 **Icon design per size:**
 
-| Size | Design Approach |
-|------|-----------------|
-| 16px | Simplify to essential shape, thicken lines, remove fine detail |
-| 32px | Moderate detail, clear silhouette |
-| 48px | Good detail visible, balanced complexity |
-| 128px | Full detail, gradients, shadows acceptable |
+| Size  | Design Approach                                                |
+| ----- | -------------------------------------------------------------- |
+| 16px  | Simplify to essential shape, thicken lines, remove fine detail |
+| 32px  | Moderate detail, clear silhouette                              |
+| 48px  | Good detail visible, balanced complexity                       |
+| 128px | Full detail, gradients, shadows acceptable                     |
 
 **PNG requirements:**
+
 - Format: PNG-24 with alpha transparency
 - Background: Transparent (no solid background)
 - Shape: Square canvas, icon can be any shape within

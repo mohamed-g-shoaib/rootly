@@ -13,7 +13,7 @@ Update side panel content to reflect the current page when relevant. A panel sho
 
 ```typescript
 // sidepanel.js - Loads once, never updates
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const data = await loadGenericData()
   renderPanel(data)
 })
@@ -36,7 +36,7 @@ async function initPanel() {
 
   // Listen for URL changes within same tab
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete') {
+    if (changeInfo.status === "complete") {
       await updateForCurrentTab()
     }
   })
@@ -46,8 +46,8 @@ async function updateForCurrentTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
 
   // Update page-specific section
-  document.getElementById('current-url').textContent = tab.url
-  document.getElementById('page-title').textContent = tab.title
+  document.getElementById("current-url").textContent = tab.url
+  document.getElementById("page-title").textContent = tab.title
 
   // Load related content
   const relatedNotes = await getNotesForUrl(tab.url)
@@ -59,20 +59,20 @@ async function updateForCurrentTab() {
 }
 
 function detectPageType(url) {
-  if (url.includes('github.com')) return 'github'
-  if (url.includes('docs.google.com')) return 'google-docs'
-  if (url.includes('youtube.com')) return 'youtube'
-  return 'generic'
+  if (url.includes("github.com")) return "github"
+  if (url.includes("docs.google.com")) return "google-docs"
+  if (url.includes("youtube.com")) return "youtube"
+  return "generic"
 }
 
 function updateActionsForPageType(pageType) {
-  const actionsContainer = document.getElementById('context-actions')
+  const actionsContainer = document.getElementById("context-actions")
 
   const actionsByType = {
-    'github': '<button>Save Repository</button><button>View Issues</button>',
-    'youtube': '<button>Save Video</button><button>Add to Playlist</button>',
-    'google-docs': '<button>Export Notes</button>',
-    'generic': '<button>Save Page</button>'
+    github: "<button>Save Repository</button><button>View Issues</button>",
+    youtube: "<button>Save Video</button><button>Add to Playlist</button>",
+    "google-docs": "<button>Export Notes</button>",
+    generic: "<button>Save Page</button>",
   }
 
   actionsContainer.innerHTML = actionsByType[pageType]
@@ -88,7 +88,7 @@ async function updateForCurrentTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
   const content = await getContentForUrl(tab.url)
 
-  const container = document.getElementById('page-content')
+  const container = document.getElementById("page-content")
 
   if (content && content.length > 0) {
     container.innerHTML = renderContent(content)

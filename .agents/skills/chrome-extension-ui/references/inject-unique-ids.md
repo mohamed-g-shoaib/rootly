@@ -13,17 +13,17 @@ Prefix all injected element IDs with a unique namespace. Generic IDs like "conta
 
 ```typescript
 // content.js - Common names cause conflicts
-const container = document.createElement('div')
-container.id = 'container'
+const container = document.createElement("div")
+container.id = "container"
 
-const modal = document.createElement('div')
-modal.id = 'modal'
+const modal = document.createElement("div")
+modal.id = "modal"
 
-const btn = document.createElement('button')
-btn.id = 'save-btn'
+const btn = document.createElement("button")
+btn.id = "save-btn"
 
 // Later...
-document.getElementById('container')
+document.getElementById("container")
 // Returns page's #container, not yours!
 ```
 
@@ -31,34 +31,34 @@ document.getElementById('container')
 
 ```typescript
 // content.js - Unique prefix for all elements
-const EXTENSION_PREFIX = 'my-extension-12345'
+const EXTENSION_PREFIX = "my-extension-12345"
 
 function createId(name) {
   return `${EXTENSION_PREFIX}-${name}`
 }
 
-const container = document.createElement('div')
-container.id = createId('container') // 'my-extension-12345-container'
+const container = document.createElement("div")
+container.id = createId("container") // 'my-extension-12345-container'
 
-const modal = document.createElement('div')
-modal.id = createId('modal') // 'my-extension-12345-modal'
+const modal = document.createElement("div")
+modal.id = createId("modal") // 'my-extension-12345-modal'
 
-const btn = document.createElement('button')
-btn.id = createId('save-btn') // 'my-extension-12345-save-btn'
+const btn = document.createElement("button")
+btn.id = createId("save-btn") // 'my-extension-12345-save-btn'
 
 // Safe lookups
 function getElement(name) {
   return document.getElementById(createId(name))
 }
 
-getElement('container') // Always returns your element
+getElement("container") // Always returns your element
 ```
 
 **Using data attributes instead of IDs:**
 
 ```typescript
 // content.js - Data attributes for element references
-const EXTENSION_ATTR = 'data-my-extension'
+const EXTENSION_ATTR = "data-my-extension"
 
 function createElement(type, name) {
   const element = document.createElement(type)
@@ -71,12 +71,12 @@ function getElement(name) {
 }
 
 // Usage
-const toolbar = createElement('div', 'toolbar')
-const saveBtn = createElement('button', 'save-btn')
+const toolbar = createElement("div", "toolbar")
+const saveBtn = createElement("button", "save-btn")
 
 // Later
-getElement('toolbar') // Always finds your toolbar
-getElement('save-btn') // Always finds your button
+getElement("toolbar") // Always finds your toolbar
+getElement("save-btn") // Always finds your button
 ```
 
 **Class name namespacing:**

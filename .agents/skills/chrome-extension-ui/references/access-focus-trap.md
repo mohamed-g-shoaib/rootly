@@ -14,14 +14,14 @@ Ensure keyboard users can always navigate out of any component. A focus trap occ
 ```typescript
 // modal.js - No way to close with keyboard
 function openModal() {
-  const modal = document.getElementById('modal')
-  modal.style.display = 'block'
-  modal.querySelector('input').focus()
+  const modal = document.getElementById("modal")
+  modal.style.display = "block"
+  modal.querySelector("input").focus()
 
   // Focus trapped - no Escape handler, no close button focus
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Tab') {
-      const focusable = modal.querySelectorAll('input, button')
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") {
+      const focusable = modal.querySelectorAll("input, button")
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
 
@@ -43,24 +43,24 @@ function openModal() {
 ```typescript
 // modal.js - Escape key and close button allow exit
 function openModal() {
-  const modal = document.getElementById('modal')
-  const closeButton = modal.querySelector('.close-btn')
+  const modal = document.getElementById("modal")
+  const closeButton = modal.querySelector(".close-btn")
   const focusableElements = modal.querySelectorAll(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   )
   const firstFocusable = focusableElements[0]
   const lastFocusable = focusableElements[focusableElements.length - 1]
 
-  modal.style.display = 'block'
+  modal.style.display = "block"
   firstFocusable.focus()
 
   function handleKeydown(event) {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       closeModal()
       return
     }
 
-    if (event.key === 'Tab') {
+    if (event.key === "Tab") {
       if (event.shiftKey && document.activeElement === firstFocusable) {
         lastFocusable.focus()
         event.preventDefault()
@@ -72,17 +72,18 @@ function openModal() {
   }
 
   function closeModal() {
-    modal.style.display = 'none'
-    document.removeEventListener('keydown', handleKeydown)
-    previouslyFocusedElement.focus()  // Return focus to trigger
+    modal.style.display = "none"
+    document.removeEventListener("keydown", handleKeydown)
+    previouslyFocusedElement.focus() // Return focus to trigger
   }
 
-  document.addEventListener('keydown', handleKeydown)
-  closeButton.addEventListener('click', closeModal)
+  document.addEventListener("keydown", handleKeydown)
+  closeButton.addEventListener("click", closeModal)
 }
 ```
 
 **Focus trap requirements:**
+
 - Escape key must close dialogs/modals
 - Close button must be keyboard accessible
 - Focus returns to the element that opened the dialog

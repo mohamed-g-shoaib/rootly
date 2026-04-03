@@ -54,8 +54,8 @@ Set z-index to the maximum value (2147483647) for injected overlays. Many sites 
 const Z_BASE = 2147483647
 
 function createOverlaySystem() {
-  const root = document.createElement('div')
-  root.id = 'extension-overlay-root'
+  const root = document.createElement("div")
+  root.id = "extension-overlay-root"
   root.style.cssText = `
     position: fixed;
     top: 0;
@@ -69,11 +69,11 @@ function createOverlaySystem() {
     toolbar: createLayer(1),
     tooltip: createLayer(2),
     modal: createLayer(3),
-    notification: createLayer(4)
+    notification: createLayer(4),
   }
 
   function createLayer(level) {
-    const layer = document.createElement('div')
+    const layer = document.createElement("div")
     layer.style.cssText = `
       position: fixed;
       z-index: ${level};

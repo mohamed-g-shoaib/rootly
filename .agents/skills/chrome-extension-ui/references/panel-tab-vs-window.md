@@ -15,17 +15,17 @@ Decide whether your side panel should be tab-specific (different content per tab
 // background.js - Panel shows same content regardless of tab
 chrome.sidePanel.setOptions({
   enabled: true,
-  path: 'sidepanel.html'
+  path: "sidepanel.html",
 })
 
 // sidepanel.js - Tries to show "current page" info
 // But doesn't update when user switches tabs
 async function loadCurrentPage() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-  document.getElementById('page-title').textContent = tab.title
+  document.getElementById("page-title").textContent = tab.title
 }
 
-document.addEventListener('DOMContentLoaded', loadCurrentPage)
+document.addEventListener("DOMContentLoaded", loadCurrentPage)
 // User switches tabs → panel still shows old tab's info
 ```
 
@@ -39,8 +39,8 @@ chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {
   await chrome.sidePanel.setOptions({
     tabId,
-    path: 'sidepanel.html',
-    enabled: true
+    path: "sidepanel.html",
+    enabled: true,
   })
 })
 
@@ -51,7 +51,7 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 })
 
 async function updatePanelForPage(tab) {
-  document.getElementById('page-title').textContent = tab.title
+  document.getElementById("page-title").textContent = tab.title
   const highlights = await getHighlightsForUrl(tab.url)
   renderHighlights(highlights)
 }
@@ -59,12 +59,12 @@ async function updatePanelForPage(tab) {
 
 **When to use each mode:**
 
-| Use Tab-Specific When | Use Window-Wide When |
-|----------------------|---------------------|
-| Content relates to current page | Content is independent of page |
+| Use Tab-Specific When            | Use Window-Wide When              |
+| -------------------------------- | --------------------------------- |
+| Content relates to current page  | Content is independent of page    |
 | Notes, highlights, page analysis | Task lists, timers, music players |
-| Translation, reading tools | Global settings, dashboards |
-| Page-specific data extraction | Cross-tab workflows |
+| Translation, reading tools       | Global settings, dashboards       |
+| Page-specific data extraction    | Cross-tab workflows               |
 
 **Window-wide panel example:**
 
@@ -72,12 +72,12 @@ async function updatePanelForPage(tab) {
 // background.js - Global panel for task management
 chrome.sidePanel.setOptions({
   enabled: true,
-  path: 'sidepanel.html'
+  path: "sidepanel.html",
 })
 
 // sidepanel.js - Content doesn't depend on current tab
 async function loadTasks() {
-  const { tasks } = await chrome.storage.sync.get('tasks')
+  const { tasks } = await chrome.storage.sync.get("tasks")
   renderTasks(tasks)
 }
 // Same task list regardless of which tab is active

@@ -53,17 +53,17 @@ Design principles for toolbar icons:
 async function setIconState(state) {
   const iconPaths = {
     active: {
-      16: 'icons/active-16.png',
-      32: 'icons/active-32.png'
+      16: "icons/active-16.png",
+      32: "icons/active-32.png",
     },
     inactive: {
-      16: 'icons/inactive-16.png',
-      32: 'icons/inactive-32.png'
+      16: "icons/inactive-16.png",
+      32: "icons/inactive-32.png",
     },
     alert: {
-      16: 'icons/alert-16.png',
-      32: 'icons/alert-32.png'
-    }
+      16: "icons/alert-16.png",
+      32: "icons/alert-32.png",
+    },
   }
 
   await chrome.action.setIcon({ path: iconPaths[state] })
@@ -72,19 +72,19 @@ async function setIconState(state) {
 // Change icon based on extension state
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.enabled) {
-    setIconState(changes.enabled.newValue ? 'active' : 'inactive')
+    setIconState(changes.enabled.newValue ? "active" : "inactive")
   }
 })
 ```
 
 **Testing icon visibility:**
 
-| Test | Pass Criteria |
-|------|---------------|
-| 16px preview | Shape clearly recognizable |
-| Grayscale | Still distinguishable |
-| On light/dark toolbar | Visible on both |
-| Next to other extensions | Stands out from common icons |
-| Color blindness simulation | Remains distinct |
+| Test                       | Pass Criteria                |
+| -------------------------- | ---------------------------- |
+| 16px preview               | Shape clearly recognizable   |
+| Grayscale                  | Still distinguishable        |
+| On light/dark toolbar      | Visible on both              |
+| Next to other extensions   | Stands out from common icons |
+| Color blindness simulation | Remains distinct             |
 
 Reference: [Extension Branding](https://developer.chrome.com/docs/webstore/branding)

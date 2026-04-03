@@ -13,13 +13,25 @@ Apply consistent colors, typography, and spacing across all extension surfaces (
 
 ```css
 /* popup.css */
-.btn { background: #007bff; border-radius: 4px; font-size: 14px; }
+.btn {
+  background: #007bff;
+  border-radius: 4px;
+  font-size: 14px;
+}
 
 /* options.css */
-.button { background: #0066cc; border-radius: 8px; font-size: 16px; }
+.button {
+  background: #0066cc;
+  border-radius: 8px;
+  font-size: 16px;
+}
 
 /* content.css */
-.action-btn { background: blue; border-radius: 0; font-size: 12px; }
+.action-btn {
+  background: blue;
+  border-radius: 0;
+  font-size: 12px;
+}
 
 /* Three different blues, three different radii, three different sizes */
 ```
@@ -30,9 +42,9 @@ Apply consistent colors, typography, and spacing across all extension surfaces (
 /* shared/variables.css - Single source of truth */
 :root {
   /* Brand colors */
-  --color-primary: #4A90D9;
-  --color-primary-hover: #357ABD;
-  --color-primary-active: #2868A8;
+  --color-primary: #4a90d9;
+  --color-primary-hover: #357abd;
+  --color-primary-active: #2868a8;
 
   --color-success: #28a745;
   --color-warning: #ffc107;
@@ -46,7 +58,8 @@ Apply consistent colors, typography, and spacing across all extension surfaces (
   --color-background-secondary: #f5f5f5;
 
   /* Typography */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-size-small: 12px;
   --font-size-base: 14px;
   --font-size-large: 16px;
@@ -95,24 +108,28 @@ Apply consistent colors, typography, and spacing across all extension surfaces (
 
 ```html
 <!-- popup.html -->
-<link rel="stylesheet" href="shared/variables.css">
-<link rel="stylesheet" href="shared/components.css">
-<link rel="stylesheet" href="popup.css">
+<link rel="stylesheet" href="shared/variables.css" />
+<link rel="stylesheet" href="shared/components.css" />
+<link rel="stylesheet" href="popup.css" />
 
 <!-- options.html -->
-<link rel="stylesheet" href="shared/variables.css">
-<link rel="stylesheet" href="shared/components.css">
-<link rel="stylesheet" href="options.css">
+<link rel="stylesheet" href="shared/variables.css" />
+<link rel="stylesheet" href="shared/components.css" />
+<link rel="stylesheet" href="options.css" />
 ```
 
 **For Shadow DOM (content scripts):**
 
 ```typescript
 // content.js - Include design system in Shadow DOM
-const styles = await fetch(chrome.runtime.getURL('shared/variables.css')).then(r => r.text())
-const components = await fetch(chrome.runtime.getURL('shared/components.css')).then(r => r.text())
+const styles = await fetch(chrome.runtime.getURL("shared/variables.css")).then(
+  (r) => r.text()
+)
+const components = await fetch(
+  chrome.runtime.getURL("shared/components.css")
+).then((r) => r.text())
 
-const shadow = host.attachShadow({ mode: 'closed' })
+const shadow = host.attachShadow({ mode: "closed" })
 shadow.innerHTML = `
   <style>${styles}\n${components}</style>
   <div class="extension-ui">

@@ -23,9 +23,7 @@ Request only the permissions your extension absolutely needs. Excessive permissi
     "webRequest",
     "<all_urls>"
   ],
-  "host_permissions": [
-    "*://*/*"
-  ]
+  "host_permissions": ["*://*/*"]
 }
 // Warning: "Read and change all your data on all websites"
 // User sees scary warning → abandons installation
@@ -36,9 +34,7 @@ Request only the permissions your extension absolutely needs. Excessive permissi
 ```json
 {
   "name": "Reading Time Calculator",
-  "permissions": [
-    "activeTab"
-  ]
+  "permissions": ["activeTab"]
 }
 // Warning: "Read and change data on the site you're viewing"
 // Minimal warning → higher trust → more installations
@@ -46,26 +42,28 @@ Request only the permissions your extension absolutely needs. Excessive permissi
 
 **Permission reduction strategies:**
 
-| Instead of... | Use... | Benefit |
-|---------------|--------|---------|
-| `tabs` | `activeTab` | No warning about reading all tabs |
-| `<all_urls>` | Specific domains | Scoped access warning |
-| `webRequest` | `declarativeNetRequest` | Modern, safer API |
-| Upfront `host_permissions` | Optional permissions | Request when needed |
+| Instead of...              | Use...                  | Benefit                           |
+| -------------------------- | ----------------------- | --------------------------------- |
+| `tabs`                     | `activeTab`             | No warning about reading all tabs |
+| `<all_urls>`               | Specific domains        | Scoped access warning             |
+| `webRequest`               | `declarativeNetRequest` | Modern, safer API                 |
+| Upfront `host_permissions` | Optional permissions    | Request when needed               |
 
 **Using optional permissions:**
 
 ```typescript
 // Request permission only when user needs the feature
-document.getElementById('advanced-feature').addEventListener('click', async () => {
-  const granted = await chrome.permissions.request({
-    permissions: ['history'],
-    origins: ['https://example.com/*']
+document
+  .getElementById("advanced-feature")
+  .addEventListener("click", async () => {
+    const granted = await chrome.permissions.request({
+      permissions: ["history"],
+      origins: ["https://example.com/*"],
+    })
+    if (granted) {
+      enableAdvancedFeature()
+    }
   })
-  if (granted) {
-    enableAdvancedFeature()
-  }
-})
 ```
 
 Reference: [Declare Permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions)

@@ -44,8 +44,8 @@ async function updateTooltipState(tabId, isSaved) {
   await chrome.action.setTitle({
     tabId,
     title: isSaved
-      ? 'Page saved - Click to view or remove'
-      : 'Save this page to your reading list'
+      ? "Page saved - Click to view or remove"
+      : "Save this page to your reading list",
   })
 }
 
@@ -58,6 +58,7 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 ```
 
 **Tooltip best practices:**
+
 - Start with a verb: "Save", "Block", "Translate", "Capture"
 - Keep under 45 characters for full visibility
 - Update dynamically to reflect current state

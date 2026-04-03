@@ -56,6 +56,7 @@ Build extensions around one narrowly defined purpose. Chrome Web Store requires 
 ```
 
 **Identifying your single purpose:**
+
 - Can you describe the extension in one sentence without "and"?
 - Do all permissions directly support that sentence?
 - Would removing any feature break the core value?

@@ -13,16 +13,20 @@ Display meaningful content immediately when the popup opens. Users perceive dela
 
 ```typescript
 // popup.js - Blank popup while fetching
-document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('content')
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("content")
 
   // Nothing visible while this runs
-  const data = await fetch('https://api.example.com/data')
+  const data = await fetch("https://api.example.com/data")
   const items = await data.json()
 
-  container.innerHTML = items.map(item => `
+  container.innerHTML = items
+    .map(
+      (item) => `
     <div class="item">${item.name}</div>
-  `).join('')
+  `
+    )
+    .join("")
 })
 // User sees empty popup for 500ms-2s
 ```
@@ -31,8 +35,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 ```typescript
 // popup.js - Immediate skeleton, then hydrate
-document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('content')
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("content")
 
   // Show skeleton immediately (already in HTML or inject fast)
   container.innerHTML = `
@@ -43,12 +47,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Fetch and replace
   try {
-    const data = await fetch('https://api.example.com/data')
+    const data = await fetch("https://api.example.com/data")
     const items = await data.json()
 
-    container.innerHTML = items.map(item => `
+    container.innerHTML = items
+      .map(
+        (item) => `
       <div class="item">${item.name}</div>
-    `).join('')
+    `
+      )
+      .join("")
   } catch (error) {
     container.innerHTML = `
       <div class="error">Unable to load. <button onclick="location.reload()">Retry</button></div>
@@ -61,11 +69,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 ```typescript
 // popup.js - Show cached immediately, update in background
-document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('content')
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("content")
 
   // Render cached data instantly
-  const cached = await chrome.storage.local.get('cachedItems')
+  const cached = await chrome.storage.local.get("cachedItems")
   if (cached.cachedItems) {
     renderItems(cached.cachedItems)
   } else {
@@ -74,10 +82,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Fetch fresh data in background
   try {
-    const response = await fetch('https://api.example.com/data')
+    const response = await fetch("https://api.example.com/data")
     const freshItems = await response.json()
     await chrome.storage.local.set({ cachedItems: freshItems })
-    renderItems(freshItems)  // Update UI with fresh data
+    renderItems(freshItems) // Update UI with fresh data
   } catch (error) {
     if (!cached.cachedItems) {
       showError()

@@ -15,13 +15,13 @@ Ensure every interactive element is reachable and operable via keyboard. Users w
 <!-- popup.html - Custom buttons not keyboard accessible -->
 <div class="toolbar">
   <div class="icon-button" onclick="handleSave()">
-    <img src="save.svg" alt="Save">
+    <img src="save.svg" alt="Save" />
   </div>
   <div class="icon-button" onclick="handleShare()">
-    <img src="share.svg" alt="Share">
+    <img src="share.svg" alt="Share" />
   </div>
   <div class="icon-button" onclick="handleDelete()">
-    <img src="delete.svg" alt="Delete">
+    <img src="delete.svg" alt="Delete" />
   </div>
 </div>
 <!-- Keyboard user: Tab key skips these entirely -->
@@ -33,15 +33,15 @@ Ensure every interactive element is reachable and operable via keyboard. Users w
 <!-- popup.html - All buttons keyboard accessible -->
 <div class="toolbar" role="toolbar" aria-label="Actions">
   <button type="button" class="icon-button" onclick="handleSave()">
-    <img src="save.svg" alt="">
+    <img src="save.svg" alt="" />
     <span class="visually-hidden">Save</span>
   </button>
   <button type="button" class="icon-button" onclick="handleShare()">
-    <img src="share.svg" alt="">
+    <img src="share.svg" alt="" />
     <span class="visually-hidden">Share</span>
   </button>
   <button type="button" class="icon-button" onclick="handleDelete()">
-    <img src="delete.svg" alt="">
+    <img src="delete.svg" alt="" />
     <span class="visually-hidden">Delete</span>
   </button>
 </div>
@@ -52,26 +52,26 @@ Ensure every interactive element is reachable and operable via keyboard. Users w
 
 ```typescript
 // For custom interactive elements, add tabindex and key handlers
-const customDropdown = document.querySelector('.custom-dropdown')
-customDropdown.setAttribute('tabindex', '0')
-customDropdown.setAttribute('role', 'combobox')
+const customDropdown = document.querySelector(".custom-dropdown")
+customDropdown.setAttribute("tabindex", "0")
+customDropdown.setAttribute("role", "combobox")
 
-customDropdown.addEventListener('keydown', (event) => {
+customDropdown.addEventListener("keydown", (event) => {
   switch (event.key) {
-    case 'Enter':
-    case ' ':
+    case "Enter":
+    case " ":
       toggleDropdown()
       event.preventDefault()
       break
-    case 'ArrowDown':
+    case "ArrowDown":
       selectNextOption()
       event.preventDefault()
       break
-    case 'ArrowUp':
+    case "ArrowUp":
       selectPreviousOption()
       event.preventDefault()
       break
-    case 'Escape':
+    case "Escape":
       closeDropdown()
       break
   }

@@ -32,18 +32,20 @@ Use `chrome.action.setPopup()` to display different popups based on application 
 ```typescript
 // popup.js - Complex state management in single popup
 async function init() {
-  const sections = ['logged-out', 'logged-in', 'error']
-  sections.forEach(s => document.getElementById(`${s}-section`).style.display = 'none')
+  const sections = ["logged-out", "logged-in", "error"]
+  sections.forEach(
+    (s) => (document.getElementById(`${s}-section`).style.display = "none")
+  )
 
   try {
     const user = await checkAuth()
     if (user) {
-      document.getElementById('logged-in-section').style.display = 'block'
+      document.getElementById("logged-in-section").style.display = "block"
     } else {
-      document.getElementById('logged-out-section').style.display = 'block'
+      document.getElementById("logged-out-section").style.display = "block"
     }
   } catch {
-    document.getElementById('error-section').style.display = 'block'
+    document.getElementById("error-section").style.display = "block"
   }
 }
 ```
@@ -56,18 +58,21 @@ chrome.runtime.onInstalled.addListener(updatePopupState)
 chrome.storage.onChanged.addListener(updatePopupState)
 
 async function updatePopupState() {
-  const { user, hasError } = await chrome.storage.local.get(['user', 'hasError'])
+  const { user, hasError } = await chrome.storage.local.get([
+    "user",
+    "hasError",
+  ])
 
   if (hasError) {
-    await chrome.action.setPopup({ popup: 'popups/error.html' })
-    await chrome.action.setBadgeText({ text: '!' })
-    await chrome.action.setBadgeBackgroundColor({ color: '#dc3545' })
+    await chrome.action.setPopup({ popup: "popups/error.html" })
+    await chrome.action.setBadgeText({ text: "!" })
+    await chrome.action.setBadgeBackgroundColor({ color: "#dc3545" })
   } else if (user) {
-    await chrome.action.setPopup({ popup: 'popups/main.html' })
-    await chrome.action.setBadgeText({ text: '' })
+    await chrome.action.setPopup({ popup: "popups/main.html" })
+    await chrome.action.setBadgeText({ text: "" })
   } else {
-    await chrome.action.setPopup({ popup: 'popups/signin.html' })
-    await chrome.action.setBadgeText({ text: '' })
+    await chrome.action.setPopup({ popup: "popups/signin.html" })
+    await chrome.action.setBadgeText({ text: "" })
   }
 }
 ```
@@ -80,6 +85,7 @@ popups/
 ```
 
 **Benefits of dynamic popups:**
+
 - Each popup is simpler and focused
 - Faster load times (less HTML/JS to parse)
 - Easier to maintain and test

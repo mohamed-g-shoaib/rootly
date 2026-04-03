@@ -26,17 +26,22 @@ Design side panels to enhance browsing without competing for attention. Panels t
 </div>
 
 <style>
-.pulse {
-  animation: pulse 1s infinite;
-  background: linear-gradient(90deg, #ff0000, #ff6600);
-  color: white;
-}
+  .pulse {
+    animation: pulse 1s infinite;
+    background: linear-gradient(90deg, #ff0000, #ff6600);
+    color: white;
+  }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-/* User's eyes pulled away from page content */
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  /* User's eyes pulled away from page content */
 </style>
 ```
 
@@ -64,28 +69,29 @@ Design side panels to enhance browsing without competing for attention. Panels t
 </div>
 
 <style>
-.panel {
-  background: #fafafa;
-  color: #333;
-  font-size: 14px;
-}
+  .panel {
+    background: #fafafa;
+    color: #333;
+    font-size: 14px;
+  }
 
-.panel-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
-}
+  .panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+  }
 
-.panel-header h1 {
-  font-size: 16px;
-  font-weight: 500;
-  margin: 0;
-}
-/* Subtle, professional, doesn't fight for attention */
+  .panel-header h1 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+  }
+  /* Subtle, professional, doesn't fight for attention */
 </style>
 ```
 
 **Non-distracting panel guidelines:**
+
 - No animations unless user-initiated
 - Muted color palette (complement browser chrome)
 - No auto-playing media

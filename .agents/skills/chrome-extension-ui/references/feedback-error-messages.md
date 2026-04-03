@@ -17,7 +17,7 @@ async function saveBookmark() {
   try {
     await chrome.bookmarks.create({ title, url })
   } catch (error) {
-    showError('Error occurred')  // User: "What error? What do I do?"
+    showError("Error occurred") // User: "What error? What do I do?"
   }
 }
 
@@ -25,7 +25,7 @@ async function syncData() {
   try {
     await fetch(apiUrl)
   } catch (error) {
-    showError('Something went wrong')  // User: "Great, now what?"
+    showError("Something went wrong") // User: "Great, now what?"
   }
 }
 ```
@@ -38,23 +38,24 @@ async function saveBookmark() {
   try {
     await chrome.bookmarks.create({ title, url })
   } catch (error) {
-    if (error.message.includes('invalid url')) {
+    if (error.message.includes("invalid url")) {
       showError({
-        title: 'Invalid URL',
-        message: 'The URL format is not valid. Check for typos.',
-        action: { label: 'Edit URL', handler: focusUrlInput }
+        title: "Invalid URL",
+        message: "The URL format is not valid. Check for typos.",
+        action: { label: "Edit URL", handler: focusUrlInput },
       })
-    } else if (error.message.includes('quota')) {
+    } else if (error.message.includes("quota")) {
       showError({
-        title: 'Storage Full',
-        message: 'You\'ve reached the bookmark limit. Delete some bookmarks to add more.',
-        action: { label: 'Manage Bookmarks', handler: openBookmarkManager }
+        title: "Storage Full",
+        message:
+          "You've reached the bookmark limit. Delete some bookmarks to add more.",
+        action: { label: "Manage Bookmarks", handler: openBookmarkManager },
       })
     } else {
       showError({
-        title: 'Could Not Save Bookmark',
-        message: 'An unexpected error occurred. Try again or restart Chrome.',
-        action: { label: 'Try Again', handler: () => saveBookmark() }
+        title: "Could Not Save Bookmark",
+        message: "An unexpected error occurred. Try again or restart Chrome.",
+        action: { label: "Try Again", handler: () => saveBookmark() },
       })
     }
   }
@@ -68,42 +69,43 @@ async function syncData() {
   } catch (error) {
     if (!navigator.onLine) {
       showError({
-        title: 'No Internet Connection',
-        message: 'Check your network connection and try again.',
-        action: { label: 'Retry', handler: () => syncData() }
+        title: "No Internet Connection",
+        message: "Check your network connection and try again.",
+        action: { label: "Retry", handler: () => syncData() },
       })
-    } else if (error.message.includes('401')) {
+    } else if (error.message.includes("401")) {
       showError({
-        title: 'Session Expired',
-        message: 'Please sign in again to continue.',
-        action: { label: 'Sign In', handler: openSignInPage }
+        title: "Session Expired",
+        message: "Please sign in again to continue.",
+        action: { label: "Sign In", handler: openSignInPage },
       })
     } else {
       showError({
-        title: 'Sync Failed',
-        message: 'Unable to reach our servers. Try again in a few minutes.',
-        action: { label: 'Retry', handler: () => syncData() }
+        title: "Sync Failed",
+        message: "Unable to reach our servers. Try again in a few minutes.",
+        action: { label: "Retry", handler: () => syncData() },
       })
     }
   }
 }
 
 function showError({ title, message, action }) {
-  const errorEl = document.getElementById('error-container')
+  const errorEl = document.getElementById("error-container")
   errorEl.innerHTML = `
     <div class="error-banner" role="alert">
       <strong>${title}</strong>
       <p>${message}</p>
-      ${action ? `<button id="error-action">${action.label}</button>` : ''}
+      ${action ? `<button id="error-action">${action.label}</button>` : ""}
     </div>
   `
   if (action) {
-    document.getElementById('error-action').onclick = action.handler
+    document.getElementById("error-action").onclick = action.handler
   }
 }
 ```
 
 **Error message checklist:**
+
 - What happened? (specific title)
 - Why did it happen? (explanation)
 - What can the user do? (actionable button)

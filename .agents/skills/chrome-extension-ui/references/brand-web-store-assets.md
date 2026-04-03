@@ -78,7 +78,7 @@ async function captureScreenshot(scenario) {
   await chrome.tabs.update({ url: scenario.url })
 
   // Wait for page load
-  await new Promise(resolve => setTimeout(resolve, 2000))
+  await new Promise((resolve) => setTimeout(resolve, 2000))
 
   // Open extension UI
   if (scenario.openPopup) {
@@ -87,8 +87,8 @@ async function captureScreenshot(scenario) {
 
   // Take screenshot
   const screenshot = await chrome.tabs.captureVisibleTab({
-    format: 'png',
-    quality: 100
+    format: "png",
+    quality: 100,
   })
 
   return screenshot
@@ -96,10 +96,10 @@ async function captureScreenshot(scenario) {
 
 const scenarios = [
   {
-    name: 'main-feature',
+    name: "main-feature",
     demoData: { items: sampleItems },
-    url: 'https://example.com',
-    openPopup: true
+    url: "https://example.com",
+    openPopup: true,
   },
   // ... more scenarios
 ]
@@ -107,12 +107,12 @@ const scenarios = [
 
 **Asset checklist:**
 
-| Asset | Size | Required |
-|-------|------|----------|
-| Icon 128×128 | 128×128 px | Yes |
-| Screenshots | 1280×800 or 640×400 | Yes (1-5) |
-| Small promo tile | 440×280 px | Recommended |
-| Large promo tile | 920×680 px | Optional |
-| Marquee | 1400×560 px | Optional |
+| Asset            | Size                | Required    |
+| ---------------- | ------------------- | ----------- |
+| Icon 128×128     | 128×128 px          | Yes         |
+| Screenshots      | 1280×800 or 640×400 | Yes (1-5)   |
+| Small promo tile | 440×280 px          | Recommended |
+| Large promo tile | 920×680 px          | Optional    |
+| Marquee          | 1400×560 px         | Optional    |
 
 Reference: [Creating a Great Listing Page](https://developer.chrome.com/docs/webstore/best-listing)

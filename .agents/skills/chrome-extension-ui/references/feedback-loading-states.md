@@ -14,12 +14,12 @@ Display immediate feedback when operations take more than 100ms. Users perceive 
 ```typescript
 // popup.js - User sees nothing while data loads
 async function loadData() {
-  const response = await fetch('https://api.example.com/data')
+  const response = await fetch("https://api.example.com/data")
   const data = await response.json()
   renderData(data)
 }
 
-document.addEventListener('DOMContentLoaded', loadData)
+document.addEventListener("DOMContentLoaded", loadData)
 // User: clicks extension → blank screen for 2 seconds → content appears
 // User thinks: "Is it broken?"
 ```
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', loadData)
 ```typescript
 // popup.js - Clear loading indication
 async function loadData() {
-  const container = document.getElementById('content')
+  const container = document.getElementById("content")
 
   // Show loading state immediately
   container.innerHTML = `
@@ -40,7 +40,7 @@ async function loadData() {
   `
 
   try {
-    const response = await fetch('https://api.example.com/data')
+    const response = await fetch("https://api.example.com/data")
     const data = await response.json()
     renderData(data)
   } catch (error) {
@@ -105,13 +105,13 @@ async function handleSubmit(event) {
 
   try {
     await saveData()
-    button.textContent = 'Saved!'
+    button.textContent = "Saved!"
     setTimeout(() => {
       button.textContent = originalText
       button.disabled = false
     }, 1500)
   } catch (error) {
-    button.textContent = 'Failed - Retry'
+    button.textContent = "Failed - Retry"
     button.disabled = false
   }
 }

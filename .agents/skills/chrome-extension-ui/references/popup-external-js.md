@@ -17,10 +17,10 @@ Place all JavaScript in separate .js files linked via `<script src>`. Manifest V
 
 <script>
   function handleClick() {
-    console.log('clicked')
+    console.log("clicked")
   }
 
-  document.getElementById('btn').addEventListener('click', () => {
+  document.getElementById("btn").addEventListener("click", () => {
     toggleExtensionState()
   })
 </script>
@@ -34,28 +34,28 @@ Place all JavaScript in separate .js files linked via `<script src>`. Manifest V
 <!-- popup.html - Script in external file -->
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-  <button id="action-btn">Click me</button>
-  <script src="popup.js"></script>
-</body>
+  <head>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <button id="action-btn">Click me</button>
+    <script src="popup.js"></script>
+  </body>
 </html>
 ```
 
 ```typescript
 // popup.js - All JavaScript here
-document.addEventListener('DOMContentLoaded', () => {
-  const button = document.getElementById('action-btn')
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("action-btn")
 
-  button.addEventListener('click', () => {
+  button.addEventListener("click", () => {
     handleClick()
   })
 })
 
 function handleClick() {
-  console.log('clicked')
+  console.log("clicked")
 }
 ```
 
@@ -63,34 +63,38 @@ function handleClick() {
 
 ```typescript
 // popup.js - Use event delegation instead of inline handlers
-const container = document.getElementById('item-list')
+const container = document.getElementById("item-list")
 
 // Event delegation - single listener handles dynamic content
-container.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-action]')
+container.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-action]")
   if (!button) return
 
   const action = button.dataset.action
   const itemId = button.dataset.itemId
 
   switch (action) {
-    case 'edit':
+    case "edit":
       editItem(itemId)
       break
-    case 'delete':
+    case "delete":
       deleteItem(itemId)
       break
   }
 })
 
 function renderItems(items) {
-  container.innerHTML = items.map(item => `
+  container.innerHTML = items
+    .map(
+      (item) => `
     <div class="item">
       <span>${item.name}</span>
       <button data-action="edit" data-item-id="${item.id}">Edit</button>
       <button data-action="delete" data-item-id="${item.id}">Delete</button>
     </div>
-  `).join('')
+  `
+    )
+    .join("")
 }
 ```
 

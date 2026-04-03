@@ -13,11 +13,11 @@ Load only visible panel sections initially. Defer loading of collapsed or below-
 
 ```typescript
 // sidepanel.js - Fetches everything on open
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // All these run before user sees anything
-  const recentItems = await fetchRecentItems()      // 200ms
-  const savedPages = await fetchSavedPages()        // 300ms
-  const analytics = await fetchAnalytics()          // 400ms
+  const recentItems = await fetchRecentItems() // 200ms
+  const savedPages = await fetchSavedPages() // 300ms
+  const analytics = await fetchAnalytics() // 400ms
   const recommendations = await fetchRecommendations() // 500ms
 
   renderRecentItems(recentItems)
@@ -32,29 +32,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 ```typescript
 // sidepanel.js - Load primary section immediately, defer rest
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // Load only the most important section immediately
   const recentItems = await fetchRecentItems()
   renderRecentItems(recentItems)
   // Panel usable in 200ms
 
   // Set up lazy loading for other sections
-  setupLazySection('saved-pages', fetchSavedPages, renderSavedPages)
-  setupLazySection('analytics', fetchAnalytics, renderAnalytics)
-  setupLazySection('recommendations', fetchRecommendations, renderRecommendations)
+  setupLazySection("saved-pages", fetchSavedPages, renderSavedPages)
+  setupLazySection("analytics", fetchAnalytics, renderAnalytics)
+  setupLazySection(
+    "recommendations",
+    fetchRecommendations,
+    renderRecommendations
+  )
 })
 
 function setupLazySection(sectionId, fetchFn, renderFn) {
   const section = document.getElementById(sectionId)
-  const header = section.querySelector('.section-header')
+  const header = section.querySelector(".section-header")
   let loaded = false
 
   // Load when section is expanded
-  header.addEventListener('click', async () => {
-    const isExpanded = section.classList.toggle('expanded')
+  header.addEventListener("click", async () => {
+    const isExpanded = section.classList.toggle("expanded")
 
     if (isExpanded && !loaded) {
-      section.querySelector('.content').innerHTML = '<div class="loading">Loading...</div>'
+      section.querySelector(".content").innerHTML =
+        '<div class="loading">Loading...</div>'
       const data = await fetchFn()
       renderFn(data)
       loaded = true
@@ -68,28 +73,31 @@ function setupLazySection(sectionId, fetchFn, renderFn) {
 ```typescript
 // sidepanel.js - Load when section scrolls into view
 function setupScrollLazyLoading() {
-  const lazySections = document.querySelectorAll('[data-lazy-section]')
+  const lazySections = document.querySelectorAll("[data-lazy-section]")
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(async (entry) => {
-      if (entry.isIntersecting) {
-        const section = entry.target
-        const sectionType = section.dataset.lazySection
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(async (entry) => {
+        if (entry.isIntersecting) {
+          const section = entry.target
+          const sectionType = section.dataset.lazySection
 
-        // Stop observing this section
-        observer.unobserve(section)
+          // Stop observing this section
+          observer.unobserve(section)
 
-        // Load content
-        section.innerHTML = '<div class="loading">Loading...</div>'
-        const data = await loadSectionData(sectionType)
-        renderSection(section, data)
-      }
-    })
-  }, {
-    rootMargin: '100px' // Start loading slightly before visible
-  })
+          // Load content
+          section.innerHTML = '<div class="loading">Loading...</div>'
+          const data = await loadSectionData(sectionType)
+          renderSection(section, data)
+        }
+      })
+    },
+    {
+      rootMargin: "100px", // Start loading slightly before visible
+    }
+  )
 
-  lazySections.forEach(section => observer.observe(section))
+  lazySections.forEach((section) => observer.observe(section))
 }
 ```
 

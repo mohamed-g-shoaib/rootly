@@ -18,15 +18,15 @@ Maintain minimum contrast ratios between text and background colors. Low contras
 }
 
 .hint-text {
-  color: #aaaaaa;  /* 2.3:1 contrast - FAILS */
+  color: #aaaaaa; /* 2.3:1 contrast - FAILS */
 }
 
 .disabled-text {
-  color: #cccccc;  /* 1.6:1 contrast - FAILS */
+  color: #cccccc; /* 1.6:1 contrast - FAILS */
 }
 
 .link {
-  color: #6699ff;  /* 2.9:1 contrast - FAILS for normal text */
+  color: #6699ff; /* 2.9:1 contrast - FAILS for normal text */
 }
 ```
 
@@ -39,33 +39,33 @@ Maintain minimum contrast ratios between text and background colors. Low contras
 }
 
 .hint-text {
-  color: #767676;  /* 4.5:1 contrast - PASSES */
+  color: #767676; /* 4.5:1 contrast - PASSES */
 }
 
 .disabled-text {
-  color: #767676;  /* 4.5:1 contrast - PASSES */
-  opacity: 0.7;    /* Visual distinction through opacity */
+  color: #767676; /* 4.5:1 contrast - PASSES */
+  opacity: 0.7; /* Visual distinction through opacity */
 }
 
 .link {
-  color: #0066cc;  /* 5.9:1 contrast - PASSES */
+  color: #0066cc; /* 5.9:1 contrast - PASSES */
 }
 
 /* Large text (18px+ or 14px+ bold) only needs 3:1 */
 .heading {
   font-size: 18px;
-  color: #595959;  /* 7:1 contrast - exceeds requirement */
+  color: #595959; /* 7:1 contrast - exceeds requirement */
 }
 ```
 
 **Contrast requirements summary:**
 
-| Element Type | Minimum Ratio |
-|--------------|---------------|
-| Normal text (< 18px) | 4.5:1 |
-| Large text (≥ 18px or ≥ 14px bold) | 3:1 |
-| UI components & graphics | 3:1 |
-| Disabled elements | No requirement (but consider usability) |
+| Element Type                       | Minimum Ratio                           |
+| ---------------------------------- | --------------------------------------- |
+| Normal text (< 18px)               | 4.5:1                                   |
+| Large text (≥ 18px or ≥ 14px bold) | 3:1                                     |
+| UI components & graphics           | 3:1                                     |
+| Disabled elements                  | No requirement (but consider usability) |
 
 **Testing contrast in your extension:**
 

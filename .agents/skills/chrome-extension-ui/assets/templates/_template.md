@@ -24,6 +24,7 @@ Brief explanation (1-3 sentences) of WHY this matters for Chrome extension UX/UI
 ```
 
 **When NOT to use this pattern:**
+
 - Exception 1
 - Exception 2
 

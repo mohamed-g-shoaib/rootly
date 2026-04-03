@@ -13,20 +13,20 @@ Limit badge text to 4 characters maximum. Longer text gets clipped and becomes u
 
 ```typescript
 // background.js - Text gets clipped
-chrome.action.setBadgeText({ text: 'UPDATED' })  // Shows: "UPDA"
-chrome.action.setBadgeText({ text: '12345' })    // Shows: "1234"
-chrome.action.setBadgeText({ text: 'NEW!' })     // Shows: "NEW!" but cramped
+chrome.action.setBadgeText({ text: "UPDATED" }) // Shows: "UPDA"
+chrome.action.setBadgeText({ text: "12345" }) // Shows: "1234"
+chrome.action.setBadgeText({ text: "NEW!" }) // Shows: "NEW!" but cramped
 ```
 
 **Correct (concise badge text):**
 
 ```typescript
 // background.js - Text fits badge
-chrome.action.setBadgeText({ text: '3' })    // Single digit count
-chrome.action.setBadgeText({ text: '99+' })  // Capped count
-chrome.action.setBadgeText({ text: 'ON' })   // Status indicator
-chrome.action.setBadgeText({ text: '!' })    // Alert symbol
-chrome.action.setBadgeText({ text: '✓' })    // Success indicator
+chrome.action.setBadgeText({ text: "3" }) // Single digit count
+chrome.action.setBadgeText({ text: "99+" }) // Capped count
+chrome.action.setBadgeText({ text: "ON" }) // Status indicator
+chrome.action.setBadgeText({ text: "!" }) // Alert symbol
+chrome.action.setBadgeText({ text: "✓" }) // Success indicator
 ```
 
 **Badge text patterns:**
@@ -34,11 +34,11 @@ chrome.action.setBadgeText({ text: '✓' })    // Success indicator
 ```typescript
 // background.js - Smart badge text formatting
 function formatBadgeCount(count) {
-  if (count === 0) return ''
+  if (count === 0) return ""
   if (count < 100) return String(count)
-  if (count < 1000) return '99+'
+  if (count < 1000) return "99+"
   if (count < 10000) return `${Math.floor(count / 1000)}k`
-  return '9k+'
+  return "9k+"
 }
 
 async function updateBadge(itemCount) {
@@ -46,11 +46,11 @@ async function updateBadge(itemCount) {
 }
 
 // Usage
-updateBadge(5)      // "5"
-updateBadge(42)     // "42"
-updateBadge(150)    // "99+"
-updateBadge(2500)   // "2k"
-updateBadge(15000)  // "9k+"
+updateBadge(5) // "5"
+updateBadge(42) // "42"
+updateBadge(150) // "99+"
+updateBadge(2500) // "2k"
+updateBadge(15000) // "9k+"
 ```
 
 **Status badges using symbols:**
@@ -58,31 +58,34 @@ updateBadge(15000)  // "9k+"
 ```typescript
 // background.js - Symbol-based status badges
 const STATUS_BADGES = {
-  syncing: '↻',
-  success: '✓',
-  error: '!',
-  paused: '⏸',
-  active: '●',
-  new: 'N'
+  syncing: "↻",
+  success: "✓",
+  error: "!",
+  paused: "⏸",
+  active: "●",
+  new: "N",
 }
 
 async function setStatusBadge(status) {
-  const text = STATUS_BADGES[status] || ''
+  const text = STATUS_BADGES[status] || ""
   const colors = {
-    syncing: '#17a2b8',
-    success: '#28a745',
-    error: '#dc3545',
-    paused: '#6c757d',
-    active: '#28a745',
-    new: '#007bff'
+    syncing: "#17a2b8",
+    success: "#28a745",
+    error: "#dc3545",
+    paused: "#6c757d",
+    active: "#28a745",
+    new: "#007bff",
   }
 
   await chrome.action.setBadgeText({ text })
-  await chrome.action.setBadgeBackgroundColor({ color: colors[status] || '#666' })
+  await chrome.action.setBadgeBackgroundColor({
+    color: colors[status] || "#666",
+  })
 }
 ```
 
 **Badge visibility rules:**
+
 - Empty string (`''`) hides the badge completely
 - Single character is most readable
 - 2-3 characters work well

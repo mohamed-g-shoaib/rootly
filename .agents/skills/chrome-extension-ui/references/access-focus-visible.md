@@ -29,7 +29,7 @@ button:focus {
 ```css
 /* styles.css - Custom focus style that's visible */
 *:focus {
-  outline: 2px solid #4A90D9;
+  outline: 2px solid #4a90d9;
   outline-offset: 2px;
 }
 
@@ -39,7 +39,7 @@ button:focus {
 }
 
 button:focus-visible {
-  outline: 2px solid #4A90D9;
+  outline: 2px solid #4a90d9;
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.3);
 }
@@ -53,6 +53,7 @@ button:focus-visible {
 ```
 
 **Focus indicator requirements:**
+
 - Minimum 3:1 contrast ratio against adjacent colors
 - At least 2px thick outline or equivalent visual change
 - Visible in both light and dark modes
@@ -62,10 +63,10 @@ button:focus-visible {
 
 ```typescript
 // Debug focus visibility during development
-document.addEventListener('focusin', (event) => {
-  console.log('Focused:', event.target)
+document.addEventListener("focusin", (event) => {
+  console.log("Focused:", event.target)
   const styles = getComputedStyle(event.target)
-  console.log('Outline:', styles.outline, 'Box-shadow:', styles.boxShadow)
+  console.log("Outline:", styles.outline, "Box-shadow:", styles.boxShadow)
 })
 ```
 

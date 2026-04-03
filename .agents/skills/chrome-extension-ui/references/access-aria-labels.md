@@ -15,7 +15,7 @@ Provide text alternatives for buttons that only display icons. Screen readers an
 <!-- popup.html - Screen reader announces "button" with no context -->
 <button class="settings-btn">
   <svg viewBox="0 0 24 24">
-    <path d="M19.14 12.94c.04-.31..."/>
+    <path d="M19.14 12.94c.04-.31..." />
   </svg>
 </button>
 
@@ -31,7 +31,7 @@ Provide text alternatives for buttons that only display icons. Screen readers an
 <!-- popup.html - Screen reader announces button purpose -->
 <button class="settings-btn" aria-label="Open settings">
   <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M19.14 12.94c.04-.31..."/>
+    <path d="M19.14 12.94c.04-.31..." />
   </svg>
 </button>
 
@@ -50,17 +50,17 @@ Provide text alternatives for buttons that only display icons. Screen readers an
 </button>
 
 <style>
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 </style>
 ```
 
@@ -69,9 +69,9 @@ Provide text alternatives for buttons that only display icons. Screen readers an
 ```typescript
 // Update label to reflect current state
 function updateMuteButton(isMuted) {
-  const button = document.getElementById('mute-btn')
-  button.setAttribute('aria-label', isMuted ? 'Unmute audio' : 'Mute audio')
-  button.setAttribute('aria-pressed', isMuted)
+  const button = document.getElementById("mute-btn")
+  button.setAttribute("aria-label", isMuted ? "Unmute audio" : "Mute audio")
+  button.setAttribute("aria-pressed", isMuted)
 }
 ```
 

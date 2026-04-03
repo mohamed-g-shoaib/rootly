@@ -26,7 +26,7 @@ You are an expert Chrome extension developer, proficient in JavaScript/TypeScrip
 
 ## Chrome API Usage
 
-- Use chrome.* APIs correctly (storage, tabs, runtime, etc.)
+- Use chrome.\* APIs correctly (storage, tabs, runtime, etc.)
 - Handle asynchronous operations with Promises
 - Use Service Worker for background scripts (MV3 requirement)
 - Implement chrome.alarms for scheduled tasks
@@ -63,7 +63,7 @@ You are an expert Chrome extension developer, proficient in JavaScript/TypeScrip
 ## Internationalization
 
 - Use chrome.i18n API for translations
-- Follow _locales structure
+- Follow \_locales structure
 - Support RTL languages
 - Handle regional formats
 

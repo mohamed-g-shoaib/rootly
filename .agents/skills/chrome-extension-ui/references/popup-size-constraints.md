@@ -42,29 +42,29 @@ Design popup content to fit within Chrome's enforced size constraints (min 25×2
 </div>
 
 <style>
-.popup-container {
-  width: 350px;      /* Comfortable reading width */
-  max-height: 500px; /* Leave room for browser chrome */
-  overflow-y: auto;
-}
-
-/* Responsive for smaller content */
-@media (max-width: 400px) {
   .popup-container {
-    width: 280px;
+    width: 350px; /* Comfortable reading width */
+    max-height: 500px; /* Leave room for browser chrome */
+    overflow-y: auto;
   }
-}
+
+  /* Responsive for smaller content */
+  @media (max-width: 400px) {
+    .popup-container {
+      width: 280px;
+    }
+  }
 </style>
 ```
 
 **Recommended popup dimensions:**
 
-| Use Case | Width | Height |
-|----------|-------|--------|
-| Simple action | 200-280px | 150-250px |
-| List/feed | 300-400px | 400-500px |
-| Settings panel | 350-450px | 350-500px |
-| Maximum practical | 600px | 500px |
+| Use Case          | Width     | Height    |
+| ----------------- | --------- | --------- |
+| Simple action     | 200-280px | 150-250px |
+| List/feed         | 300-400px | 400-500px |
+| Settings panel    | 350-450px | 350-500px |
+| Maximum practical | 600px     | 500px     |
 
 **Auto-sizing popup:**
 

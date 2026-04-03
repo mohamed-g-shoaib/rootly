@@ -22,12 +22,12 @@ Design popups with a single, visually prominent primary action. Users open popup
 </div>
 
 <style>
-.btn {
-  padding: 8px 16px;
-  background: #f0f0f0;
-  border: 1px solid #ccc;
-}
-/* All buttons look identical - user hesitates */
+  .btn {
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+  }
+  /* All buttons look identical - user hesitates */
 </style>
 ```
 
@@ -56,33 +56,34 @@ Design popups with a single, visually prominent primary action. Users open popup
 </div>
 
 <style>
-.btn-primary {
-  width: 100%;
-  padding: 12px 24px;
-  background: #4A90D9;
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-}
+  .btn-primary {
+    width: 100%;
+    padding: 12px 24px;
+    background: #4a90d9;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+  }
 
-.btn-secondary {
-  padding: 8px;
-  background: transparent;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
+  .btn-secondary {
+    padding: 8px;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
 
-.settings-link {
-  font-size: 12px;
-  color: #666;
-}
-/* Primary action dominates, secondary actions accessible but subdued */
+  .settings-link {
+    font-size: 12px;
+    color: #666;
+  }
+  /* Primary action dominates, secondary actions accessible but subdued */
 </style>
 ```
 
 **Visual hierarchy principles:**
+
 - Primary action: Largest, boldest, prominent color
 - Secondary actions: Smaller, muted colors or outlined
 - Tertiary actions: Text links or icon-only buttons

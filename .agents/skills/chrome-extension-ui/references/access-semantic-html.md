@@ -13,9 +13,7 @@ Use native HTML elements (`<button>`, `<input>`, `<select>`) instead of styled `
 
 ```html
 <!-- popup.html - Requires manual accessibility implementation -->
-<div class="btn primary" onclick="handleSubmit()">
-  Submit
-</div>
+<div class="btn primary" onclick="handleSubmit()">Submit</div>
 
 <div class="checkbox" onclick="toggleCheck()">
   <span class="check-icon"></span>
@@ -33,12 +31,10 @@ Use native HTML elements (`<button>`, `<input>`, `<select>`) instead of styled `
 
 ```html
 <!-- popup.html - Accessibility built-in -->
-<button type="submit" class="btn primary">
-  Submit
-</button>
+<button type="submit" class="btn primary">Submit</button>
 
 <label class="checkbox">
-  <input type="checkbox" name="notifications">
+  <input type="checkbox" name="notifications" />
   <span class="check-icon" aria-hidden="true"></span>
   Enable notifications
 </label>
@@ -53,24 +49,26 @@ Use native HTML elements (`<button>`, `<input>`, `<select>`) instead of styled `
 
 **Native element benefits:**
 
-| Native Element | Built-in Features |
-|----------------|-------------------|
-| `<button>` | Focus, Enter/Space activation, disabled state |
-| `<input type="checkbox">` | Toggle with Space, checked state announced |
-| `<select>` | Arrow key navigation, type-ahead search |
-| `<a href>` | Focus, Enter activation, visited state |
-| `<input type="text">` | Text editing, form validation, autocomplete |
+| Native Element            | Built-in Features                             |
+| ------------------------- | --------------------------------------------- |
+| `<button>`                | Focus, Enter/Space activation, disabled state |
+| `<input type="checkbox">` | Toggle with Space, checked state announced    |
+| `<select>`                | Arrow key navigation, type-ahead search       |
+| `<a href>`                | Focus, Enter activation, visited state        |
+| `<input type="text">`     | Text editing, form validation, autocomplete   |
 
 **When custom components are unavoidable:**
 
 ```html
 <!-- Add ALL required ARIA attributes and keyboard handlers -->
-<div role="checkbox"
-     tabindex="0"
-     aria-checked="false"
-     aria-labelledby="notif-label"
-     onkeydown="handleCheckboxKeydown(event)"
-     onclick="toggleCheck()">
+<div
+  role="checkbox"
+  tabindex="0"
+  aria-checked="false"
+  aria-labelledby="notif-label"
+  onkeydown="handleCheckboxKeydown(event)"
+  onclick="toggleCheck()"
+>
   <span class="check-icon" aria-hidden="true"></span>
 </div>
 <span id="notif-label">Enable notifications</span>

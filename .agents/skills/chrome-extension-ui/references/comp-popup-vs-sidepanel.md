@@ -47,6 +47,7 @@ Use a side panel instead of a popup when users need to reference extension conte
 ```
 
 **When to use popup instead:**
+
 - Quick, one-shot actions (toggle setting, copy to clipboard)
 - Actions completed in under 5 seconds
 - No need to reference content while on the page
