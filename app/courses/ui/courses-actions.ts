@@ -1,5 +1,7 @@
 "use server"
 
+import { cacheLife, cacheTag, updateTag } from "next/cache"
+
 import { createClient } from "@/lib/supabase/server"
 
 import type { Course, SortKey, TopicFilter } from "./courses-model"
@@ -62,6 +64,10 @@ export async function getCoursesPage({
   | { success: true; data: Course[]; totalCount: number }
   | { success: false; error: string }
 > {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`courses:user:${userId}`)
+
   const supabase = await createClient()
   const safePage = Math.max(1, Math.trunc(page))
   const safePageSize = Math.max(1, Math.min(100, Math.trunc(pageSize)))
@@ -115,6 +121,10 @@ export async function getCourseTopics({
 }): Promise<
   { success: true; topics: string[] } | { success: false; error: string }
 > {
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`courses:user:${userId}`)
+
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("courses")
@@ -167,6 +177,8 @@ export async function createCourse({
     }
   }
 
+  updateTag(`courses:user:${userId}`)
+
   return { success: true, data: fromDb(data as DbCourseRow) }
 }
 
@@ -212,6 +224,9 @@ export async function updateCourse({
     }
   }
 
+  updateTag(`courses:user:${userId}`)
+  updateTag(`course:${courseId}`)
+
   return { success: true, data: fromDb(data as DbCourseRow) }
 }
 
@@ -242,6 +257,10 @@ export async function deleteCourse({
       error: error?.message ?? "Failed to delete course",
     }
   }
+
+  updateTag(`courses:user:${userId}`)
+  updateTag(`course:${courseId}`)
+  updateTag(`course-notes:${courseId}`)
 
   return { success: true, data: fromDb(data as DbCourseRow) }
 }
