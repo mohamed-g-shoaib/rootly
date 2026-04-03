@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import * as React from "react"
+import Link from "next/link";
+import * as React from "react";
 
 import {
   ArrowLeft01Icon,
@@ -11,19 +11,21 @@ import {
   Link01Icon,
   MoreVerticalIcon,
   AddCircleIcon,
+  ArrowLeft02Icon,
+  ArrowRight02Icon,
   UnfoldMoreIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { useAnswerVisibility } from "@/hooks/use-answer-visibility"
-import { useIsMobile } from "@/hooks/use-media-query"
+import { useAnswerVisibility } from "@/hooks/use-answer-visibility";
+import { useIsMobile } from "@/hooks/use-media-query";
 
-import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
-import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header"
-import { PageContainer } from "@/components/ui/page-container"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { toastManager } from "@/components/ui/toast"
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
+import { DashboardStickyHeader } from "@/app/ui/dashboard-sticky-header";
+import { PageContainer } from "@/components/ui/page-container";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { toastManager } from "@/components/ui/toast";
 import {
   AlertDialog,
   AlertDialogClose,
@@ -33,49 +35,49 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/menu"
+} from "@/components/ui/menu";
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Progress,
   ProgressIndicator,
   ProgressTrack,
-} from "@/components/ui/progress"
+} from "@/components/ui/progress";
 
-import { CourseEditorSheet, LinksViewerSheet } from "./courses-components"
-import type { Course } from "./courses-model"
-import { totalLinkCount } from "./courses-model"
+import { CourseEditorSheet, LinksViewerSheet } from "./courses-components";
+import type { Course } from "./courses-model";
+import { totalLinkCount } from "./courses-model";
 
-import { deleteCourse, updateCourse } from "./courses-actions"
+import { deleteCourse, updateCourse } from "./courses-actions";
 
-import type { Note, SortKey, TypeFilter } from "@/app/notes/ui/notes-model"
+import type { Note, SortKey, TypeFilter } from "@/app/notes/ui/notes-model";
 import {
   EmptyState,
   FilterSheet,
   NoteCard,
-} from "@/app/notes/ui/notes-components"
+} from "@/app/notes/ui/notes-components";
 import {
   CodeViewerSheet,
   NoteEditorSheet,
   NoteViewerSheet,
-} from "@/app/notes/ui/notes-sheets"
+} from "@/app/notes/ui/notes-sheets";
 
 import {
   createNote,
   deleteNote,
   updateNote,
-} from "@/app/notes/ui/notes-actions"
+} from "@/app/notes/ui/notes-actions";
 
 export default function CourseDetailPage({
   courseId: _courseId,
@@ -83,12 +85,12 @@ export default function CourseDetailPage({
   course,
   initialNotes,
 }: {
-  courseId: string
-  userId: string | null
-  course: Course | null
-  initialNotes: Note[]
+  courseId: string;
+  userId: string | null;
+  course: Course | null;
+  initialNotes: Note[];
 }) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
   const shellFab = React.useMemo(
     () =>
       isMobile && course
@@ -98,208 +100,217 @@ export default function CourseDetailPage({
             onClick: () => setCreateOpen(true),
           }
         : undefined,
-    [course, isMobile]
-  )
-  useDashboardShellFab(shellFab)
+    [course, isMobile],
+  );
+  useDashboardShellFab(shellFab);
 
-  const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes)
+  const [allNotes, setAllNotes] = React.useState<Note[]>(() => initialNotes);
 
-  const [linksOpen, setLinksOpen] = React.useState(false)
-  const [editCourseOpen, setEditCourseOpen] = React.useState(false)
+  const [linksOpen, setLinksOpen] = React.useState(false);
+  const [editCourseOpen, setEditCourseOpen] = React.useState(false);
 
-  const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all")
-  const [flaggedOnly, setFlaggedOnly] = React.useState(false)
-  const [sortKey, setSortKey] = React.useState<SortKey>("last_updated")
-  const answerVisibility = useAnswerVisibility()
+  const [typeFilter, setTypeFilter] = React.useState<TypeFilter>("all");
+  const [flaggedOnly, setFlaggedOnly] = React.useState(false);
+  const [sortKey, setSortKey] = React.useState<SortKey>("last_updated");
+  const answerVisibility = useAnswerVisibility();
 
-  const [createOpen, setCreateOpen] = React.useState(false)
-  const [editOpen, setEditOpen] = React.useState(false)
-  const [viewOpen, setViewOpen] = React.useState(false)
-  const [codeOpen, setCodeOpen] = React.useState(false)
-  const [activeNoteId, setActiveNoteId] = React.useState<string | null>(null)
+  const [createOpen, setCreateOpen] = React.useState(false);
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [viewOpen, setViewOpen] = React.useState(false);
+  const [codeOpen, setCodeOpen] = React.useState(false);
+  const [activeNoteId, setActiveNoteId] = React.useState<string | null>(null);
 
-  const [mobileTypeSheetOpen, setMobileTypeSheetOpen] = React.useState(false)
-  const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false)
+  const [mobileTypeSheetOpen, setMobileTypeSheetOpen] = React.useState(false);
+  const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false);
 
-  const [deleteCourseOpen, setDeleteCourseOpen] = React.useState(false)
+  const [deleteCourseOpen, setDeleteCourseOpen] = React.useState(false);
 
-  const [visibleCount, setVisibleCount] = React.useState(20)
-  const [loadingMore, setLoadingMore] = React.useState(false)
-  const loadMoreRef = React.useRef<HTMLDivElement | null>(null)
+  const pageSize = 18;
+  const [currentPage, setCurrentPage] = React.useState(1);
 
-  const now = React.useMemo(() => new Date(), [])
+  const now = React.useMemo(() => new Date(), []);
 
-  const linkCount = course ? totalLinkCount(course) : 0
-  const hasLinks = linkCount > 0
+  const linkCount = course ? totalLinkCount(course) : 0;
+  const hasLinks = linkCount > 0;
 
   const filtered = React.useMemo(() => {
     const base = allNotes.filter((n) => {
-      if (typeFilter !== "all" && n.type !== typeFilter) return false
-      if (flaggedOnly && !n.flag) return false
+      if (typeFilter !== "all" && n.type !== typeFilter) return false;
+      if (flaggedOnly && !n.flag) return false;
 
-      return true
-    })
+      return true;
+    });
 
-    const listHasQa = base.some((n) => n.type === "qa")
+    const listHasQa = base.some((n) => n.type === "qa");
     const listIsOnlyFreeform =
-      base.length > 0 && base.every((n) => n.type === "freeform")
+      base.length > 0 && base.every((n) => n.type === "freeform");
 
     const effectiveSortKey =
       listIsOnlyFreeform &&
       (sortKey === "understanding_low" || sortKey === "understanding_high")
         ? "last_updated"
-        : sortKey
+        : sortKey;
 
     const sorted = base.toSorted((a, b) => {
       if (effectiveSortKey === "last_updated")
-        return b.updatedAt.localeCompare(a.updatedAt)
+        return b.updatedAt.localeCompare(a.updatedAt);
       if (effectiveSortKey === "date_created")
-        return b.createdAt.localeCompare(a.createdAt)
+        return b.createdAt.localeCompare(a.createdAt);
       if (effectiveSortKey === "course")
-        return (a.courseTitle ?? "").localeCompare(b.courseTitle ?? "")
+        return (a.courseTitle ?? "").localeCompare(b.courseTitle ?? "");
 
-      const aLevel = a.understandingLevel ?? 0
-      const bLevel = b.understandingLevel ?? 0
+      const aLevel = a.understandingLevel ?? 0;
+      const bLevel = b.understandingLevel ?? 0;
 
-      if (effectiveSortKey === "understanding_low") return aLevel - bLevel
-      return bLevel - aLevel
-    })
+      if (effectiveSortKey === "understanding_low") return aLevel - bLevel;
+      return bLevel - aLevel;
+    });
 
-    return { items: sorted, hasQa: listHasQa }
-  }, [allNotes, flaggedOnly, sortKey, typeFilter])
+    return { items: sorted, hasQa: listHasQa };
+  }, [allNotes, flaggedOnly, sortKey, typeFilter]);
 
-  const visibleNotes = React.useMemo(
-    () =>
-      filtered.items.slice(0, Math.min(visibleCount, filtered.items.length)),
-    [filtered.items, visibleCount]
-  )
+  const visibleNotes = React.useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filtered.items.slice(start, start + pageSize);
+  }, [currentPage, filtered.items]);
+  const totalPages = Math.max(1, Math.ceil(filtered.items.length / pageSize));
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [typeFilter, flaggedOnly, sortKey]);
+
+  React.useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const activeNote = React.useMemo(
     () =>
       activeNoteId
         ? (allNotes.find((n) => n.id === activeNoteId) ?? null)
         : null,
-    [activeNoteId, allNotes]
-  )
+    [activeNoteId, allNotes],
+  );
 
   const filtersActive =
-    typeFilter !== "all" || flaggedOnly || sortKey !== "last_updated"
+    typeFilter !== "all" || flaggedOnly || sortKey !== "last_updated";
 
   const qaNoteIds = React.useMemo(
     () =>
       filtered.items
         .filter((note) => note.type === "qa")
         .map((note) => note.id),
-    [filtered.items]
-  )
+    [filtered.items],
+  );
 
   const globalShowAnswers =
     qaNoteIds.length > 0 &&
-    qaNoteIds.every((id) => answerVisibility.isShown(id))
+    qaNoteIds.every((id) => answerVisibility.isShown(id));
 
   const sortLabel = React.useMemo(() => {
     switch (sortKey) {
       case "date_created":
-        return "Date Created"
+        return "Date Created";
       case "understanding_low":
-        return "Understanding (Low → High)"
+        return "Understanding (Low → High)";
       case "understanding_high":
-        return "Understanding (High → Low)"
+        return "Understanding (High → Low)";
       case "course":
-        return "Course"
+        return "Course";
       default:
-        return "Last Updated"
+        return "Last Updated";
     }
-  }, [sortKey])
+  }, [sortKey]);
 
   const typeLabel = React.useMemo(() => {
     switch (typeFilter) {
       case "qa":
-        return "Q&A"
+        return "Q&A";
       case "freeform":
-        return "Freeform"
+        return "Freeform";
       default:
-        return "All Types"
+        return "All Types";
     }
-  }, [typeFilter])
+  }, [typeFilter]);
 
   function clearFilters() {
-    setTypeFilter("all")
-    setFlaggedOnly(false)
-    setSortKey("last_updated")
+    setTypeFilter("all");
+    setFlaggedOnly(false);
+    setSortKey("last_updated");
   }
 
   async function onUpdateCourse(next: Course) {
-    if (!userId) return
+    if (!userId) return;
 
     const res = await updateCourse({
       courseId: next.id,
       patch: next,
       userId,
-    })
+    });
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not update course",
         description: res.error,
-      })
-      return
+      });
+      return;
     }
 
-    setEditCourseOpen(false)
+    setEditCourseOpen(false);
   }
 
   async function onDeleteCourse() {
-    if (!userId) return
-    if (!course) return
-    const res = await deleteCourse({ courseId: course.id, userId })
+    if (!userId) return;
+    if (!course) return;
+    const res = await deleteCourse({ courseId: course.id, userId });
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not delete course",
         description: res.error,
-      })
-      return
+      });
+      return;
     }
 
-    window.location.assign("/courses")
+    window.location.assign("/courses");
   }
 
   function openView(noteId: string) {
-    setActiveNoteId(noteId)
-    setViewOpen(true)
+    setActiveNoteId(noteId);
+    setViewOpen(true);
   }
 
   function openCode(noteId: string) {
-    setActiveNoteId(noteId)
-    setCodeOpen(true)
+    setActiveNoteId(noteId);
+    setCodeOpen(true);
   }
 
   function openEdit(noteId: string) {
-    setActiveNoteId(noteId)
-    setEditOpen(true)
+    setActiveNoteId(noteId);
+    setEditOpen(true);
   }
 
   async function onDeleteNote(noteId: string) {
-    if (!userId) return
+    if (!userId) return;
 
-    const prev = allNotes
-    setAllNotes((items) => items.filter((n) => n.id !== noteId))
-    answerVisibility.clearForId(noteId)
+    const prev = allNotes;
+    setAllNotes((items) => items.filter((n) => n.id !== noteId));
+    answerVisibility.clearForId(noteId);
 
-    const res = await deleteNote({ noteId, userId })
+    const res = await deleteNote({ noteId, userId });
     if (!res.success) {
-      setAllNotes(prev)
+      setAllNotes(prev);
       toastManager.add({
         type: "error",
         title: "Could not delete note",
         description: res.error,
-      })
+      });
     }
   }
 
   async function onSaveNote(next: Note, mode: "create" | "edit") {
-    if (!userId) return
+    if (!userId) return;
 
     if (mode === "create") {
       const optimistic: Note = {
@@ -309,74 +320,50 @@ export default function CourseDetailPage({
         courseTitle: course?.title ?? null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      }
+      };
 
-      const prev = allNotes
-      setAllNotes((items) => [optimistic, ...items])
-      setCreateOpen(false)
+      const prev = allNotes;
+      setAllNotes((items) => [optimistic, ...items]);
+      setCreateOpen(false);
 
-      const res = await createNote({ note: optimistic, userId })
+      const res = await createNote({ note: optimistic, userId });
       if (!res.success) {
-        setAllNotes(prev)
+        setAllNotes(prev);
         toastManager.add({
           type: "error",
           title: "Could not create note",
           description: res.error,
-        })
-        return
+        });
+        return;
       }
 
       setAllNotes((items) =>
-        items.map((n) => (n.id === optimistic.id ? res.data : n))
-      )
-      return
+        items.map((n) => (n.id === optimistic.id ? res.data : n)),
+      );
+      return;
     }
 
-    const prev = allNotes
-    setAllNotes((items) => items.map((n) => (n.id === next.id ? next : n)))
-    setEditOpen(false)
+    const prev = allNotes;
+    setAllNotes((items) => items.map((n) => (n.id === next.id ? next : n)));
+    setEditOpen(false);
 
     const res = await updateNote({
       noteId: next.id,
       patch: next,
       userId,
-    })
+    });
     if (!res.success) {
-      setAllNotes(prev)
+      setAllNotes(prev);
       toastManager.add({
         type: "error",
         title: "Could not update note",
         description: res.error,
-      })
-      return
+      });
+      return;
     }
 
-    setAllNotes((items) => items.map((n) => (n.id === next.id ? res.data : n)))
+    setAllNotes((items) => items.map((n) => (n.id === next.id ? res.data : n)));
   }
-
-  React.useEffect(() => {
-    const el = loadMoreRef.current
-    if (!el) return
-    if (loadingMore) return
-    if (visibleCount >= filtered.items.length) return
-
-    const obs = new IntersectionObserver(
-      async (entries) => {
-        const [entry] = entries
-        if (!entry?.isIntersecting) return
-        if (loadingMore) return
-        if (visibleCount >= filtered.items.length) return
-        setLoadingMore(true)
-        await new Promise((r) => setTimeout(r, 450))
-        setVisibleCount((c) => c + 20)
-        setLoadingMore(false)
-      },
-      { root: null, rootMargin: "300px" }
-    )
-
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [filtered.items.length, loadingMore, visibleCount])
 
   if (!course) {
     return (
@@ -388,7 +375,7 @@ export default function CourseDetailPage({
           </div>
         </div>
       </PageContainer>
-    )
+    );
   }
 
   return (
@@ -408,6 +395,8 @@ export default function CourseDetailPage({
         allNotesCount={allNotes.length}
         filtered={filtered}
         visibleNotes={visibleNotes}
+        currentPage={currentPage}
+        totalPages={totalPages}
         now={now}
         isMobile={isMobile}
         typeFilter={typeFilter}
@@ -418,16 +407,20 @@ export default function CourseDetailPage({
         typeLabel={typeLabel}
         sortLabel={sortLabel}
         answerVisibility={answerVisibility}
-        loadingMore={loadingMore}
-        loadMoreRef={loadMoreRef}
         onTypeChange={setTypeFilter}
         onSortChange={setSortKey}
         onToggleFlaggedOnly={() => setFlaggedOnly((v) => !v)}
-        onToggleGlobalAnswers={() => answerVisibility.setAllShown(!globalShowAnswers)}
+        onToggleGlobalAnswers={() =>
+          answerVisibility.setAllShown(!globalShowAnswers)
+        }
         onOpenMobileType={() => setMobileTypeSheetOpen(true)}
         onOpenMobileSort={() => setMobileSortSheetOpen(true)}
         onNewNote={() => setCreateOpen(true)}
         onClearFilters={clearFilters}
+        onPreviousPage={() => setCurrentPage((page) => Math.max(1, page - 1))}
+        onNextPage={() =>
+          setCurrentPage((page) => Math.min(totalPages, page + 1))
+        }
         onEdit={openEdit}
         onViewFull={openView}
         onViewCode={openCode}
@@ -440,7 +433,7 @@ export default function CourseDetailPage({
         onOpenChange={setLinksOpen}
         isMobile={isMobile}
         onEditCourse={() => {
-          setLinksOpen(false)
+          setLinksOpen(false);
         }}
       />
 
@@ -479,8 +472,8 @@ export default function CourseDetailPage({
         isMobile={isMobile}
         loading={false}
         onEdit={() => {
-          setViewOpen(false)
-          if (activeNoteId) setEditOpen(true)
+          setViewOpen(false);
+          if (activeNoteId) setEditOpen(true);
         }}
       />
 
@@ -491,8 +484,8 @@ export default function CourseDetailPage({
         isMobile={isMobile}
         loading={false}
         onEdit={() => {
-          setCodeOpen(false)
-          if (activeNoteId) setEditOpen(true)
+          setCodeOpen(false);
+          if (activeNoteId) setEditOpen(true);
         }}
       />
 
@@ -507,7 +500,7 @@ export default function CourseDetailPage({
           course ? { id: course.id, title: course.title } : undefined
         }
         onSave={(note) => {
-          void onSaveNote(note, "create")
+          void onSaveNote(note, "create");
         }}
       />
 
@@ -522,7 +515,7 @@ export default function CourseDetailPage({
           course ? { id: course.id, title: course.title } : undefined
         }
         onSave={(note) => {
-          void onSaveNote(note, "edit")
+          void onSaveNote(note, "edit");
         }}
       />
       <CourseEditorSheet
@@ -532,11 +525,11 @@ export default function CourseDetailPage({
         onOpenChange={setEditCourseOpen}
         breakpoint={isMobile ? "mobile" : "desktop"}
         onSave={(next) => {
-          void onUpdateCourse(next)
+          void onUpdateCourse(next);
         }}
       />
     </>
-  )
+  );
 }
 
 function CourseDetailHeader({
@@ -549,21 +542,25 @@ function CourseDetailHeader({
   onOpenLinks,
   onDeleteCourse,
 }: {
-  course: Course
-  hasLinks: boolean
-  isMobile: boolean
-  deleteCourseOpen: boolean
-  onDeleteCourseOpenChange: (open: boolean) => void
-  onOpenEditCourse: () => void
-  onOpenLinks: () => void
-  onDeleteCourse: () => Promise<void>
+  course: Course;
+  hasLinks: boolean;
+  isMobile: boolean;
+  deleteCourseOpen: boolean;
+  onDeleteCourseOpenChange: (open: boolean) => void;
+  onOpenEditCourse: () => void;
+  onOpenLinks: () => void;
+  onDeleteCourse: () => Promise<void>;
 }) {
   return (
     <DashboardStickyHeader>
       <PageContainer>
         <div className="py-4">
           <div className="flex items-center justify-between gap-3">
-            <Button variant="ghost" className="gap-2" render={<Link href="/courses" />}>
+            <Button
+              variant="ghost"
+              className="gap-2"
+              render={<Link href="/courses" />}
+            >
               <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
               Courses
             </Button>
@@ -593,7 +590,9 @@ function CourseDetailHeader({
                 ) : null}
               </div>
               {course.instructor ? (
-                <div className="pt-1 text-sm text-muted-foreground">{course.instructor}</div>
+                <div className="pt-1 text-sm text-muted-foreground">
+                  {course.instructor}
+                </div>
               ) : null}
             </div>
 
@@ -614,7 +613,7 @@ function CourseDetailHeader({
         </div>
       </PageContainer>
     </DashboardStickyHeader>
-  )
+  );
 }
 
 function CourseHeaderActions({
@@ -626,13 +625,13 @@ function CourseHeaderActions({
   onOpenLinks,
   onDeleteCourse,
 }: {
-  hasLinks: boolean
-  isMobile: boolean
-  deleteCourseOpen: boolean
-  onDeleteCourseOpenChange: (open: boolean) => void
-  onOpenEditCourse: () => void
-  onOpenLinks: () => void
-  onDeleteCourse: () => Promise<void>
+  hasLinks: boolean;
+  isMobile: boolean;
+  deleteCourseOpen: boolean;
+  onDeleteCourseOpenChange: (open: boolean) => void;
+  onOpenEditCourse: () => void;
+  onOpenLinks: () => void;
+  onDeleteCourse: () => Promise<void>;
 }) {
   return (
     <div className="flex items-center gap-2">
@@ -662,7 +661,9 @@ function CourseHeaderActions({
         </>
       ) : (
         <DropdownMenu>
-          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" aria-label="More" />}>
+          <DropdownMenuTrigger
+            render={<Button variant="ghost" size="icon" aria-label="More" />}
+          >
             <HugeiconsIcon icon={MoreVerticalIcon} size={18} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -677,7 +678,10 @@ function CourseHeaderActions({
               </DropdownMenuItem>
             ) : null}
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={() => onDeleteCourseOpenChange(true)}>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => onDeleteCourseOpenChange(true)}
+            >
               <HugeiconsIcon icon={Delete01Icon} size={18} />
               Delete Course
             </DropdownMenuItem>
@@ -685,7 +689,7 @@ function CourseHeaderActions({
         </DropdownMenu>
       )}
     </div>
-  )
+  );
 }
 
 function DeleteCourseDialog({
@@ -694,10 +698,10 @@ function DeleteCourseDialog({
   onDeleteCourse,
   trigger,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onDeleteCourse: () => Promise<void>
-  trigger: React.ReactElement
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onDeleteCourse: () => Promise<void>;
+  trigger: React.ReactElement;
 }) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -706,24 +710,33 @@ function DeleteCourseDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete course?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete the course. Notes will not be deleted — they will be unlinked.
+            This will permanently delete the course. Notes will not be deleted —
+            they will be unlinked.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogClose render={<Button variant="ghost" type="button" />}>Cancel</AlertDialogClose>
-          <Button variant="destructive" type="button" onClick={() => void onDeleteCourse()}>
+          <AlertDialogClose render={<Button variant="ghost" type="button" />}>
+            Cancel
+          </AlertDialogClose>
+          <Button
+            variant="destructive"
+            type="button"
+            onClick={() => void onDeleteCourse()}
+          >
             Delete Course
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 function CourseNotesSection({
   allNotesCount,
   filtered,
   visibleNotes,
+  currentPage,
+  totalPages,
   now,
   isMobile,
   typeFilter,
@@ -734,8 +747,6 @@ function CourseNotesSection({
   typeLabel,
   sortLabel,
   answerVisibility,
-  loadingMore,
-  loadMoreRef,
   onTypeChange,
   onSortChange,
   onToggleFlaggedOnly,
@@ -744,42 +755,46 @@ function CourseNotesSection({
   onOpenMobileSort,
   onNewNote,
   onClearFilters,
+  onPreviousPage,
+  onNextPage,
   onEdit,
   onViewFull,
   onViewCode,
   onDeleteNote,
 }: {
-  allNotesCount: number
-  filtered: { items: Note[]; hasQa: boolean }
-  visibleNotes: Note[]
-  now: Date
-  isMobile: boolean
-  typeFilter: TypeFilter
-  sortKey: SortKey
-  flaggedOnly: boolean
-  globalShowAnswers: boolean
-  filtersActive: boolean
-  typeLabel: string
-  sortLabel: string
-  answerVisibility: ReturnType<typeof useAnswerVisibility>
-  loadingMore: boolean
-  loadMoreRef: React.RefObject<HTMLDivElement | null>
-  onTypeChange: (value: TypeFilter) => void
-  onSortChange: (value: SortKey) => void
-  onToggleFlaggedOnly: () => void
-  onToggleGlobalAnswers: () => void
-  onOpenMobileType: () => void
-  onOpenMobileSort: () => void
-  onNewNote: () => void
-  onClearFilters: () => void
-  onEdit: (noteId: string) => void
-  onViewFull: (noteId: string) => void
-  onViewCode: (noteId: string) => void
-  onDeleteNote: (noteId: string) => Promise<void>
+  allNotesCount: number;
+  filtered: { items: Note[]; hasQa: boolean };
+  visibleNotes: Note[];
+  currentPage: number;
+  totalPages: number;
+  now: Date;
+  isMobile: boolean;
+  typeFilter: TypeFilter;
+  sortKey: SortKey;
+  flaggedOnly: boolean;
+  globalShowAnswers: boolean;
+  filtersActive: boolean;
+  typeLabel: string;
+  sortLabel: string;
+  answerVisibility: ReturnType<typeof useAnswerVisibility>;
+  onTypeChange: (value: TypeFilter) => void;
+  onSortChange: (value: SortKey) => void;
+  onToggleFlaggedOnly: () => void;
+  onToggleGlobalAnswers: () => void;
+  onOpenMobileType: () => void;
+  onOpenMobileSort: () => void;
+  onNewNote: () => void;
+  onClearFilters: () => void;
+  onPreviousPage: () => void;
+  onNextPage: () => void;
+  onEdit: (noteId: string) => void;
+  onViewFull: (noteId: string) => void;
+  onViewCode: (noteId: string) => void;
+  onDeleteNote: (noteId: string) => Promise<void>;
 }) {
   return (
     <PageContainer>
-      <div className="pt-4">
+      <div className="flex min-h-[calc(100vh-14rem)] flex-col pt-4 pb-8">
         <div className="flex flex-col gap-3">
           <CourseNotesToolbar
             isMobile={isMobile}
@@ -816,7 +831,9 @@ function CourseNotesSection({
                   now={now}
                   isMobile={isMobile}
                   showAnswer={answerVisibility.isShown(note.id)}
-                  onShowAnswerChange={(value) => answerVisibility.setShown(note.id, value)}
+                  onShowAnswerChange={(value) =>
+                    answerVisibility.setShown(note.id, value)
+                  }
                   onEdit={() => onEdit(note.id)}
                   onViewFull={() => onViewFull(note.id)}
                   onViewCode={() => onViewCode(note.id)}
@@ -824,18 +841,41 @@ function CourseNotesSection({
                 />
               ))
             )}
-
-            {loadingMore ? (
-              <div className="flex items-center justify-center py-6">
-                <div className="text-sm text-muted-foreground">Loading…</div>
-              </div>
-            ) : null}
-            <div ref={loadMoreRef} />
           </div>
+
+          {filtered.items.length > 0 ? (
+            <div className="mt-auto flex items-center justify-start gap-2 pt-6">
+              <Button
+                type="button"
+                variant="default"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={onPreviousPage}
+                disabled={currentPage <= 1}
+                aria-label="Previous page"
+              >
+                <HugeiconsIcon icon={ArrowLeft02Icon} size={16} />
+              </Button>
+              <span className="text-xs text-muted-foreground tabular-nums">
+                {currentPage} / {totalPages}
+              </span>
+              <Button
+                type="button"
+                variant="default"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={onNextPage}
+                disabled={currentPage >= totalPages}
+                aria-label="Next page"
+              >
+                <HugeiconsIcon icon={ArrowRight02Icon} size={16} />
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
     </PageContainer>
-  )
+  );
 }
 
 function CourseNotesToolbar({
@@ -854,27 +894,30 @@ function CourseNotesToolbar({
   onOpenMobileType,
   onOpenMobileSort,
 }: {
-  isMobile: boolean
-  typeFilter: TypeFilter
-  sortKey: SortKey
-  flaggedOnly: boolean
-  globalShowAnswers: boolean
-  hasQa: boolean
-  typeLabel: string
-  sortLabel: string
-  onTypeChange: (value: TypeFilter) => void
-  onSortChange: (value: SortKey) => void
-  onToggleFlaggedOnly: () => void
-  onToggleGlobalAnswers: () => void
-  onOpenMobileType: () => void
-  onOpenMobileSort: () => void
+  isMobile: boolean;
+  typeFilter: TypeFilter;
+  sortKey: SortKey;
+  flaggedOnly: boolean;
+  globalShowAnswers: boolean;
+  hasQa: boolean;
+  typeLabel: string;
+  sortLabel: string;
+  onTypeChange: (value: TypeFilter) => void;
+  onSortChange: (value: SortKey) => void;
+  onToggleFlaggedOnly: () => void;
+  onToggleGlobalAnswers: () => void;
+  onOpenMobileType: () => void;
+  onOpenMobileSort: () => void;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="flex flex-wrap items-center gap-2">
         {!isMobile ? (
           <>
-            <Select value={typeFilter} onValueChange={(v) => onTypeChange(v as TypeFilter)}>
+            <Select
+              value={typeFilter}
+              onValueChange={(v) => onTypeChange(v as TypeFilter)}
+            >
               <SelectTrigger className="w-40 **:data-[slot=select-icon]:hidden">
                 <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
                   <span className="min-w-0 truncate">{typeLabel}</span>
@@ -888,7 +931,10 @@ function CourseNotesToolbar({
               </SelectPopup>
             </Select>
 
-            <Select value={sortKey} onValueChange={(v) => onSortChange(v as SortKey)}>
+            <Select
+              value={sortKey}
+              onValueChange={(v) => onSortChange(v as SortKey)}
+            >
               <SelectTrigger className="w-44 **:data-[slot=select-icon]:hidden">
                 <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
                   <span className="min-w-0 truncate">{sortLabel}</span>
@@ -898,8 +944,12 @@ function CourseNotesToolbar({
               <SelectPopup alignItemWithTrigger={false}>
                 <SelectItem value="last_updated">Last Updated</SelectItem>
                 <SelectItem value="date_created">Date Created</SelectItem>
-                <SelectItem value="understanding_low">Understanding (Low → High)</SelectItem>
-                <SelectItem value="understanding_high">Understanding (High → Low)</SelectItem>
+                <SelectItem value="understanding_low">
+                  Understanding (Low → High)
+                </SelectItem>
+                <SelectItem value="understanding_high">
+                  Understanding (High → Low)
+                </SelectItem>
                 <SelectItem value="course">Course</SelectItem>
               </SelectPopup>
             </Select>
@@ -910,12 +960,19 @@ function CourseNotesToolbar({
               aria-label={flaggedOnly ? "Show all notes" : "Show flagged notes"}
               onClick={onToggleFlaggedOnly}
             >
-              <HugeiconsIcon icon={Flag01Icon} size={18} color={flaggedOnly ? "var(--destructive)" : "currentColor"} />
+              <HugeiconsIcon
+                icon={Flag01Icon}
+                size={18}
+                color={flaggedOnly ? "var(--destructive)" : "currentColor"}
+              />
             </Button>
           </>
         ) : (
           <>
-            <Button variant={typeFilter !== "all" ? "secondary" : "outline"} onClick={onOpenMobileType}>
+            <Button
+              variant={typeFilter !== "all" ? "secondary" : "outline"}
+              onClick={onOpenMobileType}
+            >
               Type
             </Button>
             <Button
@@ -924,9 +981,16 @@ function CourseNotesToolbar({
               variant={flaggedOnly ? "secondary" : "ghost"}
               onClick={onToggleFlaggedOnly}
             >
-              <HugeiconsIcon icon={Flag01Icon} size={18} color={flaggedOnly ? "var(--destructive)" : "currentColor"} />
+              <HugeiconsIcon
+                icon={Flag01Icon}
+                size={18}
+                color={flaggedOnly ? "var(--destructive)" : "currentColor"}
+              />
             </Button>
-            <Button variant={sortKey !== "last_updated" ? "secondary" : "outline"} onClick={onOpenMobileSort}>
+            <Button
+              variant={sortKey !== "last_updated" ? "secondary" : "outline"}
+              onClick={onOpenMobileSort}
+            >
               Sort by
             </Button>
           </>
@@ -934,10 +998,13 @@ function CourseNotesToolbar({
       </div>
 
       {hasQa ? (
-        <Button variant={globalShowAnswers ? "secondary" : "outline"} onClick={onToggleGlobalAnswers}>
+        <Button
+          variant={globalShowAnswers ? "secondary" : "outline"}
+          onClick={onToggleGlobalAnswers}
+        >
           {globalShowAnswers ? "Hide All Answers" : "Show All Answers"}
         </Button>
       ) : null}
     </div>
-  )
+  );
 }
