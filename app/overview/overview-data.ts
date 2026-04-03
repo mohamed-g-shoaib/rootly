@@ -6,8 +6,16 @@ import {
 } from "@/lib/dashboard-session"
 
 export type DailyStudyDatum = { date: string; label: string; minutes: number }
-export type DailyMoodDatum = { date: string; label: string; mood: 1 | 2 | 3 | null }
-export type UnderstandingDatum = { date: string; label: string; avg: number | null }
+export type DailyMoodDatum = {
+  date: string
+  label: string
+  mood: 1 | 2 | 3 | null
+}
+export type UnderstandingDatum = {
+  date: string
+  label: string
+  avg: number | null
+}
 export type CourseMasteryRow = { title: string; avg: number }
 
 type OverviewDateWindow = {
@@ -20,7 +28,7 @@ type OverviewDateWindow = {
 type DailyEntryRow = {
   date: string
   study_time_minutes: number
-  mood: 1 | 2 | 3
+  mood: 1 | 2 | 3 | null
 }
 
 type OverviewSummaryEntryRow = {
@@ -35,9 +43,31 @@ type OverviewTrendRow = {
   courses: Array<{ title: string }> | { title: string } | null
 }
 
-type OverviewUnderstandingRow = {
-  understanding_level: 1 | 2 | 3 | null
+type OverviewSummaryRpcRow = {
+  total_courses?: number | null
+  total_notes?: number | null
+  avg_understanding?: number | null
+  today_study_minutes?: number | null
+  streak_days?: number | null
 }
+
+export type OverviewSummaryStats = {
+  totalCourses: number
+  totalNotes: number
+  avgUnderstanding: number
+  todayStudyMinutes: number
+  streakDays: number
+  hasTodayAndStreakFields: boolean
+}
+
+export const getOverviewContext = cache(async () => {
+  const [supabase, userId] = await Promise.all([
+    getDashboardSupabase(),
+    getDashboardUserId(),
+  ])
+
+  return { supabase, userId }
+})
 
 function toDateInputValue(d: Date): string {
   const year = d.getUTCFullYear()
@@ -85,36 +115,26 @@ export function buildDaySeries(
 }
 
 export const getOverviewEntryRows = cache(async (nowIso: string) => {
-  const [supabase, userId] = await Promise.all([
-    getDashboardSupabase(),
-    getDashboardUserId(),
-  ])
-
-  if (!userId) {
-    return [] as DailyEntryRow[]
-  }
-
+  const rows = await getOverviewDailyRows(nowIso)
   const { startDate, today } = getOverviewDateWindow(nowIso)
 
-  const { data } = await supabase
-    .from("daily_entries")
-    .select("date,study_time_minutes,mood")
-    .eq("user_id", userId)
-    .gte("date", startDate)
-    .lte("date", today)
-    .order("date", { ascending: true })
-
-  return (data ?? []) as DailyEntryRow[]
+  return rows.filter((row) => row.date >= startDate && row.date <= today)
 })
 
 export const getOverviewSummaryEntryRows = cache(async (nowIso: string) => {
-  const [supabase, userId] = await Promise.all([
-    getDashboardSupabase(),
-    getDashboardUserId(),
-  ])
+  const rows = await getOverviewDailyRows(nowIso)
+
+  return rows.map((row) => ({
+    date: row.date,
+    study_time_minutes: row.study_time_minutes,
+  })) as OverviewSummaryEntryRow[]
+})
+
+const getOverviewDailyRows = cache(async (nowIso: string) => {
+  const { supabase, userId } = await getOverviewContext()
 
   if (!userId) {
-    return [] as OverviewSummaryEntryRow[]
+    return [] as DailyEntryRow[]
   }
 
   const now = new Date(nowIso)
@@ -125,20 +145,17 @@ export const getOverviewSummaryEntryRows = cache(async (nowIso: string) => {
 
   const { data } = await supabase
     .from("daily_entries")
-    .select("date,study_time_minutes")
+    .select("date,study_time_minutes,mood")
     .eq("user_id", userId)
     .gte("date", toDateInputValue(streakStart))
     .lte("date", today)
-    .order("date", { ascending: false })
+    .order("date", { ascending: true })
 
-  return (data ?? []) as OverviewSummaryEntryRow[]
+  return (data ?? []) as DailyEntryRow[]
 })
 
 export const getOverviewTrendRows = cache(async (nowIso: string) => {
-  const [supabase, userId] = await Promise.all([
-    getDashboardSupabase(),
-    getDashboardUserId(),
-  ])
+  const { supabase, userId } = await getOverviewContext()
 
   if (!userId) {
     return [] as OverviewTrendRow[]
@@ -156,23 +173,39 @@ export const getOverviewTrendRows = cache(async (nowIso: string) => {
   return (data ?? []) as OverviewTrendRow[]
 })
 
-export const getOverviewUnderstandingLevels = cache(async (nowIso: string) => {
-  const [supabase, userId] = await Promise.all([
-    getDashboardSupabase(),
-    getDashboardUserId(),
-  ])
+export const getOverviewSummaryStats = cache(
+  async (): Promise<OverviewSummaryStats | null> => {
+    const { supabase, userId } = await getOverviewContext()
 
-  if (!userId) {
-    return [] as OverviewUnderstandingRow[]
+    if (!userId) {
+      return null
+    }
+
+    const { data, error } = await supabase.rpc("get_overview_summary")
+
+    if (error || !data) {
+      return null
+    }
+
+    const row = (
+      Array.isArray(data) ? data[0] : data
+    ) as OverviewSummaryRpcRow | null
+
+    if (!row || typeof row !== "object") {
+      return null
+    }
+
+    const hasTodayAndStreakFields =
+      Object.prototype.hasOwnProperty.call(row, "today_study_minutes") &&
+      Object.prototype.hasOwnProperty.call(row, "streak_days")
+
+    return {
+      totalCourses: Number(row.total_courses ?? 0),
+      totalNotes: Number(row.total_notes ?? 0),
+      avgUnderstanding: Number(row.avg_understanding ?? 0),
+      todayStudyMinutes: Number(row.today_study_minutes ?? 0),
+      streakDays: Number(row.streak_days ?? 0),
+      hasTodayAndStreakFields,
+    }
   }
-
-  const { startDate } = getOverviewDateWindow(nowIso)
-
-  const { data } = await supabase
-    .from("notes")
-    .select("understanding_level")
-    .eq("user_id", userId)
-    .gte("updated_at", `${startDate}T00:00:00.000Z`)
-
-  return (data ?? []) as OverviewUnderstandingRow[]
-})
+)
