@@ -1977,6 +1977,33 @@ Recent findings:
 - Validation: no HTML or CSS diagnostics found
 - Result: Extension UI now matches dashboard field organization, has more comfortable spacing between sections, and provides clearer visual hierarchy for destructive actions
 
+### Extension course select overflow + meta cleanup (2026-04-04)
+
+- Fixed long course-title rendering issues in the capture-tab course select so wrapped text no longer collides with adjacent options.
+- Updated select behavior in:
+  - `extension/sidepanel/selects.js`
+  - `extension/sidepanel/sidepanel.css`
+- Changes:
+  - removed redundant per-option `Course` meta label from course items in the list
+  - kept `Optional` meta only for `No course`
+  - added explicit option-label styling and a no-meta option layout variant
+  - option labels now clamp to two lines with safe wrapping to preserve scanability in narrow side-panel widths
+  - selected-trigger label now truncates to a single line with ellipsis to keep trigger height stable
+- Validation: CSS and JS diagnostics show no errors in touched files
+- Result: Course picker remains compact and readable with long titles, without visual overlap or repetitive right-column noise
+
+### Extension course select truncation hardening (2026-04-04)
+
+- Follow-up fix after user validation: some environments still showed long course rows overlapping in the dropdown list.
+- Updated:
+  - `extension/sidepanel/sidepanel.css`
+  - `extension/sidepanel/selects.js`
+- Changes:
+  - switched option-label rendering from two-line clamp to strict single-line ellipsis for deterministic cross-browser behavior
+  - added `overflow: hidden` on option rows to prevent any text paint spill across neighboring rows
+  - added `title` tooltip on option labels so full course names remain discoverable on hover/focus
+- Outcome: dropdown rows now preserve fixed visual rhythm and prevent long-title overlap reliably
+
 ### Click sound refinement for typing targets (2026-04-04)
 
 - Updated global click sound behavior to exclude typing targets in `components/theme-provider.tsx`.
