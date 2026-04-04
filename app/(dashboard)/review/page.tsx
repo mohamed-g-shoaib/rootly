@@ -47,7 +47,9 @@ async function getInitialReviewData(userId: string) {
       .order("updated_at", { ascending: false }),
     supabase
       .from("notes")
-      .select("id,course_id,understanding_level,flag,courses(title)")
+      .select(
+        "id,course_id,question,answer,understanding_level,flag,courses(title)"
+      )
       .eq("user_id", userId)
       .eq("type", "qa")
       .not("question", "is", null)

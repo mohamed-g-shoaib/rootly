@@ -1,7 +1,7 @@
 import {
-  AlertCircleIcon,
+  Alert01Icon,
   CheckmarkCircle01Icon,
-  InformationCircleIcon,
+  Progress03Icon,
 } from "@hugeicons/core-free-icons"
 
 export type NoteType = "qa" | "freeform"
@@ -45,13 +45,13 @@ export function understandingLabel(level: UnderstandingLevel) {
 }
 
 export function understandingIcon(level: UnderstandingLevel) {
-  if (level === 1) return AlertCircleIcon
-  if (level === 2) return InformationCircleIcon
+  if (level === 1) return Alert01Icon
+  if (level === 2) return Progress03Icon
   return CheckmarkCircle01Icon
 }
 
 export function understandingColor(level: UnderstandingLevel) {
-  if (level === 1) return "var(--warning)"
+  if (level === 1) return "var(--destructive)"
   if (level === 2) return "var(--info)"
   return "var(--success)"
 }

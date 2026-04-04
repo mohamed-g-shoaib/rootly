@@ -652,10 +652,7 @@ function EntryEditorSheetBody({
                     <Button
                       variant={mood === 1 ? "secondary" : "outline"}
                       onClick={() => setMood(1)}
-                      className={cn(
-                        "justify-center gap-2",
-                        mood === 1 && "bg-muted"
-                      )}
+                      className="justify-center gap-2"
                     >
                       <EmojioneV1WearyFace
                         className="hidden size-5 sm:block"
@@ -667,10 +664,7 @@ function EntryEditorSheetBody({
                     <Button
                       variant={mood === 2 ? "secondary" : "outline"}
                       onClick={() => setMood(2)}
-                      className={cn(
-                        "justify-center gap-2",
-                        mood === 2 && "bg-muted"
-                      )}
+                      className="justify-center gap-2"
                     >
                       <EmojioneV1SlightlySmilingFace
                         className="hidden size-5 sm:block"
@@ -681,10 +675,7 @@ function EntryEditorSheetBody({
                     <Button
                       variant={mood === 3 ? "secondary" : "outline"}
                       onClick={() => setMood(3)}
-                      className={cn(
-                        "justify-center gap-2",
-                        mood === 3 && "bg-muted"
-                      )}
+                      className="justify-center gap-2"
                     >
                       <EmojioneV1GrinningFaceWithSmilingEyes
                         className="hidden size-5 sm:block"

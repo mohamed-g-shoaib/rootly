@@ -2029,3 +2029,35 @@ Recent findings:
   - **Reduced cognitive load**: No unpredictable appearance/disappearance based on overflow
 - Validation: no TypeScript diagnostics
 - Result: Clear, discoverable "Open full" action positioned with other card metadata badges, maintaining visual consistency while improving discoverability through explicit text label
+
+### Review session setup count fix (2026-04-04)
+
+- Fixed a regression in `app/(dashboard)/review/page.tsx` where the initial review note pool query no longer selected `question` and `answer`, even though the loader still used those fields to determine whether a Q&A note was eligible for review.
+- Result:
+  - review setup now correctly counts existing Q&A notes again
+  - starting a review session no longer incorrectly reports `You only have 0 Q&A notes available.` when valid Q&A notes exist
+
+### Daily entry mood button token fix (2026-04-04)
+
+- Fixed the daily entry sheet mood selector in `app/daily-entries/ui/daily-entries-components.tsx`.
+- Root cause:
+  - selected mood buttons were using the shared `secondary` button variant while also forcing `bg-muted`
+  - this mixed `muted` background with `secondary-foreground` text and `secondary` hover behavior, creating poor active-state color consistency and weaker contrast
+- Fix:
+  - removed the manual `bg-muted` overrides from selected mood buttons
+  - selected mood buttons now use the shared `secondary` token set consistently for base, hover, and pressed states
+
+### Notes understanding color tweak (2026-04-04)
+
+- Updated `app/notes/ui/notes-model.ts` so the `Confused` understanding state now uses `var(--destructive)` instead of `var(--warning)`.
+- Result:
+  - the confused icon in the note sheet now reads as red instead of yellow
+  - understanding-level color semantics are clearer and more visually distinct
+
+### Homepage daily progress badge normalization (2026-04-04)
+
+- Updated `app/(marketing)/ui/homepage-how-it-works.tsx` in the `Log daily progress` card.
+- Changed the `Focused` mood badge from `variant="success"` to `variant="outline"` so all three mood badges now share the same visual treatment.
+- Result:
+  - removed the green outlier badge from the mood row
+  - the daily progress card now feels more visually consistent and quieter
