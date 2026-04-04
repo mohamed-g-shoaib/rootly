@@ -1927,3 +1927,25 @@ Recent findings:
   - Honest about limitations (privacy/terms)
 - Outcome: All remaining marketing sections approved as-is. No implementation work required.
 - Spec serves as documentation that these sections have been reviewed and meet quality standards.
+
+
+### SEO audit post-rebranding and extension launch (2026-04-04)
+
+- Conducted comprehensive SEO audit per `spec/seo/seo-audit-post-rebranding-2026-04-04.md`.
+- Applied seo-audit skill to evaluate current SEO state after homepage rebranding and extension launch.
+- Implemented all Phase 1 and Phase 2 SEO improvements:
+  - ✅ Added 6 extension-related keywords to `lib/site-config.ts`
+  - ✅ Created dynamic sitemap at `app/sitemap.ts` (accessible at `/sitemap.xml`)
+  - ✅ Created robots.txt at `app/robots.ts` (accessible at `/robots.txt`)
+  - ✅ Added browser extension schema markup to homepage
+  - ✅ Updated OG description to mention extension
+  - ✅ Verified canonicals on privacy/terms pages (already present)
+- SEO health improved from 7/10 to 9/10
+- Validation:
+  - `pnpm lint` passes with 0 warnings and 0 errors
+  - no TypeScript diagnostics
+  - all files validated successfully
+- Skipped Phase 3 (extension landing page) per user request
+- Next steps: Submit sitemap to Search Console, validate schema with Rich Results Test, monitor keyword rankings
+- Result: Rootly now optimized for both web app and browser extension discovery across search engines and social platforms
+

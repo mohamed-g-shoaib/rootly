@@ -22,6 +22,23 @@ const homepageJsonLd = {
   },
 }
 
+const extensionJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Rootly Browser Extension",
+  applicationCategory: "BrowserExtension",
+  operatingSystem: "Chrome",
+  description:
+    "Capture notes and track study time from any webpage with Rootly's browser side panel.",
+  url: siteConfig.url,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  browserRequirements: "Chrome 88+",
+}
+
 export const metadata: Metadata = {
   title: "Learning tracker and study notebook",
   description:
@@ -53,9 +70,14 @@ export const metadata: Metadata = {
 export default function MarketingHomepage() {
   return (
     <div>
-      <script type="application/ld+json">
-        {JSON.stringify(homepageJsonLd)}
-      </script>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(extensionJsonLd) }}
+      />
       <HomepageNav />
       <main>
         <HomepageHero />

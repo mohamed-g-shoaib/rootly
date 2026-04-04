@@ -1,25 +1,27 @@
 import type { MetadataRoute } from "next"
-import { absoluteUrl, siteConfig } from "@/lib/site-config"
+import { siteConfig } from "@/lib/site-config"
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = siteConfig.url
+
   return [
     {
-      url: absoluteUrl("/"),
-      lastModified: siteConfig.publishedAt,
+      url: baseUrl,
+      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: absoluteUrl("/terms"),
-      lastModified: siteConfig.legalUpdatedAt,
-      changeFrequency: "yearly",
-      priority: 0.3,
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(siteConfig.legalUpdatedAt),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     {
-      url: absoluteUrl("/privacy"),
-      lastModified: siteConfig.legalUpdatedAt,
-      changeFrequency: "yearly",
-      priority: 0.3,
+      url: `${baseUrl}/terms`,
+      lastModified: new Date(siteConfig.legalUpdatedAt),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
   ]
 }

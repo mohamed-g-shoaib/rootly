@@ -13,7 +13,7 @@ export const siteConfig = {
   description:
     "Turn scattered learning into organized progress. Capture notes, track study time, and review what you learn—whether you're following coding tutorials, design courses, or any structured learning path.",
   ogDescription:
-    "Organize your learning with structured notes, study time tracking, and spaced repetition review.",
+    "Organize your learning with structured notes, study time tracking, and spaced repetition review. Includes a browser extension for capturing notes from any webpage.",
   url: normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_SITE_URL),
   locale: "en_US",
   ogAlt:
@@ -27,6 +27,12 @@ export const siteConfig = {
     "developer learning notebook",
     "spaced repetition",
     "course progress tracker",
+    "browser extension for learning",
+    "study notes browser extension",
+    "learning tracker chrome extension",
+    "note taking side panel",
+    "browser study timer",
+    "chrome extension for students",
     "Rootly",
   ],
   publishedAt: "2026-03-24",
