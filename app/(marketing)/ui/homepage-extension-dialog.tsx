@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Download01Icon, LinkSquare02Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Download01Icon, LinkSquare02Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogDescription,
@@ -15,23 +15,23 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 const EXTENSION_DOWNLOAD_URL =
-  "https://drive.google.com/file/d/1BVTrB47erypG3tevi1U9Fv6BbNUBEiuiX/view?usp=sharing"
+  "https://drive.google.com/file/d/1YJmsi7r6szHCelABcp0MzoPKpbEGZJYf/view?usp=sharing";
 
 const INSTALL_STEPS = [
   "Download the ZIP from Google Drive and unzip it on your computer.",
   "Open chrome://extensions/ and enable Developer mode (top right).",
   "Click Load unpacked (top left) and select the unzipped folder.",
   "Log in from the extension or the dashboard.",
-] as const
+] as const;
 
 type HomepageExtensionDialogProps = {
-  buttonClassName?: string
-  buttonLabel?: string
-  buttonVariant?: "default" | "outline" | "secondary" | "ghost"
-}
+  buttonClassName?: string;
+  buttonLabel?: string;
+  buttonVariant?: "default" | "outline" | "secondary" | "ghost";
+};
 
 export function HomepageExtensionDialog({
   buttonClassName,
@@ -112,7 +112,7 @@ export function HomepageExtensionDialog({
         </DialogFooter>
       </DialogPopup>
     </Dialog>
-  )
+  );
 }
 
-export { EXTENSION_DOWNLOAD_URL }
+export { EXTENSION_DOWNLOAD_URL };
