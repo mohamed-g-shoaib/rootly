@@ -30,11 +30,11 @@ import {
 import { Reveal } from "./reveal"
 
 const TRACK_DATA = [
-  { day: "Mon", minutes: "42m", value: 74 },
-  { day: "Tue", minutes: "28m", value: 48 },
-  { day: "Wed", minutes: "55m", value: 100 },
-  { day: "Thu", minutes: "20m", value: 36 },
-  { day: "Fri", minutes: "48m", value: 86 },
+  { day: "Mon", minutes: "38m", value: 65 },
+  { day: "Tue", minutes: "52m", value: 89 },
+  { day: "Wed", minutes: "45m", value: 77 },
+  { day: "Thu", minutes: "28m", value: 48 },
+  { day: "Fri", minutes: "50m", value: 86 },
 ] as const
 
 const HOW_IT_WORKS_CARD_CLASS =
@@ -150,15 +150,15 @@ function CaptureVisual() {
   return (
     <HowItWorksSurface
       label="Capture"
-      meta="React"
+      meta="Figma"
       body={
         <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
           <div className="line-clamp-2 font-medium text-balance">
-            When should you use <code>useMemo</code>?
+            When do I use auto layout?
           </div>
           <SurfaceCaption>
-            Use it when expensive work or unstable references would otherwise
-            make rerenders noisier than they need to be.
+            Use it when you need elements to resize and reflow automatically as
+            content changes.
           </SurfaceCaption>
         </div>
       }
@@ -176,15 +176,15 @@ function DailyLogVisual() {
   return (
     <HowItWorksSurface
       label="Reflect"
-      meta={<span className="tabular-nums">2h 25m</span>}
+      meta={<span className="tabular-nums">1h 15m</span>}
       body={
         <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
           <div className="line-clamp-2 font-medium text-balance">
             Today I learned
           </div>
           <SurfaceCaption>
-            I learned that <code>useMemo</code> is about expensive work and
-            stable references, not premature optimization.
+            Practiced preterite vs imperfect tense. Preterite for completed
+            actions, imperfect for ongoing past states.
           </SurfaceCaption>
         </div>
       }
@@ -218,15 +218,14 @@ function ReviewVisual() {
   return (
     <HowItWorksSurface
       label="Review"
-      meta="3 / 10 questions"
+      meta="2 / 8 questions"
       body={
         <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
           <div className="line-clamp-2 font-medium text-balance">
-            What problem does <code>useMemo</code> solve?
+            What is a perfect fifth interval?
           </div>
           <SurfaceCaption>
-            It memoizes expensive computations and helps keep references stable
-            when that stability actually matters.
+            Seven semitones apart. Sounds consonant and stable. Example: C to G.
           </SurfaceCaption>
         </div>
       }
@@ -250,7 +249,7 @@ function TrackVisual() {
   return (
     <HowItWorksSurface
       label="Track"
-      meta="avg. 2.4h / day"
+      meta="avg. 2.1h / day"
       body={
         <div className="grid h-full min-h-0 gap-2 overflow-hidden">
           {TRACK_DATA.map((item) => (
@@ -274,7 +273,7 @@ function TrackVisual() {
       footer={
         <>
           <Badge variant="outline">5 day streak</Badge>
-          <Badge variant="secondary">Study minutes</Badge>
+          <Badge variant="secondary">Mixed subjects</Badge>
         </>
       }
     />
@@ -399,7 +398,7 @@ export default function HomepageHowItWorks() {
               <HowItWorksStep
                 visual={<CaptureVisual />}
                 title="Capture notes"
-                description="Q&amp;A and freeform notes with code snippets and understanding levels."
+                description="Q&amp;A and freeform notes for any subject you're studying."
               />
             </Reveal>
 
@@ -423,7 +422,7 @@ export default function HomepageHowItWorks() {
               <HowItWorksStep
                 visual={<TrackVisual />}
                 title="Watch analytics"
-                description="Watch your study time trend and keep improving."
+                description="See your study patterns across all your learning."
               />
             </Reveal>
           </HowItWorksCarousel>

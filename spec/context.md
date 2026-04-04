@@ -1881,3 +1881,31 @@ Recent findings:
 - Outcome: hero content approved with no humanization edits required.
 - Updated spec file status to "Complete" in `spec/content/homepage-hero-rewrite-2026-04-04.md`.
 - Skills applied to this task: content-strategy, emil-design-eng, make-interfaces-feel-better, humanizer.
+
+
+### Homepage "How It Works" section rewrite (2026-04-04)
+
+- Implemented complete "How It Works" carousel content diversification per `spec/content/homepage-how-it-works-rewrite-2026-04-04.md`.
+- Content updates across 5 cards to demonstrate domain diversity:
+  - Card 1 (Organize): Kept existing developer content (Machine Learning course)
+  - Card 2 (Capture): Changed to Figma/design content (auto layout usage)
+  - Card 3 (Reflect): Changed to Spanish language learning (preterite vs imperfect tense)
+  - Card 4 (Review): Changed to Music Theory (perfect fifth interval)
+  - Card 5 (Track): Updated to show cross-domain tracking with "Mixed subjects" badge
+- Description updates:
+  - Capture: "Q&A and freeform notes for any subject you're studying."
+  - Track: "See your study patterns across all your learning."
+- Skills applied:
+  - content-strategy for domain selection and content fitting
+  - humanizer for content evaluation (all content passed as clean)
+  - emil-design-eng + make-interfaces-feel-better for visual consistency
+  - coss for component structure preservation
+- Validation:
+  - `pnpm lint` passes with 0 warnings and 0 errors
+  - no TypeScript diagnostics
+  - all content fits naturally without truncation
+  - visual consistency maintained across all cards
+- Result:
+  - carousel now demonstrates Rootly works for developers, designers, language learners, musicians, and cross-domain learning
+  - reinforces inclusive positioning from hero section
+  - provides visual proof of versatility through specific examples
