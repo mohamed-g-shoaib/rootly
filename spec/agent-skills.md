@@ -69,6 +69,7 @@ For Rootly extension work only, also load:
 | 23  | [TanStack Query Best Practices](#23-tanstack-query-best-practices)      | Project-local                          | Server-state caching, mutation, and hydration guidance       | `.agents/skills/tanstack-query-best-practices/`    |
 | 24  | [Redis Development](#24-redis-development)                              | Redis                                  | `1.0.0`                                                      | `.agents/skills/redis-development/`                |
 | 25  | [Content Strategy](#25-content-strategy)                                | Project-local                          | `1.1.0`                                                      | `.agents/skills/content-strategy/`                 |
+| 26  | [Humanizer](#26-humanizer)                                              | blader                                 | `2.1.1`                                                      | `.agents/skills/humanizer/`                        |
 
 ---
 
@@ -900,4 +901,38 @@ Content strategy guidance for planning content that drives traffic, builds autho
 | ------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `SKILL.md`                | Full content strategy framework with ideation sources, content types, prioritization, and output formats       |
 | `references/headless-cms.md` | CMS selection, content modeling for marketing, editorial workflows, platform comparison (Sanity, Contentful, Strapi) |
+
+
+
+---
+
+## 26. Humanizer
+
+**Publisher:** blader
+**Version:** `2.1.1`
+**When to load:** Editing or reviewing text to remove AI-generated writing patterns, making content sound more natural and human-written. Use when text feels robotic, overly formal, promotional, or lacks personality.
+
+### Purpose
+
+Writing editor skill that identifies and removes signs of AI-generated text based on Wikipedia's "Signs of AI writing" guide. The skill detects and fixes patterns including inflated symbolism, promotional language, superficial analyses, vague attributions, AI vocabulary overuse, negative parallelisms, and excessive hedging. Goes beyond pattern removal to inject actual personality and voice into writing.
+
+### Top 10 Rules by Priority
+
+1. **Add soul, not just remove patterns** - Sterile, voiceless writing is as obvious as AI slop; inject personality, opinions, and human perspective
+2. **Remove inflated symbolism** - Cut "serves as," "testament to," "pivotal moment," "broader trends" puffery
+3. **Eliminate promotional language** - Remove "boasts," "vibrant," "nestled," "stunning," "breathtaking," "must-visit"
+4. **Fix superficial -ing analyses** - Replace "highlighting," "underscoring," "reflecting" tacked-on phrases with direct statements
+5. **Replace vague attributions** - Change "experts believe," "industry reports," "observers cite" to specific sources
+6. **Avoid AI vocabulary overuse** - Reduce "additionally," "crucial," "delve," "landscape," "pivotal," "showcase," "underscore"
+7. **Use simple copulas** - Replace "serves as," "stands as," "boasts," "features" with "is," "are," "has"
+8. **Vary sentence rhythm** - Mix short punchy sentences with longer ones; avoid uniform structure
+9. **Remove negative parallelisms** - Cut "not only...but," "it's not just...it's" constructions
+10. **Be specific over vague** - Replace generic claims with concrete details, numbers, and examples
+
+### Available Files
+
+| File        | Description                                                                                                    |
+| ----------- | -------------------------------------------------------------------------------------------------------------- |
+| `SKILL.md`  | Complete guide covering 24 AI writing patterns with before/after examples and personality injection guidance  |
+| `README.md` | Skill overview and usage notes                                                                                 |
 
