@@ -1,6 +1,5 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
 import { Reveal } from "./reveal"
 import { MarketingPrimaryCta } from "./marketing-primary-cta"
 import { PageContainer } from "@/components/ui/page-container"
@@ -13,12 +12,6 @@ export default function HomepageHero() {
       <PageContainer>
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-6">
-            <Reveal mode="mount">
-              <Badge variant="outline" className="w-fit">
-                Built for self-taught developers
-              </Badge>
-            </Reveal>
-
             <div className="flex flex-col gap-4">
               <Reveal
                 as="h1"

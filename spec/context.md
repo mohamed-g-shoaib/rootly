@@ -1734,3 +1734,14 @@ Recent findings:
   - lint now passes with 0 warnings and 0 errors
   - mobile navbar properly fits both GitHub icon button and "Get started" button within viewport
   - all buttons maintain appropriate sizing without overflow
+
+### Homepage badge removal (2026-04-04)
+
+- Removed "Built for self-taught developers" badge from homepage hero in `app/(marketing)/ui/homepage-hero.tsx`:
+  - removed the `Badge` component usage and its wrapping `Reveal` container
+  - removed the unused `Badge` import from `@/components/ui/badge`
+  - adjusted the reveal animation delays to maintain smooth staggered entry (heading now starts at 0.05s instead of after badge)
+- Result:
+  - cleaner, more direct hero presentation without redundant badge
+  - no dead code or unused imports left behind
+  - lint passes with 0 warnings and 0 errors
