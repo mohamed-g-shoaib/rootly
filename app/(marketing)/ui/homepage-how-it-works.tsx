@@ -394,7 +394,11 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal mode="mount" delay={0.05} className={HOW_IT_WORKS_CARD_CLASS}>
+            <Reveal
+              mode="mount"
+              delay={0.05}
+              className={HOW_IT_WORKS_CARD_CLASS}
+            >
               <HowItWorksStep
                 visual={<CaptureVisual />}
                 title="Capture notes"
@@ -402,7 +406,11 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal mode="mount" delay={0.1} className={HOW_IT_WORKS_CARD_CLASS}>
+            <Reveal
+              mode="mount"
+              delay={0.1}
+              className={HOW_IT_WORKS_CARD_CLASS}
+            >
               <HowItWorksStep
                 visual={<DailyLogVisual />}
                 title="Log daily progress"
@@ -410,7 +418,11 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal mode="mount" delay={0.15} className={HOW_IT_WORKS_CARD_CLASS}>
+            <Reveal
+              mode="mount"
+              delay={0.15}
+              className={HOW_IT_WORKS_CARD_CLASS}
+            >
               <HowItWorksStep
                 visual={<ReviewVisual />}
                 title="Start a review session"
@@ -418,7 +430,11 @@ export default function HomepageHowItWorks() {
               />
             </Reveal>
 
-            <Reveal mode="mount" delay={0.2} className={HOW_IT_WORKS_CARD_CLASS}>
+            <Reveal
+              mode="mount"
+              delay={0.2}
+              className={HOW_IT_WORKS_CARD_CLASS}
+            >
               <HowItWorksStep
                 visual={<TrackVisual />}
                 title="Watch analytics"

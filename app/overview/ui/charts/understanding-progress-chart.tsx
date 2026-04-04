@@ -1,41 +1,41 @@
-"use client";
+"use client"
 
-import { useMemo } from "react";
-import dynamic from "next/dynamic";
+import { useMemo } from "react"
+import dynamic from "next/dynamic"
 
-import { ChartResponsiveShell } from "./chart-responsive-shell";
+import { ChartResponsiveShell } from "./chart-responsive-shell"
 
 const CartesianGrid = dynamic(
   () => import("recharts").then((mod) => mod.CartesianGrid),
-  { ssr: false },
-);
+  { ssr: false }
+)
 const Line = dynamic(() => import("recharts").then((mod) => mod.Line), {
   ssr: false,
-});
+})
 const LineChart = dynamic(
   () => import("recharts").then((mod) => mod.LineChart),
-  { ssr: false },
-);
+  { ssr: false }
+)
 const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
   ssr: false,
-});
+})
 const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), {
   ssr: false,
-});
+})
 const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis), {
   ssr: false,
-});
+})
 
 type Datum = {
-  date: string;
-  label: string;
-  avg: number | null;
-};
+  date: string
+  label: string
+  avg: number | null
+}
 
 export default function UnderstandingProgressChart({
   data,
 }: {
-  data: Datum[];
+  data: Datum[]
 }) {
   const chartData = useMemo(
     () =>
@@ -43,8 +43,8 @@ export default function UnderstandingProgressChart({
         ...d,
         avgValue: d.avg,
       })),
-    [data],
-  );
+    [data]
+  )
 
   return (
     <ChartResponsiveShell className="h-56 w-full min-w-0">
@@ -72,20 +72,20 @@ export default function UnderstandingProgressChart({
           />
           <Tooltip
             content={(props) => {
-              if (!props.active || !props.payload?.length) return null;
-              const entry = props.payload[0];
-              if (!entry) return null;
+              if (!props.active || !props.payload?.length) return null
+              const entry = props.payload[0]
+              if (!entry) return null
               const datum = entry.payload as Datum & {
-                avgValue: Datum["avg"];
-              };
-              const value = datum.avgValue;
-              if (value == null) return null;
+                avgValue: Datum["avg"]
+              }
+              const value = datum.avgValue
+              if (value == null) return null
               return (
                 <div className="rounded-md border bg-popover px-2 py-1 text-xs text-popover-foreground shadow-md/5">
                   <p className="text-muted-foreground">{datum.date}</p>
                   <p className="font-medium">{Number(value).toFixed(1)} / 3</p>
                 </div>
-              );
+              )
             }}
           />
           <Line
@@ -99,5 +99,5 @@ export default function UnderstandingProgressChart({
         </LineChart>
       )}
     </ChartResponsiveShell>
-  );
+  )
 }

@@ -159,7 +159,9 @@ export function NoteCard({
                 ) : null}
 
                 {isQa ? (
-                  <div className="line-clamp-2 font-medium">{note.question}</div>
+                  <div className="line-clamp-2 font-medium">
+                    {note.question}
+                  </div>
                 ) : null}
               </div>
             </div>

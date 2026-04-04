@@ -1,17 +1,11 @@
 "use client"
 
 import * as React from "react"
-import {
-  Clock01Icon,
-  Note05Icon,
-} from "@hugeicons/core-free-icons"
+import { Clock01Icon, Note05Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardPanel,
-} from "@/components/ui/card"
+import { Card, CardPanel } from "@/components/ui/card"
 import { PageContainer } from "@/components/ui/page-container"
 
 import { HomepageExtensionDialog } from "./homepage-extension-dialog"
@@ -84,7 +78,9 @@ export function BrowserWindowMock() {
             role="tabpanel"
             id={`tabpanel-${activeTab}`}
             className="h-[440px] min-w-0 rounded-[1.08rem] border bg-background/76 p-3 transition-opacity duration-200"
-            style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+            style={{
+              transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+            }}
           >
             {activeTab === "react" && <ReactContent />}
             {activeTab === "figma" && <FigmaContent />}
@@ -94,7 +90,9 @@ export function BrowserWindowMock() {
           {/* Side panel */}
           <aside
             className="flex min-w-0 flex-col rounded-[1.08rem] border bg-background/92 transition-opacity duration-200"
-            style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+            style={{
+              transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+            }}
           >
             <div className="flex flex-col gap-2.5 p-2">
               <div className="flex items-start justify-between gap-3">
@@ -161,21 +159,21 @@ function ReactContent() {
       </div>
 
       <div className="space-y-3 pt-3 text-sm text-muted-foreground">
-        <p className="text-pretty leading-6">
+        <p className="leading-6 text-pretty">
           <span className="rounded-md bg-warning/25 px-1 py-0.5 leading-7 text-foreground">
             Use memoization when recalculating a value is noticeably expensive
             or when keeping a stable reference prevents avoidable rerenders.
           </span>
         </p>
-        <p className="text-pretty leading-6">
+        <p className="leading-6 text-pretty">
           Memoization is most useful when the computation is slow or when the
           value is passed to a memoized child component.
         </p>
         <div className="rounded-xl border bg-background/84 p-3 font-mono text-[13px] leading-6 text-foreground">
-          const visibleTodos = useMemo(() =&gt; filterTodos(todos, tab),
-          [todos, tab])
+          const visibleTodos = useMemo(() =&gt; filterTodos(todos, tab), [todos,
+          tab])
         </div>
-        <p className="text-pretty leading-6">
+        <p className="leading-6 text-pretty">
           It does not make every component faster by default. The main goal is
           deliberate stability when that stability matters.
         </p>
@@ -222,19 +220,19 @@ function FigmaContent() {
       </div>
 
       <div className="space-y-3 pt-3 text-sm text-muted-foreground">
-        <div className="aspect-video max-h-[180px] rounded-xl border bg-muted/40 flex items-center justify-center">
+        <div className="flex aspect-video max-h-[180px] items-center justify-center rounded-xl border bg-muted/40">
           <div className="text-center">
             <div className="text-2xl font-semibold text-foreground">▶</div>
             <div className="pt-2 text-xs">Video: Layers and Components</div>
           </div>
         </div>
-        <p className="text-pretty leading-6">
+        <p className="leading-6 text-pretty">
           <span className="rounded-md bg-info/25 px-1 py-0.5 leading-7 text-foreground">
             Layers are the building blocks of your design. Components let you
             reuse elements across your project.
           </span>
         </p>
-        <p className="text-pretty leading-6">
+        <p className="leading-6 text-pretty">
           Understanding the layer hierarchy is essential for organizing complex
           designs. Use frames to group related elements together.
         </p>
@@ -287,7 +285,7 @@ function DuolingoContent() {
           </div>
           <div className="pt-2 text-sm">Hello! How are you?</div>
         </div>
-        <p className="text-pretty leading-6">
+        <p className="leading-6 text-pretty">
           <span className="rounded-md bg-success/25 px-1 py-0.5 leading-7 text-foreground">
             Common greetings are essential for starting conversations. Practice
             both formal and informal versions.
@@ -321,7 +319,7 @@ function DuolingoSidePanel() {
       <div className="pt-2.5 text-xs tracking-[0.12em] text-muted-foreground uppercase">
         Vocabulary
       </div>
-      <div className="pt-1 space-y-1.5 text-sm">
+      <div className="space-y-1.5 pt-1 text-sm">
         <div className="text-pretty">
           <span className="font-medium text-foreground">Hola</span>
           <span className="text-muted-foreground"> - Hello (informal)</span>

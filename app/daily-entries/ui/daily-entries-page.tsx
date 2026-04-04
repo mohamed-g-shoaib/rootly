@@ -1,29 +1,29 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   keepPreviousData,
   useQuery,
   useQueryClient,
-} from "@tanstack/react-query";
+} from "@tanstack/react-query"
 
 import {
   AddCircleIcon,
   ArrowLeft02Icon,
   ArrowRight02Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
-import { PageContainer } from "@/components/ui/page-container";
+import { PageContainer } from "@/components/ui/page-container"
 
-import { useDailyEntryLiveUpdates } from "@/hooks/use-daily-entry-live-updates";
-import { useIsMobile } from "@/hooks/use-media-query";
-import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset";
+import { useDailyEntryLiveUpdates } from "@/hooks/use-daily-entry-live-updates"
+import { useIsMobile } from "@/hooks/use-media-query"
+import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset"
 
-import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
-import { Button } from "@/components/ui/button";
-import { toastManager } from "@/components/ui/toast";
-import { upsertDailyEntry } from "@/lib/daily-entry-live";
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
+import { Button } from "@/components/ui/button"
+import { toastManager } from "@/components/ui/toast"
+import { upsertDailyEntry } from "@/lib/daily-entry-live"
 
 import {
   DateRangeFilterSheet,
@@ -31,32 +31,32 @@ import {
   EntryCard,
   EntryEditorSheet,
   MoodFilterSheet,
-} from "./daily-entries-components";
-import { DailyEntriesHeader } from "./daily-entries-header";
+} from "./daily-entries-components"
+import { DailyEntriesHeader } from "./daily-entries-header"
 import {
   createEntry,
   deleteEntry,
   getDailyEntriesPage,
   updateEntry,
-} from "./daily-entries-actions";
+} from "./daily-entries-actions"
 import {
   isSameDay,
   toDateInputValue,
   type DailyEntry,
   type MoodFilter,
-} from "./daily-entries-model";
+} from "./daily-entries-model"
 
 type DailyEntriesPageData = {
-  success: true;
-  data: DailyEntry[];
-  totalCount: number;
-};
+  success: true
+  data: DailyEntry[]
+  totalCount: number
+}
 
 const EMPTY_DAILY_ENTRIES_PAGE_DATA: DailyEntriesPageData = {
   success: true,
   data: [],
   totalCount: 0,
-};
+}
 
 export default function DailyEntriesPage({
   userId,
@@ -64,23 +64,23 @@ export default function DailyEntriesPage({
   initialEntriesTotal,
   entriesPageSize,
 }: {
-  userId: string | null;
-  initialEntries: DailyEntry[];
-  initialEntriesTotal: number;
-  entriesPageSize: number;
+  userId: string | null
+  initialEntries: DailyEntry[]
+  initialEntriesTotal: number
+  entriesPageSize: number
 }) {
-  const isMobile = useIsMobile();
-  const queryClient = useQueryClient();
+  const isMobile = useIsMobile()
+  const queryClient = useQueryClient()
 
-  const now = React.useMemo(() => new Date(), []);
-  const today = React.useMemo(() => toDateInputValue(now), [now]);
+  const now = React.useMemo(() => new Date(), [])
+  const today = React.useMemo(() => toDateInputValue(now), [now])
 
-  const [fromDate, setFromDate] = React.useState("");
-  const [toDate, setToDate] = React.useState("");
-  const [moodFilter, setMoodFilter] = React.useState<MoodFilter>("all");
+  const [fromDate, setFromDate] = React.useState("")
+  const [toDate, setToDate] = React.useState("")
+  const [moodFilter, setMoodFilter] = React.useState<MoodFilter>("all")
 
-  const [currentPage, setCurrentPage] = React.useState(1);
-  usePaginationScrollReset(currentPage);
+  const [currentPage, setCurrentPage] = React.useState(1)
+  usePaginationScrollReset(currentPage)
 
   const resolvedEntriesQueryKey = React.useMemo(
     () =>
@@ -95,11 +95,11 @@ export default function DailyEntriesPage({
             moodFilter,
           ]
         : null,
-    [currentPage, entriesPageSize, fromDate, moodFilter, toDate, userId],
-  );
+    [currentPage, entriesPageSize, fromDate, moodFilter, toDate, userId]
+  )
 
   const isInitialEntriesQuery =
-    currentPage === 1 && !fromDate && !toDate && moodFilter === "all";
+    currentPage === 1 && !fromDate && !toDate && moodFilter === "all"
 
   const entriesQuery = useQuery({
     queryKey: resolvedEntriesQueryKey ?? ["daily-entries-page", "anonymous"],
@@ -112,13 +112,13 @@ export default function DailyEntriesPage({
         toDate,
         moodFilter,
         userId: userId as string,
-      });
+      })
 
       if (!result.success) {
-        throw new Error(result.error);
+        throw new Error(result.error)
       }
 
-      return result;
+      return result
     },
     initialData: isInitialEntriesQuery
       ? {
@@ -128,28 +128,28 @@ export default function DailyEntriesPage({
         }
       : undefined,
     placeholderData: keepPreviousData,
-  });
+  })
 
   React.useEffect(() => {
-    if (!entriesQuery.error) return;
+    if (!entriesQuery.error) return
 
     toastManager.add({
       type: "error",
       title: "Could not load entries",
       description: entriesQuery.error.message,
-    });
-  }, [entriesQuery.error]);
+    })
+  }, [entriesQuery.error])
 
   const entries = React.useMemo(
     () => entriesQuery.data?.data ?? [],
-    [entriesQuery.data],
-  );
-  const entriesTotal = entriesQuery.data?.totalCount ?? 0;
-  const pageLoading = entriesQuery.isFetching;
+    [entriesQuery.data]
+  )
+  const entriesTotal = entriesQuery.data?.totalCount ?? 0
+  const pageLoading = entriesQuery.isFetching
 
   const setEntriesCache = React.useCallback(
     (updater: (items: DailyEntry[]) => DailyEntry[]) => {
-      if (!resolvedEntriesQueryKey) return;
+      if (!resolvedEntriesQueryKey) return
 
       queryClient.setQueryData<DailyEntriesPageData>(
         resolvedEntriesQueryKey,
@@ -159,75 +159,75 @@ export default function DailyEntriesPage({
               success: true,
               data: updater([]),
               totalCount: 0,
-            };
+            }
           }
 
           return {
             ...state,
             data: updater(state.data),
-          };
-        },
-      );
+          }
+        }
+      )
     },
-    [queryClient, resolvedEntriesQueryKey],
-  );
+    [queryClient, resolvedEntriesQueryKey]
+  )
 
   const getEntriesCache = React.useCallback(
     (): DailyEntriesPageData =>
       resolvedEntriesQueryKey
         ? (queryClient.getQueryData<DailyEntriesPageData>(
-            resolvedEntriesQueryKey,
+            resolvedEntriesQueryKey
           ) ?? EMPTY_DAILY_ENTRIES_PAGE_DATA)
         : EMPTY_DAILY_ENTRIES_PAGE_DATA,
-    [queryClient, resolvedEntriesQueryKey],
-  );
+    [queryClient, resolvedEntriesQueryKey]
+  )
 
   const restoreEntriesCache = React.useCallback(
     (previous: DailyEntriesPageData) => {
-      if (!resolvedEntriesQueryKey) return;
-      queryClient.setQueryData(resolvedEntriesQueryKey, previous);
+      if (!resolvedEntriesQueryKey) return
+      queryClient.setQueryData(resolvedEntriesQueryKey, previous)
     },
-    [queryClient, resolvedEntriesQueryKey],
-  );
+    [queryClient, resolvedEntriesQueryKey]
+  )
 
   useDailyEntryLiveUpdates({
     userId,
     onEntryUpsert: React.useCallback(
       (entry: DailyEntry) => {
-        setEntriesCache((items) => upsertDailyEntry(items, entry));
+        setEntriesCache((items) => upsertDailyEntry(items, entry))
       },
-      [setEntriesCache],
+      [setEntriesCache]
     ),
-  });
+  })
 
-  const [createOpen, setCreateOpen] = React.useState(false);
-  const [editOpen, setEditOpen] = React.useState(false);
-  const [activeEntryId, setActiveEntryId] = React.useState<string | null>(null);
+  const [createOpen, setCreateOpen] = React.useState(false)
+  const [editOpen, setEditOpen] = React.useState(false)
+  const [activeEntryId, setActiveEntryId] = React.useState<string | null>(null)
 
-  const [mobileDatesOpen, setMobileDatesOpen] = React.useState(false);
-  const [mobileMoodOpen, setMobileMoodOpen] = React.useState(false);
+  const [mobileDatesOpen, setMobileDatesOpen] = React.useState(false)
+  const [mobileMoodOpen, setMobileMoodOpen] = React.useState(false)
 
   const activeEntry = React.useMemo(
     () => entries.find((e) => e.id === activeEntryId) ?? null,
-    [activeEntryId, entries],
-  );
+    [activeEntryId, entries]
+  )
 
   const todayEntry = React.useMemo(
     () => entries.find((e) => isSameDay(e.date, today)) ?? null,
-    [entries, today],
-  );
+    [entries, today]
+  )
 
-  const todayHasEntry = Boolean(todayEntry);
+  const todayHasEntry = Boolean(todayEntry)
 
-  const totalPages = Math.max(1, Math.ceil(entriesTotal / entriesPageSize));
-
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [fromDate, moodFilter, toDate]);
+  const totalPages = Math.max(1, Math.ceil(entriesTotal / entriesPageSize))
 
   React.useEffect(() => {
-    if (!userId) return;
-    if (currentPage >= totalPages) return;
+    setCurrentPage(1)
+  }, [fromDate, moodFilter, toDate])
+
+  React.useEffect(() => {
+    if (!userId) return
+    if (currentPage >= totalPages) return
 
     void queryClient.prefetchQuery({
       queryKey: [
@@ -247,15 +247,15 @@ export default function DailyEntriesPage({
           toDate,
           moodFilter,
           userId,
-        });
+        })
 
         if (!result.success) {
-          throw new Error(result.error);
+          throw new Error(result.error)
         }
 
-        return result;
+        return result
       },
-    });
+    })
   }, [
     currentPage,
     entriesPageSize,
@@ -265,22 +265,22 @@ export default function DailyEntriesPage({
     toDate,
     totalPages,
     userId,
-  ]);
+  ])
 
-  const filtersActive = Boolean(fromDate || toDate || moodFilter !== "all");
+  const filtersActive = Boolean(fromDate || toDate || moodFilter !== "all")
   const changePage = React.useCallback((nextPage: number) => {
-    setCurrentPage(nextPage);
-  }, []);
+    setCurrentPage(nextPage)
+  }, [])
   const openPrimaryAction = React.useCallback(() => {
     if (todayEntry) {
-      setActiveEntryId(todayEntry.id);
-      setEditOpen(true);
-      return;
+      setActiveEntryId(todayEntry.id)
+      setEditOpen(true)
+      return
     }
 
-    setActiveEntryId(null);
-    setCreateOpen(true);
-  }, [todayEntry]);
+    setActiveEntryId(null)
+    setCreateOpen(true)
+  }, [todayEntry])
 
   const shellFab = React.useMemo(
     () => ({
@@ -288,26 +288,26 @@ export default function DailyEntriesPage({
       icon: <HugeiconsIcon icon={AddCircleIcon} size={20} />,
       onClick: openPrimaryAction,
     }),
-    [openPrimaryAction, todayHasEntry],
-  );
-  useDashboardShellFab(shellFab);
+    [openPrimaryAction, todayHasEntry]
+  )
+  useDashboardShellFab(shellFab)
 
   function clearFilters() {
-    setFromDate("");
-    setToDate("");
-    setMoodFilter("all");
+    setFromDate("")
+    setToDate("")
+    setMoodFilter("all")
   }
 
   async function onCreateEntry(draft: DailyEntry) {
-    if (!userId) return;
+    if (!userId) return
 
     if (entries.some((e) => e.date === draft.date)) {
       toastManager.add({
         type: "error",
         title: "Could not create entry",
         description: "An entry for this date already exists.",
-      });
-      return;
+      })
+      return
     }
 
     const optimistic: DailyEntry = {
@@ -315,89 +315,89 @@ export default function DailyEntriesPage({
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    }
 
-    const prev = getEntriesCache();
+    const prev = getEntriesCache()
 
-    setEntriesCache((items) => [optimistic, ...items]);
-    setCreateOpen(false);
+    setEntriesCache((items) => [optimistic, ...items])
+    setCreateOpen(false)
 
-    const res = await createEntry({ entry: optimistic, userId });
+    const res = await createEntry({ entry: optimistic, userId })
     if (!res.success) {
-      restoreEntriesCache(prev);
+      restoreEntriesCache(prev)
       toastManager.add({
         type: "error",
         title: "Could not create entry",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
     setEntriesCache((items) =>
-      items.map((e) => (e.id === optimistic.id ? res.data : e)),
-    );
-    setCurrentPage(1);
+      items.map((e) => (e.id === optimistic.id ? res.data : e))
+    )
+    setCurrentPage(1)
     await queryClient.invalidateQueries({
       queryKey: ["daily-entries-page", userId],
-    });
+    })
   }
 
   async function onUpdateEntry(next: DailyEntry) {
-    if (!userId) return;
+    if (!userId) return
 
-    const prev = getEntriesCache();
+    const prev = getEntriesCache()
 
-    setEntriesCache((items) => items.map((e) => (e.id === next.id ? next : e)));
-    setEditOpen(false);
+    setEntriesCache((items) => items.map((e) => (e.id === next.id ? next : e)))
+    setEditOpen(false)
 
     const res = await updateEntry({
       entryId: next.id,
       patch: next,
       userId,
-    });
+    })
     if (!res.success) {
-      restoreEntriesCache(prev);
+      restoreEntriesCache(prev)
       toastManager.add({
         type: "error",
         title: "Could not update entry",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
     setEntriesCache((items) =>
-      items.map((e) => (e.id === next.id ? res.data : e)),
-    );
+      items.map((e) => (e.id === next.id ? res.data : e))
+    )
     await queryClient.invalidateQueries({
       queryKey: ["daily-entries-page", userId],
-    });
+    })
   }
 
   async function onDeleteEntry(id: string) {
-    if (!userId) return;
+    if (!userId) return
 
-    const prev = getEntriesCache();
+    const prev = getEntriesCache()
 
-    setEntriesCache((items) => items.filter((e) => e.id !== id));
-    if (activeEntryId === id) setActiveEntryId(null);
+    setEntriesCache((items) => items.filter((e) => e.id !== id))
+    if (activeEntryId === id) setActiveEntryId(null)
 
-    const res = await deleteEntry({ entryId: id, userId });
+    const res = await deleteEntry({ entryId: id, userId })
     if (!res.success) {
-      restoreEntriesCache(prev);
+      restoreEntriesCache(prev)
       toastManager.add({
         type: "error",
         title: "Could not delete entry",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
     const nextPage =
-      entries.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
-    setCurrentPage(nextPage);
+      entries.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage
+    setCurrentPage(nextPage)
     await queryClient.invalidateQueries({
       queryKey: ["daily-entries-page", userId],
-    });
+    })
   }
 
   return (
@@ -437,8 +437,8 @@ export default function DailyEntriesPage({
                   entry={e}
                   now={now}
                   onEdit={() => {
-                    setActiveEntryId(e.id);
-                    setEditOpen(true);
+                    setActiveEntryId(e.id)
+                    setEditOpen(true)
                   }}
                   onDelete={() => void onDeleteEntry(e.id)}
                 />
@@ -505,7 +505,7 @@ export default function DailyEntriesPage({
         lockDate
         lockedDateValue={today}
         onSave={(next) => {
-          void onCreateEntry(next);
+          void onCreateEntry(next)
         }}
       />
 
@@ -518,9 +518,9 @@ export default function DailyEntriesPage({
         lockDate={false}
         lockedDateValue={today}
         onSave={(next) => {
-          void onUpdateEntry(next);
+          void onUpdateEntry(next)
         }}
       />
     </>
-  );
+  )
 }

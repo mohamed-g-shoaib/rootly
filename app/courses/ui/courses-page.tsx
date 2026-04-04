@@ -1,43 +1,43 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   keepPreviousData,
   useQuery,
   useQueryClient,
-} from "@tanstack/react-query";
+} from "@tanstack/react-query"
 
 import {
   AddCircleIcon,
   ArrowLeft02Icon,
   ArrowRight02Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
-import { useIsMobile } from "@/hooks/use-media-query";
-import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset";
+import { useIsMobile } from "@/hooks/use-media-query"
+import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset"
 
-import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
-import { Button } from "@/components/ui/button";
-import { PageContainer } from "@/components/ui/page-container";
-import { toastManager } from "@/components/ui/toast";
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
+import { Button } from "@/components/ui/button"
+import { PageContainer } from "@/components/ui/page-container"
+import { toastManager } from "@/components/ui/toast"
 
-import type { Course, SortKey, TopicFilter } from "./courses-model";
+import type { Course, SortKey, TopicFilter } from "./courses-model"
 import {
   createCourse,
   deleteCourse,
   getCourseTopics,
   getCoursesPage,
   updateCourse,
-} from "./courses-actions";
-import { CoursesHeader } from "./courses-header";
+} from "./courses-actions"
+import { CoursesHeader } from "./courses-header"
 import {
   CourseCard,
   CourseEditorSheet,
   EmptyState,
   FilterSheet,
   LinksViewerSheet,
-} from "./courses-components";
+} from "./courses-components"
 
 export default function CoursesPage({
   userId,
@@ -46,13 +46,13 @@ export default function CoursesPage({
   coursesPageSize,
   initialTopicItems,
 }: {
-  userId: string | null;
-  initialCourses: Course[];
-  initialCoursesTotal: number;
-  coursesPageSize: number;
-  initialTopicItems: string[];
+  userId: string | null
+  initialCourses: Course[]
+  initialCoursesTotal: number
+  coursesPageSize: number
+  initialTopicItems: string[]
 }) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile()
   const shellFab = React.useMemo(
     () =>
       isMobile
@@ -62,47 +62,47 @@ export default function CoursesPage({
             onClick: () => setCreateOpen(true),
           }
         : undefined,
-    [isMobile],
-  );
-  useDashboardShellFab(shellFab);
+    [isMobile]
+  )
+  useDashboardShellFab(shellFab)
 
-  const [currentPage, setCurrentPage] = React.useState(1);
-  usePaginationScrollReset(currentPage);
+  const [currentPage, setCurrentPage] = React.useState(1)
+  usePaginationScrollReset(currentPage)
   const [topicItemsState, setTopicItemsState] = React.useState<string[]>(
-    () => initialTopicItems,
-  );
+    () => initialTopicItems
+  )
 
-  const [topicFilter, setTopicFilter] = React.useState<TopicFilter>("all");
-  const [sortKey, setSortKey] = React.useState<SortKey>("last_updated");
+  const [topicFilter, setTopicFilter] = React.useState<TopicFilter>("all")
+  const [sortKey, setSortKey] = React.useState<SortKey>("last_updated")
 
-  const [createOpen, setCreateOpen] = React.useState(false);
-  const [editOpen, setEditOpen] = React.useState(false);
-  const [linksOpen, setLinksOpen] = React.useState(false);
+  const [createOpen, setCreateOpen] = React.useState(false)
+  const [editOpen, setEditOpen] = React.useState(false)
+  const [linksOpen, setLinksOpen] = React.useState(false)
   const [activeCourseId, setActiveCourseId] = React.useState<string | null>(
-    null,
-  );
+    null
+  )
 
-  const [mobileTopicSheetOpen, setMobileTopicSheetOpen] = React.useState(false);
-  const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false);
-  const queryClient = useQueryClient();
+  const [mobileTopicSheetOpen, setMobileTopicSheetOpen] = React.useState(false)
+  const [mobileSortSheetOpen, setMobileSortSheetOpen] = React.useState(false)
+  const queryClient = useQueryClient()
 
-  const now = React.useMemo(() => new Date(), []);
+  const now = React.useMemo(() => new Date(), [])
 
   const topicItems = React.useMemo<{ value: TopicFilter; label: string }[]>(
     () => [
       { value: "all", label: "All Topics" },
       ...topicItemsState.map((t) => ({ value: t, label: t })),
     ],
-    [topicItemsState],
-  );
+    [topicItemsState]
+  )
 
-  const filtersActive = topicFilter !== "all" || sortKey !== "last_updated";
+  const filtersActive = topicFilter !== "all" || sortKey !== "last_updated"
 
   const isInitialQuery =
     currentPage === 1 &&
     topicFilter === "all" &&
     sortKey === "last_updated" &&
-    initialCoursesTotal > 0;
+    initialCoursesTotal > 0
 
   const coursesQuery = useQuery({
     queryKey: [
@@ -121,13 +121,13 @@ export default function CoursesPage({
         sortKey,
         topicFilter,
         userId: userId as string,
-      });
+      })
 
       if (!result.success) {
-        throw new Error(result.error);
+        throw new Error(result.error)
       }
 
-      return result;
+      return result
     },
     initialData: isInitialQuery
       ? {
@@ -137,30 +137,30 @@ export default function CoursesPage({
         }
       : undefined,
     placeholderData: keepPreviousData,
-  });
+  })
 
   React.useEffect(() => {
-    if (!coursesQuery.error) return;
+    if (!coursesQuery.error) return
 
     toastManager.add({
       type: "error",
       title: "Could not load courses",
       description: coursesQuery.error.message,
-    });
-  }, [coursesQuery.error]);
+    })
+  }, [coursesQuery.error])
 
-  const courses = coursesQuery.data?.data ?? [];
-  const coursesTotal = coursesQuery.data?.totalCount ?? 0;
-  const pageLoading = coursesQuery.isFetching;
-  const totalPages = Math.max(1, Math.ceil(coursesTotal / coursesPageSize));
+  const courses = coursesQuery.data?.data ?? []
+  const coursesTotal = coursesQuery.data?.totalCount ?? 0
+  const pageLoading = coursesQuery.isFetching
+  const totalPages = Math.max(1, Math.ceil(coursesTotal / coursesPageSize))
 
   const activeCourse = activeCourseId
     ? (courses.find((c) => c.id === activeCourseId) ?? null)
-    : null;
+    : null
 
   React.useEffect(() => {
-    if (!userId) return;
-    if (currentPage >= totalPages) return;
+    if (!userId) return
+    if (currentPage >= totalPages) return
 
     void queryClient.prefetchQuery({
       queryKey: [
@@ -178,15 +178,15 @@ export default function CoursesPage({
           sortKey,
           topicFilter,
           userId,
-        });
+        })
 
         if (!result.success) {
-          throw new Error(result.error);
+          throw new Error(result.error)
         }
 
-        return result;
+        return result
       },
-    });
+    })
   }, [
     coursesPageSize,
     currentPage,
@@ -195,107 +195,107 @@ export default function CoursesPage({
     topicFilter,
     totalPages,
     userId,
-  ]);
+  ])
 
   React.useEffect(() => {
-    setCurrentPage(1);
-  }, [sortKey, topicFilter]);
+    setCurrentPage(1)
+  }, [sortKey, topicFilter])
 
   const changePage = React.useCallback((nextPage: number) => {
-    setCurrentPage(nextPage);
-  }, []);
+    setCurrentPage(nextPage)
+  }, [])
 
   function clearFilters() {
-    setTopicFilter("all");
-    setSortKey("last_updated");
+    setTopicFilter("all")
+    setSortKey("last_updated")
   }
 
   function openLinks(courseId: string) {
-    setActiveCourseId(courseId);
-    setLinksOpen(true);
+    setActiveCourseId(courseId)
+    setLinksOpen(true)
   }
 
   function openEdit(courseId: string) {
-    setActiveCourseId(courseId);
-    setEditOpen(true);
+    setActiveCourseId(courseId)
+    setEditOpen(true)
   }
 
   async function onDeleteCourse(courseId: string) {
-    if (!userId) return;
-    if (activeCourseId === courseId) setActiveCourseId(null);
+    if (!userId) return
+    if (activeCourseId === courseId) setActiveCourseId(null)
 
-    const res = await deleteCourse({ courseId, userId });
+    const res = await deleteCourse({ courseId, userId })
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not delete course",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
     const nextPage =
-      courses.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
-    setCurrentPage(nextPage);
+      courses.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage
+    setCurrentPage(nextPage)
     await queryClient.invalidateQueries({
       queryKey: ["courses-page", userId],
-    });
+    })
   }
 
   async function onCreateCourse(draft: Course) {
-    if (!userId) return;
+    if (!userId) return
 
     const optimistic: Course = {
       ...draft,
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    }
 
-    setCreateOpen(false);
+    setCreateOpen(false)
 
-    const res = await createCourse({ course: optimistic, userId });
+    const res = await createCourse({ course: optimistic, userId })
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not create course",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
-    setCurrentPage(1);
+    setCurrentPage(1)
     await queryClient.invalidateQueries({
       queryKey: ["courses-page", userId],
-    });
-    const topicsResult = await getCourseTopics({ userId });
+    })
+    const topicsResult = await getCourseTopics({ userId })
     if (topicsResult.success) {
-      setTopicItemsState(topicsResult.topics);
+      setTopicItemsState(topicsResult.topics)
     }
   }
 
   async function onUpdateCourse(next: Course) {
-    if (!userId) return;
+    if (!userId) return
 
-    setEditOpen(false);
+    setEditOpen(false)
 
     const res = await updateCourse({
       courseId: next.id,
       patch: next,
       userId,
-    });
+    })
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not update course",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
     await queryClient.invalidateQueries({
       queryKey: ["courses-page", userId],
-    });
+    })
   }
 
   const header = (
@@ -312,7 +312,7 @@ export default function CoursesPage({
       onOpenMobileTopic={() => setMobileTopicSheetOpen(true)}
       onOpenMobileSort={() => setMobileSortSheetOpen(true)}
     />
-  );
+  )
 
   return (
     <>
@@ -353,7 +353,7 @@ export default function CoursesPage({
                 size="sm"
                 className="h-8 w-8 p-0"
                 onClick={() => {
-                  changePage(Math.max(1, currentPage - 1));
+                  changePage(Math.max(1, currentPage - 1))
                 }}
                 disabled={currentPage <= 1 || pageLoading}
                 aria-label="Previous page"
@@ -369,7 +369,7 @@ export default function CoursesPage({
                 size="sm"
                 className="h-8 w-8 p-0"
                 onClick={() => {
-                  changePage(Math.min(totalPages, currentPage + 1));
+                  changePage(Math.min(totalPages, currentPage + 1))
                 }}
                 disabled={currentPage >= totalPages || pageLoading}
                 aria-label="Next page"
@@ -411,8 +411,8 @@ export default function CoursesPage({
         onOpenChange={setLinksOpen}
         isMobile={isMobile}
         onEditCourse={() => {
-          setLinksOpen(false);
-          if (activeCourseId) setEditOpen(true);
+          setLinksOpen(false)
+          if (activeCourseId) setEditOpen(true)
         }}
       />
 
@@ -423,7 +423,7 @@ export default function CoursesPage({
         onOpenChange={setCreateOpen}
         breakpoint={isMobile ? "mobile" : "desktop"}
         onSave={(next: Course) => {
-          void onCreateCourse(next);
+          void onCreateCourse(next)
         }}
       />
 
@@ -434,9 +434,9 @@ export default function CoursesPage({
         onOpenChange={setEditOpen}
         breakpoint={isMobile ? "mobile" : "desktop"}
         onSave={(next: Course) => {
-          void onUpdateCourse(next);
+          void onUpdateCourse(next)
         }}
       />
     </>
-  );
+  )
 }

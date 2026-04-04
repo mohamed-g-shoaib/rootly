@@ -80,83 +80,83 @@ export function SessionCard({
       <div className="h-[220px]">
         <Card className="h-full p-4">
           <div className="flex h-full flex-col gap-3">
-          <div className="flex shrink-0 items-start justify-between gap-3">
-            <button
-              type="button"
-              className="min-w-0 flex-1 text-left"
-              onClick={onView}
-            >
-              <div className="line-clamp-2 font-medium decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
-                {session.name}
-              </div>
-            </button>
-            <div className="shrink-0 pt-0.5 text-xs text-muted-foreground">
-              {formattedDate}
-            </div>
-          </div>
-
-          <div className="flex min-h-0 w-full flex-1 items-center justify-between gap-4 overflow-hidden">
-            <div className="min-w-0 flex-1">
-              <div className="text-xs text-muted-foreground">
-                Weakest course
-              </div>
-              <div
-                className={cn(
-                  "truncate pt-1 text-sm font-normal",
-                  weakestCourseTitle === "—" && "text-muted-foreground"
-                )}
+            <div className="flex shrink-0 items-start justify-between gap-3">
+              <button
+                type="button"
+                className="min-w-0 flex-1 text-left"
+                onClick={onView}
               >
-                {weakestCourseTitle}
+                <div className="line-clamp-2 font-medium decoration-muted-foreground/50 decoration-dotted underline-offset-2 hover:underline">
+                  {session.name}
+                </div>
+              </button>
+              <div className="shrink-0 pt-0.5 text-xs text-muted-foreground">
+                {formattedDate}
               </div>
-            </div>
-            <div className="min-w-0 flex-1 text-right">
-              <div className="text-xs text-muted-foreground">
-                Strongest course
-              </div>
-              <div
-                className={cn(
-                  "truncate pt-1 text-sm font-normal",
-                  strongestCourseTitle === "—" && "text-muted-foreground"
-                )}
-              >
-                {strongestCourseTitle}
-              </div>
-            </div>
-          </div>
-
-          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
-            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
-              <Badge variant="outline" className="shrink-0">
-                <span className="inline-flex items-center gap-2">
-                  <HugeiconsIcon icon={Target01Icon} size={14} />
-                  {session.accuracy}%
-                </span>
-              </Badge>
-              <Badge variant="outline" className="shrink-0">
-                <span className="inline-flex items-center gap-2">
-                  <HugeiconsIcon icon={Clock01Icon} size={14} />
-                  {formatMinutes(session.timeSpentMinutes)}
-                </span>
-              </Badge>
-              <Badge variant="outline" className="shrink-0">
-                <span className="inline-flex items-center gap-2">
-                  <HugeiconsIcon icon={CheckListIcon} size={14} />
-                  {session.questionCount}q
-                </span>
-              </Badge>
-              {session.shuffled ? (
-                <Badge variant="outline" className="shrink-0">
-                  Shuffled
-                </Badge>
-              ) : null}
-              {session.flaggedOnly ? (
-                <Badge variant="outline" className="shrink-0">
-                  Flagged
-                </Badge>
-              ) : null}
             </div>
 
-            <div className="-mr-2 flex shrink-0 items-center gap-1">
+            <div className="flex min-h-0 w-full flex-1 items-center justify-between gap-4 overflow-hidden">
+              <div className="min-w-0 flex-1">
+                <div className="text-xs text-muted-foreground">
+                  Weakest course
+                </div>
+                <div
+                  className={cn(
+                    "truncate pt-1 text-sm font-normal",
+                    weakestCourseTitle === "—" && "text-muted-foreground"
+                  )}
+                >
+                  {weakestCourseTitle}
+                </div>
+              </div>
+              <div className="min-w-0 flex-1 text-right">
+                <div className="text-xs text-muted-foreground">
+                  Strongest course
+                </div>
+                <div
+                  className={cn(
+                    "truncate pt-1 text-sm font-normal",
+                    strongestCourseTitle === "—" && "text-muted-foreground"
+                  )}
+                >
+                  {strongestCourseTitle}
+                </div>
+              </div>
+            </div>
+
+            <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
+              <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+                <Badge variant="outline" className="shrink-0">
+                  <span className="inline-flex items-center gap-2">
+                    <HugeiconsIcon icon={Target01Icon} size={14} />
+                    {session.accuracy}%
+                  </span>
+                </Badge>
+                <Badge variant="outline" className="shrink-0">
+                  <span className="inline-flex items-center gap-2">
+                    <HugeiconsIcon icon={Clock01Icon} size={14} />
+                    {formatMinutes(session.timeSpentMinutes)}
+                  </span>
+                </Badge>
+                <Badge variant="outline" className="shrink-0">
+                  <span className="inline-flex items-center gap-2">
+                    <HugeiconsIcon icon={CheckListIcon} size={14} />
+                    {session.questionCount}q
+                  </span>
+                </Badge>
+                {session.shuffled ? (
+                  <Badge variant="outline" className="shrink-0">
+                    Shuffled
+                  </Badge>
+                ) : null}
+                {session.flaggedOnly ? (
+                  <Badge variant="outline" className="shrink-0">
+                    Flagged
+                  </Badge>
+                ) : null}
+              </div>
+
+              <div className="-mr-2 flex shrink-0 items-center gap-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     render={
@@ -181,8 +181,8 @@ export function SessionCard({
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+              </div>
             </div>
-          </div>
           </div>
         </Card>
       </div>

@@ -869,7 +869,6 @@ Redis-focused operational and modeling guidance for high-performance data access
 | `rules/`    | Category-based rules for data modeling, performance, security, and observability |
 | `AGENTS.md` | Fully expanded compiled document                                                 |
 
-
 ---
 
 ## 25. Content Strategy
@@ -897,12 +896,10 @@ Content strategy guidance for planning content that drives traffic, builds autho
 
 ### Available Files
 
-| File                      | Description                                                                                                    |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `SKILL.md`                | Full content strategy framework with ideation sources, content types, prioritization, and output formats       |
+| File                         | Description                                                                                                          |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `SKILL.md`                   | Full content strategy framework with ideation sources, content types, prioritization, and output formats             |
 | `references/headless-cms.md` | CMS selection, content modeling for marketing, editorial workflows, platform comparison (Sanity, Contentful, Strapi) |
-
-
 
 ---
 
@@ -931,8 +928,7 @@ Writing editor skill that identifies and removes signs of AI-generated text base
 
 ### Available Files
 
-| File        | Description                                                                                                    |
-| ----------- | -------------------------------------------------------------------------------------------------------------- |
-| `SKILL.md`  | Complete guide covering 24 AI writing patterns with before/after examples and personality injection guidance  |
-| `README.md` | Skill overview and usage notes                                                                                 |
-
+| File        | Description                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------ |
+| `SKILL.md`  | Complete guide covering 24 AI writing patterns with before/after examples and personality injection guidance |
+| `README.md` | Skill overview and usage notes                                                                               |

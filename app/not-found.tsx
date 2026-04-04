@@ -1,14 +1,14 @@
-import Link from "next/link";
+import Link from "next/link"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { PageContainer } from "@/components/ui/page-container";
+} from "@/components/ui/card"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default function NotFound() {
   return (
@@ -19,10 +19,10 @@ export default function NotFound() {
             <p className="text-7xl leading-none font-semibold tracking-tight sm:text-8xl">
               404
             </p>
-            <CardTitle className="text-balance text-2xl sm:text-3xl">
+            <CardTitle className="text-2xl text-balance sm:text-3xl">
               Page not found
             </CardTitle>
-            <CardDescription className="mx-auto w-full max-w-xl text-center text-pretty text-sm sm:text-base">
+            <CardDescription className="mx-auto w-full max-w-xl text-center text-sm text-pretty sm:text-base">
               The page you are looking for does not exist or may have been
               moved.
             </CardDescription>
@@ -40,5 +40,5 @@ export default function NotFound() {
         </Card>
       </PageContainer>
     </main>
-  );
+  )
 }

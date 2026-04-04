@@ -130,18 +130,15 @@
   --dashboard-dock-height-desktop: 3rem;
   --dashboard-pagination-height: 3rem;
   --dashboard-shell-clearance-mobile: calc(
-    var(--dashboard-floating-gap-mobile) +
-      var(--dashboard-dock-height-mobile) +
+    var(--dashboard-floating-gap-mobile) + var(--dashboard-dock-height-mobile) +
       var(--dashboard-floating-gap-mobile) +
-      var(--dashboard-pagination-height) +
-      var(--dashboard-floating-gap-mobile)
+      var(--dashboard-pagination-height) + var(--dashboard-floating-gap-mobile)
   );
   --dashboard-shell-clearance-desktop: calc(
     var(--dashboard-floating-gap-desktop) +
       var(--dashboard-dock-height-desktop) +
       var(--dashboard-floating-gap-desktop) +
-      var(--dashboard-pagination-height) +
-      var(--dashboard-floating-gap-desktop)
+      var(--dashboard-pagination-height) + var(--dashboard-floating-gap-desktop)
   );
 }
 

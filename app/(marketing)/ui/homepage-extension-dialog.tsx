@@ -88,7 +88,7 @@ export function HomepageExtensionDialog({
               href={EXTENSION_DOWNLOAD_URL}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 block break-all text-sm text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
+              className="mt-2 block text-sm break-all text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
             >
               {EXTENSION_DOWNLOAD_URL}
             </a>

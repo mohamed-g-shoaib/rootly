@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Suspense } from "react";
+import type { Metadata } from "next"
+import { Suspense } from "react"
 
 import {
   getOverviewDateWindow,
@@ -8,22 +8,22 @@ import {
   getOverviewSummaryStats,
   getOverviewTrendRows,
   getOverviewSummaryEntryRows,
-} from "@/app/overview/overview-data";
+} from "@/app/overview/overview-data"
 import OverviewInsights, {
   OverviewInsightsSkeleton,
-} from "@/app/overview/ui/overview-insights";
-import OverviewPageUI from "@/app/overview/ui/overview-page";
-import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf";
+} from "@/app/overview/ui/overview-insights"
+import OverviewPageUI from "@/app/overview/ui/overview-page"
+import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf"
 
 export const metadata: Metadata = {
   title: "Overview",
-};
+}
 
 function toDateInputValue(d: Date): string {
-  const year = d.getUTCFullYear();
-  const month = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  const year = d.getUTCFullYear()
+  const month = String(d.getUTCMonth() + 1).padStart(2, "0")
+  const day = String(d.getUTCDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
 }
 
 function formatLongDate(d: Date) {
@@ -31,7 +31,7 @@ function formatLongDate(d: Date) {
     weekday: "long",
     month: "long",
     day: "numeric",
-  }).format(d);
+  }).format(d)
 }
 
 function computeTodayAndStreakFromEntries({
@@ -40,38 +40,38 @@ function computeTodayAndStreakFromEntries({
   today,
   rows,
 }: {
-  days: number;
-  now: Date;
-  today: string;
-  rows: Array<{ date: string; study_time_minutes: number }>;
+  days: number
+  now: Date
+  today: string
+  rows: Array<{ date: string; study_time_minutes: number }>
 }) {
-  let todayStudyMinutes = 0;
-  let streakDays = 0;
+  let todayStudyMinutes = 0
+  let streakDays = 0
 
-  const entryByDate = new Map<string, { minutes: number }>();
+  const entryByDate = new Map<string, { minutes: number }>()
 
   for (const row of rows) {
     entryByDate.set(row.date, {
       minutes: row.study_time_minutes,
-    });
-    if (row.date === today) todayStudyMinutes += row.study_time_minutes;
+    })
+    if (row.date === today) todayStudyMinutes += row.study_time_minutes
   }
 
   for (let i = 0; i < days; i += 1) {
-    const d = new Date(now);
-    d.setUTCDate(d.getUTCDate() - i);
-    const entry = entryByDate.get(toDateInputValue(d));
-    if (!entry) break;
-    streakDays += 1;
+    const d = new Date(now)
+    d.setUTCDate(d.getUTCDate() - i)
+    const entry = entryByDate.get(toDateInputValue(d))
+    if (!entry) break
+    streakDays += 1
   }
 
-  return { streakDays, todayStudyMinutes };
+  return { streakDays, todayStudyMinutes }
 }
 
 export default async function OverviewPage() {
-  const perf = createDashboardRoutePerf("/overview");
-  const summaryPerf = perf.createScope("summary");
-  const useSummaryRpc = process.env.ROOTLY_OVERVIEW_USE_SUMMARY_RPC === "1";
+  const perf = createDashboardRoutePerf("/overview")
+  const summaryPerf = perf.createScope("summary")
+  const useSummaryRpc = process.env.ROOTLY_OVERVIEW_USE_SUMMARY_RPC === "1"
 
   // Start async work early so session/context and data queries overlap.
   const sessionPromise = perf.measure(
@@ -79,22 +79,22 @@ export default async function OverviewPage() {
     () => getOverviewContext(),
     (ctx) => ({
       authenticated: Boolean(ctx.userId),
-    }),
-  );
-  const { supabase, userId } = await sessionPromise;
+    })
+  )
+  const { supabase, userId } = await sessionPromise
 
-  const now = new Date();
-  const nowIso = now.toISOString();
-  const { days, today } = getOverviewDateWindow(nowIso);
+  const now = new Date()
+  const nowIso = now.toISOString()
+  const { days, today } = getOverviewDateWindow(nowIso)
 
   // Start insights data early so it can overlap with summary work.
   // Do not await here; streamed insights will consume these cached promises.
-  void getOverviewEntryRows(nowIso);
-  void getOverviewTrendRows(nowIso);
+  void getOverviewEntryRows(nowIso)
+  void getOverviewTrendRows(nowIso)
 
   let summaryEntryRowsPromise: Promise<
     Array<{ date: string; study_time_minutes: number }>
-  > | null = null;
+  > | null = null
 
   const loadSummaryEntryRows = () => {
     if (!summaryEntryRowsPromise) {
@@ -103,49 +103,49 @@ export default async function OverviewPage() {
         () => getOverviewSummaryEntryRows(nowIso),
         (result) => ({
           rows: result.length,
-        }),
-      );
+        })
+      )
     }
 
-    return summaryEntryRowsPromise;
-  };
+    return summaryEntryRowsPromise
+  }
   const summaryStatsPromise = useSummaryRpc
     ? summaryPerf.measure(
         "summary-rpc",
         () => getOverviewSummaryStats(),
         (result) => ({
           hasData: Boolean(result),
-        }),
+        })
       )
-    : null;
+    : null
 
-  let totalCourses = 0;
-  let totalNotes = 0;
-  let todayStudyMinutes = 0;
-  let avgUnderstanding = 0;
-  let streakDays = 0;
+  let totalCourses = 0
+  let totalNotes = 0
+  let todayStudyMinutes = 0
+  let avgUnderstanding = 0
+  let streakDays = 0
 
   if (userId) {
-    const summaryStats = summaryStatsPromise ? await summaryStatsPromise : null;
+    const summaryStats = summaryStatsPromise ? await summaryStatsPromise : null
 
     if (summaryStats) {
-      totalCourses = summaryStats.totalCourses;
-      totalNotes = summaryStats.totalNotes;
-      avgUnderstanding = summaryStats.avgUnderstanding;
-      todayStudyMinutes = summaryStats.todayStudyMinutes;
-      streakDays = summaryStats.streakDays;
+      totalCourses = summaryStats.totalCourses
+      totalNotes = summaryStats.totalNotes
+      avgUnderstanding = summaryStats.avgUnderstanding
+      todayStudyMinutes = summaryStats.todayStudyMinutes
+      streakDays = summaryStats.streakDays
 
       // Older RPC versions may not return today/streak fields yet.
       if (!summaryStats.hasTodayAndStreakFields) {
-        const summaryEntryRows = await loadSummaryEntryRows();
+        const summaryEntryRows = await loadSummaryEntryRows()
         const fallback = computeTodayAndStreakFromEntries({
           days,
           now,
           today,
           rows: summaryEntryRows,
-        });
-        todayStudyMinutes = fallback.todayStudyMinutes;
-        streakDays = fallback.streakDays;
+        })
+        todayStudyMinutes = fallback.todayStudyMinutes
+        streakDays = fallback.streakDays
       }
     } else {
       const [coursesCountRes, notesCountRes, trendRows] = await Promise.all([
@@ -158,7 +158,7 @@ export default async function OverviewPage() {
               .eq("user_id", userId),
           (result) => ({
             totalCourses: result.count ?? 0,
-          }),
+          })
         ),
         summaryPerf.measure(
           "fallback-note-count",
@@ -169,44 +169,41 @@ export default async function OverviewPage() {
               .eq("user_id", userId),
           (result) => ({
             totalNotes: result.count ?? 0,
-          }),
+          })
         ),
         summaryPerf.measure(
           "fallback-trend-rows",
           () => getOverviewTrendRows(nowIso),
           (result) => ({
             rows: result.length,
-          }),
+          })
         ),
-      ]);
+      ])
 
-      totalCourses = coursesCountRes.count ?? 0;
-      totalNotes = notesCountRes.count ?? 0;
+      totalCourses = coursesCountRes.count ?? 0
+      totalNotes = notesCountRes.count ?? 0
       const nonNullLevels = trendRows
         .map((row) => row.understanding_level)
-        .filter((level): level is 1 | 2 | 3 => level != null);
-      const totalLevelSum = nonNullLevels.reduce(
-        (acc, level) => acc + level,
-        0,
-      );
+        .filter((level): level is 1 | 2 | 3 => level != null)
+      const totalLevelSum = nonNullLevels.reduce((acc, level) => acc + level, 0)
       avgUnderstanding =
-        nonNullLevels.length > 0 ? totalLevelSum / nonNullLevels.length : 0;
+        nonNullLevels.length > 0 ? totalLevelSum / nonNullLevels.length : 0
 
-      const summaryEntryRows = await loadSummaryEntryRows();
+      const summaryEntryRows = await loadSummaryEntryRows()
       const fallback = computeTodayAndStreakFromEntries({
         days,
         now,
         today,
         rows: summaryEntryRows,
-      });
-      todayStudyMinutes = fallback.todayStudyMinutes;
-      streakDays = fallback.streakDays;
+      })
+      todayStudyMinutes = fallback.todayStudyMinutes
+      streakDays = fallback.streakDays
     }
 
     await summaryPerf.measure(
       "derive-understanding",
-      async () => avgUnderstanding,
-    );
+      async () => avgUnderstanding
+    )
   }
 
   perf.finish({
@@ -214,7 +211,7 @@ export default async function OverviewPage() {
     totalNotes,
     streakDays,
     todayStudyMinutes,
-  });
+  })
 
   return (
     <>
@@ -232,5 +229,5 @@ export default async function OverviewPage() {
         <OverviewInsights nowIso={nowIso} />
       </Suspense>
     </>
-  );
+  )
 }

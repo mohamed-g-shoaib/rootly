@@ -52,8 +52,8 @@ Each sound asset is a `SoundAsset` object:
 ```ts
 export interface SoundAsset {
   name: string
-  dataUri: string        // "data:audio/mpeg;base64,..."
-  duration: number       // seconds
+  dataUri: string // "data:audio/mpeg;base64,..."
+  duration: number // seconds
   format: "mp3" | "wav" | "ogg"
   license: "CC0" | "OGA-BY" | "MIT"
   author: string
@@ -120,7 +120,9 @@ export function useSound(
   } = options
 
   const [isPlaying, setIsPlaying] = useState(false)
-  const [duration, setDuration] = useState<number | null>(sound.duration ?? null)
+  const [duration, setDuration] = useState<number | null>(
+    sound.duration ?? null
+  )
   const sourceRef = useRef<AudioBufferSourceNode | null>(null)
   const gainRef = useRef<GainNode | null>(null)
   const bufferRef = useRef<AudioBuffer | null>(null)
@@ -144,7 +146,11 @@ export function useSound(
 
   const stop = useCallback(() => {
     if (sourceRef.current) {
-      try { sourceRef.current.stop() } catch { /* already stopped */ }
+      try {
+        sourceRef.current.stop()
+      } catch {
+        /* already stopped */
+      }
       sourceRef.current = null
     }
     setIsPlaying(false)
@@ -172,7 +178,10 @@ export function useSound(
         source.connect(gain)
         gain.connect(ctx.destination)
 
-        source.onended = () => { setIsPlaying(false); onEnd?.() }
+        source.onended = () => {
+          setIsPlaying(false)
+          onEnd?.()
+        }
 
         source.start(0)
         sourceRef.current = source
@@ -181,10 +190,22 @@ export function useSound(
         onPlay?.()
       })()
     },
-    [soundEnabled, ensureBuffer, playbackRate, volume, interrupt, stop, onPlay, onEnd]
+    [
+      soundEnabled,
+      ensureBuffer,
+      playbackRate,
+      volume,
+      interrupt,
+      stop,
+      onPlay,
+      onEnd,
+    ]
   )
 
-  const pause = useCallback(() => { stop(); onPause?.() }, [stop, onPause])
+  const pause = useCallback(() => {
+    stop()
+    onPause?.()
+  }, [stop, onPause])
 
   // Keep live volume in sync if it changes
   useEffect(() => {
@@ -195,7 +216,11 @@ export function useSound(
   useEffect(() => {
     return () => {
       if (sourceRef.current) {
-        try { sourceRef.current.stop() } catch { /* already stopped */ }
+        try {
+          sourceRef.current.stop()
+        } catch {
+          /* already stopped */
+        }
       }
     }
   }, [])
@@ -233,7 +258,8 @@ const AudioPreferencesContext =
 
 export function useAudioPreferences() {
   const context = React.useContext(AudioPreferencesContext)
-  if (!context) throw new Error("useAudioPreferences must be used within ThemeProvider")
+  if (!context)
+    throw new Error("useAudioPreferences must be used within ThemeProvider")
   return context
 }
 ```
@@ -295,7 +321,8 @@ function isDisabledTarget(target: HTMLElement) {
 function getClickableTarget(target: EventTarget | null) {
   if (!(target instanceof Element)) return null
   const clickable = target.closest(CLICKABLE_SELECTOR)
-  if (!(clickable instanceof HTMLElement) || isDisabledTarget(clickable)) return null
+  if (!(clickable instanceof HTMLElement) || isDisabledTarget(clickable))
+    return null
   return clickable
 }
 

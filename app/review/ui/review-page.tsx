@@ -1,24 +1,24 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   keepPreviousData,
   useQuery,
   useQueryClient,
-} from "@tanstack/react-query";
+} from "@tanstack/react-query"
 
 import {
   ArrowLeft02Icon,
   ArrowRight02Icon,
   PlayIcon,
   Target01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 
-import { PageContainer } from "@/components/ui/page-container";
-import { useIsMobile } from "@/hooks/use-media-query";
-import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset";
-import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/ui/page-container"
+import { useIsMobile } from "@/hooks/use-media-query"
+import { usePaginationScrollReset } from "@/hooks/use-pagination-scroll-reset"
+import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetClose,
@@ -27,103 +27,103 @@ import {
   SheetPanel,
   SheetPopup,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Form } from "@/components/ui/form";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
-import { toastManager } from "@/components/ui/toast";
+} from "@/components/ui/sheet"
+import { Form } from "@/components/ui/form"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
+import { Switch } from "@/components/ui/switch"
+import { toastManager } from "@/components/ui/toast"
 import {
   FormSection,
   FormSectionDescription,
   FormSectionTitle,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 
-import { useDashboardShellFab } from "@/app/ui/dashboard-shell";
+import { useDashboardShellFab } from "@/app/ui/dashboard-shell"
 import {
   deleteReviewSession,
   getReviewSessionsPage,
   getReviewNotes,
   saveReviewSession,
-} from "./review-actions";
+} from "./review-actions"
 import {
   ReviewEmptyState,
   SessionCard,
   formatMinutes,
-} from "./review-components";
+} from "./review-components"
 import {
   ReviewSession as ReviewSessionView,
   type ReviewSessionState,
-} from "./review-session";
+} from "./review-session"
 import {
   ReviewSummary,
   type ReviewSummaryData,
   buildSessionFromSummary,
   sessionDateLabel,
-} from "./review-summary";
+} from "./review-summary"
 import type {
   ReviewCourse,
   ReviewNote,
   ReviewSession as ReviewSessionModel,
   ReviewSessionConfig,
-} from "./review-model";
+} from "./review-model"
 
 function buildSummary(nextState: ReviewSessionState): ReviewSummaryData {
-  const answeredCount = nextState.answeredCount;
+  const answeredCount = nextState.answeredCount
   const accuracy =
     answeredCount > 0
       ? Math.round((nextState.leveledUp.length / answeredCount) * 100)
-      : 0;
+      : 0
 
-  const timeSpentMinutes = Math.max(0, Math.round(nextState.elapsedMs / 60000));
-  const notesById = new Map(nextState.notes.map((note) => [note.id, note]));
+  const timeSpentMinutes = Math.max(0, Math.round(nextState.elapsedMs / 60000))
+  const notesById = new Map(nextState.notes.map((note) => [note.id, note]))
 
   const leveledUp = nextState.leveledUp
     .map((id) => {
-      const note = notesById.get(id);
-      if (!note) return null;
-      return { id, question: note.question };
+      const note = notesById.get(id)
+      if (!note) return null
+      return { id, question: note.question }
     })
-    .filter(Boolean) as { id: string; question: string }[];
+    .filter(Boolean) as { id: string; question: string }[]
 
   const leveledDown = nextState.leveledDown
     .map((id) => {
-      const note = notesById.get(id);
-      if (!note) return null;
-      return { id, question: note.question };
+      const note = notesById.get(id)
+      if (!note) return null
+      return { id, question: note.question }
     })
-    .filter(Boolean) as { id: string; question: string }[];
+    .filter(Boolean) as { id: string; question: string }[]
 
-  const courseBuckets = new Map<string, number[]>();
+  const courseBuckets = new Map<string, number[]>()
   for (const n of nextState.notes.slice(0, answeredCount)) {
-    if (!n.courseId) continue;
-    const list = courseBuckets.get(n.courseId) ?? [];
-    list.push(n.understandingLevel);
-    courseBuckets.set(n.courseId, list);
+    if (!n.courseId) continue
+    const list = courseBuckets.get(n.courseId) ?? []
+    list.push(n.understandingLevel)
+    courseBuckets.set(n.courseId, list)
   }
 
-  const courseScores: Record<string, number> = {};
+  const courseScores: Record<string, number> = {}
 
-  let weakestCourseId: string | null = null;
-  let strongestCourseId: string | null = null;
-  let weakestAvg = Infinity;
-  let strongestAvg = -Infinity;
+  let weakestCourseId: string | null = null
+  let strongestCourseId: string | null = null
+  let weakestAvg = Infinity
+  let strongestAvg = -Infinity
 
   for (const [courseId, levels] of courseBuckets.entries()) {
-    const avg = levels.reduce((a, b) => a + b, 0) / levels.length;
+    const avg = levels.reduce((a, b) => a + b, 0) / levels.length
     courseScores[courseId] = Math.max(
       0,
-      Math.min(100, Math.round(((avg - 1) / 2) * 100)),
-    );
+      Math.min(100, Math.round(((avg - 1) / 2) * 100))
+    )
     if (avg < weakestAvg) {
-      weakestAvg = avg;
-      weakestCourseId = courseId;
+      weakestAvg = avg
+      weakestCourseId = courseId
     }
     if (avg > strongestAvg) {
-      strongestAvg = avg;
-      strongestCourseId = courseId;
+      strongestAvg = avg
+      strongestCourseId = courseId
     }
   }
 
@@ -138,13 +138,13 @@ function buildSummary(nextState: ReviewSessionState): ReviewSummaryData {
     weakestCourseId,
     strongestCourseId,
     courseScores,
-  };
+  }
 }
 
 type ViewState =
   | { type: "list" }
   | { type: "active" }
-  | { type: "summary"; data: ReviewSummaryData; config: ReviewSessionConfig };
+  | { type: "summary"; data: ReviewSummaryData; config: ReviewSessionConfig }
 
 export default function ReviewPage({
   userId,
@@ -154,56 +154,56 @@ export default function ReviewPage({
   courses,
   initialNotesPool,
 }: {
-  userId: string | null;
-  initialSessions: ReviewSessionModel[];
-  initialSessionsTotal: number;
-  sessionsPageSize: number;
-  courses: ReviewCourse[];
-  initialNotesPool: ReviewNote[];
+  userId: string | null
+  initialSessions: ReviewSessionModel[]
+  initialSessionsTotal: number
+  sessionsPageSize: number
+  courses: ReviewCourse[]
+  initialNotesPool: ReviewNote[]
 }) {
-  const isMobile = useIsMobile();
-  const now = React.useMemo(() => new Date(), []);
+  const isMobile = useIsMobile()
+  const now = React.useMemo(() => new Date(), [])
   const shellFab = React.useMemo(
     () => ({
       ariaLabel: "Start review",
       icon: <HugeiconsIcon icon={PlayIcon} size={20} />,
       onClick: () => setSetupOpen(true),
     }),
-    [],
-  );
-  useDashboardShellFab(shellFab);
+    []
+  )
+  useDashboardShellFab(shellFab)
 
-  const [view, setView] = React.useState<ViewState>({ type: "list" });
+  const [view, setView] = React.useState<ViewState>({ type: "list" })
 
   const [notesPool, setNotesPool] = React.useState<ReviewNote[]>(
-    () => initialNotesPool,
-  );
+    () => initialNotesPool
+  )
 
-  const queryClient = useQueryClient();
-  const [sessionsPage, setSessionsPage] = React.useState(1);
-  usePaginationScrollReset(sessionsPage);
+  const queryClient = useQueryClient()
+  const [sessionsPage, setSessionsPage] = React.useState(1)
+  usePaginationScrollReset(sessionsPage)
 
-  const [detailOpen, setDetailOpen] = React.useState(false);
+  const [detailOpen, setDetailOpen] = React.useState(false)
   const [selectedSessionId, setSelectedSessionId] = React.useState<
     string | null
-  >(null);
-  const [detailLoading, setDetailLoading] = React.useState(false);
+  >(null)
+  const [detailLoading, setDetailLoading] = React.useState(false)
 
-  const [setupOpen, setSetupOpen] = React.useState(false);
-  const [startingSession, setStartingSession] = React.useState(false);
+  const [setupOpen, setSetupOpen] = React.useState(false)
+  const [startingSession, setStartingSession] = React.useState(false)
 
   const [questionCountMode, setQuestionCountMode] =
-    React.useState<ReviewSessionConfig["questionCountMode"]>("20");
-  const [customCount, setCustomCount] = React.useState(20);
-  const [shuffled, setShuffled] = React.useState(false);
-  const [flaggedOnly, setFlaggedOnly] = React.useState(false);
+    React.useState<ReviewSessionConfig["questionCountMode"]>("20")
+  const [customCount, setCustomCount] = React.useState(20)
+  const [shuffled, setShuffled] = React.useState(false)
+  const [flaggedOnly, setFlaggedOnly] = React.useState(false)
 
   const availableNotes = React.useMemo(
     () => notesPool.filter((n) => (flaggedOnly ? n.flag : true)),
-    [flaggedOnly, notesPool],
-  );
+    [flaggedOnly, notesPool]
+  )
 
-  const isInitialSessionsQuery = sessionsPage === 1;
+  const isInitialSessionsQuery = sessionsPage === 1
   const sessionsQuery = useQuery({
     queryKey: ["review-sessions-page", userId, sessionsPage, sessionsPageSize],
     enabled: Boolean(userId),
@@ -212,13 +212,13 @@ export default function ReviewPage({
         page: sessionsPage,
         pageSize: sessionsPageSize,
         userId: userId as string,
-      });
+      })
 
       if (!result.success) {
-        throw new Error(result.error);
+        throw new Error(result.error)
       }
 
-      return result;
+      return result
     },
     initialData: isInitialSessionsQuery
       ? {
@@ -228,30 +228,30 @@ export default function ReviewPage({
         }
       : undefined,
     placeholderData: keepPreviousData,
-  });
+  })
 
   React.useEffect(() => {
-    if (!sessionsQuery.error) return;
+    if (!sessionsQuery.error) return
 
     toastManager.add({
       type: "error",
       title: "Could not load sessions",
       description: sessionsQuery.error.message,
-    });
-  }, [sessionsQuery.error]);
+    })
+  }, [sessionsQuery.error])
 
-  const sessions = sessionsQuery.data?.data ?? [];
-  const sessionsTotal = sessionsQuery.data?.totalCount ?? 0;
-  const sessionsPageLoading = sessionsQuery.isFetching;
+  const sessions = sessionsQuery.data?.data ?? []
+  const sessionsTotal = sessionsQuery.data?.totalCount ?? 0
+  const sessionsPageLoading = sessionsQuery.isFetching
 
   const sessionsTotalPages = Math.max(
     1,
-    Math.ceil(sessionsTotal / sessionsPageSize),
-  );
+    Math.ceil(sessionsTotal / sessionsPageSize)
+  )
 
   React.useEffect(() => {
-    if (!userId) return;
-    if (sessionsPage >= sessionsTotalPages) return;
+    if (!userId) return
+    if (sessionsPage >= sessionsTotalPages) return
 
     void queryClient.prefetchQuery({
       queryKey: [
@@ -265,77 +265,75 @@ export default function ReviewPage({
           page: sessionsPage + 1,
           pageSize: sessionsPageSize,
           userId,
-        });
+        })
 
         if (!result.success) {
-          throw new Error(result.error);
+          throw new Error(result.error)
         }
 
-        return result;
+        return result
       },
-    });
-  }, [queryClient, sessionsPage, sessionsPageSize, sessionsTotalPages, userId]);
+    })
+  }, [queryClient, sessionsPage, sessionsPageSize, sessionsTotalPages, userId])
 
   const changeSessionsPage = React.useCallback((nextPage: number) => {
-    setSessionsPage(nextPage);
-  }, []);
+    setSessionsPage(nextPage)
+  }, [])
 
   async function ensureReviewNotesLoaded(noteIds: string[]) {
-    if (!userId) return [];
+    if (!userId) return []
 
-    const notesById = new Map(notesPool.map((note) => [note.id, note]));
+    const notesById = new Map(notesPool.map((note) => [note.id, note]))
 
     const missingIds = noteIds.filter((noteId) => {
-      const note = notesById.get(noteId);
-      return note != null && !note.detailsLoaded;
-    });
+      const note = notesById.get(noteId)
+      return note != null && !note.detailsLoaded
+    })
 
     if (missingIds.length === 0) {
       return noteIds
         .map((noteId) => notesById.get(noteId))
-        .filter((note): note is ReviewNote => note != null);
+        .filter((note): note is ReviewNote => note != null)
     }
 
-    const res = await getReviewNotes({ noteIds: missingIds, userId });
+    const res = await getReviewNotes({ noteIds: missingIds, userId })
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not load review notes",
         description: res.error,
-      });
-      return [];
+      })
+      return []
     }
 
     const fetchedById = new Map(
-      res.data.map((note) => [note.id, note] as const),
-    );
+      res.data.map((note) => [note.id, note] as const)
+    )
 
-    setNotesPool((prev) =>
-      prev.map((note) => fetchedById.get(note.id) ?? note),
-    );
+    setNotesPool((prev) => prev.map((note) => fetchedById.get(note.id) ?? note))
 
     return noteIds
       .map((noteId) => fetchedById.get(noteId) ?? notesById.get(noteId))
-      .filter((note): note is ReviewNote => note != null);
+      .filter((note): note is ReviewNote => note != null)
   }
 
   async function openSessionDetail(sessionId: string) {
-    setSelectedSessionId(sessionId);
-    setDetailOpen(true);
+    setSelectedSessionId(sessionId)
+    setDetailOpen(true)
 
-    const session = sessions.find((candidate) => candidate.id === sessionId);
-    if (!session) return;
+    const session = sessions.find((candidate) => candidate.id === sessionId)
+    if (!session) return
 
     const noteIds = Array.from(
-      new Set([...session.notesLeveledUp, ...session.notesLeveledDown]),
-    );
-    if (noteIds.length === 0) return;
+      new Set([...session.notesLeveledUp, ...session.notesLeveledDown])
+    )
+    if (noteIds.length === 0) return
 
-    setDetailLoading(true);
+    setDetailLoading(true)
     try {
-      await ensureReviewNotesLoaded(noteIds);
+      await ensureReviewNotesLoaded(noteIds)
     } finally {
-      setDetailLoading(false);
+      setDetailLoading(false)
     }
   }
 
@@ -344,14 +342,14 @@ export default function ReviewPage({
     data,
     config,
   }: {
-    sessionName: string;
-    data: ReviewSummaryData;
-    config: { shuffled: boolean; flaggedOnly: boolean };
+    sessionName: string
+    data: ReviewSummaryData
+    config: { shuffled: boolean; flaggedOnly: boolean }
   }) {
-    if (!userId) return;
+    if (!userId) return
 
-    const createdAt = new Date().toISOString();
-    const date = createdAt.slice(0, 10);
+    const createdAt = new Date().toISOString()
+    const date = createdAt.slice(0, 10)
 
     const optimistic = buildSessionFromSummary({
       data,
@@ -361,96 +359,96 @@ export default function ReviewPage({
       name: sessionName,
       userId,
       config,
-    });
-    setView({ type: "list" });
+    })
+    setView({ type: "list" })
 
     const res = await saveReviewSession({
       session: optimistic,
       userId,
       courseScores: data.courseScores,
-    });
+    })
 
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not save session",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
-    setSessionsPage(1);
+    setSessionsPage(1)
     await queryClient.invalidateQueries({
       queryKey: ["review-sessions-page", userId],
-    });
+    })
   }
 
   async function onDeleteSession(id: string) {
-    if (!userId) return;
+    if (!userId) return
 
-    const res = await deleteReviewSession({ sessionId: id, userId });
+    const res = await deleteReviewSession({ sessionId: id, userId })
     if (!res.success) {
       toastManager.add({
         type: "error",
         title: "Could not delete session",
         description: res.error,
-      });
-      return;
+      })
+      return
     }
 
     const nextPage =
       sessions.length === 1 && sessionsPage > 1
         ? sessionsPage - 1
-        : sessionsPage;
+        : sessionsPage
 
-    setSessionsPage(nextPage);
+    setSessionsPage(nextPage)
     await queryClient.invalidateQueries({
       queryKey: ["review-sessions-page", userId],
-    });
+    })
   }
 
   const configuredCount = React.useMemo(() => {
-    if (questionCountMode === "10") return 10;
-    if (questionCountMode === "20") return 20;
-    if (questionCountMode === "all") return availableNotes.length;
-    return customCount;
-  }, [availableNotes.length, customCount, questionCountMode]);
+    if (questionCountMode === "10") return 10
+    if (questionCountMode === "20") return 20
+    if (questionCountMode === "all") return availableNotes.length
+    return customCount
+  }, [availableNotes.length, customCount, questionCountMode])
 
   const customCountTooHigh =
     questionCountMode === "custom" &&
     customCount > 0 &&
-    customCount > availableNotes.length;
+    customCount > availableNotes.length
 
   async function startSession() {
     if (questionCountMode === "custom" && (!customCount || customCount < 1)) {
-      return;
+      return
     }
-    if (customCountTooHigh) return;
+    if (customCountTooHigh) return
 
-    const base = notesPool.filter((n) => (flaggedOnly ? n.flag : true)).slice();
+    const base = notesPool.filter((n) => (flaggedOnly ? n.flag : true)).slice()
 
     if (shuffled) {
       for (let i = base.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const a = base[i];
-        const b = base[j];
-        if (!a || !b) continue;
-        base[i] = b;
-        base[j] = a;
+        const j = Math.floor(Math.random() * (i + 1))
+        const a = base[i]
+        const b = base[j]
+        if (!a || !b) continue
+        base[i] = b
+        base[j] = a
       }
     }
 
     const planned =
       questionCountMode === "all"
         ? base.length
-        : Math.min(configuredCount, base.length);
+        : Math.min(configuredCount, base.length)
 
-    const targetIds = base.slice(0, planned).map((note) => note.id);
-    setStartingSession(true);
+    const targetIds = base.slice(0, planned).map((note) => note.id)
+    setStartingSession(true)
     try {
-      const notes = await ensureReviewNotesLoaded(targetIds);
+      const notes = await ensureReviewNotesLoaded(targetIds)
       if (notes.length === 0) {
-        return;
+        return
       }
 
       const state: ReviewSessionState = {
@@ -465,70 +463,68 @@ export default function ReviewPage({
         startMs: Date.now(),
         elapsedMs: 0,
         finished: false,
-      };
+      }
 
-      setSetupOpen(false);
-      setView({ type: "active" });
-      setActiveState(state);
+      setSetupOpen(false)
+      setView({ type: "active" })
+      setActiveState(state)
     } finally {
-      setStartingSession(false);
+      setStartingSession(false)
     }
   }
 
   const [activeState, setActiveState] =
-    React.useState<ReviewSessionState | null>(null);
+    React.useState<ReviewSessionState | null>(null)
 
   function endWithoutSummary() {
-    setActiveState(null);
-    setView({ type: "list" });
+    setActiveState(null)
+    setView({ type: "list" })
   }
 
   function toSummary(nextState: ReviewSessionState) {
-    const summary = buildSummary(nextState);
+    const summary = buildSummary(nextState)
     const config: ReviewSessionConfig = {
       questionCountMode,
       customCount,
       shuffled,
       flaggedOnly,
-    };
-    setActiveState(null);
-    setView({ type: "summary", data: summary, config });
+    }
+    setActiveState(null)
+    setView({ type: "summary", data: summary, config })
   }
 
   function onRate(rating: "nailed" | "sort_of" | "forgot") {
-    if (!activeState) return;
+    if (!activeState) return
 
-    const current = activeState.notes[activeState.currentIndex];
-    if (!current) return;
+    const current = activeState.notes[activeState.currentIndex]
+    if (!current) return
 
-    const prevLevel = current.understandingLevel;
-    let nextLevel = prevLevel;
+    const prevLevel = current.understandingLevel
+    let nextLevel = prevLevel
 
-    if (rating === "nailed")
-      nextLevel = Math.min(3, prevLevel + 1) as 1 | 2 | 3;
-    if (rating === "forgot")
-      nextLevel = Math.max(1, prevLevel - 1) as 1 | 2 | 3;
+    if (rating === "nailed") nextLevel = Math.min(3, prevLevel + 1) as 1 | 2 | 3
+    if (rating === "forgot") nextLevel = Math.max(1, prevLevel - 1) as 1 | 2 | 3
 
-    const didChange = nextLevel !== prevLevel;
+    const didChange = nextLevel !== prevLevel
 
     const nextNotes = activeState.notes.map((n, idx) =>
       idx === activeState.currentIndex
         ? { ...n, understandingLevel: nextLevel }
-        : n,
-    );
+        : n
+    )
 
     const leveledUp =
       rating === "nailed" && didChange
         ? Array.from(new Set([...activeState.leveledUp, current.id]))
-        : activeState.leveledUp;
+        : activeState.leveledUp
 
     const leveledDown =
       rating === "forgot" && didChange
         ? Array.from(new Set([...activeState.leveledDown, current.id]))
-        : activeState.leveledDown;
+        : activeState.leveledDown
 
-    const nextAnswered = activeState.answeredCount + 1;
-    const nextIndex = activeState.currentIndex + 1;
+    const nextAnswered = activeState.answeredCount + 1
+    const nextIndex = activeState.currentIndex + 1
 
     const nextState: ReviewSessionState = {
       ...activeState,
@@ -538,20 +534,20 @@ export default function ReviewPage({
       answeredCount: nextAnswered,
       currentIndex: Math.min(nextIndex, nextNotes.length - 1),
       revealed: false,
-    };
+    }
 
     setNotesPool((prev) =>
       prev.map((n) =>
-        n.id === current.id ? { ...n, understandingLevel: nextLevel } : n,
-      ),
-    );
+        n.id === current.id ? { ...n, understandingLevel: nextLevel } : n
+      )
+    )
 
     if (nextIndex >= nextNotes.length) {
-      toSummary({ ...nextState, finished: true });
-      return;
+      toSummary({ ...nextState, finished: true })
+      return
     }
 
-    setActiveState(nextState);
+    setActiveState(nextState)
   }
 
   if (view.type === "active" && activeState) {
@@ -563,7 +559,7 @@ export default function ReviewPage({
         onEndWithoutSummary={endWithoutSummary}
         onToSummary={toSummary}
       />
-    );
+    )
   }
 
   return (
@@ -600,12 +596,12 @@ export default function ReviewPage({
         onCustomCountChange={setCustomCount}
         onShuffledChange={setShuffled}
         onFlaggedOnlyChange={(value) => {
-          setFlaggedOnly(value);
-          const count = notesPool.filter((n) => (value ? n.flag : true)).length;
-          if (questionCountMode === "all") return;
-          if (questionCountMode === "10") return;
-          if (questionCountMode === "20") return;
-          if (customCount > count) setCustomCount(count);
+          setFlaggedOnly(value)
+          const count = notesPool.filter((n) => (value ? n.flag : true)).length
+          if (questionCountMode === "all") return
+          if (questionCountMode === "10") return
+          if (questionCountMode === "20") return
+          if (customCount > count) setCustomCount(count)
         }}
         onStart={startSession}
         startingSession={startingSession}
@@ -622,7 +618,7 @@ export default function ReviewPage({
         loading={detailLoading}
       />
     </>
-  );
+  )
 }
 
 function ActiveReviewSession({
@@ -632,13 +628,11 @@ function ActiveReviewSession({
   onEndWithoutSummary,
   onToSummary,
 }: {
-  activeState: ReviewSessionState;
-  onRate: (rating: "nailed" | "sort_of" | "forgot") => void;
-  onUpdateState: React.Dispatch<
-    React.SetStateAction<ReviewSessionState | null>
-  >;
-  onEndWithoutSummary: () => void;
-  onToSummary: (nextState: ReviewSessionState) => void;
+  activeState: ReviewSessionState
+  onRate: (rating: "nailed" | "sort_of" | "forgot") => void
+  onUpdateState: React.Dispatch<React.SetStateAction<ReviewSessionState | null>>
+  onEndWithoutSummary: () => void
+  onToSummary: (nextState: ReviewSessionState) => void
 }) {
   return (
     <ReviewSessionView
@@ -652,13 +646,13 @@ function ActiveReviewSession({
       }
       onEndEarly={() => {
         if (activeState.answeredCount === 0) {
-          onEndWithoutSummary();
-          return;
+          onEndWithoutSummary()
+          return
         }
-        onToSummary({ ...activeState, endedEarly: true });
+        onToSummary({ ...activeState, endedEarly: true })
       }}
     />
-  );
+  )
 }
 
 function ReviewPageContent({
@@ -678,27 +672,27 @@ function ReviewPageContent({
   onOpenSessionDetail,
   onDeleteSession,
 }: {
-  view: ViewState;
-  courses: ReviewCourse[];
-  sessions: ReviewSessionModel[];
-  sessionsTotal: number;
-  sessionsPage: number;
-  sessionsPageSize: number;
-  sessionsPageLoading: boolean;
-  isMobile: boolean;
-  now: Date;
-  onStart: () => void;
+  view: ViewState
+  courses: ReviewCourse[]
+  sessions: ReviewSessionModel[]
+  sessionsTotal: number
+  sessionsPage: number
+  sessionsPageSize: number
+  sessionsPageLoading: boolean
+  isMobile: boolean
+  now: Date
+  onStart: () => void
   onSaveSession: (args: {
-    sessionName: string;
-    data: ReviewSummaryData;
-    config: { shuffled: boolean; flaggedOnly: boolean };
-  }) => Promise<void>;
-  onDiscardSummary: () => void;
-  onChangeSessionsPage: (page: number) => void;
-  onOpenSessionDetail: (sessionId: string) => Promise<void>;
-  onDeleteSession: (sessionId: string) => Promise<void>;
+    sessionName: string
+    data: ReviewSummaryData
+    config: { shuffled: boolean; flaggedOnly: boolean }
+  }) => Promise<void>
+  onDiscardSummary: () => void
+  onChangeSessionsPage: (page: number) => void
+  onOpenSessionDetail: (sessionId: string) => Promise<void>
+  onDeleteSession: (sessionId: string) => Promise<void>
 }) {
-  const totalPages = Math.max(1, Math.ceil(sessionsTotal / sessionsPageSize));
+  const totalPages = Math.max(1, Math.ceil(sessionsTotal / sessionsPageSize))
 
   return (
     <PageContainer>
@@ -725,7 +719,7 @@ function ReviewPageContent({
                   shuffled: view.config.shuffled,
                   flaggedOnly: view.config.flaggedOnly,
                 },
-              });
+              })
             }}
             onDiscard={onDiscardSummary}
           />
@@ -776,7 +770,7 @@ function ReviewPageContent({
         ) : null}
       </div>
     </PageContainer>
-  );
+  )
 }
 
 function ReviewSessionGrid({
@@ -786,16 +780,16 @@ function ReviewSessionGrid({
   onOpenSessionDetail,
   onDeleteSession,
 }: {
-  courses: ReviewCourse[];
-  sessions: ReviewSessionModel[];
-  now: Date;
-  onOpenSessionDetail: (sessionId: string) => Promise<void>;
-  onDeleteSession: (sessionId: string) => Promise<void>;
+  courses: ReviewCourse[]
+  sessions: ReviewSessionModel[]
+  now: Date
+  onOpenSessionDetail: (sessionId: string) => Promise<void>
+  onDeleteSession: (sessionId: string) => Promise<void>
 }) {
   const coursesById = React.useMemo(
     () => new Map(courses.map((course) => [course.id, course.title])),
-    [courses],
-  );
+    [courses]
+  )
 
   return (
     <div>
@@ -803,10 +797,10 @@ function ReviewSessionGrid({
         {sessions.map((s) => {
           const weakestTitle = s.weakestCourseId
             ? (coursesById.get(s.weakestCourseId) ?? "—")
-            : "—";
+            : "—"
           const strongestTitle = s.strongestCourseId
             ? (coursesById.get(s.strongestCourseId) ?? "—")
-            : "—";
+            : "—"
 
           return (
             <SessionCard
@@ -816,15 +810,15 @@ function ReviewSessionGrid({
               weakestCourseTitle={weakestTitle}
               strongestCourseTitle={strongestTitle}
               onView={() => {
-                void onOpenSessionDetail(s.id);
+                void onOpenSessionDetail(s.id)
               }}
               onDelete={() => void onDeleteSession(s.id)}
             />
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
 
 function SetupSheet({
@@ -844,23 +838,23 @@ function SetupSheet({
   onStart,
   startingSession,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  isMobile: boolean;
-  questionCountMode: "10" | "20" | "all" | "custom";
-  customCount: number;
-  shuffled: boolean;
-  flaggedOnly: boolean;
-  availableCount: number;
-  customCountTooHigh: boolean;
-  onQuestionCountModeChange: (mode: "10" | "20" | "all" | "custom") => void;
-  onCustomCountChange: (value: number) => void;
-  onShuffledChange: (value: boolean) => void;
-  onFlaggedOnlyChange: (value: boolean) => void;
-  onStart: () => void | Promise<void>;
-  startingSession: boolean;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  isMobile: boolean
+  questionCountMode: "10" | "20" | "all" | "custom"
+  customCount: number
+  shuffled: boolean
+  flaggedOnly: boolean
+  availableCount: number
+  customCountTooHigh: boolean
+  onQuestionCountModeChange: (mode: "10" | "20" | "all" | "custom") => void
+  onCustomCountChange: (value: number) => void
+  onShuffledChange: (value: boolean) => void
+  onFlaggedOnlyChange: (value: boolean) => void
+  onStart: () => void | Promise<void>
+  startingSession: boolean
 }) {
-  const side = isMobile ? "bottom" : "right";
+  const side = isMobile ? "bottom" : "right"
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -975,7 +969,7 @@ function SetupSheet({
             <Button
               type="button"
               onClick={() => {
-                void onStart();
+                void onStart()
               }}
               className="gap-2"
               disabled={
@@ -994,7 +988,7 @@ function SetupSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  );
+  )
 }
 
 function SessionDetailSheet({
@@ -1007,42 +1001,40 @@ function SessionDetailSheet({
   notesPool,
   loading,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  isMobile: boolean;
-  session: ReviewSessionModel | null;
-  now: Date;
-  courses: ReviewCourse[];
-  notesPool: ReviewNote[];
-  loading: boolean;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  isMobile: boolean
+  session: ReviewSessionModel | null
+  now: Date
+  courses: ReviewCourse[]
+  notesPool: ReviewNote[]
+  loading: boolean
 }) {
-  const side = isMobile ? "bottom" : "right";
+  const side = isMobile ? "bottom" : "right"
 
   const weakestTitle = React.useMemo(() => {
-    if (!session?.weakestCourseId) return "—";
-    return courses.find((c) => c.id === session.weakestCourseId)?.title ?? "—";
-  }, [courses, session?.weakestCourseId]);
+    if (!session?.weakestCourseId) return "—"
+    return courses.find((c) => c.id === session.weakestCourseId)?.title ?? "—"
+  }, [courses, session?.weakestCourseId])
 
   const strongestTitle = React.useMemo(() => {
-    if (!session?.strongestCourseId) return "—";
-    return (
-      courses.find((c) => c.id === session.strongestCourseId)?.title ?? "—"
-    );
-  }, [courses, session?.strongestCourseId]);
+    if (!session?.strongestCourseId) return "—"
+    return courses.find((c) => c.id === session.strongestCourseId)?.title ?? "—"
+  }, [courses, session?.strongestCourseId])
 
   const leveledUpQuestions = React.useMemo(() => {
-    if (!session) return [];
+    if (!session) return []
     return session.notesLeveledUp
       .map((id) => notesPool.find((n) => n.id === id)?.question)
-      .filter(Boolean) as string[];
-  }, [notesPool, session]);
+      .filter(Boolean) as string[]
+  }, [notesPool, session])
 
   const leveledDownQuestions = React.useMemo(() => {
-    if (!session) return [];
+    if (!session) return []
     return session.notesLeveledDown
       .map((id) => notesPool.find((n) => n.id === id)?.question)
-      .filter(Boolean) as string[];
-  }, [notesPool, session]);
+      .filter(Boolean) as string[]
+  }, [notesPool, session])
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -1154,5 +1146,5 @@ function SessionDetailSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  );
+  )
 }

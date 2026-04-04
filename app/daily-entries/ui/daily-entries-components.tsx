@@ -227,54 +227,54 @@ export function EntryCard({
         {/* EntryCard is intentionally shorter — less content than other card types */}
         <Card className="h-full p-4">
           <div className="flex h-full flex-col gap-3">
-          <div className="flex shrink-0 items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-1.5">
-              <div className="truncate font-medium">
-                {formatEntryDate(entry.date, now)}
+            <div className="flex shrink-0 items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-1.5">
+                <div className="truncate font-medium">
+                  {formatEntryDate(entry.date, now)}
+                </div>
+                {isToday ? (
+                  <Badge variant="outline" className="shrink-0">
+                    Today
+                  </Badge>
+                ) : null}
               </div>
-              {isToday ? (
-                <Badge variant="outline" className="shrink-0">
-                  Today
-                </Badge>
-              ) : null}
-            </div>
-            <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
-              <HugeiconsIcon icon={Clock01Icon} size={16} />
-              <span className="tabular-nums">
-                {formatStudyTime(entry.studyTimeMinutes)}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex min-h-0 flex-1 items-center overflow-hidden">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              {entry.mood === 1 ? (
-                <EmojioneV1WearyFace className="size-5" aria-hidden="true" />
-              ) : entry.mood === 2 ? (
-                <EmojioneV1SlightlySmilingFace
-                  className="size-5"
-                  aria-hidden="true"
-                />
-              ) : (
-                <EmojioneV1GrinningFaceWithSmilingEyes
-                  className="size-5"
-                  aria-hidden="true"
-                />
-              )}
-              <span>{moodLabel(entry.mood)}</span>
-            </div>
-          </div>
-
-          <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
-            <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
-              {entry.notes ? (
-                <span className="truncate text-xs text-muted-foreground">
-                  {entry.notes}
+              <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
+                <HugeiconsIcon icon={Clock01Icon} size={16} />
+                <span className="tabular-nums">
+                  {formatStudyTime(entry.studyTimeMinutes)}
                 </span>
-              ) : null}
+              </div>
             </div>
 
-            <div className="-mr-2 flex shrink-0 items-center gap-1">
+            <div className="flex min-h-0 flex-1 items-center overflow-hidden">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                {entry.mood === 1 ? (
+                  <EmojioneV1WearyFace className="size-5" aria-hidden="true" />
+                ) : entry.mood === 2 ? (
+                  <EmojioneV1SlightlySmilingFace
+                    className="size-5"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <EmojioneV1GrinningFaceWithSmilingEyes
+                    className="size-5"
+                    aria-hidden="true"
+                  />
+                )}
+                <span>{moodLabel(entry.mood)}</span>
+              </div>
+            </div>
+
+            <div className="-mb-2 flex shrink-0 items-center justify-between gap-2">
+              <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
+                {entry.notes ? (
+                  <span className="truncate text-xs text-muted-foreground">
+                    {entry.notes}
+                  </span>
+                ) : null}
+              </div>
+
+              <div className="-mr-2 flex shrink-0 items-center gap-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     render={
@@ -299,8 +299,8 @@ export function EntryCard({
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+              </div>
             </div>
-          </div>
           </div>
         </Card>
       </div>

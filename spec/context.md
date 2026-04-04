@@ -1425,7 +1425,6 @@ Recent findings:
 - UX intent:
   - preserve one clear action entry point per context without dedicating a whole sticky bar to a single button
 
-
 ### Homepage extension marketing update (2026-04-03)
 
 - Updated the homepage hero CTA in `app/(marketing)/ui/homepage-hero.tsx`:
@@ -1868,7 +1867,6 @@ Recent findings:
   - video player constrained to reasonable size
 - Validation: no TypeScript diagnostics
 
-
 ### Homepage hero humanizer evaluation (2026-04-04)
 
 - Applied humanizer skill to evaluate final hero content for AI writing patterns.
@@ -1881,7 +1879,6 @@ Recent findings:
 - Outcome: hero content approved with no humanization edits required.
 - Updated spec file status to "Complete" in `spec/content/homepage-hero-rewrite-2026-04-04.md`.
 - Skills applied to this task: content-strategy, emil-design-eng, make-interfaces-feel-better, humanizer.
-
 
 ### Homepage "How It Works" section rewrite (2026-04-04)
 
@@ -1910,7 +1907,6 @@ Recent findings:
   - reinforces inclusive positioning from hero section
   - provides visual proof of versatility through specific examples
 
-
 ### Homepage remaining sections review (2026-04-04)
 
 - Reviewed final CTA, footer, privacy policy, and terms of service per `spec/content/homepage-remaining-sections-2026-04-04.md`.
@@ -1927,7 +1923,6 @@ Recent findings:
   - Honest about limitations (privacy/terms)
 - Outcome: All remaining marketing sections approved as-is. No implementation work required.
 - Spec serves as documentation that these sections have been reviewed and meet quality standards.
-
 
 ### SEO audit post-rebranding and extension launch (2026-04-04)
 
@@ -1949,8 +1944,6 @@ Recent findings:
 - Next steps: Submit sitemap to Search Console, validate schema with Rich Results Test, monitor keyword rankings
 - Result: Rootly now optimized for both web app and browser extension discovery across search engines and social platforms
 
-
-
 ### OG image update (2026-04-04)
 
 - Updated main OpenGraph image to reflect inclusive positioning in `app/opengraph-image.tsx`.
@@ -1963,7 +1956,6 @@ Recent findings:
 - Validation: `pnpm lint` passes with 0 warnings and 0 errors
 - Result: Social sharing images now align with rebranded inclusive positioning with cleaner, more relaxed layout
 
-
 ### Extension color theme update (2026-04-04)
 
 - Updated extension side panel colors to match website's claude-blue theme in `extension/sidepanel/sidepanel.css`.
@@ -1973,7 +1965,6 @@ Recent findings:
   - Dark mode: complete dark theme color palette matching website
 - Validation: no CSS diagnostics found
 - Result: Extension now uses identical color system as website, ensuring visual consistency across all Rootly surfaces
-
 
 ### Extension UX improvements (2026-04-04)
 
@@ -1986,7 +1977,6 @@ Recent findings:
 - Validation: no HTML or CSS diagnostics found
 - Result: Extension UI now matches dashboard field organization, has more comfortable spacing between sections, and provides clearer visual hierarchy for destructive actions
 
-
 ### Click sound refinement for typing targets (2026-04-04)
 
 - Updated global click sound behavior to exclude typing targets in `components/theme-provider.tsx`.
@@ -1996,7 +1986,6 @@ Recent findings:
   - Click sound now only fires on buttons, links, and other interactive controls, not on form fields where users intend to type
 - Validation: no TypeScript diagnostics found
 - Result: Users can click into input fields and textareas without hearing the click sound, making the audio feedback feel more intentional and less intrusive during form interactions
-
 
 ### Notes page answer visibility icon refinement (2026-04-04)
 
@@ -2017,7 +2006,6 @@ Recent findings:
   - Eye icon is universally understood convention for visibility toggles
 - Validation: no TypeScript errors
 - Result: Cleaner, more refined note cards with reduced cognitive load when browsing multiple Q&A notes, while maintaining clear interaction affordance through familiar icon metaphor
-
 
 ### Notes page "Open full" action redesign (2026-04-04)
 

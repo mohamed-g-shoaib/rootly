@@ -12,12 +12,14 @@
 ### Overall Health: Good Foundation, Needs Extension Coverage
 
 **Strengths:**
+
 - ✅ Clean metadata structure
 - ✅ Proper schema markup (SoftwareApplication)
 - ✅ Inclusive keywords added
 - ✅ Good technical foundation
 
 **Critical Gaps:**
+
 - ❌ No sitemap.xml
 - ❌ No robots.txt
 - ❌ Extension not mentioned in SEO metadata
@@ -25,6 +27,7 @@
 - ❌ No browser extension schema markup
 
 **Priority Issues:**
+
 1. **High**: Add extension keywords and metadata
 2. **High**: Create sitemap.xml
 3. **Medium**: Add robots.txt
@@ -39,6 +42,7 @@
 **Primary Goal:** Organic discovery for learning tracker + browser extension  
 **Target Audience:** Students, developers, designers, language learners (broad)  
 **Recent Changes:**
+
 - Homepage rebranded to inclusive positioning (completed)
 - Browser extension launched (not yet in SEO)
 
@@ -50,12 +54,14 @@
 
 **Issue:** No XML sitemap exists
 
-**Impact:** High  
+**Impact:** High
+
 - Search engines must discover pages through crawling only
 - No priority signals for important pages
 - Slower indexation of new content
 
 **Evidence:**
+
 - No sitemap file in `/public`
 - No sitemap route handler in `/app`
 - Not referenced in robots.txt (which also doesn't exist)
@@ -65,8 +71,8 @@ Create dynamic sitemap using Next.js sitemap generation:
 
 ```typescript
 // app/sitemap.ts
-import { MetadataRoute } from 'next'
-import { siteConfig } from '@/lib/site-config'
+import { MetadataRoute } from "next"
+import { siteConfig } from "@/lib/site-config"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = siteConfig.url
@@ -75,19 +81,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
       url: `${baseUrl}/privacy`,
       lastModified: new Date(siteConfig.legalUpdatedAt),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${baseUrl}/terms`,
       lastModified: new Date(siteConfig.legalUpdatedAt),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 0.5,
     },
   ]
@@ -102,12 +108,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 **Issue:** No robots.txt file exists
 
-**Impact:** Medium  
+**Impact:** Medium
+
 - No sitemap reference for crawlers
 - No crawl directives
 - Missing opportunity to guide crawlers
 
 **Evidence:**
+
 - No robots.txt in `/public`
 - No robots route handler in `/app`
 
@@ -116,14 +124,14 @@ Create robots.txt using Next.js robots generation:
 
 ```typescript
 // app/robots.ts
-import { MetadataRoute } from 'next'
-import { siteConfig } from '@/lib/site-config'
+import { MetadataRoute } from "next"
+import { siteConfig } from "@/lib/site-config"
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
+      userAgent: "*",
+      allow: "/",
     },
     sitemap: `${siteConfig.url}/sitemap.xml`,
   }
@@ -138,12 +146,14 @@ export default function robots(): MetadataRoute.Robots {
 
 **Issue:** Schema only covers web app, not browser extension
 
-**Impact:** Medium  
+**Impact:** Medium
+
 - Extension not discoverable via structured data
 - Missing rich results opportunity
 - No extension-specific search features
 
 **Current Schema:**
+
 ```json
 {
   "@type": "SoftwareApplication",
@@ -162,7 +172,8 @@ const extensionJsonLd = {
   name: "Rootly Browser Extension",
   applicationCategory: "BrowserExtension",
   operatingSystem: "Chrome",
-  description: "Capture notes and track study time from any webpage with Rootly's browser side panel.",
+  description:
+    "Capture notes and track study time from any webpage with Rootly's browser side panel.",
   url: siteConfig.url,
   offers: {
     "@type": "Offer",
@@ -183,12 +194,14 @@ const extensionJsonLd = {
 
 **Issue:** Current keywords don't include extension-related terms
 
-**Impact:** High  
+**Impact:** High
+
 - Extension not discoverable via search
 - Missing high-intent queries
 - Competitors may capture extension searches
 
 **Current Keywords:**
+
 ```typescript
 keywords: [
   "learning tracker",
@@ -204,6 +217,7 @@ keywords: [
 ```
 
 **Missing Keywords:**
+
 - "browser extension for learning"
 - "study notes browser extension"
 - "learning tracker chrome extension"
@@ -244,12 +258,14 @@ keywords: [
 
 **Issue:** Homepage description doesn't mention browser extension
 
-**Impact:** Medium  
+**Impact:** Medium
+
 - Users don't know extension exists from search results
 - Missing differentiation from competitors
 - Lower CTR from extension-seeking users
 
 **Current Description:**
+
 ```
 "Turn scattered learning into organized progress. Capture notes, track study time, and review what you learn—whether you're following coding tutorials, design courses, or any structured learning path."
 ```
@@ -272,22 +288,26 @@ ogDescription:
 
 **Issue:** Homepage title could be more keyword-rich
 
-**Impact:** Low  
+**Impact:** Low
+
 - Current title is clean but generic
 - Could include "browser extension" for differentiation
 
 **Current Title:**
+
 ```
 "Learning tracker and study notebook"
 ```
 
 **Current Full Title:**
+
 ```
 "Rootly | Learning tracker and study notebook"
 ```
 
 **Recommendation:**
 Consider A/B testing:
+
 ```
 "Learning tracker and study notebook with browser extension"
 ```
@@ -304,12 +324,14 @@ Or keep current (it's already good and not too long).
 
 **Issue:** No dedicated landing page for browser extension
 
-**Impact:** Medium  
+**Impact:** Medium
+
 - Extension-specific searches have no target page
 - Can't optimize for extension keywords separately
 - Missing conversion opportunity
 
 **Current State:**
+
 - Extension mentioned in homepage hero
 - Extension dialog exists
 - No `/extension` or `/browser-extension` page
@@ -318,11 +340,13 @@ Or keep current (it's already good and not too long).
 Create dedicated extension landing page at `/extension`:
 
 **Target Keywords:**
+
 - "rootly browser extension"
 - "learning tracker chrome extension"
 - "study notes side panel"
 
 **Content Structure:**
+
 1. Hero: Extension value proposition
 2. Features: Side panel, quick capture, timer
 3. How it works: Screenshots/demo
@@ -338,13 +362,15 @@ Create dedicated extension landing page at `/extension`:
 
 **Issue:** No blog or content section for SEO content
 
-**Impact:** Low (for now)  
+**Impact:** Low (for now)
+
 - Limited keyword coverage
 - No educational content
 - Missing long-tail traffic opportunity
 
 **Recommendation:**
 Consider adding `/blog` or `/learn` section for:
+
 - Study techniques guides
 - Learning productivity tips
 - Tool comparisons
@@ -361,6 +387,7 @@ Consider adding `/blog` or `/learn` section for:
 **Status:** ✅ Good
 
 **Evidence:**
+
 ```typescript
 alternates: {
   canonical: "/",
@@ -381,6 +408,7 @@ Add canonicals to privacy and terms pages (if not already present).
 **Status:** ✅ Good
 
 **Evidence:**
+
 ```typescript
 robots: {
   index: true,
@@ -401,6 +429,7 @@ Proper robots meta tags in root layout.
 **Status:** ✅ Assumed Good
 
 **Evidence:**
+
 - Responsive design patterns in code
 - Tailwind responsive utilities used
 - Mobile-first approach
@@ -418,11 +447,13 @@ Test with Google Mobile-Friendly Test after deployment.
 
 **Recommendation:**
 Monitor after deployment:
+
 - LCP: Should be < 2.5s
 - INP: Should be < 200ms
 - CLS: Should be < 0.1
 
 **Tools:**
+
 - PageSpeed Insights
 - Search Console Core Web Vitals report
 
@@ -511,16 +542,19 @@ Monitor after deployment:
 ## Expected Outcomes
 
 ### Immediate (Phase 1)
+
 - Extension discoverable via extension-related searches
 - Faster indexation of all pages
 - Proper crawler guidance
 
 ### Short-term (Phase 2)
+
 - Rich results for extension in search
 - Better social sharing previews
 - Clean canonical structure
 
 ### Long-term (Phase 3)
+
 - Dedicated extension landing page ranking
 - Educational content driving long-tail traffic
 - Established authority in learning tools space
@@ -563,6 +597,7 @@ Monitor after deployment:
 **Current:** 7/10
 
 **Breakdown:**
+
 - Technical Foundation: 8/10 (good structure, missing sitemap/robots)
 - On-Page Optimization: 7/10 (good metadata, missing extension keywords)
 - Content Quality: 8/10 (clean, inclusive, well-written)
@@ -586,7 +621,6 @@ Monitor after deployment:
 ---
 
 **End of Audit**
-
 
 ---
 
@@ -644,12 +678,14 @@ Successfully implemented all Phase 1 and Phase 2 SEO improvements.
 ### What Was Skipped
 
 **Phase 3 (Future Enhancements):**
+
 - Extension landing page at `/extension` (not created per user request)
 - Blog/content hub (future consideration)
 
 ### Next Steps
 
 **Post-Deployment:**
+
 1. Validate sitemap at `/sitemap.xml`
 2. Validate robots at `/robots.txt`
 3. Test schema with Google Rich Results Test
@@ -660,17 +696,20 @@ Successfully implemented all Phase 1 and Phase 2 SEO improvements.
 ### Expected Outcomes
 
 **Immediate:**
+
 - Extension discoverable via extension-related searches
 - Faster indexation of all pages
 - Proper crawler guidance
 - Rich results for extension in search
 
 **Short-term:**
+
 - Better social sharing previews with extension mention
 - Improved CTR from extension-seeking users
 - Clean canonical structure across all pages
 
 **Long-term:**
+
 - Established presence in extension search results
 - Broader keyword coverage
 - Increased organic traffic from diverse learning audiences

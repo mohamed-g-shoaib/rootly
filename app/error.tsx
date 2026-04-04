@@ -1,25 +1,25 @@
-"use client";
+"use client"
 
-import Link from "next/link";
+import Link from "next/link"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { PageContainer } from "@/components/ui/page-container";
+} from "@/components/ui/card"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default function ErrorPage({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error: Error & { digest?: string }
+  reset: () => void
 }) {
-  const isDev = process.env.NODE_ENV !== "production";
+  const isDev = process.env.NODE_ENV !== "production"
 
   return (
     <main className="grid min-h-svh place-items-center bg-background py-6 sm:py-8">
@@ -29,10 +29,10 @@ export default function ErrorPage({
             <p className="text-7xl leading-none font-semibold tracking-tight sm:text-8xl">
               500
             </p>
-            <CardTitle className="text-balance text-2xl sm:text-3xl">
+            <CardTitle className="text-2xl text-balance sm:text-3xl">
               We hit an unexpected error
             </CardTitle>
-            <CardDescription className="mx-auto w-full max-w-xl text-center text-pretty text-sm sm:text-base">
+            <CardDescription className="mx-auto w-full max-w-xl text-center text-sm text-pretty sm:text-base">
               You can try again or return to a safe page.
             </CardDescription>
           </CardHeader>
@@ -63,5 +63,5 @@ export default function ErrorPage({
         </Card>
       </PageContainer>
     </main>
-  );
+  )
 }

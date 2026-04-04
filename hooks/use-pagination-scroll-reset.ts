@@ -1,36 +1,36 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 
 export function usePaginationScrollReset(page: number) {
-  const previousPageRef = React.useRef(page);
+  const previousPageRef = React.useRef(page)
 
   React.useEffect(() => {
     if (previousPageRef.current === page) {
-      return;
+      return
     }
 
-    previousPageRef.current = page;
+    previousPageRef.current = page
 
     const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+      "(prefers-reduced-motion: reduce)"
+    ).matches
 
-    let firstFrameId = 0;
-    let secondFrameId = 0;
+    let firstFrameId = 0
+    let secondFrameId = 0
 
     firstFrameId = window.requestAnimationFrame(() => {
       secondFrameId = window.requestAnimationFrame(() => {
         window.scrollTo({
           top: 0,
           behavior: prefersReducedMotion ? "auto" : "smooth",
-        });
-      });
-    });
+        })
+      })
+    })
 
     return () => {
-      window.cancelAnimationFrame(firstFrameId);
-      window.cancelAnimationFrame(secondFrameId);
-    };
-  }, [page]);
+      window.cancelAnimationFrame(firstFrameId)
+      window.cancelAnimationFrame(secondFrameId)
+    }
+  }, [page])
 }

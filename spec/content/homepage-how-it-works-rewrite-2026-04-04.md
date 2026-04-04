@@ -24,6 +24,7 @@ Diversify the "How It Works" carousel cards to demonstrate Rootly's versatility 
 ### Strategic Decision
 
 **Show diversity through specificity:**
+
 - Each card represents a different learning domain
 - Keep the same 5-step workflow (Organize → Capture → Reflect → Review → Track)
 - Use realistic, domain-appropriate content that fits naturally in the card space
@@ -36,29 +37,34 @@ Diversify the "How It Works" carousel cards to demonstrate Rootly's versatility 
 ### Card Distribution by Domain
 
 **Card 1 - Organize (Developer):**
+
 - Domain: Web Development
 - Course: "Machine Learning Fundamentals" by Andrew Ng
 - Why: Maintains developer credibility as the first card
 - Keeps current implementation (already good)
 
 **Card 2 - Capture (Designer):**
+
 - Domain: Design/UX
 - Course: Figma or UI Design
 - Note type: Q&A about design principles or tool usage
 - Why: Shows Rootly works for visual/creative learning
 
 **Card 3 - Reflect (Language Learner):**
+
 - Domain: Language Learning
 - Course: Spanish, French, or another language
 - Daily note: Vocabulary or grammar insight
 - Why: Demonstrates non-technical structured learning
 
 **Card 4 - Review (Music/Creative):**
+
 - Domain: Music Theory or Creative Skill
 - Note: Music theory concept or technique
 - Why: Further broadens to creative/artistic learning
 
 **Card 5 - Track (General/Mixed):**
+
 - Domain: Cross-domain or general productivity
 - Shows aggregate study time across different subjects
 - Why: Demonstrates Rootly as a unified system for all learning
@@ -70,6 +76,7 @@ Diversify the "How It Works" carousel cards to demonstrate Rootly's versatility 
 ### Card 1: Organize (Developer) - KEEP CURRENT
 
 **Current implementation is good:**
+
 ```
 Label: "Organize"
 Meta: "3 resources"
@@ -89,6 +96,7 @@ Badges: "Course", "42% complete"
 ### Card 2: Capture (Designer) - NEW CONTENT
 
 **Visual content:**
+
 ```
 Label: "Capture"
 Meta: "Figma"
@@ -101,12 +109,14 @@ Badges: "Q&A note", "Ready to review"
 **Description:** "Q&A and freeform notes for any subject you're studying."
 
 **Why this works:**
+
 - Figma is recognizable and design-focused
 - Question is practical and domain-specific
 - Answer is concise and fits the card space naturally
 - Shows Rootly handles non-code learning
 
 **Content length check:**
+
 - Question: 52 characters (fits in 2 lines)
 - Answer: 117 characters (fits in 4-line clamp with room to spare)
 
@@ -115,6 +125,7 @@ Badges: "Q&A note", "Ready to review"
 ### Card 3: Reflect (Language Learner) - NEW CONTENT
 
 **Visual content:**
+
 ```
 Label: "Reflect"
 Meta: "1h 15m"
@@ -127,12 +138,14 @@ Mood badges: "Burned", "Neutral", "Focused" (Focused selected)
 **Description:** "Track study time and mood to build consistency."
 
 **Why this works:**
+
 - Spanish grammar is universally recognizable
 - Shows language learning use case
 - Note is specific and educational (not generic)
 - Fits naturally in the card space
 
 **Content length check:**
+
 - Note: 110 characters (fits in 4-line clamp comfortably)
 
 ---
@@ -140,6 +153,7 @@ Mood badges: "Burned", "Neutral", "Focused" (Focused selected)
 ### Card 4: Review (Music Theory) - NEW CONTENT
 
 **Visual content:**
+
 ```
 Label: "Review"
 Meta: "2 / 8 questions"
@@ -152,12 +166,14 @@ Understanding badges: "Getting It" (selected), "Clear"
 **Description:** "Spaced repetition sessions built around your own notes."
 
 **Why this works:**
+
 - Music theory is structured learning (like coding)
 - Shows Rootly works for creative/artistic domains
 - Question and answer are concise and domain-appropriate
 - Demonstrates the review system with non-code content
 
 **Content length check:**
+
 - Question: 37 characters (fits in 2 lines easily)
 - Answer: 77 characters (fits in 4-line clamp with room)
 
@@ -166,6 +182,7 @@ Understanding badges: "Getting It" (selected), "Clear"
 ### Card 5: Track (Cross-Domain) - UPDATED CONTENT
 
 **Visual content:**
+
 ```
 Label: "Track"
 Meta: "avg. 2.1h / day"
@@ -182,12 +199,14 @@ Badges: "5 day streak", "Mixed subjects"
 **Description:** "See your study patterns across all your learning."
 
 **Why this works:**
+
 - Shows Rootly as a unified system for all learning
 - Demonstrates cross-domain tracking
 - Reinforces the inclusive positioning
 - Badge change from "Study minutes" to "Mixed subjects" makes the diversity explicit
 
 **Content length check:**
+
 - Day labels + times fit in existing layout
 - Badge text is concise
 
@@ -232,6 +251,7 @@ Badges: "5 day streak", "Mixed subjects"
    - Generic filler content
 
 **Content density check:**
+
 - Current React card: Question 37 chars, Answer 117 chars ✅
 - Proposed Figma card: Question 52 chars, Answer 117 chars ✅
 - Proposed Spanish card: Note 110 chars ✅
@@ -246,24 +266,28 @@ All content fits naturally without forcing truncation.
 Applied humanizer skill patterns to proposed content before implementation:
 
 ### Card 2 (Figma) - Clean ✅
+
 - Question: Direct, practical, no AI vocabulary
 - Answer: Specific, technical, no promotional language
 - No "serves as" or copula avoidance
 - Natural developer/designer voice
 
 ### Card 3 (Spanish) - Clean ✅
+
 - Note: Specific learning insight, not generic
 - No "I learned that X is crucial/pivotal"
 - Practical grammar distinction, not vague
 - Natural student reflection voice
 
 ### Card 4 (Music) - Clean ✅
+
 - Question: Direct, domain-appropriate
 - Answer: Concise technical definition with example
 - No promotional language or vague attributions
 - Natural music student voice
 
 ### Card 5 (Track) - Clean ✅
+
 - Badge change: "Mixed subjects" is descriptive, not promotional
 - Description update: "across all your learning" is inclusive without being vague
 - No AI vocabulary or inflated significance
@@ -321,24 +345,28 @@ Applied humanizer skill patterns to proposed content before implementation:
 ## Design Principles Applied
 
 ### From content-strategy:
+
 - ✅ Show breadth through specific examples
 - ✅ Each card demonstrates a different domain
 - ✅ Content matches search intent for broader audience
 - ✅ Visual proof more credible than copy claims
 
 ### From humanizer:
+
 - ✅ No AI vocabulary words
 - ✅ No promotional language
 - ✅ Specific, practical content
 - ✅ Natural voice for each domain
 
 ### From emil-design-eng + make-interfaces-feel-better:
+
 - ✅ Maintain visual consistency across cards
 - ✅ Content fits naturally without forcing
 - ✅ No layout shifts between cards
 - ✅ Badge usage remains semantic and clear
 
 ### From coss:
+
 - ✅ Respect existing component structure
 - ✅ Use existing badge variants
 - ✅ Maintain spacing and density
@@ -349,12 +377,14 @@ Applied humanizer skill patterns to proposed content before implementation:
 ## Success Metrics
 
 ### Qualitative
+
 - Cards demonstrate clear domain diversity
 - Content feels natural and domain-appropriate
 - No awkward truncation or layout issues
 - Carousel reinforces inclusive positioning from hero
 
 ### Quantitative (Post-launch)
+
 - Increased engagement with carousel (scroll-through rate)
 - Broader audience resonance in user feedback
 - Reduced bounce rate from non-developer traffic
@@ -365,16 +395,19 @@ Applied humanizer skill patterns to proposed content before implementation:
 ## Alternative Considered and Rejected
 
 **Option: Add 6th card for even more diversity**
+
 - Rejected: Would make carousel too long
 - Current 5-card structure is already well-balanced
 - Better to show quality diversity in 5 cards than dilute with 6+
 
 **Option: Rotate content dynamically**
+
 - Rejected: Adds complexity without clear benefit
 - Static content is more reliable and easier to maintain
 - Users can scroll to see all examples
 
 **Option: Use generic "Subject A, Subject B" labels**
+
 - Rejected: Specific examples are more credible
 - Generic labels feel like placeholder content
 - Real domain names (Figma, Spanish, Music Theory) are more relatable
@@ -402,7 +435,6 @@ Applied humanizer skill patterns to proposed content before implementation:
 
 **End of Specification**
 
-
 ---
 
 ## Implementation Summary (2026-04-04)
@@ -412,26 +444,31 @@ Successfully implemented all content updates to diversify the "How It Works" car
 ### Changes Applied
 
 **Card 1 - Organize (Developer):**
+
 - ✅ No changes (kept existing ML course content)
 
 **Card 2 - Capture (Designer):**
+
 - ✅ Changed meta from "React" to "Figma"
 - ✅ Updated question to "When do I use auto layout?" (30 chars - fits perfectly)
 - ✅ Updated answer to Figma auto layout explanation (91 chars - fits comfortably)
 - ✅ Updated description to "Q&A and freeform notes for any subject you're studying."
 
 **Card 3 - Reflect (Language Learner):**
+
 - ✅ Changed meta from "2h 25m" to "1h 15m"
 - ✅ Updated note to Spanish grammar content (preterite vs imperfect tense)
 - ✅ Kept mood badges (Focused selected)
 
 **Card 4 - Review (Music Theory):**
+
 - ✅ Changed meta from "3 / 10 questions" to "2 / 8 questions"
 - ✅ Updated question to "What is a perfect fifth interval?"
 - ✅ Updated answer to music theory content
 - ✅ Kept understanding badges (Getting It selected)
 
 **Card 5 - Track (Cross-Domain):**
+
 - ✅ Changed meta from "avg. 2.4h / day" to "avg. 2.1h / day"
 - ✅ Updated time values to show variety (38m, 52m, 45m, 28m, 50m)
 - ✅ Changed badge from "Study minutes" to "Mixed subjects"
@@ -448,6 +485,7 @@ Successfully implemented all content updates to diversify the "How It Works" car
 ### Content Quality Check
 
 Applied humanizer skill to final implementation:
+
 - ✅ Figma content: Natural designer voice, no AI patterns
 - ✅ Spanish content: Specific learning insight, practical grammar
 - ✅ Music content: Clear technical definition with example
@@ -466,6 +504,7 @@ All content reads naturally and demonstrates domain diversity without promotiona
 ### Result
 
 The "How It Works" section now successfully demonstrates Rootly's versatility across five different learning domains:
+
 1. Developer (Machine Learning)
 2. Designer (Figma)
 3. Language Learner (Spanish)

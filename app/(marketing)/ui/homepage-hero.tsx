@@ -29,10 +29,10 @@ export default function HomepageHero() {
                 className="text-base text-pretty text-muted-foreground sm:text-lg lg:max-w-4xl"
               >
                 Rootly helps you capture notes, track study time, and review
-                what you learn, whether you're following coding tutorials, design
-                courses, or any structured learning path. The browser side panel
-                keeps your notes and study timer beside the content while you
-                learn.
+                what you learn, whether you're following coding tutorials,
+                design courses, or any structured learning path. The browser
+                side panel keeps your notes and study timer beside the content
+                while you learn.
               </Reveal>
             </div>
 

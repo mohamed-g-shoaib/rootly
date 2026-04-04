@@ -1,24 +1,24 @@
-import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
+import type { Metadata } from "next"
+import { cacheLife, cacheTag } from "next/cache"
 
-import DailyEntriesPageUI from "@/app/daily-entries/ui/daily-entries-page";
-import type { DailyEntry } from "@/app/daily-entries/ui/daily-entries-model";
-import { getDashboardUserId } from "@/lib/dashboard-session";
-import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf";
-import { createClient } from "@/lib/supabase/server";
+import DailyEntriesPageUI from "@/app/daily-entries/ui/daily-entries-page"
+import type { DailyEntry } from "@/app/daily-entries/ui/daily-entries-model"
+import { getDashboardUserId } from "@/lib/dashboard-session"
+import { createDashboardRoutePerf } from "@/lib/dashboard-route-perf"
+import { createClient } from "@/lib/supabase/server"
 
 export const metadata: Metadata = {
   title: "Daily Entries",
-};
+}
 
-const DAILY_ENTRIES_PAGE_SIZE = 10;
+const DAILY_ENTRIES_PAGE_SIZE = 10
 
 async function getInitialDailyEntriesData(userId: string) {
-  "use cache: private";
-  cacheLife("minutes");
-  cacheTag(`daily-entries:user:${userId}`);
+  "use cache: private"
+  cacheLife("minutes")
+  cacheTag(`daily-entries:user:${userId}`)
 
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { data, count } = await supabase
     .from("daily_entries")
@@ -27,18 +27,18 @@ async function getInitialDailyEntriesData(userId: string) {
     })
     .eq("user_id", userId)
     .order("date", { ascending: false })
-    .range(0, DAILY_ENTRIES_PAGE_SIZE - 1);
+    .range(0, DAILY_ENTRIES_PAGE_SIZE - 1)
 
   const initialEntries: DailyEntry[] =
     (
       data as Array<{
-        id: string;
-        date: string;
-        study_time_minutes: number;
-        mood: 1 | 2 | 3;
-        notes: string | null;
-        created_at: string;
-        updated_at: string;
+        id: string
+        date: string
+        study_time_minutes: number
+        mood: 1 | 2 | 3
+        notes: string | null
+        created_at: string
+        updated_at: string
       }> | null
     )?.map((row) => ({
       id: row.id,
@@ -48,23 +48,23 @@ async function getInitialDailyEntriesData(userId: string) {
       notes: row.notes,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
-    })) ?? [];
+    })) ?? []
 
   return {
     initialEntries,
     initialEntriesTotal: count ?? 0,
-  };
+  }
 }
 
 export default async function DailyEntriesPage() {
-  const perf = createDashboardRoutePerf("/daily-entries");
+  const perf = createDashboardRoutePerf("/daily-entries")
   const userId = await perf.measure(
     "session",
     () => getDashboardUserId(),
     (currentUserId) => ({
       authenticated: Boolean(currentUserId),
-    }),
-  );
+    })
+  )
 
   const { initialEntries, initialEntriesTotal } = userId
     ? await perf.measure(
@@ -72,13 +72,13 @@ export default async function DailyEntriesPage() {
         () => getInitialDailyEntriesData(userId),
         (result) => ({
           rows: result.initialEntries.length,
-        }),
+        })
       )
-    : { initialEntries: [] as DailyEntry[], initialEntriesTotal: 0 };
+    : { initialEntries: [] as DailyEntry[], initialEntriesTotal: 0 }
 
   perf.finish({
     entries: initialEntries.length,
-  });
+  })
 
   return (
     <DailyEntriesPageUI
@@ -87,5 +87,5 @@ export default async function DailyEntriesPage() {
       initialEntriesTotal={initialEntriesTotal}
       entriesPageSize={DAILY_ENTRIES_PAGE_SIZE}
     />
-  );
+  )
 }
