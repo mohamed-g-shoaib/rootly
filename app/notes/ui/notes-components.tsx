@@ -188,8 +188,10 @@ export function NoteCard({
               <div className="flex flex-nowrap items-center gap-1.5 overflow-hidden">
                 {!readOnly && note.hasCodeSnippet ? (
                   <Badge
+                    render={<button type="button" />}
                     variant="outline"
-                    className="shrink-0 cursor-pointer"
+                    className="shrink-0"
+                    aria-label="Open code snippet"
                     onClick={onViewCode}
                   >
                     <span className="inline-flex items-center gap-2">
@@ -212,8 +214,10 @@ export function NoteCard({
 
                 {!readOnly ? (
                   <Badge
+                    render={<button type="button" />}
                     variant="outline"
-                    className="shrink-0 cursor-pointer"
+                    className="shrink-0"
+                    aria-label="Open full note"
                     onClick={onViewFull}
                   >
                     Open full

@@ -2061,3 +2061,11 @@ Recent findings:
 - Result:
   - removed the green outlier badge from the mood row
   - the daily progress card now feels more visually consistent and quieter
+
+### Notes card badge sound fix (2026-04-04)
+
+- Updated clickable note-card badges in `app/notes/ui/notes-components.tsx`.
+- Changed the code snippet badge and `Open full` badge to render as real `button` elements while keeping badge styling.
+- Result:
+  - both sheet-opening badge actions now participate in the global click interaction sound
+  - interaction semantics are also cleaner for accessibility and input handling
