@@ -119,6 +119,15 @@ function isDisabledTarget(target: HTMLElement) {
   );
 }
 
+function isTypingTarget(target: HTMLElement) {
+  return (
+    target.isContentEditable ||
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.tagName === "SELECT"
+  );
+}
+
 function getClickableTarget(target: EventTarget | null) {
   if (!(target instanceof Element)) {
     return null;
@@ -131,6 +140,11 @@ function getClickableTarget(target: EventTarget | null) {
   const clickable = target.closest(CLICKABLE_SELECTOR);
 
   if (!(clickable instanceof HTMLElement) || isDisabledTarget(clickable)) {
+    return null;
+  }
+
+  // Don't play click sound on typing targets (inputs, textareas, selects)
+  if (isTypingTarget(clickable)) {
     return null;
   }
 
@@ -161,19 +175,6 @@ function ClickSound() {
   }, []);
 
   return null;
-}
-
-function isTypingTarget(target: EventTarget | null) {
-  if (!(target instanceof HTMLElement)) {
-    return false;
-  }
-
-  return (
-    target.isContentEditable ||
-    target.tagName === "INPUT" ||
-    target.tagName === "TEXTAREA" ||
-    target.tagName === "SELECT"
-  );
 }
 
 function ThemeHotkey() {

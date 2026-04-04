@@ -1985,3 +1985,14 @@ Recent findings:
   - Added `.destructive-button` CSS class with destructive background and foreground colors
 - Validation: no HTML or CSS diagnostics found
 - Result: Extension UI now matches dashboard field organization, has more comfortable spacing between sections, and provides clearer visual hierarchy for destructive actions
+
+
+### Click sound refinement for typing targets (2026-04-04)
+
+- Updated global click sound behavior to exclude typing targets in `components/theme-provider.tsx`.
+- Changes:
+  - Moved `isTypingTarget` helper function earlier in the file (before `getClickableTarget`)
+  - Modified `getClickableTarget` to check if the clickable element is a typing target (input, textarea, select, contenteditable)
+  - Click sound now only fires on buttons, links, and other interactive controls, not on form fields where users intend to type
+- Validation: no TypeScript diagnostics found
+- Result: Users can click into input fields and textareas without hearing the click sound, making the audio feedback feel more intentional and less intrusive during form interactions
