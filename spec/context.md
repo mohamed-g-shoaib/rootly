@@ -1962,3 +1962,26 @@ Recent findings:
 - Shortened description to reduce crowding above "capture - track - review" footer
 - Validation: `pnpm lint` passes with 0 warnings and 0 errors
 - Result: Social sharing images now align with rebranded inclusive positioning with cleaner, more relaxed layout
+
+
+### Extension color theme update (2026-04-04)
+
+- Updated extension side panel colors to match website's claude-blue theme in `extension/sidepanel/sidepanel.css`.
+- Applied exact color values from `lib/themes.ts` claude-blue theme to extension CSS custom properties.
+- Updated both light and dark mode color schemes:
+  - Light mode: background, foreground, primary, secondary, muted, accent, border, input, ring, and all semantic tokens
+  - Dark mode: complete dark theme color palette matching website
+- Validation: no CSS diagnostics found
+- Result: Extension now uses identical color system as website, ensuring visual consistency across all Rootly surfaces
+
+
+### Extension UX improvements (2026-04-04)
+
+- Improved extension side panel layout and spacing for better readability in `extension/sidepanel/index.html` and `extension/sidepanel/sidepanel.css`.
+- Changes:
+  - Capture tab: moved "Flag for review" and "Add code snippet" options below understanding level under "Options" label to match dashboard layout
+  - Increased spacing between field groups from 8px to 12px (`.stack` gap) while keeping internal field spacing at 8px (`.field-stack` gap) for more relaxed reading
+  - Timer tab: changed stop button from `secondary-button` to `destructive-button` class with destructive color treatment
+  - Added `.destructive-button` CSS class with destructive background and foreground colors
+- Validation: no HTML or CSS diagnostics found
+- Result: Extension UI now matches dashboard field organization, has more comfortable spacing between sections, and provides clearer visual hierarchy for destructive actions

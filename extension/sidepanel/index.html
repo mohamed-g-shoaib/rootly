@@ -149,26 +149,7 @@
               </div>
             </div>
 
-            <div class="option-row" role="group" aria-label="Note options">
-              <button
-                id="note-flag-toggle"
-                class="ghost-button option-toggle"
-                type="button"
-                aria-pressed="false"
-              >
-                Flag for review
-              </button>
-              <button
-                id="note-code-toggle"
-                class="ghost-button option-toggle"
-                type="button"
-                aria-pressed="false"
-              >
-                Add code snippet
-              </button>
-            </div>
-
-            <div id="qa-fields" class="stack compact-stack">
+            <div id="qa-fields" class="stack">
               <label
                 class="field-stack compact-stack"
                 for="note-question-input"
@@ -218,11 +199,32 @@
                   </div>
                 </div>
               </div>
+              <div class="field-stack compact-stack">
+                <span class="metric-label">Options</span>
+                <div class="option-row" role="group" aria-label="Note options">
+                  <button
+                    id="note-flag-toggle"
+                    class="ghost-button option-toggle"
+                    type="button"
+                    aria-pressed="false"
+                  >
+                    Flag for review
+                  </button>
+                  <button
+                    id="note-code-toggle"
+                    class="ghost-button option-toggle"
+                    type="button"
+                    aria-pressed="false"
+                  >
+                    Add code snippet
+                  </button>
+                </div>
+              </div>
             </div>
 
             <label
               id="freeform-fields"
-              class="field-stack compact-stack hidden"
+              class="field-stack hidden"
               for="note-body-input"
             >
               <span class="metric-label">Note</span>
@@ -234,7 +236,7 @@
               ></textarea>
             </label>
 
-            <div id="note-code-fields" class="stack compact-stack hidden">
+            <div id="note-code-fields" class="stack hidden">
               <label class="field-stack compact-stack" for="note-code-input">
                 <span class="metric-label">Code snippet</span>
                 <textarea
@@ -360,7 +362,7 @@
               </button>
               <button
                 id="timer-stop"
-                class="secondary-button hidden"
+                class="destructive-button hidden"
                 type="button"
               >
                 Stop
