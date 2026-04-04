@@ -1745,3 +1745,18 @@ Recent findings:
   - cleaner, more direct hero presentation without redundant badge
   - no dead code or unused imports left behind
   - lint passes with 0 warnings and 0 errors
+
+### Content Strategy skill registration (2026-04-04)
+
+- Added new `content-strategy` skill to `spec/agent-skills.md` as skill #25:
+  - added entry to the skills index table with version `1.1.0`
+  - added detailed section documenting the skill's purpose, top 10 rules by priority, and available files
+  - skill provides content strategy guidance for planning searchable and shareable content
+  - includes frameworks for content ideation, topic clustering, buyer journey mapping, and prioritization
+  - references include headless CMS guidance for content modeling and platform selection
+- When to use:
+  - planning content strategy or editorial calendars
+  - deciding what content to create or topics to cover
+  - content ideation and topic cluster development
+  - mapping content to buyer stages
+  - analyzing keyword data, customer research, or competitor gaps

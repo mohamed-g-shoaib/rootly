@@ -68,6 +68,7 @@ For Rootly extension work only, also load:
 | 22  | [Next Cache Components](#22-next-cache-components)                      | Project-local                          | Next.js 16+ Cache Components and PPR patterns                | `.agents/skills/next-cache-components/`            |
 | 23  | [TanStack Query Best Practices](#23-tanstack-query-best-practices)      | Project-local                          | Server-state caching, mutation, and hydration guidance       | `.agents/skills/tanstack-query-best-practices/`    |
 | 24  | [Redis Development](#24-redis-development)                              | Redis                                  | `1.0.0`                                                      | `.agents/skills/redis-development/`                |
+| 25  | [Content Strategy](#25-content-strategy)                                | Project-local                          | `1.1.0`                                                      | `.agents/skills/content-strategy/`                 |
 
 ---
 
@@ -866,3 +867,37 @@ Redis-focused operational and modeling guidance for high-performance data access
 | `SKILL.md`  | Overview and quick reference across Redis optimization domains                   |
 | `rules/`    | Category-based rules for data modeling, performance, security, and observability |
 | `AGENTS.md` | Fully expanded compiled document                                                 |
+
+
+---
+
+## 25. Content Strategy
+
+**Publisher:** Project-local
+**Version:** `1.1.0`
+**When to load:** Planning content strategy, deciding what content to create, figuring out topics to cover, content ideation, editorial calendar planning, content marketing roadmap, topic clusters, content pillars, or when the user asks "what should I write about"
+
+### Purpose
+
+Content strategy guidance for planning content that drives traffic, builds authority, and generates leads. The skill helps identify content opportunities through customer research, keyword analysis, competitor gaps, and buyer journey mapping. It distinguishes between searchable content (capturing existing demand) and shareable content (creating demand), and provides frameworks for prioritizing topics based on customer impact, content-market fit, search potential, and resource requirements.
+
+### Top 10 Rules by Priority
+
+1. **Every piece must be searchable, shareable, or both** - Prioritize searchable content first as search traffic is the foundation
+2. **Check for product marketing context first** - Read `.agents/product-marketing-context.md` if it exists before asking questions
+3. **Match search intent exactly** - Answer what the searcher actually wants, not what you want to tell them
+4. **Use customer language** - Extract exact phrases from sales calls, support tickets, and surveys
+5. **Map content to buyer stage** - Use proven keyword modifiers for awareness, consideration, decision, and implementation stages
+6. **Build topic clusters around 3-5 content pillars** - Focus on core topics your brand will own
+7. **Prioritize with a scoring framework** - Weight customer impact (40%), content-market fit (30%), search potential (20%), resources (10%)
+8. **Lead shareable content with novel insights** - Challenge conventional wisdom, share original data, or tell vulnerable stories
+9. **Use hub and spoke structure for comprehensive topics** - Create overview hub first, then build related subtopic spokes
+10. **Mine multiple research sources** - Combine keyword data, call transcripts, surveys, forums, and competitor analysis
+
+### Available Files
+
+| File                      | Description                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `SKILL.md`                | Full content strategy framework with ideation sources, content types, prioritization, and output formats       |
+| `references/headless-cms.md` | CMS selection, content modeling for marketing, editorial workflows, platform comparison (Sanity, Contentful, Strapi) |
+
