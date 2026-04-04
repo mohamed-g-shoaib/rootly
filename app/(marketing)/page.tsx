@@ -23,14 +23,14 @@ const homepageJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "Developer learning notebook",
+  title: "Learning tracker and study notebook",
   description:
-    "Capture notes, track progress, and review what you learn in one deliberate system built for self-taught developers.",
+    "Turn scattered learning into organized progress. Capture notes, track study time, and review what you learn—whether you're following coding tutorials, design courses, or any structured learning path.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Rootly | Developer learning notebook",
+    title: "Rootly | Learning tracker and study notebook",
     description: siteConfig.ogDescription,
     url: "/",
     images: [
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rootly | Developer learning notebook",
+    title: "Rootly | Learning tracker and study notebook",
     description: siteConfig.ogDescription,
     images: ["/twitter-image"],
   },

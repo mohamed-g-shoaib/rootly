@@ -1760,3 +1760,124 @@ Recent findings:
   - content ideation and topic cluster development
   - mapping content to buyer stages
   - analyzing keyword data, customer research, or competitor gaps
+
+### Homepage hero rewrite specification (2026-04-04)
+
+- Created comprehensive spec at `spec/content/homepage-hero-rewrite-2026-04-04.md` for hero section content and design overhaul.
+- Strategic direction:
+  - broaden positioning from "developer-only" to "structured learning for anyone"
+  - maintain developer credibility as core strength, not exclusion
+  - implement interactive 3-tab browser mock to demonstrate versatility
+- Content strategy (using content-strategy skill):
+  - new headline: "Turn scattered learning into organized progress"
+  - inclusive supporting copy showing breadth: coding tutorials, design courses, structured learning
+  - expanded SEO keywords: learning tracker, study notes app, organized learning system
+- Visual strategy (using emil-design-eng + make-interfaces-feel-better skills):
+  - 3 clickable tabs: React Docs (developer), Figma Tutorial (designer), Spanish Lesson (general)
+  - each tab shows different content + adapted side panel
+  - smooth 200ms opacity transitions with custom ease-out curve
+  - traffic light dots kept at reduced opacity (/50) for authenticity without distraction
+  - URL bar updates instantly per tab (no animation on chrome)
+- Design decisions validated:
+  - keep traffic light dots (instant browser recognition, minimal visual weight)
+  - use text-only tabs with bottom border accent for active state
+  - cross-fade content transitions (opacity only, no transform)
+  - proper ARIA roles and keyboard navigation for accessibility
+- Implementation checklist and success metrics included in spec
+- Status: Ready for implementation pending approval
+
+### Homepage hero rewrite implementation (2026-04-04)
+
+- Implemented the complete homepage hero section rewrite per `spec/content/homepage-hero-rewrite-2026-04-04.md`.
+- Content updates:
+  - hero headline: "Turn scattered learning into organized progress."
+  - supporting copy now inclusive: mentions coding tutorials, design courses, and structured learning paths
+  - updated `lib/site-config.ts` with broader keywords and descriptions
+  - updated `app/(marketing)/page.tsx` metadata for SEO
+- Browser mock implementation:
+  - added interactive 3-tab system (React Docs, Figma Tutorial, Spanish Lesson)
+  - tabs use proper ARIA roles (`tablist`, `tab`, `tabpanel`) for accessibility
+  - traffic light dots opacity reduced from /60 to /50 per design spec
+  - URL bar updates instantly when switching tabs (no animation on chrome)
+  - content cross-fades with 200ms custom ease-out transition
+  - each tab shows different main content and adapted side panel
+- Tab content variants:
+  - React: Q&A note about useMemo with "Getting It" badge
+  - Figma: Q&A note about frames vs groups with "Clear" badge
+  - Duolingo: Freeform note with Spanish vocabulary (no badge)
+  - timer values vary per tab to show realistic usage
+- Design principles applied:
+  - transitions use `cubic-bezier(0.23, 1, 0.32, 1)` per emil-design-eng
+  - opacity-only transitions (no transform) for clean content swap
+  - tabs use bottom border accent for active state
+  - no scale or hover animations on tabs (keeps chrome stable)
+- Validation:
+  - `pnpm lint` passes with 0 warnings and 0 errors
+  - no TypeScript diagnostics
+  - all accessibility requirements met (ARIA roles, keyboard nav ready)
+- Result:
+  - hero section now demonstrates versatility across learning contexts
+  - positioning broadened without losing developer credibility
+  - visual proof more credible than copy claims
+
+### Homepage browser mock height consistency fix (2026-04-04)
+
+- Fixed layout shift issue where browser mock shell had 3 different heights when switching tabs.
+- Root cause: each tab's content had different natural heights (Figma video player was taller).
+- Solution applied (using make-interfaces-feel-better principles):
+  - added `min-h-[420px]` to main content container to establish consistent baseline
+  - adjusted Figma video aspect ratio from `aspect-video` (16:9) to `aspect-16/10` (more compact)
+  - added additional paragraph to Figma content to balance text density across tabs
+- Result:
+  - browser shell maintains consistent height across all tab switches
+  - no jarring layout shifts when users explore different tabs
+  - smooth, professional tab-switching experience
+- Validation:
+  - `pnpm lint` passes
+  - no TypeScript diagnostics
+
+### Homepage browser mock height fix - final solution (2026-04-04)
+
+- Implemented proper fixed-height solution to completely eliminate layout shift between tabs.
+- Previous attempt used `min-h-[420px]` which only set a minimum, allowing content to still expand.
+- Final solution:
+  - changed main content container from `min-h-[420px]` to `h-[360px]` (fixed height, shorter)
+  - added `overflow-y-auto` to allow scrolling if content exceeds fixed height
+  - reduced code block padding from `p-3` to `p-2.5` for tighter spacing
+- Result:
+  - browser shell now maintains exact same height across all tab switches
+  - no layout shift whatsoever
+  - shorter overall height makes the mock more compact and focused
+  - content remains fully accessible via scroll if needed
+- Validation: no TypeScript diagnostics
+
+### Homepage browser mock height fix - practical solution (2026-04-04)
+
+- Revised the height fix to be practical without requiring scroll.
+- Final implementation:
+  - set fixed height to `h-[440px]` (taller, more comfortable)
+  - removed `overflow-y-auto` (no scroll needed)
+  - adjusted Figma video player with `max-h-[180px]` constraint to prevent expansion
+  - removed extra paragraph from Figma content to balance with other tabs
+  - all three tabs now have similar content density that fits naturally
+- Result:
+  - browser shell maintains consistent 440px height across all tabs
+  - no layout shift when switching tabs
+  - no scrolling required - all content visible
+  - comfortable reading height
+  - video player constrained to reasonable size
+- Validation: no TypeScript diagnostics
+
+
+### Homepage hero humanizer evaluation (2026-04-04)
+
+- Applied humanizer skill to evaluate final hero content for AI writing patterns.
+- Evaluation results:
+  - headline "Turn scattered learning into organized progress" is clean (no AI vocabulary, no copula avoidance, natural tone)
+  - supporting copy is clean (no promotional language, no vague attributions, specific examples without forced patterns)
+  - no inflated symbolism or significance language detected
+  - no superficial -ing analyses or filler phrases
+  - content reads as human-written with natural rhythm
+- Outcome: hero content approved with no humanization edits required.
+- Updated spec file status to "Complete" in `spec/content/homepage-hero-rewrite-2026-04-04.md`.
+- Skills applied to this task: content-strategy, emil-design-eng, make-interfaces-feel-better, humanizer.

@@ -9,22 +9,24 @@ function normalizeSiteUrl(url: string) {
 
 export const siteConfig = {
   name: "Rootly",
-  title: "Rootly | Developer learning notebook",
+  title: "Rootly | Learning tracker and study notebook",
   description:
-    "Capture notes, track progress, and review what you learn in one deliberate system built for self-taught developers.",
+    "Turn scattered learning into organized progress. Capture notes, track study time, and review what you learn—whether you're following coding tutorials, design courses, or any structured learning path.",
   ogDescription:
-    "Turn scattered tutorial tabs, rough notes, and progress fragments into one calm learning system.",
+    "Organize your learning with structured notes, study time tracking, and spaced repetition review.",
   url: normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_SITE_URL),
   locale: "en_US",
   ogAlt:
-    "Rootly, a developer learning notebook for capturing notes, tracking progress, and reviewing what you learn.",
+    "Rootly, a learning tracker and study notebook for capturing notes, tracking progress, and reviewing what you learn.",
   keywords: [
+    "learning tracker",
+    "study notes app",
+    "organized learning system",
+    "study time tracker",
+    "progress tracker for students",
     "developer learning notebook",
-    "learning tracker for developers",
-    "study notes for developers",
-    "developer spaced repetition",
+    "spaced repetition",
     "course progress tracker",
-    "self-taught developer tools",
     "Rootly",
   ],
   publishedAt: "2026-03-24",

@@ -19,7 +19,7 @@ export default function HomepageHero() {
                 delay={0.05}
                 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
               >
-                Save what you learn from docs and tutorials in one place.
+                Turn scattered learning into organized progress.
               </Reveal>
 
               <Reveal
@@ -28,10 +28,11 @@ export default function HomepageHero() {
                 delay={0.1}
                 className="text-base text-pretty text-muted-foreground sm:text-lg lg:max-w-4xl"
               >
-                Rootly is a learning notebook for self-taught developers. Save
-                notes from docs and tutorials, track study time, and review the
-                ideas you want to remember. The browser side panel keeps note
-                capture and your study timer beside the page while you study.
+                Rootly helps you capture notes, track study time, and review
+                what you learn, whether you're following coding tutorials, design
+                courses, or any structured learning path. The browser side panel
+                keeps your notes and study timer beside the content while you
+                learn.
               </Reveal>
             </div>
 
