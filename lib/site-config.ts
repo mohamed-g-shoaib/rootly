@@ -1,7 +1,7 @@
 const FALLBACK_SITE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : "https://rootly.app"
+    : "https://rootlynotes.vercel.app"
 
 function normalizeSiteUrl(url: string) {
   return url.endsWith("/") ? url.slice(0, -1) : url
