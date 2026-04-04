@@ -1702,3 +1702,11 @@ Recent findings:
   - `components/theme-icons/ibm.tsx`
 - Follow-up decision:
   - abandoned the route-level theme isolation experiment and restored the previous global custom-theme behavior
+
+### Next.js smooth-scroll attribute opt-in (2026-04-04)
+
+- Added `data-scroll-behavior="smooth"` to the root `<html>` element in `app/layout.tsx`.
+- Reason:
+  - the app intentionally enables `scroll-behavior: smooth` in global CSS, and Next.js expects the matching data attribute so it can temporarily suppress smooth scrolling during router-driven scroll restoration
+- Result:
+  - removes the framework warning without changing the app's intended smooth-scroll behavior
