@@ -247,6 +247,7 @@ Rootly helps you capture notes, track study time, and review what you learn—wh
    - Feels authentic without being pixel-perfect
 
 3. **Consider hover state (optional enhancement):**
+
    ```tsx
    // On parent hover, slightly increase opacity
    .browser-chrome:hover .traffic-light {
