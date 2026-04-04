@@ -47,6 +47,24 @@ export default function HomepageNav() {
           </Link>
 
           <div className="flex items-center gap-2">
+            {/* Mobile: icon-only GitHub button */}
+            <Button
+              render={
+                <a
+                  href="https://github.com/mohamed-g-shoaib/rootly"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Star on GitHub"
+                />
+              }
+              variant="outline"
+              size="icon"
+              className="shrink-0 sm:hidden"
+            >
+              <HugeiconsIcon icon={Github01Icon} size={18} />
+            </Button>
+
+            {/* Desktop: GitHub button with label */}
             <Button
               render={
                 <a
@@ -63,7 +81,7 @@ export default function HomepageNav() {
               Star on GitHub
             </Button>
 
-            <MarketingPrimaryCta />
+            <MarketingPrimaryCta className="w-auto" />
           </div>
         </div>
       </PageContainer>

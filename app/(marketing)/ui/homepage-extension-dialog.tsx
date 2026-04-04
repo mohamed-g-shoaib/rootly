@@ -102,6 +102,7 @@ export function HomepageExtensionDialog({
                 href={EXTENSION_DOWNLOAD_URL}
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Download Rootly extension"
               />
             }
           >

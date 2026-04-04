@@ -1710,3 +1710,27 @@ Recent findings:
   - the app intentionally enables `scroll-behavior: smooth` in global CSS, and Next.js expects the matching data attribute so it can temporarily suppress smooth scrolling during router-driven scroll restoration
 - Result:
   - removes the framework warning without changing the app's intended smooth-scroll behavior
+
+### Homepage navbar mobile GitHub button (2026-04-04)
+
+- Added GitHub button to mobile navbar as an icon-only version for better mobile UX parity with desktop.
+- Implementation in `app/(marketing)/ui/homepage-nav.tsx`:
+  - mobile: icon-only button with `size="icon"` variant, visible below `sm` breakpoint
+  - desktop: button with icon + "Star on GitHub" label, visible at `sm` breakpoint and above
+  - both versions link to the same GitHub repository and include proper `aria-label` for accessibility
+- Result:
+  - mobile users can now access the GitHub repository directly from the navbar without needing to scroll or navigate elsewhere
+  - maintains visual consistency with the compact mobile navbar design while preserving the more descriptive desktop version
+
+### Homepage navbar mobile layout fixes (2026-04-04)
+
+- Fixed accessibility lint error in `app/(marketing)/ui/homepage-extension-dialog.tsx`:
+  - added `aria-label="Download Rootly extension"` to the download button anchor element
+- Fixed mobile navbar layout issues in `app/(marketing)/ui/homepage-nav.tsx`:
+  - added `shrink-0` to mobile GitHub icon button to prevent it from shrinking
+  - overrode `MarketingPrimaryCta` width with `className="w-auto"` to prevent full-width behavior on mobile
+  - this fixes the issue where the "Get started" button was pushed outside the viewport on mobile devices
+- Result:
+  - lint now passes with 0 warnings and 0 errors
+  - mobile navbar properly fits both GitHub icon button and "Get started" button within viewport
+  - all buttons maintain appropriate sizing without overflow
