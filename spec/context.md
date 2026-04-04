@@ -1949,3 +1949,16 @@ Recent findings:
 - Next steps: Submit sitemap to Search Console, validate schema with Rich Results Test, monitor keyword rankings
 - Result: Rootly now optimized for both web app and browser extension discovery across search engines and social platforms
 
+
+
+### OG image update (2026-04-04)
+
+- Updated main OpenGraph image to reflect inclusive positioning in `app/opengraph-image.tsx`.
+- Changes:
+  - Eyebrow: "Developer learning notebook" → "Learning tracker and study notebook"
+  - Title: "Your tutorial tabs are not a learning system." → "Turn scattered learning into organized progress."
+  - Description: Shortened to "Capture notes, track study time, and review what you learn across any subject."
+- Removed em dash (AI writing pattern flagged by humanizer skill)
+- Shortened description to reduce crowding above "capture - track - review" footer
+- Validation: `pnpm lint` passes with 0 warnings and 0 errors
+- Result: Social sharing images now align with rebranded inclusive positioning with cleaner, more relaxed layout

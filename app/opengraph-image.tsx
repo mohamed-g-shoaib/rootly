@@ -11,9 +11,9 @@ export const contentType = socialImageContentType
 
 export default function OpenGraphImage() {
   return createRootlySocialImage({
-    eyebrow: "Developer learning notebook",
-    title: "Your tutorial tabs are not a learning system.",
+    eyebrow: "Learning tracker and study notebook",
+    title: "Turn scattered learning into organized progress.",
     description:
-      "Capture notes, track progress, and review what you learn in one deliberate system built for self-taught developers.",
+      "Capture notes, track study time, and review what you learn across any subject.",
   })
 }
