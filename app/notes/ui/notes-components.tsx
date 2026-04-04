@@ -6,6 +6,7 @@ import {
   CodeIcon,
   Delete01Icon,
   Edit01Icon,
+  EyeIcon,
   Flag01Icon,
   MoreVerticalIcon,
   Note01Icon,
@@ -18,7 +19,6 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import * as React from "react"
 
-import { useElementOverflow } from "@/hooks/use-element-overflow"
 import { cn } from "@/lib/utils"
 
 import {
@@ -164,26 +164,21 @@ export function NoteCard({
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-hidden">
+            <div className="min-h-0 flex-1">
               {isQa ? (
-                <div className="flex min-h-0 flex-1 items-start overflow-hidden">
-                  {showAnswer ? (
-                    <NoteCardExcerpt
-                      text={note.previewText}
-                      onOpen={onViewFull}
-                    />
-                  ) : (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onShowAnswerChange(true)}
-                    >
-                      Show Answer
-                    </Button>
-                  )}
-                </div>
+                showAnswer ? (
+                  <div className="line-clamp-3 text-sm text-muted-foreground">
+                    {note.previewText}
+                  </div>
+                ) : (
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    Answer hidden
+                  </div>
+                )
               ) : (
-                <NoteCardExcerpt text={note.previewText} onOpen={onViewFull} />
+                <div className="line-clamp-3 text-sm text-muted-foreground">
+                  {note.previewText}
+                </div>
               )}
             </div>
 
@@ -212,23 +207,19 @@ export function NoteCard({
                     {understandingLabel(note.understandingLevel)}
                   </Badge>
                 ) : null}
+
+                {!readOnly ? (
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 cursor-pointer"
+                    onClick={onViewFull}
+                  >
+                    Open full
+                  </Badge>
+                ) : null}
               </div>
 
               <div className="-mr-2 flex shrink-0 items-center gap-1">
-                {isQa && showAnswer ? (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Hide answer"
-                    onClick={() => onShowAnswerChange(false)}
-                  >
-                    <HugeiconsIcon
-                      icon={ViewOffIcon}
-                      size={18}
-                      color="var(--info)"
-                    />
-                  </Button>
-                ) : null}
                 {note.flag ? (
                   <div
                     aria-label="Flagged for review"
@@ -237,6 +228,20 @@ export function NoteCard({
                   >
                     <HugeiconsIcon icon={Flag01Icon} size={18} />
                   </div>
+                ) : null}
+                {isQa ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={showAnswer ? "Hide answer" : "Show answer"}
+                    onClick={() => onShowAnswerChange(!showAnswer)}
+                  >
+                    <HugeiconsIcon
+                      icon={showAnswer ? ViewOffIcon : EyeIcon}
+                      size={18}
+                      color={showAnswer ? "var(--info)" : "currentColor"}
+                    />
+                  </Button>
                 ) : null}
 
                 {!readOnly ? (
@@ -342,58 +347,6 @@ export function ExportSheet({
         </Form>
       </SheetPopup>
     </Sheet>
-  )
-}
-
-function NoteCardExcerpt({
-  text,
-  onOpen,
-}: {
-  text: string
-  onOpen: () => void
-}) {
-  const { contentRef, isOverflowing, targetRef } =
-    useElementOverflow<HTMLParagraphElement>({
-      watch: text,
-    })
-
-  return (
-    <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 overflow-hidden">
-      <div className="relative min-h-0 flex-1 overflow-hidden">
-        <p
-          ref={targetRef}
-          className="line-clamp-3 text-sm break-words text-muted-foreground"
-        >
-          {text}
-        </p>
-
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 overflow-visible opacity-0"
-        >
-          <div
-            ref={contentRef}
-            className="text-sm break-words whitespace-pre-wrap text-muted-foreground"
-          >
-            {text}
-          </div>
-        </div>
-      </div>
-
-      {isOverflowing ? (
-        <div className="flex items-center gap-2 self-start">
-          <Button
-            variant="ghost"
-            size="xs"
-            type="button"
-            className="h-6 px-1.5 text-xs text-muted-foreground hover:text-foreground"
-            onClick={onOpen}
-          >
-            Open full
-          </Button>
-        </div>
-      ) : null}
-    </div>
   )
 }
 

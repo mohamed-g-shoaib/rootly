@@ -1996,3 +1996,48 @@ Recent findings:
   - Click sound now only fires on buttons, links, and other interactive controls, not on form fields where users intend to type
 - Validation: no TypeScript diagnostics found
 - Result: Users can click into input fields and textareas without hearing the click sound, making the audio feedback feel more intentional and less intrusive during form interactions
+
+
+### Notes page answer visibility icon refinement (2026-04-04)
+
+- Replaced "Show Answer" button with icon-only toggle in Q&A note cards in `app/notes/ui/notes-components.tsx`.
+- Changes:
+  - Removed "Show Answer" button that appeared when answer was hidden
+  - Added `EyeIcon` import from hugeicons
+  - Unified answer visibility toggle into single icon button that appears for all Q&A notes
+  - Icon shows `EyeIcon` when answer is hidden, `ViewOffIcon` when shown
+  - Icon positioned before flag and menu icons in card footer
+  - When answer is hidden, card shows subtle "Answer hidden" text instead of button
+  - Updated `aria-label` to dynamically reflect current state ("Show answer" / "Hide answer")
+  - Icon uses info color (`var(--info)`) when answer is shown, default color when hidden
+- Design rationale:
+  - Reduces visual noise across note grid by removing repetitive button labels
+  - Improves spatial efficiency in 220px height-constrained cards
+  - Maintains consistency with existing icon-only footer controls
+  - Eye icon is universally understood convention for visibility toggles
+- Validation: no TypeScript errors
+- Result: Cleaner, more refined note cards with reduced cognitive load when browsing multiple Q&A notes, while maintaining clear interaction affordance through familiar icon metaphor
+
+
+### Notes page "Open full" action redesign (2026-04-04)
+
+- Redesigned "Open full" action from overflow-dependent text button to always-visible badge in card footer in `app/notes/ui/notes-components.tsx`.
+- Applied design skills: make-interfaces-feel-better, coss, emil-design-eng
+- Changes:
+  - Removed `NoteCardExcerpt` component and its overflow detection logic
+  - Removed `useElementOverflow` hook import (no longer needed)
+  - Replaced dynamic "Open full" text button with consistent badge in footer badge group
+  - Badge shows `Note01Icon` + "Open full" text for clear affordance
+  - Positioned after code snippet and understanding badges on left side of footer
+  - Badge appears for all cards (not just overflowing ones) for predictable, consistent UX
+  - Content area now shows simple `line-clamp-3` text preview without interactive elements
+  - Badge uses same `variant="outline"` and `cursor-pointer` styling as other action badges
+- Design rationale (from loaded skills):
+  - **Clear affordance**: Text label "Open full" makes action immediately understandable at first glance
+  - **Spatial grouping**: Badge positioned with other metadata/action badges on left side
+  - **Visual consistency**: Matches existing badge pattern (code snippet badge is also clickable)
+  - **Predictable UX**: Always visible, users know where to find it
+  - **Cleaner content area**: Text preview is purely informational, not interactive
+  - **Reduced cognitive load**: No unpredictable appearance/disappearance based on overflow
+- Validation: no TypeScript diagnostics
+- Result: Clear, discoverable "Open full" action positioned with other card metadata badges, maintaining visual consistency while improving discoverability through explicit text label
