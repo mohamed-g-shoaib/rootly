@@ -1692,3 +1692,13 @@ Recent findings:
   - keep the browser chrome believable while making it feel a little shorter and less visually tall above the mock content
 - Validation note:
   - local shell still did not have `pnpm` available during this edit session, so lint/build were not rerun from this terminal
+
+### IBM theme removal (2026-04-04)
+
+- Removed the `IBM` custom dashboard color theme from the project.
+- Updated the dashboard theme picker so it no longer imports or maps an IBM icon:
+  - `components/theme-switcher.tsx`
+- Deleted the unused IBM theme icon component:
+  - `components/theme-icons/ibm.tsx`
+- Follow-up decision:
+  - abandoned the route-level theme isolation experiment and restored the previous global custom-theme behavior

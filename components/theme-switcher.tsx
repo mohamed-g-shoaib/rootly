@@ -9,7 +9,6 @@ import Calcom from "@/components/theme-icons/calcom-coss-ui"
 import { ClaudeAI } from "@/components/theme-icons/claude"
 import { ClaudeBlue } from "@/components/theme-icons/claude-blue"
 import { Discord } from "@/components/theme-icons/discord"
-import { IBM } from "@/components/theme-icons/ibm"
 import Milka from "@/components/theme-icons/milka"
 import { Snapchat } from "@/components/theme-icons/snapchat"
 import { PerplexityAI } from "@/components/theme-icons/perplexity"
@@ -57,7 +56,6 @@ const THEME_ICONS: Record<string, ThemeIconComponent> = {
   milka: Milka,
   claude: ClaudeAI,
   discord: Discord,
-  ibm: IBM,
   twitter: Twitter,
   snapchat: Snapchat,
   supabase: Supabase,
