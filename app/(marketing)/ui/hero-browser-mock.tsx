@@ -7,6 +7,7 @@ import {
   Note05Icon,
   PlayIcon,
   PauseIcon,
+  Globe02Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -32,6 +33,12 @@ const PHASES = [
     id: "solution",
     title: "Structured capture",
     caption: "Rootly captures knowledge as structured, reviewable cards.",
+    duration: 5000,
+  },
+  {
+    id: "extension",
+    title: "Seamless capture",
+    caption: "Capture anything from your browser with one click.",
     duration: 5000,
   },
   {
@@ -112,6 +119,69 @@ function PhaseSolution() {
             Whenever its parent re-renders, or when its own state/props change.
           </div>
         </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function PhaseExtension() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.05 }}
+      transition={{ duration: 0.4, ease: EASE_OUT }}
+      className="relative w-full max-w-[280px] overflow-hidden rounded-2xl border bg-background after:pointer-events-none after:absolute after:inset-[2px] after:rounded-[calc(var(--radius-2xl)-2px)] after:border after:border-border/50 sm:max-w-[320px]"
+    >
+      <div className="flex items-center gap-1.5 border-b bg-muted/50 px-3 py-2">
+        <div className="size-2.5 rounded-full bg-border" />
+        <div className="size-2.5 rounded-full bg-border" />
+        <div className="size-2.5 rounded-full bg-border" />
+      </div>
+      <div className="relative flex min-h-[160px] flex-col sm:min-h-[180px]">
+        {/* Fake page content */}
+        <div className="flex flex-1 flex-col gap-2 p-4">
+          <div className="h-2 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+          <div className="h-1.5 w-2/3 rounded-full bg-muted-foreground/10" />
+          <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+        </div>
+        {/* Extension side panel */}
+        <motion.div
+          initial={{ x: 80, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.4, ease: EASE_OUT }}
+          className="absolute top-0 right-0 bottom-0 w-2/5 border-l bg-card p-3 shadow-lg"
+        >
+          <div className="mb-3 flex items-center gap-1.5">
+            <HugeiconsIcon
+              icon={Globe02Icon}
+              size={12}
+              className="text-foreground"
+            />
+            <div className="text-[9px] font-bold tracking-wider text-muted-foreground uppercase">
+              Rootly
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="rounded-md border border-border/50 bg-muted/30 p-2">
+              <div className="h-1.5 w-full rounded-full bg-muted-foreground/20" />
+              <div className="mt-1 h-1 w-2/3 rounded-full bg-muted-foreground/10" />
+            </div>
+            <div className="rounded-md border border-border/50 bg-muted/30 p-2">
+              <div className="h-1.5 w-full rounded-full bg-muted-foreground/20" />
+              <div className="mt-1 h-1 w-1/2 rounded-full bg-muted-foreground/10" />
+            </div>
+            <motion.button
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.3, ease: EASE_OUT }}
+              className="mt-1 rounded-md bg-foreground px-2 py-1.5 text-[10px] font-medium text-background"
+            >
+              + Add to Rootly
+            </motion.button>
+          </div>
+        </motion.div>
       </div>
     </motion.div>
   )
@@ -208,7 +278,7 @@ function HeroStoryDemo({ isPlaying }: { isPlaying: boolean }) {
     <div className="flex flex-col bg-background">
       {/* Progress Bars (Instagram style) */}
       <div className="px-4 pt-4 pb-2">
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-4 gap-1.5">
           {PHASES.map((p, i) => {
             return (
               <button
@@ -258,7 +328,8 @@ function HeroStoryDemo({ isPlaying }: { isPlaying: boolean }) {
           <AnimatePresence mode="wait">
             {phase === 0 && <PhaseProblem key="problem" />}
             {phase === 1 && <PhaseSolution key="solution" />}
-            {phase === 2 && <PhaseValue key="value" />}
+            {phase === 2 && <PhaseExtension key="extension" />}
+            {phase === 3 && <PhaseValue key="value" />}
           </AnimatePresence>
         </div>
       </div>
