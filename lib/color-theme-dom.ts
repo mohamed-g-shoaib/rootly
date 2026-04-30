@@ -2,10 +2,11 @@
 
 import {
   buildColorThemeCss,
+  DASHBOARD_DEFAULT_CUSTOM_THEME_ID,
   DASHBOARD_COLOR_THEME_STYLE_ID,
   type ColorThemeId,
 } from "@/lib/color-theme"
-import { THEMES, type ThemeColors } from "@/lib/themes"
+import { getThemeById, THEMES, type ThemeColors } from "@/lib/themes"
 
 export function applyThemeColors(colors: ThemeColors) {
   for (const [key, value] of Object.entries(colors)) {
@@ -14,7 +15,7 @@ export function applyThemeColors(colors: ThemeColors) {
 }
 
 export function clearThemeColors() {
-  const theme = THEMES[0]
+  const theme = getThemeById(DASHBOARD_DEFAULT_CUSTOM_THEME_ID) ?? THEMES[0]
   if (!theme) return
 
   for (const key of Object.keys(theme.light)) {

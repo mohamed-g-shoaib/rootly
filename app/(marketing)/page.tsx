@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import HomepageFinalCta from "./ui/homepage-final-cta"
+import HomepageFeatures from "./ui/homepage-features"
 import HomepageFooter from "./ui/homepage-footer"
 import HomepageHero from "./ui/homepage-hero"
-import HomepageHowItWorks from "./ui/homepage-how-it-works"
 import HomepageNav from "./ui/homepage-nav"
 import { absoluteUrl, siteConfig } from "@/lib/site-config"
 
@@ -20,23 +20,6 @@ const homepageJsonLd = {
     price: "0",
     priceCurrency: "USD",
   },
-}
-
-const extensionJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "Rootly Browser Extension",
-  applicationCategory: "BrowserExtension",
-  operatingSystem: "Chrome",
-  description:
-    "Capture notes and track study time from any webpage with Rootly's browser side panel.",
-  url: siteConfig.url,
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-  browserRequirements: "Chrome 88+",
 }
 
 export const metadata: Metadata = {
@@ -74,14 +57,10 @@ export default function MarketingHomepage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(extensionJsonLd) }}
-      />
       <HomepageNav />
       <main>
         <HomepageHero />
-        <HomepageHowItWorks />
+        <HomepageFeatures />
         <HomepageFinalCta />
       </main>
       <HomepageFooter />

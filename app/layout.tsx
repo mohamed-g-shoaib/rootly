@@ -3,10 +3,7 @@ import { Suspense } from "react"
 import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
-import { ColorThemeApplicator } from "@/components/color-theme-applicator"
-import { DashboardColorThemeStyle } from "@/components/dashboard-color-theme-style"
 import { QueryProvider } from "@/components/query-provider"
-import { ThemeProvider } from "@/components/theme-provider"
 import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/site-config"
@@ -86,18 +83,12 @@ export default async function RootLayout({
       )}
     >
       <body suppressHydrationWarning>
-        <Suspense fallback={null}>
-          <DashboardColorThemeStyle />
-        </Suspense>
         <QueryProvider>
-          <ThemeProvider>
-            <ColorThemeApplicator />
-            <ToastProvider>
-              <AnchoredToastProvider>
-                <Suspense fallback={null}>{children}</Suspense>
-              </AnchoredToastProvider>
-            </ToastProvider>
-          </ThemeProvider>
+          <ToastProvider>
+            <AnchoredToastProvider>
+              <Suspense fallback={null}>{children}</Suspense>
+            </AnchoredToastProvider>
+          </ToastProvider>
         </QueryProvider>
       </body>
     </html>

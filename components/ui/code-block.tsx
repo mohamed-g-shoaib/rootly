@@ -2,9 +2,9 @@
 
 import * as React from "react"
 
-import { useTheme } from "next-themes"
 import { getSingletonHighlighter } from "shiki/bundle/web"
 
+import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
 const SUPPORTED_LANGUAGES = [

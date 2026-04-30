@@ -4,7 +4,7 @@ import { Reveal } from "./reveal"
 import { MarketingPrimaryCta } from "./marketing-primary-cta"
 import { PageContainer } from "@/components/ui/page-container"
 import { HomepageExtensionDialog } from "./homepage-extension-dialog"
-import { BrowserWindowMock } from "./homepage-extension-highlight"
+import { BrowserWindowMock } from "./hero-browser-mock"
 
 export default function HomepageHero() {
   return (
@@ -26,13 +26,10 @@ export default function HomepageHero() {
                 as="p"
                 mode="mount"
                 delay={0.1}
-                className="text-base text-pretty text-muted-foreground sm:text-lg lg:max-w-4xl"
+                className="text-base text-pretty text-muted-foreground sm:text-lg lg:max-w-2xl"
               >
-                Rootly helps you capture notes, track study time, and review
-                what you learn, whether you're following coding tutorials,
-                design courses, or any structured learning path. The browser
-                side panel keeps your notes and study timer beside the content
-                while you learn.
+                Capture notes, track study time, and review what you've learned
+                organized around the courses you're actually taking.
               </Reveal>
             </div>
 

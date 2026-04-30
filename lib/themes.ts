@@ -185,7 +185,7 @@ const ALL_THEMES: Theme[] = [
       "sidebar-ring": "oklch(0.7731 0 0)",
     },
   },
-  
+
   {
     id: "sakura",
     label: "Sakura",
@@ -475,8 +475,8 @@ const ALL_THEMES: Theme[] = [
     },
   },
   {
-    id: "zed",
-    label: "Zed",
+    id: "rootly",
+    label: "Rootly",
     light: {
       background: "oklch(0.9195 0.0169 88.0030)",
       foreground: "oklch(0.2350 0 0)",
@@ -546,13 +546,9 @@ const ALL_THEMES: Theme[] = [
       "sidebar-ring": "oklch(0.8520 0.0205 100.6306)",
     },
   },
-  
-  
-  ]
+]
 
-export const THEMES: Theme[] = ALL_THEMES.toSorted((a, b) =>
-  a.label.localeCompare(b.label)
-)
+export const THEMES: Theme[] = ALL_THEMES
 
 export const THEME_IDS = THEMES.map((t) => t.id)
 

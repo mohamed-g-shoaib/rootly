@@ -16,8 +16,8 @@ import { rust } from "@codemirror/lang-rust"
 import { java } from "@codemirror/lang-java"
 import { cpp } from "@codemirror/lang-cpp"
 import { php } from "@codemirror/lang-php"
-import { useTheme } from "next-themes"
 
+import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
 function getLanguageExtension(language: string) {

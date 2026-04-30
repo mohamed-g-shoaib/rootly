@@ -1,56 +1,56 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Suspense } from "react";
-import Link from "next/link";
+import * as React from "react"
+import { Suspense } from "react"
+import Link from "next/link"
 import {
   ArrowLeft01Icon,
   GithubIcon,
   GoogleIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
-import RootlyLogo from "@/components/rootly-logo";
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { createClient } from "@/lib/supabase/client"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
+import RootlyLogo from "@/components/rootly-logo"
 
 function LoginPageContent() {
   const callbackErrorMessage = React.useMemo(() => {
-    if (typeof window === "undefined") return null;
-    const errorParam = new URLSearchParams(window.location.search).get("error");
+    if (typeof window === "undefined") return null
+    const errorParam = new URLSearchParams(window.location.search).get("error")
     return errorParam === "auth_callback_failed"
       ? "Authentication failed. Please try again."
-      : null;
-  }, []);
+      : null
+  }, [])
 
   const [loadingProvider, setLoadingProvider] = React.useState<string | null>(
-    null,
-  );
+    null
+  )
   const [oauthErrorMessage, setOauthErrorMessage] = React.useState<
     string | null
-  >(null);
+  >(null)
 
   async function handleOAuthSignIn(provider: "google" | "github") {
-    setLoadingProvider(provider);
-    setOauthErrorMessage(null);
+    setLoadingProvider(provider)
+    setOauthErrorMessage(null)
 
-    const supabase = createClient();
+    const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
-    });
+    })
 
     if (error) {
-      setOauthErrorMessage(error.message);
-      setLoadingProvider(null);
+      setOauthErrorMessage(error.message)
+      setLoadingProvider(null)
     }
   }
 
-  const isLoading = !!loadingProvider;
-  const errorMessage = oauthErrorMessage ?? callbackErrorMessage;
+  const isLoading = !!loadingProvider
+  const errorMessage = oauthErrorMessage ?? callbackErrorMessage
 
   return (
     <div className="flex flex-col gap-4">
@@ -138,7 +138,7 @@ function LoginPageContent() {
         </p>
       </Card>
     </div>
-  );
+  )
 }
 
 export default function LoginPageUI() {
@@ -146,7 +146,7 @@ export default function LoginPageUI() {
     <Suspense fallback={<LoginPageContentFallback />}>
       <LoginPageContent />
     </Suspense>
-  );
+  )
 }
 
 function LoginPageContentFallback() {
@@ -212,5 +212,5 @@ function LoginPageContentFallback() {
         </p>
       </Card>
     </div>
-  );
+  )
 }

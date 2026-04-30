@@ -2,11 +2,10 @@
 
 import * as React from "react"
 
-import { useTheme } from "next-themes"
-
+import { useTheme } from "@/components/theme-provider"
 import {
   COLOR_THEME_COOKIE_NAME,
-  COSS_UI_THEME_ID,
+  CALCOM_THEME_ID,
   DASHBOARD_DEFAULT_CUSTOM_THEME_ID,
   normalizeColorThemeId,
   type ColorThemeId,
@@ -75,7 +74,7 @@ function loadThemePreferenceFromCookie() {
   const rawThemeId = readPreferenceCookie()
   const nextThemeId = normalizeColorThemeId(rawThemeId)
 
-  if (rawThemeId && nextThemeId === COSS_UI_THEME_ID) {
+  if (rawThemeId && nextThemeId === CALCOM_THEME_ID) {
     clearPreferenceCookie()
   }
   if (
@@ -83,7 +82,10 @@ function loadThemePreferenceFromCookie() {
     nextThemeId === DASHBOARD_DEFAULT_CUSTOM_THEME_ID &&
     rawThemeId !== DASHBOARD_DEFAULT_CUSTOM_THEME_ID
   ) {
-    clearPreferenceCookie()
+    setPreferenceCookie(DASHBOARD_DEFAULT_CUSTOM_THEME_ID)
+  }
+  if (!rawThemeId && nextThemeId === DASHBOARD_DEFAULT_CUSTOM_THEME_ID) {
+    setPreferenceCookie(DASHBOARD_DEFAULT_CUSTOM_THEME_ID)
   }
 
   updateSnapshot(nextThemeId)
@@ -123,7 +125,7 @@ export function useColorTheme(): {
     const nextThemeId = normalizeColorThemeId(id)
     updateSnapshot(nextThemeId)
 
-    if (nextThemeId === COSS_UI_THEME_ID) {
+    if (nextThemeId === CALCOM_THEME_ID) {
       clearPreferenceCookie()
       return
     }
@@ -131,7 +133,7 @@ export function useColorTheme(): {
   }, [])
 
   React.useEffect(() => {
-    if (themeId === COSS_UI_THEME_ID) {
+    if (themeId === CALCOM_THEME_ID) {
       clearThemeColors()
       syncDashboardThemeStyle(themeId)
       return

@@ -10,9 +10,9 @@ import { ClaudeAI } from "@/components/theme-icons/claude"
 import { ClaudeBlue } from "@/components/theme-icons/claude-blue"
 import Milka from "@/components/theme-icons/milka"
 import { PerplexityAI } from "@/components/theme-icons/perplexity"
+import Rootly from "@/components/theme-icons/rootly"
 import Sakura from "@/components/theme-icons/sakura"
 import { Vercel } from "@/components/theme-icons/vercel"
-import { Zed } from "@/components/theme-icons/zed"
 import {
   Combobox,
   ComboboxEmpty,
@@ -25,6 +25,10 @@ import {
 } from "@/components/ui/combobox"
 import { SelectButton } from "@/components/ui/select"
 import { useColorTheme } from "@/hooks/use-color-theme"
+import {
+  CALCOM_THEME_ID,
+  DASHBOARD_DEFAULT_CUSTOM_THEME_ID,
+} from "@/lib/color-theme"
 import { THEMES } from "@/lib/themes"
 import { cn } from "@/lib/utils"
 
@@ -36,25 +40,26 @@ type ThemeOption = {
 type ThemeIconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>
 
 const THEME_ITEMS: ThemeOption[] = [
-  { label: "Claude Blue (Default)", value: "claude-blue" },
-  { label: "Coss UI", value: "default" },
-  ...THEMES.filter((theme) => theme.id !== "claude-blue").map((theme) => ({
+  { label: "Calcom", value: CALCOM_THEME_ID },
+  ...THEMES.map((theme) => ({
     label: theme.label,
     value: theme.id,
   })),
 ]
 
 const THEME_ITEMS_BY_ID = new Map(THEME_ITEMS.map((item) => [item.value, item]))
+const DEFAULT_THEME_ITEM =
+  THEME_ITEMS_BY_ID.get(DASHBOARD_DEFAULT_CUSTOM_THEME_ID) ?? THEME_ITEMS[0]
 
 const THEME_ICONS: Record<string, ThemeIconComponent> = {
-  default: Calcom,
+  calcom: Calcom,
   milka: Milka,
   claude: ClaudeAI,
   sakura: Sakura,
   perplexity: PerplexityAI,
   vercel: Vercel,
   "claude-blue": ClaudeBlue,
-  zed: Zed,
+  rootly: Rootly,
 }
 
 function ThemeIcon({ value }: { value: string }) {
@@ -101,7 +106,7 @@ export function ThemeSwitcher() {
   const { themeId, setThemeId } = useColorTheme()
 
   const selected = React.useMemo(
-    () => THEME_ITEMS_BY_ID.get(themeId) ?? THEME_ITEMS[0],
+    () => THEME_ITEMS_BY_ID.get(themeId) ?? DEFAULT_THEME_ITEM,
     [themeId]
   )
 
@@ -113,7 +118,7 @@ export function ThemeSwitcher() {
           items={THEME_ITEMS}
           value={selected}
           onValueChange={(value) =>
-            setThemeId(value?.value ?? THEME_ITEMS[0]?.value)
+            setThemeId(value?.value ?? DEFAULT_THEME_ITEM?.value)
           }
         >
           <ComboboxTrigger render={<SelectButton />}>

@@ -17,7 +17,11 @@ export async function DashboardColorThemeStyle() {
   if (!css) return null
 
   return (
-    <style id={DASHBOARD_COLOR_THEME_STYLE_ID} data-color-theme-id={themeId}>
+    <style
+      id={DASHBOARD_COLOR_THEME_STYLE_ID}
+      data-color-theme-id={themeId}
+      suppressHydrationWarning
+    >
       {css}
     </style>
   )

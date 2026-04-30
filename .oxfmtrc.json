@@ -11,6 +11,7 @@
     "coverage/**",
     ".turbo/**",
     ".pnpm-store/**",
+    ".agents/**",
     "pnpm-lock.yaml",
     "components/ui/**"
   ],

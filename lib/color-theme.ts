@@ -1,13 +1,14 @@
 import { getThemeById, THEME_IDS } from "@/lib/themes"
 
-export const COSS_UI_THEME_ID = "default"
+export const CALCOM_THEME_ID = "calcom"
+export const LEGACY_COSS_UI_THEME_ID = "default"
 // Which custom theme should be used when there is no cookie (or it is invalid/stale).
-export const DASHBOARD_DEFAULT_CUSTOM_THEME_ID = "claude-blue"
+export const DASHBOARD_DEFAULT_CUSTOM_THEME_ID = "rootly"
 export const COLOR_THEME_COOKIE_NAME = "reway.dashboard.paletteTheme"
 export const DASHBOARD_COLOR_THEME_STYLE_ID = "dashboard-color-theme-ssr"
 
 export type StoredColorThemeId = (typeof THEME_IDS)[number]
-export type ColorThemeId = StoredColorThemeId | typeof COSS_UI_THEME_ID
+export type ColorThemeId = StoredColorThemeId | typeof CALCOM_THEME_ID
 
 function isStoredColorThemeId(
   value: string | null | undefined
@@ -19,8 +20,10 @@ function isStoredColorThemeId(
 export function normalizeColorThemeId(
   value: string | null | undefined
 ): ColorThemeId {
-  // "default" always means: no custom dashboard token overrides.
-  if (value === COSS_UI_THEME_ID) return COSS_UI_THEME_ID
+  // "calcom" is the base theme with no custom dashboard token overrides.
+  if (value === CALCOM_THEME_ID || value === LEGACY_COSS_UI_THEME_ID) {
+    return CALCOM_THEME_ID
+  }
 
   // No cookie (fresh user) or invalid/stale cookie: fall back to the default custom theme.
   if (!value) return DASHBOARD_DEFAULT_CUSTOM_THEME_ID
@@ -29,7 +32,7 @@ export function normalizeColorThemeId(
 }
 
 export function buildColorThemeCss(themeId: ColorThemeId): string {
-  if (themeId === COSS_UI_THEME_ID) return ""
+  if (themeId === CALCOM_THEME_ID) return ""
 
   const theme = getThemeById(themeId)
   if (!theme) return ""
@@ -42,4 +45,17 @@ export function buildColorThemeCss(themeId: ColorThemeId): string {
     .join("")
 
   return `:root{${light}}.dark{${dark}}`
+}
+
+export function buildMarketingThemeCss(themeId: ColorThemeId): string {
+  if (themeId === CALCOM_THEME_ID) return ""
+
+  const theme = getThemeById(themeId)
+  if (!theme) return ""
+
+  const light = Object.entries(theme.light)
+    .map(([key, value]) => `--${key}:${value};`)
+    .join("")
+
+  return `:root{${light}}`
 }

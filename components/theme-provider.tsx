@@ -1,9 +1,15 @@
 "use client"
 
 import * as React from "react"
-import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 
 import { clickSoftSound } from "@/lib/audio/click-soft"
+import {
+  DASHBOARD_THEME_COOKIE_NAME,
+  DASHBOARD_THEME_ROOT_ID,
+  LEGACY_DASHBOARD_THEME_STORAGE_KEY,
+  normalizeDashboardTheme,
+  type DashboardThemeMode,
+} from "@/lib/dashboard-theme"
 import { playSound } from "@/lib/audio/sound-engine"
 import { switchOffSound } from "@/lib/audio/switch-off"
 import { switchOnSound } from "@/lib/audio/switch-on"
@@ -11,11 +17,18 @@ import { useSound } from "@/hooks/use-sound"
 
 const AUDIO_MUTED_STORAGE_KEY = "portfolio-audio-muted"
 
+type ThemeContextValue = {
+  theme: DashboardThemeMode
+  resolvedTheme: DashboardThemeMode
+  setTheme: (theme: DashboardThemeMode | "system") => void
+}
+
 type AudioPreferencesContextValue = {
   muted: boolean
   setMuted: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+const ThemeContext = React.createContext<ThemeContextValue | null>(null)
 const AudioPreferencesContext =
   React.createContext<AudioPreferencesContextValue | null>(null)
 
@@ -35,6 +48,78 @@ const CLICKABLE_SELECTOR = [
   "[role='switch']",
   "[role='tab']",
 ].join(", ")
+
+function applyTheme(theme: DashboardThemeMode) {
+  const root = document.getElementById(DASHBOARD_THEME_ROOT_ID)
+  const isDark = theme === "dark"
+
+  document.documentElement.classList.toggle("dark", isDark)
+  document.documentElement.style.colorScheme = theme
+
+  if (root instanceof HTMLElement) {
+    root.classList.toggle("dark", isDark)
+    root.style.colorScheme = theme
+  }
+}
+
+function readThemeCookie(): DashboardThemeMode | null {
+  const match = document.cookie
+    .split(";")
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith(`${DASHBOARD_THEME_COOKIE_NAME}=`))
+
+  if (!match) return null
+
+  return normalizeDashboardTheme(
+    decodeURIComponent(match.split("=").slice(1).join("="))
+  )
+}
+
+function writeThemeCookie(theme: DashboardThemeMode) {
+  document.cookie = `${DASHBOARD_THEME_COOKIE_NAME}=${encodeURIComponent(
+    theme
+  )}; path=/; max-age=${365 * 24 * 60 * 60}; samesite=lax`
+}
+
+function readLegacyStoredTheme(): DashboardThemeMode | null {
+  const stored = window.localStorage.getItem(LEGACY_DASHBOARD_THEME_STORAGE_KEY)
+  if (!stored) return null
+  return normalizeDashboardTheme(stored)
+}
+
+function AudioPreferencesProvider({ children }: { children: React.ReactNode }) {
+  const [muted, setMuted] = React.useState(false)
+
+  React.useEffect(() => {
+    const stored = window.localStorage.getItem(AUDIO_MUTED_STORAGE_KEY)
+    if (stored === "true") {
+      setMuted(true)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    window.localStorage.setItem(AUDIO_MUTED_STORAGE_KEY, String(muted))
+  }, [muted])
+
+  const value = React.useMemo(() => ({ muted, setMuted }), [muted])
+
+  return (
+    <AudioPreferencesContext.Provider value={value}>
+      <ClickSound />
+      {children}
+    </AudioPreferencesContext.Provider>
+  )
+}
+
+export function useTheme() {
+  const context = React.useContext(ThemeContext)
+
+  if (!context) {
+    throw new Error("useTheme must be used within ThemeProvider")
+  }
+
+  return context
+}
 
 export function useAudioPreferences() {
   const context = React.useContext(AudioPreferencesContext)
@@ -79,36 +164,63 @@ export function playThemeSwitchSound({
 
 function ThemeProvider({
   children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
-  const [muted, setMuted] = React.useState(false)
+  initialTheme,
+}: {
+  children: React.ReactNode
+  initialTheme: DashboardThemeMode
+}) {
+  const [clientTheme, setClientTheme] =
+    React.useState<DashboardThemeMode | null>(null)
+  const theme = clientTheme ?? initialTheme
 
-  React.useEffect(() => {
-    const stored = window.localStorage.getItem(AUDIO_MUTED_STORAGE_KEY)
-    if (stored === "true") {
-      setMuted(true)
+  React.useLayoutEffect(() => {
+    const cookieTheme = readThemeCookie()
+    const legacyTheme = readLegacyStoredTheme()
+    const nextTheme = cookieTheme ?? legacyTheme ?? initialTheme
+
+    if (nextTheme !== initialTheme) {
+      setClientTheme(nextTheme)
     }
-  }, [])
 
-  React.useEffect(() => {
-    window.localStorage.setItem(AUDIO_MUTED_STORAGE_KEY, String(muted))
-  }, [muted])
+    writeThemeCookie(nextTheme)
+    applyTheme(nextTheme)
 
-  const value = React.useMemo(() => ({ muted, setMuted }), [muted])
+    return () => {
+      document.documentElement.classList.remove("dark")
+      document.documentElement.style.colorScheme = "light"
+    }
+  }, [initialTheme])
+
+  const setTheme = React.useCallback(
+    (nextTheme: DashboardThemeMode | "system") => {
+      const resolvedTheme = nextTheme === "system" ? "light" : nextTheme
+      setClientTheme(resolvedTheme)
+      writeThemeCookie(resolvedTheme)
+      window.localStorage.setItem(
+        LEGACY_DASHBOARD_THEME_STORAGE_KEY,
+        resolvedTheme
+      )
+      applyTheme(resolvedTheme)
+    },
+    []
+  )
+
+  const themeValue = React.useMemo(
+    () => ({
+      theme,
+      resolvedTheme: theme,
+      setTheme,
+    }),
+    [setTheme, theme]
+  )
 
   return (
-    <AudioPreferencesContext.Provider value={value}>
-      <NextThemesProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        {...props}
-      >
-        <ClickSound />
+    <ThemeContext.Provider value={themeValue}>
+      <AudioPreferencesProvider>
         <ThemeHotkey />
         {children}
-      </NextThemesProvider>
-    </AudioPreferencesContext.Provider>
+      </AudioPreferencesProvider>
+    </ThemeContext.Provider>
   )
 }
 
@@ -228,4 +340,4 @@ function ThemeHotkey() {
   return null
 }
 
-export { ThemeProvider }
+export { AudioPreferencesProvider, ThemeProvider }

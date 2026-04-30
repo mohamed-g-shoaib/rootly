@@ -3,7 +3,6 @@ import Link from "next/link"
 import RootlyLogo from "@/components/rootly-logo"
 import { PageContainer } from "@/components/ui/page-container"
 import { Separator } from "@/components/ui/separator"
-import { ThemeSwitcherMultiButton } from "./theme-switcher-multi-button"
 
 const FOOTER_LINKS = [
   {
@@ -27,7 +26,7 @@ const FOOTER_LINKS = [
 
 export default function HomepageFooter() {
   return (
-    <footer className="pt-14">
+    <footer className="pt-0">
       <Separator />
       <div className="border-t bg-background">
         <PageContainer>
@@ -43,7 +42,6 @@ export default function HomepageFooter() {
                 Capture notes, track progress, and review what you learn.
               </div>
               <div>© 2026 Rootly. All rights reserved.</div>
-              <ThemeSwitcherMultiButton className="w-fit" />
             </div>
 
             <nav
