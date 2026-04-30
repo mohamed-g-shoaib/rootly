@@ -8,15 +8,10 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import Calcom from "@/components/theme-icons/calcom-coss-ui"
 import { ClaudeAI } from "@/components/theme-icons/claude"
 import { ClaudeBlue } from "@/components/theme-icons/claude-blue"
-import { Discord } from "@/components/theme-icons/discord"
 import Milka from "@/components/theme-icons/milka"
-import { Snapchat } from "@/components/theme-icons/snapchat"
 import { PerplexityAI } from "@/components/theme-icons/perplexity"
 import Sakura from "@/components/theme-icons/sakura"
-import { Supabase } from "@/components/theme-icons/supabase"
-import { Twitter } from "@/components/theme-icons/twitter"
 import { Vercel } from "@/components/theme-icons/vercel"
-import { Twitch } from "@/components/theme-icons/twitch"
 import { Zed } from "@/components/theme-icons/zed"
 import {
   Combobox,
@@ -55,14 +50,9 @@ const THEME_ICONS: Record<string, ThemeIconComponent> = {
   default: Calcom,
   milka: Milka,
   claude: ClaudeAI,
-  discord: Discord,
-  twitter: Twitter,
-  snapchat: Snapchat,
-  supabase: Supabase,
   sakura: Sakura,
   perplexity: PerplexityAI,
   vercel: Vercel,
-  twitch: Twitch,
   "claude-blue": ClaudeBlue,
   zed: Zed,
 }
