@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 import {
   BookOpen01Icon,
@@ -8,19 +8,19 @@ import {
   PlayIcon,
   PauseIcon,
   Globe02Icon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AnimatePresence,
   MotionConfig,
   motion,
   useMotionValue,
   animate,
-} from "motion/react"
+} from "motion/react";
 
-import { Card, CardPanel } from "@/components/ui/card"
+import { Card, CardPanel } from "@/components/ui/card";
 
-const EASE_OUT = [0.23, 1, 0.32, 1] as const
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
 const PHASES = [
   {
@@ -47,7 +47,7 @@ const PHASES = [
     caption: "Spaced repetition ensures you remember what you learn.",
     duration: 5000,
   },
-]
+];
 
 function PhaseProblem() {
   return (
@@ -78,7 +78,7 @@ function PhaseProblem() {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function PhaseSolution() {
@@ -121,7 +121,7 @@ function PhaseSolution() {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function PhaseExtension() {
@@ -178,13 +178,13 @@ function PhaseExtension() {
               transition={{ delay: 0.5, duration: 0.3, ease: EASE_OUT }}
               className="mt-1 rounded-md bg-foreground px-2 py-1.5 text-[10px] font-medium text-background"
             >
-              + Add to Rootly
+              + Add Note
             </motion.button>
           </div>
         </motion.div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function PhaseValue() {
@@ -229,50 +229,50 @@ function PhaseValue() {
         </motion.div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function HeroStoryDemo({ isPlaying }: { isPlaying: boolean }) {
-  const [phase, setPhase] = React.useState(0)
-  const [phaseRunId, setPhaseRunId] = React.useState(0)
-  const progress = useMotionValue(0)
+  const [phase, setPhase] = React.useState(0);
+  const [phaseRunId, setPhaseRunId] = React.useState(0);
+  const progress = useMotionValue(0);
   const progressControlsRef = React.useRef<ReturnType<typeof animate> | null>(
-    null
-  )
+    null,
+  );
 
   React.useEffect(() => {
-    if (!isPlaying) return
+    if (!isPlaying) return;
 
-    progressControlsRef.current?.stop()
-    progressControlsRef.current = null
+    progressControlsRef.current?.stop();
+    progressControlsRef.current = null;
 
-    const currentProgress = progress.get()
-    const remainingRatio = 1 - currentProgress
-    const duration = (PHASES[phase].duration * remainingRatio) / 1000
+    const currentProgress = progress.get();
+    const remainingRatio = 1 - currentProgress;
+    const duration = (PHASES[phase].duration * remainingRatio) / 1000;
 
-    if (duration <= 0) return
+    if (duration <= 0) return;
 
     const controls = animate(progress, 1, {
       duration,
       ease: "linear",
       onComplete: () => {
-        progress.set(0)
-        setPhase((p) => (p + 1) % PHASES.length)
-        setPhaseRunId((id) => id + 1)
+        progress.set(0);
+        setPhase((p) => (p + 1) % PHASES.length);
+        setPhaseRunId((id) => id + 1);
       },
-    })
+    });
 
-    progressControlsRef.current = controls
+    progressControlsRef.current = controls;
 
-    return () => controls.stop()
-  }, [isPlaying, phase, phaseRunId, progress])
+    return () => controls.stop();
+  }, [isPlaying, phase, phaseRunId, progress]);
 
   const handlePhaseClick = (i: number) => {
-    progressControlsRef.current?.stop()
-    progress.set(0)
-    setPhase(i)
-    setPhaseRunId((id) => id + 1)
-  }
+    progressControlsRef.current?.stop();
+    progress.set(0);
+    setPhase(i);
+    setPhaseRunId((id) => id + 1);
+  };
 
   return (
     <div className="flex flex-col bg-background">
@@ -295,7 +295,7 @@ function HeroStoryDemo({ isPlaying }: { isPlaying: boolean }) {
                   }}
                 />
               </button>
-            )
+            );
           })}
         </div>
       </div>
@@ -334,11 +334,11 @@ function HeroStoryDemo({ isPlaying }: { isPlaying: boolean }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export function BrowserWindowMock() {
-  const [isPlaying, setIsPlaying] = React.useState(true)
+  const [isPlaying, setIsPlaying] = React.useState(true);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -380,5 +380,5 @@ export function BrowserWindowMock() {
         </Card>
       </div>
     </MotionConfig>
-  )
+  );
 }
