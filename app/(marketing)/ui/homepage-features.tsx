@@ -5,6 +5,7 @@ import {
   PanelRightOpenIcon,
   Folder01Icon,
   Task01Icon,
+  ChartAnalysisIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
@@ -115,6 +116,31 @@ function ProgressVisual() {
   )
 }
 
+function StatsVisual() {
+  return (
+    <div className="relative flex w-full max-w-[280px] flex-col gap-3 rounded-2xl border bg-background p-4 shadow-sm after:pointer-events-none after:absolute after:inset-[2px] after:rounded-[calc(var(--radius-2xl)-2px)] after:border after:border-border/50">
+      <div className="flex items-center justify-between border-b border-border/50 pb-2">
+        <div className="text-[11px] font-medium text-muted-foreground">
+          Study Time
+        </div>
+        <div className="text-xs font-semibold text-foreground tabular-nums">
+          +24%
+        </div>
+      </div>
+      <div className="flex h-[72px] items-end gap-2 px-1">
+        {[30, 50, 40, 85, 60, 45, 100].map((height, i) => (
+          <div key={i} className="flex flex-1 flex-col justify-end gap-1.5 h-full">
+            <div 
+              className={`w-full rounded-sm transition-colors ${i === 6 ? "bg-foreground" : "bg-muted-foreground/20"}`} 
+              style={{ height: `${height}%` }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const FEATURES = [
   {
     title: "Contextual side panel",
@@ -136,6 +162,13 @@ const FEATURES = [
       "Log your daily study time and focus level. Build consistent momentum and watch your learning streak grow over time.",
     icon: Task01Icon,
     visual: <ProgressVisual />,
+  },
+  {
+    title: "Learning insights",
+    description:
+      "Visualize your progress with detailed charts. Identify weak spots and optimize your study schedule based on real data.",
+    icon: ChartAnalysisIcon,
+    visual: <StatsVisual />,
   },
 ]
 
@@ -161,7 +194,7 @@ export default function HomepageFeatures() {
             </Reveal>
           </div>
 
-          <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto grid w-full max-w-4xl gap-6 sm:grid-cols-2">
             {FEATURES.map((feat, i) => (
               <Reveal key={feat.title} delay={i * 0.1} className="h-full">
                 <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card after:pointer-events-none after:absolute after:inset-[2px] after:rounded-[calc(var(--radius-3xl)-2px)] after:border after:border-border/50">

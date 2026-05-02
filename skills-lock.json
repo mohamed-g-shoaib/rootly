@@ -56,18 +56,6 @@
       "sourceType": "github",
       "computedHash": "35ec9acf08dabb77ca240330d10dd1a562ca869fe75e67ae12c4e472eb7fe498"
     },
-    "motion": {
-      "source": "secondsky/claude-skills",
-      "sourceType": "github",
-      "skillPath": "plugins/motion/skills/motion/SKILL.md",
-      "computedHash": "07e39574eb2f22d7d3daa430c9b53abf3b2127c2801008205916334f8aa0143d"
-    },
-    "motion-design": {
-      "source": "lottiefiles/motion-design-skill",
-      "sourceType": "github",
-      "skillPath": "skills/motion-design/SKILL.md",
-      "computedHash": "4f16f46c81f25a2a25b7a4720b7ea001e65f384b31b5b7f4b455fef87fbc9016"
-    },
     "next-best-practices": {
       "source": "vercel-labs/next-skills",
       "sourceType": "github",
