@@ -4,6 +4,7 @@ import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
 import { QueryProvider } from "@/components/query-provider"
+import { BeaconClient } from "@/components/beacon-client"
 import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/site-config"
@@ -84,6 +85,7 @@ export default async function RootLayout({
     >
       <body suppressHydrationWarning>
         <QueryProvider>
+          <BeaconClient />
           <ToastProvider>
             <AnchoredToastProvider>
               <Suspense fallback={null}>{children}</Suspense>

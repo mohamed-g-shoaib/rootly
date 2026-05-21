@@ -144,7 +144,25 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 SUPABASE_SECRET_KEY=sb_secret_your_key_here
 SUPABASE_PROJECT_ID=your-project-id
 SUPABASE_DB_PASSWORD=your-db-password
+
+# Optional but recommended (protects /api/beacon)
+BEACON_SECRET=replace-with-a-long-random-string
 ```
+
+## Supabase anti-pause beacon
+
+If you want to keep a Supabase project from pausing due to inactivity, this repo includes a small heartbeat write endpoint:
+
+- Endpoint: `GET/POST /api/beacon`
+- Table: `public.beacon_heartbeats` (see `docs/supabase-beacon.sql`)
+- Auth: if `BEACON_SECRET` is set, pass it as `x-beacon-secret: ...` (or `?secret=...`)
+
+### Automatic ping (no scheduler)
+
+`BeaconClient` sends a background request to `/api/beacon` at most once per 24 hours whenever someone uses the app (browser localStorage throttling).
+
+- Component: `components/beacon-client.tsx`
+- Wired in: `app/layout.tsx`
 
 ## Scripts
 
