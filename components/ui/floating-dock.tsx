@@ -120,7 +120,7 @@ function FloatingDockMobile({
               onFocus={() => prefetch(item.link)}
               onTouchStart={() => prefetch(item.link)}
               className={cn(
-                "inline-flex min-h-12 min-w-[3.5rem] flex-col items-center justify-center gap-1 rounded-xl border px-2 pt-1.5 pb-1 text-[10px] font-medium tracking-[0.01em] transition-colors",
+                "inline-flex min-h-12 min-w-[3.5rem] flex-col items-center justify-center gap-1 rounded-[calc(var(--radius)+2px)] border px-2 pt-1.5 pb-1 text-[10px] font-medium tracking-[0.01em] transition-colors",
                 isActive
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-transparent bg-transparent text-muted-foreground hover:border-border hover:bg-accent/80 hover:text-accent-foreground",
@@ -214,7 +214,7 @@ function DesktopDockItem({
       onFocus={() => onPrefetch(link)}
       onTouchStart={() => onPrefetch(link)}
       className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-lg border px-3 text-sm font-medium tracking-[-0.01em] transition-colors",
+        "inline-flex h-10 items-center gap-2 rounded-[calc(var(--radius)+2px)] border px-3 text-sm font-medium tracking-[-0.01em] transition-colors",
         active
           ? "border-primary bg-primary text-primary-foreground"
           : "border-transparent bg-transparent text-muted-foreground hover:border-border hover:bg-accent/80 hover:text-accent-foreground",

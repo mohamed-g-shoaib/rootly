@@ -653,7 +653,7 @@ h2 {
   align-items: start;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: calc(var(--radius-lg) - 3px);
   color: var(--foreground);
   display: grid;
   gap: 6px;

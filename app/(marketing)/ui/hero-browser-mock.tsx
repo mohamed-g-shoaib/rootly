@@ -88,7 +88,7 @@ function PhaseSolution() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.05 }}
       transition={{ duration: 0.4, ease: EASE_OUT }}
-      className="relative w-full max-w-[280px] overflow-hidden rounded-2xl border bg-background after:pointer-events-none after:absolute after:inset-[2px] after:rounded-[calc(var(--radius-2xl)-2px)] after:border after:border-border/50 sm:max-w-[320px]"
+      className="relative w-full max-w-[280px] overflow-hidden rounded-[26px] border bg-background after:pointer-events-none after:absolute after:inset-[2px] after:rounded-[24px] after:border after:border-border/50 sm:max-w-[320px]"
     >
       <div className="flex flex-col gap-4 p-4">
         <div className="flex items-center gap-2">
@@ -342,7 +342,7 @@ export function BrowserWindowMock() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="w-full overflow-hidden rounded-[var(--radius-4xl)] bg-[url('/hero-bg.webp')] bg-cover bg-center p-4 sm:p-5 lg:p-6">
+      <div className="w-full overflow-hidden rounded-[38px] bg-[url('/hero-bg.webp')] bg-cover bg-center p-4 sm:rounded-[42px] sm:p-5 lg:rounded-[46px] lg:p-6">
         <Card className="w-full overflow-hidden rounded-3xl border-border/80 bg-background after:pointer-events-none after:absolute after:inset-[2px] after:rounded-[calc(var(--radius-3xl)-2px)] after:border after:border-border/50">
           <div className="border-b bg-muted px-3 py-2 sm:px-4">
             <div className="flex items-center justify-between gap-3">

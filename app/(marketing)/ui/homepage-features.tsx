@@ -20,7 +20,7 @@ import {
 function SidePanelVisual() {
   return (
     <div className="relative flex w-full max-w-[280px] overflow-hidden rounded-2xl border bg-background p-1.5 shadow-sm after:pointer-events-none after:absolute after:inset-[2px] after:rounded-[calc(var(--radius-2xl)-2px)] after:border after:border-border/50">
-      <div className="flex w-full gap-2 rounded-xl border border-border/50 bg-muted/20 p-2">
+      <div className="flex w-full gap-2 rounded-[calc(var(--radius)+2px)] border border-border/50 bg-muted/20 p-1">
         {/* Fake Page Content */}
         <div className="flex flex-1 flex-col gap-2 p-1">
           <div className="h-2 w-1/2 rounded-full bg-muted-foreground/20" />
@@ -29,7 +29,7 @@ function SidePanelVisual() {
           <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
         </div>
         {/* Fake Side Panel */}
-        <div className="flex w-2/5 flex-col gap-2 rounded-lg border bg-background p-2">
+        <div className="flex w-2/5 flex-col gap-2 rounded-md border bg-background p-2">
           <div className="flex items-center gap-1.5">
             <div className="size-1.5 rounded-full bg-foreground" />
             <div className="h-1.5 w-10 rounded-full bg-muted-foreground/20" />
@@ -56,12 +56,12 @@ function CourseVisual() {
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
-        <div className="rounded-lg border border-border/50 bg-muted/20 px-2 py-1.5">
+        <div className="rounded-sm border border-border/50 bg-muted/20 px-2 py-1.5">
           <div className="text-[10px] font-medium text-foreground">
             What is Big O notation?
           </div>
         </div>
-        <div className="rounded-lg border border-border/50 bg-muted/20 px-2 py-1.5">
+        <div className="rounded-sm border border-border/50 bg-muted/20 px-2 py-1.5">
           <div className="text-[10px] font-medium text-foreground">
             Explain the OSI model.
           </div>
