@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
+import * as React from "react";
+import Link from "next/link";
 
-import { Github01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Github01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import RootlyLogo from "@/components/rootly-logo"
-import { Button } from "@/components/ui/button"
-import { PageContainer } from "@/components/ui/page-container"
-import { cn } from "@/lib/utils"
-import { MarketingPrimaryCta } from "./marketing-primary-cta"
+import RootlyLogo from "@/components/rootly-logo";
+import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/ui/page-container";
+import { cn } from "@/lib/utils";
+import { MarketingPrimaryCta } from "./marketing-primary-cta";
 
 export default function HomepageNav() {
-  const [scrolled, setScrolled] = React.useState(false)
+  const [scrolled, setScrolled] = React.useState(false);
 
   React.useEffect(() => {
     function onScroll() {
       setScrolled((prev) => {
-        const next = window.scrollY > 40
-        return prev === next ? prev : next
-      })
+        const next = window.scrollY > 40;
+        return prev === next ? prev : next;
+      });
     }
 
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <header
@@ -34,7 +34,7 @@ export default function HomepageNav() {
         "fixed inset-x-0 top-0 z-40 border-b transition-colors",
         scrolled
           ? "border-border bg-background/80 backdrop-blur"
-          : "border-transparent bg-transparent"
+          : "border-transparent bg-transparent",
       )}
     >
       <PageContainer>
@@ -51,7 +51,7 @@ export default function HomepageNav() {
             <Button
               render={
                 <a
-                  href="https://github.com/mohamed-g-shoaib/rootly"
+                  href="https://github.com/mohamedgshoaib/rootly"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Star on GitHub"
@@ -68,7 +68,7 @@ export default function HomepageNav() {
             <Button
               render={
                 <a
-                  href="https://github.com/mohamed-g-shoaib/rootly"
+                  href="https://github.com/mohamedgshoaib/rootly"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Star on GitHub"
@@ -86,5 +86,5 @@ export default function HomepageNav() {
         </div>
       </PageContainer>
     </header>
-  )
+  );
 }

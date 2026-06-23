@@ -1,8 +1,8 @@
-import Link from "next/link"
+import Link from "next/link";
 
-import RootlyLogo from "@/components/rootly-logo"
-import { PageContainer } from "@/components/ui/page-container"
-import { Separator } from "@/components/ui/separator"
+import RootlyLogo from "@/components/rootly-logo";
+import { PageContainer } from "@/components/ui/page-container";
+import { Separator } from "@/components/ui/separator";
 
 const FOOTER_LINKS = [
   {
@@ -10,7 +10,7 @@ const FOOTER_LINKS = [
     links: [
       {
         label: "GitHub",
-        href: "https://github.com/mohamed-g-shoaib/rootly",
+        href: "https://github.com/mohamedgshoaib/rootly",
         external: true,
       },
     ],
@@ -22,7 +22,7 @@ const FOOTER_LINKS = [
       { label: "Terms of Service", href: "/terms" },
     ],
   },
-] as const
+] as const;
 
 export default function HomepageFooter() {
   return (
@@ -89,5 +89,5 @@ export default function HomepageFooter() {
         </PageContainer>
       </div>
     </footer>
-  )
+  );
 }
