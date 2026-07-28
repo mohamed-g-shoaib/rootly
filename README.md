@@ -1,140 +1,69 @@
+![Rootly banner](public/rootly-cover.webp)
+
 # Rootly
 
-![Rootly banner](public/marketing-image.jpg)
+Rootly is a developer-focused learning notebook for self-taught developers and serious learners. It helps turn scattered study sessions into structured notes, reviewable knowledge, and measurable progress.
 
-Rootly is a developer-focused learning notebook for self-taught developers. It helps you capture notes, organize courses, track study sessions, and review what you learn in one place.
+Rootly is built for active learning rather than generic note-taking. Capture what you learn, connect it to courses, record study time and mood, revisit it through active recall, and use the overview to see how your learning is developing.
 
-This repository is the active v2 app: a cloud-first Next.js application built with Supabase, Coss UI, and App Router.
+## What you can do
 
-## Why Rootly
+- Capture two kinds of notes: Q&A notes for active recall and freeform notes for flexible study capture.
+- Organize notes into courses while keeping uncategorized notes available.
+- Log daily study time and mood to build a consistent learning record.
+- Run review sessions that update understanding levels over time.
+- Use overview charts and summaries to follow study trends, consistency, and mastery.
+- Capture notes and daily entries from a browser side panel without leaving the page you are studying.
 
-Rootly is built for learning workflows, not generic note-taking. It combines note capture, study tracking, and review into a single system so you can keep momentum across real learning sessions.
+## Product surface
 
-## Features
+| Surface           | Purpose                                                           |
+| ----------------- | ----------------------------------------------------------------- |
+| Marketing site    | Explains the product and its learning workflow                    |
+| Dashboard         | Houses overview, notes, courses, daily entries, and review        |
+| Browser extension | Provides fast side-panel capture connected to the website session |
+| Supabase backend  | Stores user-scoped learning data and authentication state         |
 
-- Q&A notes and freeform notes
-- Course tracking with topic-aware organization
-- Daily study logs (time + mood)
-- Review sessions for active recall
-- Dashboard overview with charts and trend summaries
-- Browser extension side panel for fast capture workflows
+Authenticated dashboard routes include `/overview`, `/notes`, `/courses`, `/courses/[id]`, `/daily-entries`, and `/review`. Public routes include `/`, `/login`, `/terms`, and `/privacy`.
 
-## App routes
+## Architecture
 
-Public routes:
+Rootly is the v2 cloud-first rebuild of the product:
 
-- `/` marketing homepage
-- `/login` authentication page
-- `/terms` terms of service
-- `/privacy` privacy policy
-- `/auth/callback` OAuth callback route
+- Next.js App Router separates marketing, authentication, and dashboard route groups.
+- The shared `DashboardShell` mounts once in `app/(dashboard)/layout.tsx`.
+- Supabase Auth and Row Level Security keep reads and writes scoped to the signed-in user.
+- `proxy.ts` refreshes sessions and protects dashboard routes.
+- Next.js Cache Components, cache lifetimes, cache tags, and targeted invalidation support fresh dashboard reads.
+- TanStack Query powers interactive dashboard areas such as notes, courses, daily entries, and review.
+- The browser extension uses the website cookie session rather than a separate token system.
+- Coss UI components in `components/ui` are treated as a sealed design-system boundary.
 
-Authenticated app routes:
+## Technology
 
-- `/overview`
-- `/notes`
-- `/courses`
-- `/courses/[id]`
-- `/daily-entries`
-- `/review`
-
-## Recent improvements
-
-### Faster dashboard navigation
-
-- Shipped a dashboard instant-navigation rollout with authenticated timing baselines for core routes.
-- Moved dashboard data flows to query-backed patterns using TanStack Query and cache-tagged server reads/mutations.
-- Expanded server-backed pagination for courses, notes, daily entries, review, and course detail notes.
-- Added a shared pagination dock for fixed-footer page controls.
-- Removed route-level loading skeleton swaps once interactive query-backed fetch paths were stable.
-- Refined route prefetch and dock transitions for faster perceived navigation.
-
-### Better caching and rendering stability
-
-- Enabled Next.js Cache Components and stabilized build behavior around cached/private dashboard reads.
-- Added read-side cache directives, cache lifetimes, and domain tags across dashboard domains.
-- Expanded mutation invalidation parity to keep overview and list screens fresh after writes.
-- Removed and documented stale baseline risks from unauthenticated CLI probing.
-
-### More reliable overview charts
-
-- Optimized overview loading path and non-blocking prewarm behavior.
-- Split heavy overview chart bundles using dynamic client loading.
-- Eliminated Recharts negative-size warnings by using measured container shells and explicit chart sizing.
-
-### UX polish and fallback coverage
-
-- Added centered global error and not-found pages using Coss UI patterns (`500` and `404` states with clear recovery actions).
-- Fixed hydration mismatch sources around media-query branching and user-menu trigger identity.
-- Standardized pointer cursor behavior across shared primitives.
-- Kept editor sheets mounted where needed for consistent open/close animation behavior.
-
-### Audio interaction system
-
-- Added a global click-sound system with mute persistence.
-- Added dedicated switch sounds for theme toggles.
-- Added mute/unmute controls in dock and avatar surfaces.
-- Implemented a lightweight Web Audio engine with embedded assets and React hook integration.
-
-### Extension and live update bridge
-
-- Shipped modular side panel architecture improvements and a UX refresh.
-- Added cookie-authenticated extension API routes for bootstrap, notes, courses, and daily entry writes.
-- Added hardened content-script and background bridge validation.
-- Added request idempotency protections and payload normalization for extension writes.
-- Wired extension writes into dashboard live updates (overview, notes, daily entries) for immediate in-app visibility.
-- Added extension runtime tests and dedicated script coverage.
-
-### Tooling and quality
-
-- Ran broad formatting/lint stabilization passes.
-- Updated dependencies.
-- Added and documented new local skills for Next Cache Components, TanStack Query, Redis, and view transitions.
-
-## Tech stack
-
-- Next.js 16 (App Router, Turbopack, Cache Components)
-- React 19
-- TypeScript
-- Tailwind CSS v4
-- Coss UI on top of Base UI
-- Supabase Auth + Postgres
+- Next.js 16 and React 19
+- TypeScript and Tailwind CSS v4
+- Supabase Auth and PostgreSQL
 - TanStack Query
-- Motion (including view transition usage)
-- Recharts
-- Oxlint + Oxfmt
+- Coss UI on Base UI
+- Motion and Recharts
+- Oxlint and Oxfmt
+- Chrome Manifest V3 extension APIs
 
-## Project structure (high level)
+## Run locally
 
-- [app](app): Next.js App Router routes and feature UIs
-- [components](components): shared UI, theme provider, dashboard shell pieces
-- [hooks](hooks): reusable client hooks
-- [lib](lib): shared app utilities, extension helpers, live update plumbing
-- [extension](extension): browser extension code (manifest, side panel, bridge)
-- [spec](spec): product, performance, and implementation docs
+Requirements: Node.js, pnpm, and a Supabase project.
 
-## Quick start
-
-To run Rootly locally:
+Install dependencies and start the development server:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Then open `http://localhost:3000`.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Design system rule
-
-Treat [components/ui](components/ui) as owned design-system code.
-
-- Compose on top of existing primitives.
-- Avoid ad-hoc rewrites of Coss internals.
-- Preserve established tokens, layering, and interaction conventions.
-
-## Environment variables
-
-Create `.env.local` with:
+Create `.env.local` with the values required by the application:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
@@ -145,54 +74,59 @@ SUPABASE_SECRET_KEY=sb_secret_your_key_here
 SUPABASE_PROJECT_ID=your-project-id
 SUPABASE_DB_PASSWORD=your-db-password
 
-# Optional but recommended (protects /api/beacon)
+# Optional: protects /api/beacon
 BEACON_SECRET=replace-with-a-long-random-string
 ```
 
-## Supabase anti-pause beacon
+The complete variable list is also available in [.env.example](.env.example). Server-only secrets must not be exposed to the browser.
 
-If you want to keep a Supabase project from pausing due to inactivity, this repo includes a small heartbeat write endpoint:
+## Browser extension
 
-- Endpoint: `GET/POST /api/beacon`
-- Table: `public.beacon_heartbeats` (see `docs/supabase-beacon.sql`)
-- Auth: if `BEACON_SECRET` is set, pass it as `x-beacon-secret: ...` (or `?secret=...`)
+The extension lives in [extension](extension). It is a Manifest V3 side panel that can use the local app or the configured Rootly site. Sign in to Rootly in the browser first, then load the `extension` directory as an unpacked extension in Chrome.
 
-### Automatic ping (no scheduler)
+The side panel connects to these website API routes:
 
-`BeaconClient` sends a background request to `/api/beacon` at most once per 24 hours whenever someone uses the app (browser localStorage throttling).
+- `GET /api/extension/bootstrap`
+- `POST /api/extension/notes`
+- `POST /api/extension/courses`
+- `POST /api/extension/daily-entries`
 
-- Component: `components/beacon-client.tsx`
-- Wired in: `app/layout.tsx`
+Extension writes include payload normalization and idempotency handling. Dashboard live-update bridges keep relevant notes and daily entries visible after an extension write.
 
-## Scripts
+## Development commands
 
 ```bash
-pnpm dev
-pnpm build
-pnpm start
-pnpm lint
-pnpm lint:fix
-pnpm fmt
-pnpm fmt:check
-pnpm typecheck
-pnpm test:extension
+pnpm dev             # Start Next.js with Turbopack
+pnpm build           # Create a production build
+pnpm start           # Serve the production build
+pnpm typecheck       # Run TypeScript checks
+pnpm lint            # Run Oxlint with warnings denied
+pnpm fmt:check       # Check Oxfmt formatting
+pnpm test:extension  # Run extension and idempotency tests
 ```
 
-## Documentation
+## Repository map
 
-For product and implementation context:
+- [app](app): App Router routes, server actions, and feature UIs
+- [components](components): shared shell, providers, and UI primitives
+- [extension](extension): Manifest V3 side panel and browser bridges
+- [hooks](hooks): reusable client hooks
+- [lib](lib): Supabase clients, caching, live updates, themes, audio, and extension helpers
+- [spec](spec): product direction and implementation guidance
+- [docs](docs): Coss UI, Supabase, theme, and interaction references
 
-- Product and direction: [spec/what-is-rootly.md](spec/what-is-rootly.md)
-- Frontend workflow: [spec/frontend-development-cycle.md](spec/frontend-development-cycle.md)
-- Agent skill usage: [spec/agent-skills.md](spec/agent-skills.md)
-- Dashboard navigation/perf plan: [spec/dashboard-navigation-performance.md](spec/dashboard-navigation-performance.md)
-- Dashboard instant-navigation implementation record: [spec/dashboard-instant-navigation-plan-2026-04-03.md](spec/dashboard-instant-navigation-plan-2026-04-03.md)
-- Overview optimization audit: [spec/overview-performance-audit-2026-04-03.md](spec/overview-performance-audit-2026-04-03.md)
-- Browser extension side panel spec: [spec/browser-extension-side-panel.md](spec/browser-extension-side-panel.md)
-- Sound system implementation guide: [spec/add-click-sound.md](spec/add-click-sound.md)
+## Project rules
 
-## Contributing
+Rootly is intentionally a learning notebook, not a general-purpose workspace. New work should strengthen structured capture, active recall, or measurable progress without expanding the product into a generic notes or collaboration platform.
 
-Issues and pull requests are welcome.
+Treat [components/ui](components/ui) as owned design-system code: compose existing primitives and preserve their established tokens and interaction conventions.
 
-If documentation and implementation ever disagree, please trust the codebase first and open a docs fix so they stay aligned.
+For the product model and architectural constraints, read [spec/index.md](spec/index.md). The repository's skill index is in [spec/skills.md](spec/skills.md).
+
+## Supabase beacon
+
+The optional `/api/beacon` endpoint records a small heartbeat for keeping an otherwise quiet Supabase project active. Its table definition is in [docs/supabase-beacon.sql](docs/supabase-beacon.sql), and the client-side throttled request is wired through [components/beacon-client.tsx](components/beacon-client.tsx).
+
+## Status
+
+This repository is the active v2 application codebase. The implementation and configuration are the source of truth for shipped behavior; product intent and non-negotiable constraints are recorded in [spec/index.md](spec/index.md).
